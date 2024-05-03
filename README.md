@@ -2,6 +2,8 @@
 
 This repository contains the code of an Experiment pipeline for Topic Modeling using LDA (Latent Dirichlet Allocation) written in R.
 
+When using this code, please reference "Leon Ackermann & Oscar Kjell (in progress). Visualizing different language formats.
+
 ## Table of Contents
 1. [Overview](#overview)
 2. [Installation](#installation)
