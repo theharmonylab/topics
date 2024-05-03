@@ -362,6 +362,7 @@ ldaTest <- function(model,
 #' @param plot_topics_idx (vector) The topics to plot determined by index
 #' @param p_threshold (integer) The p-value threshold to use for significance
 #' @param save_dir (string) The directory to save the wordclouds
+#' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
 #' @param seed (integer) The seed to set for reproducibility
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @export
@@ -369,11 +370,12 @@ ldaWordclouds <- function(model,
                           test,
                           color_negative_cor=scale_color_gradient(low = "darkgreen", high = "green"),
                           color_positive_cor=scale_color_gradient(low = "darkred", high = "red"),
-                          scale_size=TRUE,
-                          plot_topics_idx=NULL,
-                          p_threshold=0.05,
-                          save_dir="./results",
-                          seed=42){
+                          scale_size = TRUE,
+                          plot_topics_idx = NULL,
+                          p_threshold = 0.05,
+                          save_dir = "./results",
+                          figure_format = ".svg",
+                          seed = 42){
   
   model <- name_cols_with_vocab(model, "phi", model$vocabulary)
   test_type = test$test_method

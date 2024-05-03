@@ -46,9 +46,9 @@ source("./src/main.R")
 To preprocess the data, run the following command:
 ```R
 data <- read.csv("data.csv")
-dtm <- ldaDtm(data=data,
-              id_col="id",
-              data_col="text")
+dtm <- ldaDtm(data = data,
+              id_col = "id",
+              data_col = "text")
 ```
 The function takes the following arguments:
 - `data` (tibble): the data frame containing the text data
@@ -69,9 +69,9 @@ The function takes the following arguments:
 **2. Model Training**<br>
 To train the LDA model, run the following command:
 ```R
-model <- ldaModel(dtm=dtm,
-                  num_topics=20,
-                  num_iterations=1000)
+model <- ldaModel(dtm = dtm,
+                  num_topics = 20,
+                  num_iterations = 1000)
 ```
 The function takes the following arguments:
 - `dtm` (R_obj): The document term matrix.
@@ -85,8 +85,8 @@ The function takes the following arguments:
 **3. Model Inference**<br>
 To infer the topic term distribution of the documents, run the following command:
 ```R
-preds <- ldaPreds(model=model,
-                  dtm=dtm)
+preds <- ldaPreds(model = model,
+                  dtm = dtm)
 ```
 The function takes the following arguments:
 - `model` (list): The trained model.
@@ -99,12 +99,12 @@ The function takes the following arguments:
 **4. Statistical Analysis**<br>
 To analyze the relationship between the topics and the prediction variable, run the following command:
 ```R
-test <- ldaTest(model=model,
-                preds=preds,
-                dtm=dtm,
-                pred_var="phq9",
-                control_vars=c("age",..),
-                test_method="linear_regression")
+test <- ldaTest(model = model,
+                preds = preds,
+                dtm = dtm,
+                pred_var = "phq9",
+                control_vars = c("age",..),
+                test_method = "linear_regression")
 ```
 The function takes the following arguments:
 - `model` (list): The trained LDA model.
@@ -121,8 +121,8 @@ The function takes the following arguments:
 **5. Visualization**<br>
 To visualize the significant topics as wordclouds, run the following command:
 ```R
-ldaWordclouds(model=model,
-              test=test)
+ldaWordclouds(model = model,
+              test = test)
 ```
 The function takes the following arguments:
 - `model` (list): The trained model.
@@ -133,6 +133,7 @@ The function takes the following arguments:
 - `plot_topics_idx` (vector): Indices of the topics to be plotted.
 - `p_threshold` (integer): The p-value threshold for determining significance in topic correlations.
 - `save_dir` (string): The directory where the wordclouds will be saved.
+- `figure_format` (string): Set the figure format, e.g., ".svg" or ".png".
 - `seed` (integer): The seed for reproducibility.
 
 
