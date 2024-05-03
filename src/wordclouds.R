@@ -7,7 +7,9 @@ library(ggwordcloud)
 #' @param vocabulary (list) the vocabulary to be used
 #' @return (list) the modified model
 #' @noRd
-name_cols_with_vocab <- function(model, col, vocabulary){
+name_cols_with_vocab <- function(model, 
+                                 col, 
+                                 vocabulary){
   colnames(model[[col]]) <- as.character(unlist(vocabulary))
   return(model)
 }
@@ -18,7 +20,9 @@ name_cols_with_vocab <- function(model, col, vocabulary){
 #' @param model_type (string) "mallet"
 #' @return list of data.frames with assigned phi
 #' @noRd
-assign_phi_to_words <- function(df_list, phi, model_type){
+assign_phi_to_words <- function(df_list, 
+                                phi, 
+                                model_type){
   #view(phi)
   for (i in 1:length(df_list)){
     df <- data.frame(df_list[[i]]) 
@@ -72,6 +76,7 @@ create_topic_words_dfs <- function(summary){
 #' @param p_threshold (float) set threshold which determines which topics are plotted
 #' @param save_dir (string) save plots in specified directory, if left blank, plots is not saved,
 #' thus save_dir is necessary
+#' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
 #' @param seed (int) seed is needed for saving the plots in the correct directory
 #' @noRd
 create_plots <- function(df_list, 
@@ -81,11 +86,12 @@ create_plots <- function(df_list,
                          cor_var,
                          color_negative_cor,
                          color_positive_cor,
-                         scale_size=TRUE,
-                         plot_topics_idx=NULL,
-                         p_threshold=NULL,
-                         save_dir="./results",
-                         seed=42){
+                         scale_size = FALSE,
+                         plot_topics_idx = NULL,
+                         p_threshold = NULL,
+                         save_dir = "./results",
+                         figure_format = ".svg",
+                         seed = 42){
   if (is.null(plot_topics_idx)){
     plot_topics_idx <- seq(1, length(df_list))
   } 
@@ -151,7 +157,11 @@ create_plots <- function(df_list,
         dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
       }
       p_adjusted <- sprintf("%.2e", p_adjusted)
-      ggsave(paste0(save_dir,"/seed_", seed, "/wordclouds/t_", i, "_r_", estimate, "_p_", p_adjusted,".png"), plot = plot, width = 10, height = 8, units = "in")
+      ggsave(paste0(save_dir,"/seed_", seed, 
+                    "/wordclouds/t_", i, "_r_", 
+                    estimate, "_p_", 
+                    p_adjusted, figure_format), 
+             plot = plot, width = 10, height = 8, units = "in")
     }
   }
 }
