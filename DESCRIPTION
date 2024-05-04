@@ -23,18 +23,15 @@ Imports:
     textmineR,
     ggplot2,
     dplyr,
-    tidyr,
-    tidyverse,
     mallet,
     rJava,
-    tokenizers,
-    reticulate,
-    text2vec,
-    quanteda,
     ggwordcloud, 
     effsize,
     purrr,
-    tibble
+    tibble, 
+    methods,
+    readr,
+    stopwords
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,

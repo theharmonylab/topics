@@ -44,6 +44,7 @@ assign_phi_to_words <- function(df_list,
 #' This is a private function and used internally by ldaWordclouds
 #' @param summary (data.frame) the models summary
 #' @return a list of dataframes for each topic filled with top terms
+#' @importFrom stats complete.cases
 #' @noRd
 create_topic_words_dfs <- function(summary){
   n <- nrow(summary)
@@ -52,7 +53,7 @@ create_topic_words_dfs <- function(summary){
   for (i in 1:n) {
     word_vector <- unlist(strsplit(summary[paste0("t_",i),]$top_terms, ", "))
     df <- data.frame(Word = word_vector) # Create an empty dataframe
-    df <- df_cleaned <- df[complete.cases(df), ]
+    df <- df_cleaned <- df[stats::complete.cases(df), ]
     df_list[[i]] <- df  # Add the dataframe to the list
     
     name <- paste("t", i, sep = "_")  # Create the name for the dataframe

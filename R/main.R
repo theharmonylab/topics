@@ -16,6 +16,8 @@
 #' @param save_dir (string) the directory to save the results, default is "./results", if NULL, no results are saved
 #' @return the document term matrix
 #' @importFrom textmineR CreateDtm
+#' @importFrom stats complete.cases
+#' @importFrom stopwords stopwords
 #' @export
 ldaDtm <- function(data, # provide relative directory path to data
                    id_col,
@@ -37,7 +39,7 @@ ldaDtm <- function(data, # provide relative directory path to data
   # Data
   text <- data
   text_cols <- text
-  text_cols <- text_cols[complete.cases(text_cols), ] # remove rows without values
+  text_cols <- text_cols[stats::complete.cases(text_cols), ] # remove rows without values
   text_cols = text_cols[sample(1:nrow(text_cols)), ] # shuffle
   
   split_index <- round(nrow(text_cols) * split) 
@@ -225,6 +227,8 @@ ldaModel <- function(dtm,
 #' @param save_dir (string) The directory to save the model, if NULL, the predictions will not be saved
 #' @param load_dir (string) The directory to load the model from, if NULL, the predictions will not be loaded
 #' @return A tibble of the predictions
+#' @importFrom tibble as_tibble tibble
+#' @importFrom dplyr %>%
 #' @export
 ldaPreds <- function(model, # only needed if load_dir==NULL 
                     num_iterations=100, # only needed if load_dir==NULL, 
@@ -250,13 +254,13 @@ ldaPreds <- function(model, # only needed if load_dir==NULL
       random_seed = seed
     )
     
-    preds <- as_tibble(preds)
+    preds <- tibble::as_tibble(preds)
     colnames(preds) <- paste("t_", 1:ncol(preds), sep="")
     #if (!is.null(group_var)){
     #  categories <- data[group_var]
     #  preds <- bind_cols(categories, preds)
     #}
-    preds <- preds %>% tibble()
+    preds <- preds %>% tibble::tibble()
     
   }
   
@@ -288,6 +292,7 @@ ldaPreds <- function(model, # only needed if load_dir==NULL
 #' @param save_dir (string) The directory to save the test, if NULL, the test will not be saved
 #' @return A list of the test results, test method, and prediction variable
 #' @importFrom dplyr bind_cols
+#' @importFrom readr write_csv
 #' @export
 ldaTest <- function(model,
                     preds, 
@@ -349,7 +354,7 @@ ldaTest <- function(model,
                  estimate = test$estimate,
                  t_value = test$statistic,
                  p_value = test$p.value)
-      write_csv(data.frame(df), paste0(save_dir, "/seed_", seed, "/textTrain_regression.csv"))
+      readr::write_csv(data.frame(df), paste0(save_dir, "/seed_", seed, "/textTrain_regression.csv"))
     }
     saveRDS(test, paste0(save_dir, "/seed_", seed, "/test_",test_method, ".rds"))
     print(paste0("The test was saved in: ", save_dir,"/seed_", seed, "/test_",test_method, ".rds"))
@@ -375,8 +380,8 @@ ldaTest <- function(model,
 #' @export
 ldaWordclouds <- function(model,
                           test,
-                          color_negative_cor=scale_color_gradient(low = "darkgreen", high = "green"),
-                          color_positive_cor=scale_color_gradient(low = "darkred", high = "red"),
+                          color_negative_cor = scale_color_gradient(low = "darkgreen", high = "green"),
+                          color_positive_cor = scale_color_gradient(low = "darkred", high = "red"),
                           scale_size = FALSE,
                           plot_topics_idx = NULL,
                           p_threshold = 0.05,

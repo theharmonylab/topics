@@ -30,13 +30,14 @@ is_continuous_variable <- function(df, threshold) {
 #' @param grouping1 (string) The name of the grouping variable
 #' @param colname (string) The name of the topic variable
 #' @importFrom dplyr mutate sym
+#' @importFrom stats median
 #' @return RObj of the testing result of a single topic
 #' @noRd
 median_split_test_topic_wise <- function(topic_loadings,
                                          grouping1,
                                          colname) {
   
-  median_grouping <- median(topic_loadings[[grouping1]])
+  median_grouping <- stats::median(topic_loadings[[grouping1]])
   
   topic_loadings <- topic_loadings %>%
     dplyr::mutate(group = ifelse(!!dplyr::sym(grouping1) >= median_grouping, 'Group1', 'Group2'))
@@ -73,14 +74,15 @@ median_split_test_topics <- function(topic_loadings,
 #' @param topic_loadings (tibble) The initial tibble
 #' @param grouping1 (string) The name of the grouping variable
 #' @param colname (string) The name of the topic variable
-#' @importFrom dplyr mutate sym
 #' @return RObj of the testing result of a single topic
+#' @importFrom dplyr mutate sym
+#' @importFrom stats cor.test
 #' @noRd
 corr_topic_wise <- function(topics_loadings,
                             grouping1,
                             colname) {
   
-  corr_results <- cor.test(topics_loadings[[grouping1]],
+  corr_results <- stats::cor.test(topics_loadings[[grouping1]],
                            topics_loadings[[colname]])
   
   return(corr_results)
@@ -335,9 +337,10 @@ sort_stats_tibble <- function(df) {
 #' @param n_min_max (integer) If split = "min_max", the number of records to test per group.
 #' @param multiple_comparison (string) The p-correction method
 #' @return Results
-#' @importFrom dplyr select everything bind_cols right_join
-#' @importFrom tibble is_tibble
+#' @importFrom dplyr contains select everything bind_cols right_join join_by
+#' @importFrom tibble is_tibble as_tibble
 #' @importFrom text textTrainRegression
+#' @importFrom stats  complete.cases sd lm glm as.formula
 #' @noRd
 topic_test <- function(topic_terms,
                        topics_loadings,
@@ -347,17 +350,13 @@ topic_test <- function(topic_terms,
                        split = "median",
                        n_min_max = 20,
                        multiple_comparison = "bonferroni"){
-  require(stats)
-  require(purrr)
-  require(dplyr)
-  require(tidyr)
-  #require(textmineR)
+
   colnames(grouping_variable) <- "value"
   topics_groupings <- dplyr::bind_cols(topics_loadings,
-                                grouping_variable)
+                                       grouping_variable)
   
-  topics_loadings <- topics_loadings[complete.cases(topics_groupings), ]
-  grouping_variable <- grouping_variable[complete.cases(topics_groupings), ]
+  topics_loadings <- topics_loadings[stats::complete.cases(topics_groupings), ]
+  grouping_variable <- grouping_variable[stats::complete.cases(topics_groupings), ]
   
   
   if (TRUE){
@@ -426,8 +425,9 @@ topic_test <- function(topic_terms,
       # Change the output of a list to a tibble. For corr only now.
       output <- extract_topic_stats_corr(result)
       names(output)[1] <- c("topic_name")
-      output <- dplyr::left_join(output, topic_terms,
-                                 by = join_by(topic_name == topic))
+      output <- dplyr::left_join(output, 
+                                 topic_terms,
+                                 by = dplyr::join_by(topic_name == topic))
       
       output <- output %>%
         dplyr::select(
@@ -463,7 +463,9 @@ topic_test <- function(topic_terms,
       #print(class(output$topic_name))
       #print(class(topic_terms$topic))
       #output <- dplyr::left_join(output, topic_terms, by = join_by(topic_name == topic))
-      output <- dplyr::left_join(output, topic_terms, by = join_by(topic_name == topic))
+      output <- dplyr::left_join(output, 
+                                 topic_terms, 
+                                 by = join_by(topic_name == topic))
       #view(output)
       #output <- dplyr::left_join(output, topic_terms, by = join_by(topic))
       
@@ -505,7 +507,7 @@ topic_test <- function(topic_terms,
     for (topic in lda_topics) {
       #view(preds[[topic]])
       mean_value <- mean(preds[[topic]])
-      std_dev <- sd(preds[[topic]])
+      std_dev <- stats::sd(preds[[topic]])
       preds[[paste0("z_",topic)]] <- (preds[[topic]] - mean_value) / std_dev#preds[[topic]] # scale(preds[[topic]])
     }
     #view(preds)
@@ -536,8 +538,8 @@ topic_test <- function(topic_terms,
       
       
       for (topic in z_lda_topics) {
-        formula <- as.formula(paste0(topic, formula_tail))
-        multi_models[[paste0("t_",topic)]] <- lm(formula, data = preds)
+        formula <- stats::as.formula(paste0(topic, formula_tail))
+        multi_models[[paste0("t_",topic)]] <- stats::lm(formula, data = preds)
       }
     } 
     
@@ -548,7 +550,7 @@ topic_test <- function(topic_terms,
       #print(z_lda_topics[1])
       for (topic in z_lda_topics){
         
-        multi_models[[paste0("t_", topic)]] <- glm(paste0("z_",control_variables[1], " ~ ", topic), data = preds)
+        multi_models[[paste0("t_", topic)]] <- stats::glm(paste0("z_",control_variables[1], " ~ ", topic), data = preds)
       }
     }
     
@@ -646,11 +648,12 @@ topic_test <- function(topic_terms,
       }
     }
     
-    dims <- as.data.frame(preds) %>% select(contains("Dim"))
+    dims <- as.data.frame(preds) %>% dplyr::select(
+      dplyr::contains("Dim"))
     #view(dims)
     #dims <- step_zv(dims)
-    dims <- as_tibble(dims)
-    preds <- as_tibble(preds)
+    dims <- tibble::as_tibble(dims)
+    preds <- tibble::as_tibble(preds)
     for (col in colnames(dims)) {
       dims[[col]] <- as.numeric(dims[[col]])
     }
@@ -678,6 +681,7 @@ topic_test <- function(topic_terms,
 #' @param num_iterations (string) Number of iterations
 #' @return Mallet model
 #' @importFrom textmineR Dtm2Docs CalcGamma
+#' @importFrom stats setNames
 #' @importFrom mallet mallet.top.words mallet.doc.topics mallet.word.freqs mallet.topic.labels MalletLDA  mallet.import  mallet.topic.words
 #' @noRd
 get_mallet_model <- function(dtm,
@@ -687,14 +691,17 @@ get_mallet_model <- function(dtm,
   # still to complete
   docs <- textmineR::Dtm2Docs(dtm)
   
-  model <- mallet::MalletLDA(num.topics = num_topics,
-                     alpha.sum = 5,
-                     beta = 0.01)
-  instances <- mallet::mallet.import(as.character(seq_along(docs)),
-                             docs,
-                             #"example_stoplist.csv",
-                             preserve.case = FALSE,
-                             token.regexp= "[\\p{L}\\p{N}_]+|[\\p{P}]+\ ")
+  model <- mallet::MalletLDA(
+    num.topics = num_topics,
+    alpha.sum = 5,
+    beta = 0.01)
+  
+  instances <- mallet::mallet.import(
+    as.character(seq_along(docs)),
+    docs,
+    preserve.case = FALSE,
+    token.regexp = "[\\p{L}\\p{N}_]+|[\\p{P}]+\ ")
+  
   model$loadDocuments(instances)
   model$train(num_iterations)
   
@@ -724,7 +731,6 @@ get_mallet_model <- function(dtm,
     df_top_terms[paste0("t_", i_topic)] <- top_terms
   }
   
-  
   return_model <- list()
   #return_model$top_terms_mallet <- bind_rows(list_top_terms)
   return_model$instances <- instances #model$instances()
@@ -738,33 +744,37 @@ get_mallet_model <- function(dtm,
   #return_model$top_terms <- GetTopTerms(phi = return_model$phi, M = num_top_words)
   return_model$frequencies <- mallet::mallet.word.freqs(model)
   return_model$vocabulary <- model$getVocabulary()
-  model$prevalence_mallet <- colSums(mallet.doc.topics(model, 
-                                                       smoothed=TRUE, 
-                                                       normalized=TRUE)) /
+  model$prevalence_mallet <- colSums(mallet.doc.topics(
+    model,
+    smoothed=TRUE,
+    normalized=TRUE)) /
     sum(mallet.doc.topics(model, 
                           smoothed=TRUE, 
                           normalized=TRUE)) * 100
   
   #sum(list_top_terms$prevalence)
   return_model$labels <- mallet::mallet.topic.labels(model)
-  return_model$theta <- mallet::mallet.doc.topics(model, 
-                                                  smoothed=TRUE, 
-                                                  normalized=TRUE)
+  return_model$theta <- mallet::mallet.doc.topics(
+    model,
+    smoothed = TRUE,
+    normalized = TRUE)
   
   return_model$prevalence <- colSums(return_model$theta) / 
     sum(return_model$theta) * 100
   
   keys <- paste0("t_", 1:num_topics)
   
-  return_model$prevalence <- setNames(return_model$prevalence, keys)
+  return_model$prevalence <- stats::setNames(return_model$prevalence, keys)
   #return_model$labels <- LabelTopics(assignments = return_model$theta > 0.05, dtm = dtm, M = 1)
   
   return_model$coherence <- return_model$prevalence
   
   # put theta into the right format
   df_theta <- data.frame(return_model$theta)
-  df_theta <- setNames(df_theta, 
-                       keys)
+  df_theta <- stats::setNames(
+    df_theta,
+    keys)
+  
   return_model$theta <- df_theta
   
   # take the first word as dummy label, no other solution worked
@@ -780,13 +790,17 @@ get_mallet_model <- function(dtm,
   #return(c(result1 = result1, result2 = result2))
   
   pred_model <- list()
-  pred_model$phi <- mallet::mallet.topic.words(model, 
-                                               smoothed=TRUE, 
-                                               normalized=TRUE)
+  pred_model$phi <- mallet::mallet.topic.words(
+    model,
+    smoothed = TRUE,
+    normalized = TRUE)
   
   colnames(pred_model$phi) <- as.character(unlist(return_model$vocabulary))
   
-  pred_model$theta <- mallet::mallet.doc.topics(model, smoothed=TRUE, normalized=TRUE)
+  pred_model$theta <- mallet::mallet.doc.topics(
+    model, 
+    smoothed = TRUE, 
+    normalized = TRUE)
   
   k <- ncol(pred_model$theta) # Specify the value of k  
   new_col_names <- paste("t", 
