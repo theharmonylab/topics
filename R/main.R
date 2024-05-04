@@ -15,6 +15,7 @@
 #' @param seed (integer) the random seed for reproducibility
 #' @param save_dir (string) the directory to save the results, default is "./results", if NULL, no results are saved
 #' @return the document term matrix
+#' @importFrom textmineR CreateDtm
 #' @export
 ldaDtm <- function(data, # provide relative directory path to data
                    id_col,
@@ -52,16 +53,17 @@ ldaDtm <- function(data, # provide relative directory path to data
     
   }
   
-  # create a document term matrix for training set
-  train_dtm <- CreateDtm(doc_vec = train[[data_col]], # character vector of documents
-                         doc_names = train[[id_col]], # document names
-                         ngram_window = ngram_window, # minimum and maximum n-gram length
-                         stopword_vec = stopwords, #::stopwords("en", source = "snowball"),
-                         lower = TRUE, # lowercase - this is the default value
-                         remove_punctuation = TRUE, # punctuation - this is the default
-                         remove_numbers = TRUE, # numbers - this is the default
-                         verbose = FALSE, # Turn off status bar for this demo
-                         cpus = 4) # default is all available cpus on the system
+  # create a document term matrix for training set help(CreateDtm)
+  train_dtm <- textmineR::CreateDtm(
+    doc_vec = train[[data_col]], # character vector of documents
+    doc_names = train[[id_col]], # document names
+    ngram_window = ngram_window, # minimum and maximum n-gram length
+    stopword_vec = stopwords, #::stopwords("en", source = "snowball"),
+    lower = TRUE, # lowercase - this is the default value
+    remove_punctuation = TRUE, # punctuation - this is the default
+    remove_numbers = TRUE, # numbers - this is the default
+    verbose = FALSE, # Turn off status bar for this demo
+    cpus = 4) # default is all available cpus on the system
   
   if (occ_rate>0){
     #print("rows in train")
@@ -94,15 +96,16 @@ ldaDtm <- function(data, # provide relative directory path to data
   
   
   # create a document term matrix for test set
-  test_dtm <- CreateDtm(doc_vec = test[[data_col]], # character vector of documents
-                        doc_names = test[[id_col]], # document names
-                        ngram_window = ngram_window, # minimum and maximum n-gram length
-                        stopword_vec = stopwords::stopwords("en", source = "snowball"),
-                        lower = TRUE, # lowercase - this is the default value
-                        remove_punctuation = TRUE, # punctuation - this is the default
-                        remove_numbers = TRUE, # numbers - this is the default
-                        verbose = FALSE, # Turn off status bar for this demo
-                        cpus = 4) # default is all available cpus on the system
+  test_dtm <- textmineR::CreateDtm(
+    doc_vec = test[[data_col]], # character vector of documents
+    doc_names = test[[id_col]], # document names
+    ngram_window = ngram_window, # minimum and maximum n-gram length
+    stopword_vec = stopwords::stopwords("en", source = "snowball"),
+    lower = TRUE, # lowercase - this is the default value
+    remove_punctuation = TRUE, # punctuation - this is the default
+    remove_numbers = TRUE, # numbers - this is the default
+    verbose = FALSE, # Turn off status bar for this demo
+    cpus = 4) # default is all available cpus on the system
   
   if (occ_rate>0){
     
@@ -134,7 +137,10 @@ ldaDtm <- function(data, # provide relative directory path to data
     }
   }
   
-  dtms <- list(train_dtm=train_dtm, test_dtm=test_dtm, train_data=train, test_data=test)
+  dtms <- list(train_dtm = train_dtm, 
+               test_dtm = test_dtm, 
+               train_data = train, 
+               test_data = test)
   
   if (!is.null(save_dir)){
     if (!dir.exists(save_dir)) {
@@ -170,22 +176,25 @@ ldaModel <- function(dtm,
                     load_dir=NULL){
   dtm <- dtm$train_dtm
   set.seed(seed)
+  
   if (!is.null(load_dir)){
     model <- readRDS(paste0(load_dir, "/seed_", seed, "/model.rds"))
   } else {
-    model <- get_mallet_model(dtm = dtm,
-                              num_topics = num_topics,
-                              num_top_words = num_top_words,
-                              num_iterations = num_iterations)
+    model <- get_mallet_model(
+      dtm = dtm,
+      num_topics = num_topics,
+      num_top_words = num_top_words,
+      num_iterations = num_iterations)
     
     
-    model$summary <- data.frame(topic = rownames(model$labels),
-                                label = model$labels,
-                                coherence = round(model$coherence, 3),
-                                prevalence = round(model$prevalence,3),
-                                top_terms = apply(model$top_terms, 
-                                                  2, 
-                                                  function(x){paste(x, collapse = ", ")}),
+    model$summary <- data.frame(
+      topic = rownames(model$labels),
+      label = model$labels,
+      coherence = round(model$coherence, 3),
+      prevalence = round(model$prevalence,3),
+      top_terms = apply(model$top_terms,
+                        2, 
+                          function(x){paste(x, collapse = ", ")}),
                                 stringsAsFactors = FALSE)
     model$summary[order(model$summary$prevalence, decreasing = TRUE) , ][ 1:10 , ]
   }
@@ -278,6 +287,7 @@ ldaPreds <- function(model, # only needed if load_dir==NULL
 #' @param load_dir (string) The directory to load the test from, if NULL, the test will not be loaded
 #' @param save_dir (string) The directory to save the test, if NULL, the test will not be saved
 #' @return A list of the test results, test method, and prediction variable
+#' @importFrom dplyr bind_cols
 #' @export
 ldaTest <- function(model,
                     preds, 
@@ -289,25 +299,28 @@ ldaTest <- function(model,
                     seed=42,
                     load_dir=NULL,
                     save_dir="./results"){
+  
   data <- dtm$train_data
   control_vars <- c(pred_var, control_vars)
+  
   if (!is.null(load_dir)){
     test <- readRDS(paste0(load_dir, "/seed_", seed, "/test.rds"))
   } else {
     if (!is.null(group_var)){
       if (!(group_var %in% names(preds))){
-        preds <- bind_cols(data[group_var], preds)
+        preds <- dplyr::bind_cols(data[group_var], preds)
       }
     }
     for (control_var in control_vars){
       if (!(control_var %in% names(preds))){
-        preds <- bind_cols(data[control_var], preds)
+        preds <- dplyr::bind_cols(data[control_var], preds)
       }
     }
     if (test_method=="ridge_regression"){
       group_var <- pred_var
     }
-    preds <- preds %>% tibble()
+    preds <- preds %>% tibble::tibble()
+    
     test <- topic_test(topic_terms = model$summary,
                        topics_loadings = preds,
                        grouping_variable = preds[group_var],
@@ -326,10 +339,12 @@ ldaTest <- function(model,
     } else {
       cat("Directory already exists.\n")
     }
+    
     if(!dir.exists(paste0(save_dir, "/seed_", seed))){
       dir.create(paste0(save_dir, "/seed_", seed))
     }
-    if (test_method=="textTrain_regression"){
+    
+    if (test_method == "textTrain_regression"){
       df <- list(variable = group_var,
                  estimate = test$estimate,
                  t_value = test$statistic,
@@ -339,7 +354,10 @@ ldaTest <- function(model,
     saveRDS(test, paste0(save_dir, "/seed_", seed, "/test_",test_method, ".rds"))
     print(paste0("The test was saved in: ", save_dir,"/seed_", seed, "/test_",test_method, ".rds"))
   }
-  return(list(test=test, test_method=test_method, pred_var=pred_var))
+  
+  return(list(test = test, 
+              test_method = test_method, 
+              pred_var = pred_var))
 }
 
 #' The function to create lda wordclouds
@@ -374,16 +392,16 @@ ldaWordclouds <- function(model,
   
 
   create_plots(df_list = df_list, 
-               summary=model$summary,
-               test=test$test, 
-               test_type="linear_regression",
-               cor_var=pred_var,
+               summary = model$summary,
+               test = test$test, 
+               test_type = "linear_regression",
+               cor_var = pred_var,
                color_negative_cor = color_negative_cor,
                color_positive_cor = color_positive_cor,
-               scale_size=scale_size,
-               plot_topics_idx=plot_topics_idx,
-               p_threshold=p_threshold,
-               save_dir=save_dir,
-               seed=seed)
+               scale_size = scale_size,
+               plot_topics_idx = plot_topics_idx,
+               p_threshold = p_threshold,
+               save_dir = save_dir,
+               seed = seed)
   print(paste0("The plots are saved in ", save_dir, "/seed", seed, "/wordclouds"))
 }

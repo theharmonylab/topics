@@ -58,7 +58,6 @@ create_topic_words_dfs <- function(summary){
     name <- paste("t", i, sep = "_")  # Create the name for the dataframe
     assign(name, df_list[[i]])  # Assign the dataframe to a variable with the specified name
   }
-  
   return(df_list)
 }
 
@@ -77,6 +76,8 @@ create_topic_words_dfs <- function(summary){
 #' thus save_dir is necessary
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
 #' @param seed (int) seed is needed for saving the plots in the correct directory
+#' @importFrom ggwordcloud geom_text_wordcloud
+#' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes
 #' @noRd
 create_plots <- function(df_list, 
                          summary,
@@ -100,23 +101,28 @@ create_plots <- function(df_list,
     if (test_type == "linear_regression"){
       estimate_col <- paste0(cor_var,".estimate") # grep(partial_name, data_frame_names, value = TRUE)
       p_adjusted_col <- paste0(cor_var,".p_adjusted")
+      
     } else if (test_type == "t-test"){
       estimate_col <- "cohens d" # probably doesnt work yet
+      
     } else if (test_type == "logistic_regression"){
       estimate_col <- "estimate"
       estimate_col <- "p_adjustedfdr"
+      
     }
     estimate <- test[i,][[estimate_col]]# $PHQtot.estimate
     p_adjusted <- test[i,][[p_adjusted_col]] # $PHQtot.p_adjustedfdr
+
     if (scale_size==TRUE){
       prevalence <- summary[paste0("t_",i),]$prevalence
     }
-    #print(paste0("prevalence: ", prevalence))
+    #  print(paste0("prevalence: ", prevalence))
     
     
     # this will ensure that all topics are plotted
     if (is.null(p_threshold) ){
       p_threshold <- p_adjusted +1 
+      
     }
     
     #print(is.null(p_threshold))
@@ -137,14 +143,17 @@ create_plots <- function(df_list,
         max_size <- 10
         y <- ""
       }
-      #view(df_list[[i]])
-      plot <- ggplot(df_list[[i]], aes(label = Word, size = phi, color = phi))+#,x=estimate)) +
-        geom_text_wordcloud() +
-        scale_size_area(max_size = max_size) +
-        theme_minimal() +
+      #view(df_list[[i]]) help(ggplot) library(ggplot2)
+      plot <- ggplot2::ggplot(df_list[[i]], 
+                              ggplot2::aes(label = Word, 
+                                           size = phi, 
+                                           color = phi)) + #,x=estimate)) +
+        ggwordcloud::geom_text_wordcloud() +
+        ggplot2::scale_size_area(max_size = max_size) +
+        ggplot2::theme_minimal() +
         #theme(plot.margin = margin(0,0,0,0, "cm")) +
         color_scheme + 
-        labs(x = paste0("r = ", estimate),
+        ggplot2::labs(x = paste0("r = ", estimate),
              y= y)
       
       if (!dir.exists(save_dir)) {
@@ -156,7 +165,7 @@ create_plots <- function(df_list,
         dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
       }
       p_adjusted <- sprintf("%.2e", p_adjusted)
-      ggsave(paste0(save_dir,"/seed_", seed, 
+      ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
                     "/wordclouds/t_", i, "_r_", 
                     estimate, "_p_", 
                     p_adjusted, figure_format), 

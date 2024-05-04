@@ -1,17 +1,3 @@
-library(textmineR)
-library(text)
-library(reticulate)
-library(recipes)
-library(tidyverse)
-library(mallet)
-library(rJava)
-library(tokenizers)
-library(text2vec)
-library(dplyr)
-library(quanteda)
-library(ggwordcloud)
-
-
 
 
 #mallet, the javascript for textmining
@@ -32,8 +18,11 @@ set.seed(42)
 #' @return boolean value
 #' @noRd
 is_continuous_variable <- function(df, threshold) {
+  
   numbers_unique_values <- length(unique(df[[1]]))
+  
   return (numbers_unique_values > threshold)
+  
 }
 
 #' The function to calculate median split on a single column
@@ -46,9 +35,12 @@ is_continuous_variable <- function(df, threshold) {
 median_split_test_topic_wise <- function(topic_loadings,
                                          grouping1,
                                          colname) {
+  
   median_grouping <- median(topic_loadings[[grouping1]])
+  
   topic_loadings <- topic_loadings %>%
     dplyr::mutate(group = ifelse(!!dplyr::sym(grouping1) >= median_grouping, 'Group1', 'Group2'))
+  
   t_test_result <- t.test(topic_loadings[[colname]] ~ group,
                           var.equal = FALSE,
                           data = topic_loadings)
@@ -65,12 +57,15 @@ median_split_test_topic_wise <- function(topic_loadings,
 median_split_test_topics <- function(topic_loadings,
                                      grouping1,
                                      colnames) {
+  
   results <- purrr::pmap(list(
     list(topic_loadings),
     grouping1,
     colnames),
     median_split_test_topic_wise)
+  
   names(results) <- colnames
+  
   return(results)
 }
 
@@ -84,8 +79,10 @@ median_split_test_topics <- function(topic_loadings,
 corr_topic_wise <- function(topics_loadings,
                             grouping1,
                             colname) {
+  
   corr_results <- cor.test(topics_loadings[[grouping1]],
                            topics_loadings[[colname]])
+  
   return(corr_results)
 }
 
@@ -95,13 +92,15 @@ corr_topic_wise <- function(topics_loadings,
 #' @param grouping1 (string) The name of the grouping variable
 #' @param colnames (vector) The vector of the topic names
 #' @param method1 (string) The method to adjust the p value
-#' @importFrom purrr pmap
+#' @importFrom purrr pmap map
+#' @importFrom stats p.adjust
 #' @return a named list of testing results
 #' @noRd
 topics_corr_grouping <- function(topics_loadings,
                                  grouping1,
                                  colnames1,
                                  method1="bonferroni") {
+  
   topics_stats <- purrr::pmap(list(
     list(topics_loadings),
     grouping1,
@@ -110,7 +109,8 @@ topics_corr_grouping <- function(topics_loadings,
   
   names(topics_stats) <- colnames1
   
-  topics_stats <- map(topics_stats,
+  # help(map)
+  topics_stats <- purrr::map(topics_stats,
                       ~ c(.x, adjust.p.value = stats::p.adjust(
                         .x$p.value,
                         method = method1,
@@ -126,12 +126,16 @@ topics_corr_grouping <- function(topics_loadings,
 #' @importFrom effsize cohen.d
 #' @return a named list of testing results
 #' @noRd
-extract_topic_stats_corr <- function(topics_stats, cal_cohen_d = FALSE) {
-  require(tibble)
-  require(effsize)
+extract_topic_stats_corr <- function(
+    topics_stats, 
+    cal_cohen_d = FALSE) {
+  
+#  require(tibble)
+#  require(effsize)
   
   # Define a function to extract the required information from a single topic
   extract_single_topic <- function(name, topic) {
+    
     df <- topic$parameter["df"]
     p_value <- topic$p.value
     estimate <- topic$estimate["cor"]
@@ -139,22 +143,27 @@ extract_topic_stats_corr <- function(topics_stats, cal_cohen_d = FALSE) {
     conf_int_lower <- topic$conf.int[1]
     conf_int_higher <- topic$conf.int[2]
     
-    # Calculate Cohen's d if cal_cohen_d is TRUE
+    # Calculate Cohen's d if cal_cohen_d is TRUE help(cohen.d)
     if (cal_cohen_d) {
-      effect_size <- cohen.d(topic$statistic, df)$estimate
+      effect_size <- effsize::cohen.d(topic$statistic, df)$estimate
     } else {
       effect_size <- "not_available"
     }
     
-    return(tibble::tibble("topic_name" = name, "df" = df, "p.value" = p_value,
-                          "adjust.p_value" = adjust.p_value,
-                          "estimate_corr" = estimate,
-                          "conf.int_lower" = conf_int_lower, "conf.int_higher" = conf_int_higher,
-                          "cohen_d" = effect_size))
+    return(tibble::tibble(
+      "topic_name" = name,
+      "df" = df,
+      "p.value" = p_value,
+      "adjust.p_value" = adjust.p_value,
+      "estimate_corr" = estimate,
+      "conf.int_lower" = conf_int_lower,
+      "conf.int_higher" = conf_int_higher,
+      "cohen_d" = effect_size))
   }
   
   # Use purrr::pmap_dfr to apply the function to each topic in the list and return a tibble
-  output <- purrr::pmap_dfr(list(names(topics_stats), topics_stats),
+  output <- purrr::pmap_dfr(list(names(topics_stats), 
+                                 topics_stats),
                             extract_single_topic)
   
   return(output)
@@ -164,7 +173,7 @@ extract_topic_stats_corr <- function(topics_stats, cal_cohen_d = FALSE) {
 #' @param topics_loadings (list) The topic loadings from input
 #' @param method1 (string) Method to adjust p value.
 #' @param calc_cohen_d (boolean) To calculate cohen'd else return "NA"
-#' @importFrom purrr pmap
+#' @importFrom purrr pmap map
 #' @importFrom utils combn
 #' @importFrom dplyr filter
 #' @importFrom stats t.test p.adjust
@@ -175,7 +184,9 @@ topics_t_test_grouping <- function(topics_loadings,
                                    calc_cohen_d = TRUE) {
   # Get unique combinations of 'value' column
   #view(topics_loadings)
-  combinations <- utils::combn(unique(topics_loadings$value), 2, simplify = FALSE)
+  combinations <- utils::combn(unique(topics_loadings$value), 
+                               2, 
+                               simplify = FALSE)
   #view(combinations)
   
   # Function to perform t-test and calculate Cohen's d
@@ -187,7 +198,7 @@ topics_t_test_grouping <- function(topics_loadings,
     #view(df1)
     #view(t)
     
-    results <- map(3:ncol(topics_loadings), ~ list(
+    results <- purrr::map(3:ncol(topics_loadings), ~ list(
       #view(df1[[.]]),
       t_test = stats::t.test(df1[[.]], df2[[.]]),
       cohen_d = if (calc_cohen_d) effsize::cohen.d(df1[[.]], df2[[.]]) else "NA"
@@ -198,13 +209,13 @@ topics_t_test_grouping <- function(topics_loadings,
     groupings <- unique(topics_loadings$value)
     #view(length(groupings))
     if (length(groupings) > 1) {
-      results <- map(results, ~ c(.x, adjust.p.value = stats::p.adjust(
+      results <- purrr::map(results, ~ c(.x, adjust.p.value = stats::p.adjust(
         .x$t_test$p.value,
         method = method1,
         n = length(groupings))))
     } else {
       # Return "not_available" if a group has only one observation
-      results <- map(results, ~ c(.x, adjust.p.value = "not_available"))
+      results <- purrr::map(results, ~ c(.x, adjust.p.value = "not_available"))
     }
     
     names(results) <- paste0("t_", 1:(ncol(topics_loadings)-2))
@@ -213,10 +224,12 @@ topics_t_test_grouping <- function(topics_loadings,
   }
   
   # Apply function to each combination
-  results <- map(combinations, t_test_func)
+  results <- purrr::map(combinations, t_test_func)
   
   # Name each element in the list with the combination it represents
-  names(results) <- map(combinations, paste, collapse = "_")
+  names(results) <- purrr::map(combinations, 
+                               paste, 
+                               collapse = "_")
   
   return(results)
 }
@@ -230,14 +243,19 @@ topics_t_test_grouping <- function(topics_loadings,
 #' @importFrom effsize cohen.d
 #' @return a named list of testing results
 #' @noRd
-extract_topic_stats_cate <- function(topics_stats, cal_cohen_d = TRUE) {
-  require(tibble)
-  require(effsize)
+extract_topic_stats_cate <- function(topics_stats, 
+                                     cal_cohen_d = TRUE) {
+#  require(tibble)
+#  require(effsize)
   
   # Define a function to extract the required information from a single topic
-  extract_single_topic <- function(name1, topic1, cal_cohen_d=TRUE) {
+  extract_single_topic <- function(
+    name1, 
+    topic1, 
+    cal_cohen_d = TRUE) {
     # Extract the non-NULL htest object / flatten
-    htest <- purrr::compact(unlist(topic1, recursive = FALSE))
+    htest <- purrr::compact(unlist(topic1, 
+                                   recursive = FALSE))
     
     t_stats <- htest[["t_test.statistic"]]
     df <- htest[["t_test.parameter"]][["df"]]
@@ -256,6 +274,7 @@ extract_topic_stats_cate <- function(topics_stats, cal_cohen_d = TRUE) {
       eff_size <- "NA"
       eff_size_conf_lower <- "NA"
       eff_size_conf_higher <- "NA"
+      
     } else {
       eff_size <- htest[["cohen_d.estimate"]]
       eff_size_conf_lower <- htest[["cohen_d.conf.int"]][["lower"]]
@@ -315,8 +334,10 @@ sort_stats_tibble <- function(df) {
 #' @param split (string) How to split the CONTINUOUS test_values for testing
 #' @param n_min_max (integer) If split = "min_max", the number of records to test per group.
 #' @param multiple_comparison (string) The p-correction method
-#' @importFrom dplyr select everything
 #' @return Results
+#' @importFrom dplyr select everything bind_cols right_join
+#' @importFrom tibble is_tibble
+#' @importFrom text textTrainRegression
 #' @noRd
 topic_test <- function(topic_terms,
                        topics_loadings,
@@ -332,7 +353,7 @@ topic_test <- function(topic_terms,
   require(tidyr)
   #require(textmineR)
   colnames(grouping_variable) <- "value"
-  topics_groupings <- bind_cols(topics_loadings,
+  topics_groupings <- dplyr::bind_cols(topics_loadings,
                                 grouping_variable)
   
   topics_loadings <- topics_loadings[complete.cases(topics_groupings), ]
@@ -396,6 +417,7 @@ topic_test <- function(topic_terms,
       colnames(temp)[2:ncol(temp)] <- colnames(topics_loadings)
       topics_loadings <- temp
       temp <- NULL
+      
       result <- topics_corr_grouping(
         topics_loadings,
         grouping1 = colnames(topics_loadings)[1],
@@ -598,8 +620,10 @@ topic_test <- function(topic_terms,
     
     #return (control_variable_summary)
     control_variable_summary$topic <- lda_topics
-    
-    output <- right_join(topic_terms[c("topic", "top_terms")], data.frame(control_variable_summary), by = join_by(topic))
+       
+    output <- dplyr::right_join(topic_terms[c("topic", "top_terms")], 
+                         data.frame(control_variable_summary), 
+                         by = join_by(topic))
     # add the adjustment for bonferroni
     return(output)    
     
@@ -630,7 +654,7 @@ topic_test <- function(topic_terms,
     for (col in colnames(dims)) {
       dims[[col]] <- as.numeric(dims[[col]])
     }
-    trained_model <- textTrainRegression(
+    trained_model <- text::textTrainRegression(
       x = dims,
       y = grouping_variable,
       multi_cores = FALSE # This is FALSE due to CRAN testing and Windows machines.
@@ -646,33 +670,51 @@ topic_test <- function(topic_terms,
 }
 
 
+
+#' get_mallet_model
+#' @param dtm (R_obj) A document-term matrix
+#' @param num_topics (integer) The number of topics
+#' @param num_top_words (string) The number of words
+#' @param num_iterations (string) Number of iterations
+#' @return Mallet model
+#' @importFrom textmineR Dtm2Docs CalcGamma
+#' @importFrom mallet mallet.top.words mallet.doc.topics mallet.word.freqs mallet.topic.labels MalletLDA  mallet.import  mallet.topic.words
+#' @noRd
 get_mallet_model <- function(dtm,
-                             num_topics=20,
-                             num_top_words=10, 
-                             num_iterations=1000){
+                             num_topics = 20,
+                             num_top_words = 10, 
+                             num_iterations = 1000){
   # still to complete
-  docs <- Dtm2Docs(dtm)
+  docs <- textmineR::Dtm2Docs(dtm)
   
-  model <- MalletLDA(num.topics = num_topics,
+  model <- mallet::MalletLDA(num.topics = num_topics,
                      alpha.sum = 5,
                      beta = 0.01)
-  instances <- mallet.import(as.character(seq_along(docs)),
+  instances <- mallet::mallet.import(as.character(seq_along(docs)),
                              docs,
                              #"example_stoplist.csv",
                              preserve.case = FALSE,
                              token.regexp= "[\\p{L}\\p{N}_]+|[\\p{P}]+\ ")
   model$loadDocuments(instances)
   model$train(num_iterations)
-  topic.words <- mallet.topic.words(model,
-                                    smoothed=TRUE,
-                                    normalized=TRUE)
   
-  df_top_terms <- data.frame(matrix(NA, nrow = num_top_words, ncol = num_topics))
-  colnames(df_top_terms) <- paste0("t_", 1:num_topics)
+  topic.words <- mallet::mallet.topic.words(
+    model,
+    smoothed = TRUE,
+    normalized = TRUE)
+  
+  df_top_terms <- data.frame(matrix(NA, 
+                                    nrow = num_top_words, 
+                                    ncol = num_topics))
+  
+  colnames(df_top_terms) <- paste0("t_", 
+                                   1:num_topics)
+  
   for(i_topic in 1:num_topics){
-    top_terms <- mallet.top.words(model,
-                                  word.weights = topic.words[i_topic,],
-                                  num.top.words = num_top_words)
+    top_terms <- mallet::mallet.top.words(
+      model,
+      word.weights = topic.words[i_topic,],
+      num.top.words = num_top_words)
     
     #top_terms <- paste(top_terms$term, collapse=" ")
     #topic <- paste("t_", i_topic, sep="")
@@ -691,18 +733,29 @@ get_mallet_model <- function(dtm,
   return_model$top_terms_mallet <- df_top_terms
   return_model$top_terms <- return_model$top_terms_mallet
   #return_model$phi <- mallet.topic.w
-  return_model$phi <- mallet.topic.words(model, smoothed=TRUE, normalized=TRUE)
-  return_model$topic_docs <- mallet.doc.topics(model, smoothed=TRUE, normalized=TRUE)
+  return_model$phi <- mallet::mallet.topic.words(model, smoothed=TRUE, normalized=TRUE)
+  return_model$topic_docs <- mallet::mallet.doc.topics(model, smoothed=TRUE, normalized=TRUE)
   #return_model$top_terms <- GetTopTerms(phi = return_model$phi, M = num_top_words)
-  return_model$frequencies <- mallet.word.freqs(model)
+  return_model$frequencies <- mallet::mallet.word.freqs(model)
   return_model$vocabulary <- model$getVocabulary()
-  model$prevalence_mallet <- colSums(mallet.doc.topics(model, smoothed=TRUE, normalized=TRUE)) /
-    sum(mallet.doc.topics(model, smoothed=TRUE, normalized=TRUE)) * 100
+  model$prevalence_mallet <- colSums(mallet.doc.topics(model, 
+                                                       smoothed=TRUE, 
+                                                       normalized=TRUE)) /
+    sum(mallet.doc.topics(model, 
+                          smoothed=TRUE, 
+                          normalized=TRUE)) * 100
+  
   #sum(list_top_terms$prevalence)
-  return_model$labels <- mallet.topic.labels(model)
-  return_model$theta <- mallet.doc.topics(model, smoothed=TRUE, normalized=TRUE)
-  return_model$prevalence <- colSums(return_model$theta) / sum(return_model$theta) * 100
+  return_model$labels <- mallet::mallet.topic.labels(model)
+  return_model$theta <- mallet::mallet.doc.topics(model, 
+                                                  smoothed=TRUE, 
+                                                  normalized=TRUE)
+  
+  return_model$prevalence <- colSums(return_model$theta) / 
+    sum(return_model$theta) * 100
+  
   keys <- paste0("t_", 1:num_topics)
+  
   return_model$prevalence <- setNames(return_model$prevalence, keys)
   #return_model$labels <- LabelTopics(assignments = return_model$theta > 0.05, dtm = dtm, M = 1)
   
@@ -710,26 +763,41 @@ get_mallet_model <- function(dtm,
   
   # put theta into the right format
   df_theta <- data.frame(return_model$theta)
-  df_theta <- setNames(df_theta, keys)
+  df_theta <- setNames(df_theta, 
+                       keys)
   return_model$theta <- df_theta
   
   # take the first word as dummy label, no other solution worked
   first_row <- return_model$top_terms_mallet[1,]
-  return_model$labels <- matrix(first_row, nrow = num_topics, ncol = 1)
-  rownames(return_model$labels) <- paste0("t_", 1:num_topics)
+  return_model$labels <- matrix(first_row, 
+                                nrow = num_topics, 
+                                ncol = 1)
+  
+  rownames(return_model$labels) <- paste0("t_", 
+                                          1:num_topics)
+  
   colnames(return_model$labels) <- "label_1"
   #return(c(result1 = result1, result2 = result2))
   
   pred_model <- list()
-  pred_model$phi <- mallet.topic.words(model, smoothed=TRUE, normalized=TRUE)
+  pred_model$phi <- mallet::mallet.topic.words(model, 
+                                               smoothed=TRUE, 
+                                               normalized=TRUE)
+  
   colnames(pred_model$phi) <- as.character(unlist(return_model$vocabulary))
-  pred_model$theta <- mallet.doc.topics(model, smoothed=TRUE, normalized=TRUE)
+  
+  pred_model$theta <- mallet::mallet.doc.topics(model, smoothed=TRUE, normalized=TRUE)
+  
   k <- ncol(pred_model$theta) # Specify the value of k  
-  new_col_names <- paste("t", 1:k, sep = "_") # Generate new column names
+  new_col_names <- paste("t", 
+                         1:k, 
+                         sep = "_") # Generate new column names
+  
   colnames(pred_model$theta) <- new_col_names # Assign new column names to the dataframe
   pred_model$alpha <- model$alpha
-  pred_model$gamma <- CalcGamma(phi = pred_model$phi, 
-                                theta = pred_model$theta)
+  pred_model$gamma <- textmineR::CalcGamma(
+    phi = pred_model$phi, 
+    theta = pred_model$theta)
   
   pred_model$data <- dtm
   #names(pred_model)
@@ -748,12 +816,17 @@ get_mallet_model <- function(dtm,
 #' @param mode (string) absolute or relative amount of terms to be removed
 #' @return A list of terms to be removed
 #' @noRd
-get_removal_terms <- function(dtm, n, type, mode="absolute"){
+get_removal_terms <- function(dtm, 
+                              n, 
+                              type, 
+                              mode="absolute"){
+  
   term_frequencies <- colSums(as.matrix(dtm))
   df <- data.frame(as.matrix(dtm))
   
   # Create a data frame with term and frequency
-  term_frequency_df <- data.frame(Term = colnames(dtm), Frequency = term_frequencies)
+  term_frequency_df <- data.frame(Term = colnames(dtm),
+                                  Frequency = term_frequencies)
   
   # Sort the data frame in descending order of frequency
   term_frequency_df <- term_frequency_df[order(-term_frequency_df$Frequency), ]
@@ -762,12 +835,15 @@ get_removal_terms <- function(dtm, n, type, mode="absolute"){
   #top_terms <- head(term_frequency_df, n = 10)
   if (mode=="percent"){
     removal_index <- nrow(term_frequency_df)*n 
+    
   } else if (mode == "absolute"){
     removal_index <- n-1
+    
   }
   if (type=="most"){
     removal_index <- round(removal_index) 
     removal_words <- term_frequency_df[["Term"]][1:removal_index]
+    
   } else {
     removal_index <- nrow(term_frequency_df) - round(removal_index) # calculates index of term that has highest freqency of all percent least frequent words
     removal_words <- term_frequency_df[["Term"]][nrow(term_frequency_df):removal_index]
@@ -784,13 +860,22 @@ get_removal_terms <- function(dtm, n, type, mode="absolute"){
 #' @return A list of column indices to be removed
 #' @noRd
 get_removal_columns <- function(dtm, n, type, mode="absolute"){
-  terms <- get_removal_terms(dtm, n, type, mode)
+  
+  terms <- get_removal_terms(dtm, 
+                             n, 
+                             type, 
+                             mode)
+  
   filtered_terms_test <- c()
+  
   for (term in terms){
-    filtered_terms_test <- c(filtered_terms_test, term)
+    filtered_terms_test <- c(filtered_terms_test, 
+                             term)
   }
+  
   #filtered_terms_test <- c("sad", "tired", "happy", "low")
   column_indices_to_remove <- which(colnames(dtm) %in% filtered_terms_test)
+  
   return(column_indices_to_remove)
 }
 

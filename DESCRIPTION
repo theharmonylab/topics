@@ -19,6 +19,7 @@ SystemRequirements: Python (>= 3.6.0)
 LazyData: true
 BuildVignettes: true
 Imports: 
+    text, 
     textmineR,
     ggplot2,
     dplyr,
