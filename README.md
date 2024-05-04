@@ -5,11 +5,6 @@ This repository contains the code of an Experiment pipeline for Topic Modeling u
 When using this code, please reference "Leon Ackermann & Oscar Kjell (in progress). Visualizing different language formats.
 
 ## Installation
-To install the required packages, run the following command:
-```bash
-bash requirements.sh
-```
-
 ``` r
 # install.packages("devtools")
 devtools::install_github("theharmonylab/ldatext", auth_token = " .... ")
@@ -43,12 +38,6 @@ The visualization step creates wordclouds of the significant topics found by the
 
 ## Usage
 In an example where the topics are used to predict the PHQ-9 score, the pipeline can be run as follows:
-
-**0. Setup**<br>
-Before running the pipeline, make sure to have the following command in your R script:
-```R
-source("./src/main.R")
-```
 
 
 **1. Data Preprocessing**<br>
