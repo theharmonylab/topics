@@ -4,6 +4,11 @@ This repository contains the code of an Experiment pipeline for Topic Modeling u
 
 When using this code, please reference "Leon Ackermann & Oscar Kjell (in progress). Visualizing different language formats.
 
+## Installation
+To install the required packages, run the following command:
+```bash
+bash requirements.sh
+```
 
 ``` r
 # install.packages("devtools")
@@ -34,12 +39,6 @@ The analysis includes the methods like linear regression, binary regression, rid
 
 **5. Visualization**<br>
 The visualization step creates wordclouds of the significant topics found by the statistical analysis.
-
-## Installation
-To install the required packages, run the following command:
-```bash
-bash requirements.sh
-```
 
 
 ## Usage
