@@ -1,7 +1,7 @@
 citHeader("To cite ldatext in publications use:")
 
 bibentry(
-   bibtype = "Article",
+   bibtype = "Misc",
    title = "Visualizing different language formats.",
    author = as.person("Leon Ackermann,Oscar Kjell [aut]"),
    journal = " ",
