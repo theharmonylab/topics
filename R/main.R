@@ -1,15 +1,4 @@
-library(textmineR)
-library(tidyverse)
-library(mallet)
-library(rJava)
-library(tokenizers)
-library(reticulate)
-#source("./src/utils.R")
-#source("./src/inferencer.R")
-#source("./src/wordclouds.R")
-library(text2vec)
-library(dplyr)
-library(quanteda)
+
 
 #' the function for creating a document term matrix
 #' @param data (tibble) the data frame containing the text data

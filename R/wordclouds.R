@@ -1,5 +1,4 @@
-library(ggwordcloud)
-#source("./src/main.R")
+
 
 #' A private function used by ldaWordclouds to rename the columns of a model with the vocabulary
 #' @param model (list) the model to be modified

@@ -30,7 +30,10 @@ Imports:
     reticulate,
     text2vec,
     quanteda,
-    ggwordcloud
+    ggwordcloud, 
+    effsize,
+    purrr,
+    tibble
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,
