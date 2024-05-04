@@ -1,4 +1,4 @@
-# lda-pipeline
+# ldatext
 
 This repository contains the code of an Experiment pipeline for Topic Modeling using LDA (Latent Dirichlet Allocation) written in R.
 

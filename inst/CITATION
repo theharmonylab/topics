@@ -1,0 +1,10 @@
+citHeader("To cite ldatext in publications use:")
+
+bibentry(
+   bibtype = "Article",
+   title = "Visualizing different language formats.",
+   author = as.person("Leon Ackermann,Oscar Kjell [aut]"),
+   journal = " ",
+   doi = " ",
+   year = 2024,
+   url = "https://github.com/theharmonylab/ldatext")
