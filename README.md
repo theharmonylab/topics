@@ -10,6 +10,13 @@ When using this code, please reference "Leon Ackermann & Oscar Kjell (in progres
 devtools::install_github("theharmonylab/ldatext", auth_token = " .... ")
 
 # see how to make your private auth token here: https://github.com/settings/tokens
+
+
+
+# Before open the library, consider setting this option (can increase 5000);  without it the code may ran out of memory
+options(java.parameters = "-Xmx5000m")
+
+
 ```
 
 ## Table of Contents
