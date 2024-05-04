@@ -19,27 +19,22 @@ SystemRequirements: Python (>= 3.6.0)
 LazyData: true
 BuildVignettes: true
 Imports: 
-    tibble,
-    ggrepel,
-    rlang,
-    purrr,
-    magrittr,
+    textmineR,
+    ggplot2,
+    dplyr,
+    tidyr,
+    tidyverse,
+    mallet,
+    rJava,
+    tokenizers,
     reticulate,
-    effsize,
-    stopwords,
-    textmineR
+    text2vec,
+    quanteda,
+    ggwordcloud
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,
     rmarkdown,
-    testthat,
-    rio,
-    glmnet,
-    randomForest,
-    covr,
-    xml2,
-    ranger,
-    utils,
-    ggwordcloud,
+    testthat
 VignetteBuilder: knitr
 Depends: R (>= 4.00)
