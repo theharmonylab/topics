@@ -7,7 +7,9 @@ When using this code, please reference "Leon Ackermann & Oscar Kjell (in progres
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("harmonylab/lda-pipelin"")
+devtools::install_github("theharmonylab/ldatext", auth_token = " .... ")
+
+# see how to make your private auth token here: https://github.com/settings/tokens
 ```
 
 ## Table of Contents
