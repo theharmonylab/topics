@@ -41,9 +41,9 @@ inferencer <- function (model) {
 # out_file: the name of a file to save to (will overwrite an existing file)
 
 write_inferencer <- function (inf, out_file) {
-  fos <- .jnew("java/io/FileOutputStream", out_file)
-  oos <- .jnew("java/io/ObjectOutputStream",
-               .jcast(fos, "java/io/OutputStream"))
+  fos <- rJava::.jnew("java/io/FileOutputStream", out_file)
+  oos <- rJava::.jnew("java/io/ObjectOutputStream",
+                      rJava::.jcast(fos, "java/io/OutputStream"))
   oos$writeObject(inf)
   oos$close()
 }
@@ -54,8 +54,8 @@ write_inferencer <- function (inf, out_file) {
 # returns a reference to a topic inferencer object
 
 read_inferencer <- function (in_file) {
-  J("cc.mallet.topics.TopicInferencer")$read(
-    new(J("java.io.File"), in_file)
+  rJava ::J("cc.mallet.topics.TopicInferencer")$read(
+    new(rJava::J("java.io.File"), in_file)
   )
 }
 
@@ -99,7 +99,8 @@ infer_topics <- function (inferencer,
   
   doc_topics <- vector("list", instances$size())
   for (j in 1:instances$size()) {
-    inst <- .jcall(iter, "Ljava/lang/Object;", "next")
+   
+    inst <- rJava::.jcall(iter, "Ljava/lang/Object;", "next")
     doc_topics[[j]] <- inferencer$getSampledDistribution(
       inst,
       n_iterations, sampling_interval, burn_in)
@@ -143,7 +144,7 @@ compatible_instances <- function (ids, texts, instances) {
 instances_lengths <- function (instances) {
   iter <- instances$iterator()
   replicate(instances$size(),
-            .jcall(iter, "Ljava/lang/Object;", "next")$getData()$size()
+            rJava::.jcall(iter, "Ljava/lang/Object;", "next")$getData()$size()
   )
 }
 

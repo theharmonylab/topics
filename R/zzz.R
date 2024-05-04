@@ -7,19 +7,21 @@
             system is not 64-bit.")
   }
 
-  text_version_nr <- tryCatch(
+  ldatext_version_nr <- tryCatch(
     {
-      text_version_nr1 <- paste(" (version ", packageVersion("ldatext"), ")", sep = "")
+      ldatext_version_nr1 <- paste(" (version ", 
+                                packageVersion("ldatext"), ")", 
+                                sep = "")
     },
     error = function(e) {
-      text_version_nr1 <- ""
+      ldatext_version_nr1 <- ""
     }
   )
 
   packageStartupMessage(
     colourise(
       paste("This is ldatext",
-        text_version_nr,
+            ldatext_version_nr,
         ".\n",
         sep = ""
       ),
