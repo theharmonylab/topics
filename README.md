@@ -4,6 +4,12 @@ This repository contains the code of an Experiment pipeline for Topic Modeling u
 
 When using this code, please reference "Leon Ackermann & Oscar Kjell (in progress). Visualizing different language formats.
 
+
+``` r
+# install.packages("devtools")
+devtools::install_github("harmonylab/lda-pipelin"")
+```
+
 ## Table of Contents
 1. [Overview](#overview)
 2. [Installation](#installation)

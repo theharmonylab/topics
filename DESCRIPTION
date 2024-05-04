@@ -1,0 +1,45 @@
+Package: ldatext
+Type: Package
+Title: Creating and significance testing LDA topics
+Version: 0.9.01
+Authors@R: c(
+    person("Leon", "Ackermann", , "leonmax.ackermann@gmail.com", role = c("aut", "cre"), 
+      comment = c(ORCID = "0000-0002-2728-6278"),
+    ),
+    person("Oscar", "Kjell", role = c("aut"), 
+      comment = c(ORCID = "0000-0002-2728-6278"))
+    )
+Description: This package complement the text package by including LDA topics in the pipeline. For more information see  <https://www.r-text.org>.
+License: GPL-3
+URL: https://github.com/theharmonylab/lda-pipeline
+BugReports: https://github.com/theharmonylab/lda-pipeline
+Encoding: UTF-8
+Archs: x64
+SystemRequirements: Python (>= 3.6.0)
+LazyData: true
+BuildVignettes: true
+Imports: 
+    tibble,
+    ggrepel,
+    rlang,
+    purrr,
+    magrittr,
+    reticulate,
+    effsize,
+    stopwords,
+    textmineR
+RoxygenNote: 7.2.3
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat,
+    rio,
+    glmnet,
+    randomForest,
+    covr,
+    xml2,
+    ranger,
+    utils,
+    ggwordcloud,
+VignetteBuilder: knitr
+Depends: R (>= 4.00)

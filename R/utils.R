@@ -169,7 +169,7 @@ extract_topic_stats_corr <- function(topics_stats, cal_cohen_d = FALSE) {
 #' @importFrom dplyr filter
 #' @importFrom stats t.test p.adjust
 #' @importFrom effsize cohen.d
-#' @NoRd
+#' @noRd
 topics_t_test_grouping <- function(topics_loadings,
                                    method1,
                                    calc_cohen_d = TRUE) {
