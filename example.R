@@ -3,10 +3,11 @@
 #  without it the code may ran out of memory
 options(java.parameters = "-Xmx5000m")
 
-source("./src/main.R")
-ls()
+
+library(ldatext)
+
 exists("ldaDtm")
-getwd()
+
 data <- read.csv("depression_anxiety_cleaned.csv")
 
 dtm <- ldaDtm(data = data, 
