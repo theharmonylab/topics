@@ -1,6 +1,6 @@
 # ldatext
 
-This repository contains the code of an Experiment pipeline for Topic Modeling using LDA (Latent Dirichlet Allocation) written in R.
+ldatext is an R-package based on mallet for LDA (Latent Dirichlet Allocation) Topic Modeling.
 
 When using this code, please reference "Leon Ackermann & Oscar Kjell (in progress). Visualizing different language formats.
 
