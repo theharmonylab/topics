@@ -18,6 +18,7 @@
 #' @importFrom textmineR CreateDtm
 #' @importFrom stats complete.cases
 #' @importFrom stopwords stopwords
+#' @importFrom Matrix colSums
 #' @export
 ldaDtm <- function(data, # provide relative directory path to data
                    id_col,
@@ -54,7 +55,8 @@ ldaDtm <- function(data, # provide relative directory path to data
     train[[data_col]] <- gsub(paste0("\\b", removalword, "\\b"), "", train[[data_col]]) 
     
   }
-  
+  #id_col = "id"
+  #ngram_window <- c(1,2)
   # create a document term matrix for training set help(CreateDtm)
   train_dtm <- textmineR::CreateDtm(
     doc_vec = train[[data_col]], # character vector of documents
@@ -66,6 +68,7 @@ ldaDtm <- function(data, # provide relative directory path to data
     remove_numbers = TRUE, # numbers - this is the default
     verbose = FALSE, # Turn off status bar for this demo
     cpus = 4) # default is all available cpus on the system
+
   
   if (occ_rate>0){
     #print("rows in train")
@@ -73,7 +76,7 @@ ldaDtm <- function(data, # provide relative directory path to data
     removal_frequency <- round(nrow(train)*occ_rate) -1
     #print("removal frequency")
     #print(removal_frequency)
-    train_dtm <- train_dtm[,colSums(train_dtm) > removal_frequency]
+    train_dtm <- train_dtm[,Matrix::colSums(train_dtm) > removal_frequency]
   }
   if (removal_mode != "threshold"){
     if (removal_rate_least > 0){
@@ -89,10 +92,10 @@ ldaDtm <- function(data, # provide relative directory path to data
     }
   } else if (removal_mode == "threshold"){
     if (!is.null(removal_rate_least)){
-      train_dtm <- train_dtm[,colSums(train_dtm) > removal_rate_least]
+      train_dtm <- train_dtm[,Matrix::colSums(train_dtm) > removal_rate_least]
     }
     if (!is.null(removal_rate_most)){
-      train_dtm <- train_dtm[,colSums(train_dtm) < removal_rate_most]
+      train_dtm <- train_dtm[,Matrix::colSums(train_dtm) < removal_rate_most]
     }
   }
   
@@ -113,10 +116,10 @@ ldaDtm <- function(data, # provide relative directory path to data
     
     removal_frequency <- round(nrow(test)*occ_rate) -1
     
-    test_dtm <- test_dtm[,colSums(test_dtm) > removal_frequency]
+    test_dtm <- test_dtm[, Matrix::colSums(test_dtm) > removal_frequency]
   }
   #removal_frequency <- get_occ_frequency(test_dtm, occ_rate)
-  #test_dtm <- test_dtm[,colSums(test_dtm) > removal_frequency]
+  #test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_frequency]
   
   if (removal_mode != "threshold"){
     if (removal_rate_least > 0){
@@ -132,10 +135,10 @@ ldaDtm <- function(data, # provide relative directory path to data
     }
   } else if (removal_mode == "threshold"){
     if (!is.null(removal_rate_least)){
-      test_dtm <- test_dtm[,colSums(test_dtm) > removal_rate_least]
+      test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_rate_least]
     }
     if (!is.null(removal_rate_most)){
-      test_dtm <- test_dtm[,colSums(test_dtm) < removal_rate_most]
+      test_dtm <- test_dtm[,Matrix::colSums(test_dtm) < removal_rate_most]
     }
   }
   
