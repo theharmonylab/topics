@@ -9,7 +9,7 @@ library(ldatext)
 exists("ldaDtm")
 
 data <- read.csv("depression_anxiety_cleaned.csv")
-
+colnames(data)
 dtm <- ldaDtm(data = data, 
               id_col = "unique_id", 
               data_col = "dep_all_phrases", 
@@ -31,7 +31,7 @@ test <- ldaTest(model = model,
                 preds = preds,
                 dtm = dtm,
                 pred_var = "PHQtot",
-                test_method = "linear_regression")
+                test_method = "logistic_regression")
 
 ldaWordclouds(model = model, 
               test = test)
