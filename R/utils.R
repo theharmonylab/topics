@@ -688,7 +688,7 @@ get_mallet_model <- function(dtm,
                              num_topics = 20,
                              num_top_words = 10, 
                              num_iterations = 1000){
-  # still to complete
+  # still to complete help(Dtm2Docs)
   docs <- textmineR::Dtm2Docs(dtm)
   
   model <- mallet::MalletLDA(
@@ -696,19 +696,20 @@ get_mallet_model <- function(dtm,
     alpha.sum = 5,
     beta = 0.01)
   
-  # set seed (it does not work)
-  # https://stackoverflow.com/questions/37356001/using-a-random-seed-in-rmallet
-  model$setRandomSeed(42L)
-  
   instances <- mallet::mallet.import(
     as.character(seq_along(docs)),
     docs,
     preserve.case = FALSE,
     token.regexp = "[\\p{L}\\p{N}_]+|[\\p{P}]+\ ")
   
+  # set seed (it does not make the entire ldaModel() output 
+  # object setqual TRUE, but many more objectis within the object becomes equal)
+  # https://stackoverflow.com/questions/37356001/using-a-random-seed-in-rmallet
+  model$setRandomSeed(42L)
   model$loadDocuments(instances)
+
   model$train(num_iterations)
-  
+ 
   topic.words <- mallet::mallet.topic.words(
     model,
     smoothed = TRUE,
@@ -743,18 +744,25 @@ get_mallet_model <- function(dtm,
   return_model$top_terms_mallet <- df_top_terms
   return_model$top_terms <- return_model$top_terms_mallet
   #return_model$phi <- mallet.topic.w
-  return_model$phi <- mallet::mallet.topic.words(model, smoothed=TRUE, normalized=TRUE)
-  return_model$topic_docs <- mallet::mallet.doc.topics(model, smoothed=TRUE, normalized=TRUE)
+  return_model$phi <- mallet::mallet.topic.words(model, 
+                                                 smoothed=TRUE, 
+                                                 normalized=TRUE)
+  
+  return_model$topic_docs <- mallet::mallet.doc.topics(model, 
+                                                       smoothed=TRUE,
+                                                       normalized=TRUE)
   #return_model$top_terms <- GetTopTerms(phi = return_model$phi, M = num_top_words)
   return_model$frequencies <- mallet::mallet.word.freqs(model)
   return_model$vocabulary <- model$getVocabulary()
+  
   model$prevalence_mallet <- colSums(mallet::mallet.doc.topics(
     model,
     smoothed=TRUE,
     normalized=TRUE)) /
-    sum(mallet::mallet.doc.topics(model, 
-                          smoothed=TRUE, 
-                          normalized=TRUE)) * 100
+    sum(mallet::mallet.doc.topics(
+      model,
+      smoothed=TRUE,
+      normalized=TRUE)) * 100
   
   #sum(list_top_terms$prevalence)
   return_model$labels <- mallet::mallet.topic.labels(model)
@@ -768,7 +776,10 @@ get_mallet_model <- function(dtm,
   
   keys <- paste0("t_", 1:num_topics)
   
-  return_model$prevalence <- stats::setNames(return_model$prevalence, keys)
+  return_model$prevalence <- stats::setNames(
+    return_model$prevalence, 
+    keys)
+  
   #return_model$labels <- LabelTopics(assignments = return_model$theta > 0.05, dtm = dtm, M = 1)
   
   return_model$coherence <- return_model$prevalence
@@ -799,7 +810,8 @@ get_mallet_model <- function(dtm,
     smoothed = TRUE,
     normalized = TRUE)
   
-  colnames(pred_model$phi) <- as.character(unlist(return_model$vocabulary))
+  colnames(pred_model$phi) <- as.character(unlist(
+    return_model$vocabulary))
   
   pred_model$theta <- mallet::mallet.doc.topics(
     model, 
@@ -813,6 +825,7 @@ get_mallet_model <- function(dtm,
   
   colnames(pred_model$theta) <- new_col_names # Assign new column names to the dataframe
   pred_model$alpha <- model$alpha
+  
   pred_model$gamma <- textmineR::CalcGamma(
     phi = pred_model$phi, 
     theta = pred_model$theta)

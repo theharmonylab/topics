@@ -173,17 +173,20 @@ ldaDtm <- function(data, # provide relative directory path to data
 #' @return A list of the model, the top terms, the labels, the coherence, and the prevalence
 #' @export
 ldaModel <- function(dtm,
-                    num_topics=20,
-                    num_top_words=10,
-                    num_iterations=1000,
-                    seed=42,
-                    save_dir="./results",
-                    load_dir=NULL){
+                    num_topics = 20,
+                    num_top_words = 10,
+                    num_iterations = 1000,
+                    seed = 42,
+                    save_dir = "./results",
+                    load_dir = NULL){
   dtm <- dtm$train_dtm
   set.seed(seed)
   
   if (!is.null(load_dir)){
-    model <- readRDS(paste0(load_dir, "/seed_", seed, "/model.rds"))
+    model <- readRDS(paste0(load_dir, 
+                            "/seed_",
+                            seed, 
+                            "/model.rds"))
   } else {
     model <- get_mallet_model(
       dtm = dtm,
