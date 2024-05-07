@@ -290,6 +290,8 @@ ldaPreds <- function(model, # only needed if load_dir==NULL
 #' @param group_var (string) The variable to group by (only needed for t-test)
 #' @param control_vars (vector) The control variables
 #' @param test_method (string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"
+#' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
+#' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
 #' @param seed (integer) The seed to set for reproducibility
 #' @param load_dir (string) The directory to load the test from, if NULL, the test will not be loaded
 #' @param save_dir (string) The directory to save the test, if NULL, the test will not be saved
@@ -304,6 +306,7 @@ ldaTest <- function(model,
                     group_var=NULL, # only one in the case of t-test
                     control_vars=c(),
                     test_method,
+                    p_adjust_method = "fdr",
                     seed=42,
                     load_dir=NULL,
                     save_dir="./results"){
@@ -336,7 +339,7 @@ ldaTest <- function(model,
                        test_method = test_method,
                        split = "median",
                        n_min_max = 20,
-                       multiple_comparison = "fdr")
+                       multiple_comparison = p_adjust_method)
   }
   
   if (!is.null(save_dir)){
@@ -402,7 +405,7 @@ ldaWordclouds <- function(model,
   create_plots(df_list = df_list, 
                summary = model$summary,
                test = test$test, 
-               test_type = "linear_regression",
+               test_type = test$test_method,
                cor_var = pred_var,
                color_negative_cor = color_negative_cor,
                color_positive_cor = color_positive_cor,

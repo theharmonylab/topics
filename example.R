@@ -24,11 +24,18 @@ model <- ldaModel(dtm = dtm,
 preds <- ldaPreds(model = model,
                   dtm = dtm)
 
-test <- ldaTest(model = model,
+
+test_line <- ldaTest(model = model,
                 preds = preds,
                 dtm = dtm,
                 pred_var = "minidep_diagnose",
-                test_method = "logistic_regression")
-test$test
+                test_method = "linear_regression")
+
+
 ldaWordclouds(model = model, 
-              test = test)
+              test = test_log)
+
+
+
+
+

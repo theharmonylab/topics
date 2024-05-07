@@ -104,11 +104,11 @@ create_plots <- function(df_list,
       p_adjusted_col <- paste0(cor_var,".p_adjusted")
       
     } else if (test_type == "t-test"){
-      estimate_col <- "cohens d" # probably doesnt work yet
+      estimate_col <- "cohens d" # probably doesn't work yet
       
     } else if (test_type == "logistic_regression"){
       estimate_col <- "estimate"
-      estimate_col <- "p_adjustedfdr"
+      p_adjusted_col <- "p_adjusted"
       
     }
     estimate <- test[i,][[estimate_col]]# $PHQtot.estimate
