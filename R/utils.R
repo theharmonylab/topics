@@ -696,6 +696,10 @@ get_mallet_model <- function(dtm,
     alpha.sum = 5,
     beta = 0.01)
   
+  # set seed (it does not work)
+  # https://stackoverflow.com/questions/37356001/using-a-random-seed-in-rmallet
+  model$setRandomSeed(42L)
+  
   instances <- mallet::mallet.import(
     as.character(seq_along(docs)),
     docs,
@@ -744,11 +748,11 @@ get_mallet_model <- function(dtm,
   #return_model$top_terms <- GetTopTerms(phi = return_model$phi, M = num_top_words)
   return_model$frequencies <- mallet::mallet.word.freqs(model)
   return_model$vocabulary <- model$getVocabulary()
-  model$prevalence_mallet <- colSums(mallet.doc.topics(
+  model$prevalence_mallet <- colSums(mallet::mallet.doc.topics(
     model,
     smoothed=TRUE,
     normalized=TRUE)) /
-    sum(mallet.doc.topics(model, 
+    sum(mallet::mallet.doc.topics(model, 
                           smoothed=TRUE, 
                           normalized=TRUE)) * 100
   
