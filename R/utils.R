@@ -679,6 +679,7 @@ topic_test <- function(topic_terms,
 #' @param num_topics (integer) The number of topics
 #' @param num_top_words (string) The number of words
 #' @param num_iterations (string) Number of iterations
+#' @param seed Set see with L, like 42L.
 #' @return Mallet model
 #' @importFrom textmineR Dtm2Docs CalcGamma
 #' @importFrom stats setNames
@@ -687,7 +688,8 @@ topic_test <- function(topic_terms,
 get_mallet_model <- function(dtm,
                              num_topics = 20,
                              num_top_words = 10, 
-                             num_iterations = 1000){
+                             num_iterations = 1000, 
+                             seed){
   # still to complete help(Dtm2Docs)
   docs <- textmineR::Dtm2Docs(dtm)
   
@@ -705,7 +707,7 @@ get_mallet_model <- function(dtm,
   # set seed (it does not make the entire ldaModel() output 
   # object setqual TRUE, but many more objectis within the object becomes equal)
   # https://stackoverflow.com/questions/37356001/using-a-random-seed-in-rmallet
-  model$setRandomSeed(42L)
+  model$setRandomSeed(seed)
   model$loadDocuments(instances)
 
   model$train(num_iterations)

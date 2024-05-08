@@ -176,7 +176,7 @@ ldaModel <- function(dtm,
                     num_topics = 20,
                     num_top_words = 10,
                     num_iterations = 1000,
-                    seed = 42,
+                    seed = 42L,
                     save_dir = "./results",
                     load_dir = NULL){
   dtm <- dtm$train_dtm
@@ -192,7 +192,8 @@ ldaModel <- function(dtm,
       dtm = dtm,
       num_topics = num_topics,
       num_top_words = num_top_words,
-      num_iterations = num_iterations)
+      num_iterations = num_iterations, 
+      seed = seed)
     
     
     model$summary <- data.frame(

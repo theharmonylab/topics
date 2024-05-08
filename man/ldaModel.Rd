@@ -9,7 +9,7 @@ ldaModel(
   num_topics = 20,
   num_top_words = 10,
   num_iterations = 1000,
-  seed = 42,
+  seed = 42L,
   save_dir = "./results",
   load_dir = NULL
 )
