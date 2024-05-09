@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">ldatext</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.01</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.9</span>
       </span>
     </div>
 
@@ -63,9 +63,9 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="lda-pipeline">lda-pipeline<a class="anchor" aria-label="anchor" href="#lda-pipeline"></a>
+<div class="page-header"><h1 id="ldatext">ldatext<a class="anchor" aria-label="anchor" href="#ldatext"></a>
 </h1></div>
-<p>This repository contains the code of an Experiment pipeline for Topic Modeling using LDA (Latent Dirichlet Allocation) written in R.</p>
+<p>ldatext is an R-package based on mallet for LDA (Latent Dirichlet Allocation) Topic Modeling.</p>
 <p>When using this code, please reference “Leon Ackermann &amp; Oscar Kjell (in progress). Visualizing different language formats.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -74,7 +74,12 @@
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"theharmonylab/ldatext"</span>, auth_token <span class="op">=</span> <span class="st">" .... "</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># see how to make your private auth token here: https://github.com/settings/tokens</span></span></code></pre></div>
+<span><span class="co"># see how to make your private auth token here: https://github.com/settings/tokens</span></span>
+<span></span>
+<span></span>
+<span></span>
+<span><span class="co"># Before open the library, consider setting this option (can increase 5000);  without it the code may ran out of memory</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>java.parameters <span class="op">=</span> <span class="st">"-Xmx5000m"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="table-of-contents">Table of Contents<a class="anchor" aria-label="anchor" href="#table-of-contents"></a>
@@ -162,7 +167,7 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Leon Ackermann <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-2728-6278" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Leon Ackermann <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0000-0000-0000" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Oscar Kjell <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-2728-6278" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>

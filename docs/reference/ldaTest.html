@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ldatext</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.01</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.9</span>
       </span>
     </div>
 
@@ -58,6 +58,7 @@
 <span>  group_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">test_method</span>,</span>
+<span>  p_adjust_method <span class="op">=</span> <span class="st">"fdr"</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">42</span>,</span>
 <span>  load_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  save_dir <span class="op">=</span> <span class="st">"./results"</span></span>
@@ -92,6 +93,11 @@
 
 <dt>test_method</dt>
 <dd><p>(string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"</p></dd>
+
+
+<dt>p_adjust_method</dt>
+<dd><p>(character) Method to adjust/correct p-values for multiple comparisons
+(default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").</p></dd>
 
 
 <dt>seed</dt>

@@ -41,8 +41,9 @@ setequal(model1$pred_model, model2$pred_model) # TRUE
 setequal(model1$summary, model2$summary) # TRUE
 
 
-
-
+# change so model can be used on new data 
+# tests
+# "topics"
 
 preds <- ldaPreds(model = model,
                   dtm = dtm)
