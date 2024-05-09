@@ -6,12 +6,12 @@ devtools::build()
 #  without it the code may ran out of memory
 options(java.parameters = "-Xmx5000m")
 library(ldatext)
-
-data <- read.csv("depression_anxiety_cleaned.csv")
+library(dplyr)
+data <- Language_based_assessment_data_8 %>% mutate(unique_id = row_number())
 colnames(data)
 dtm <- ldaDtm(data = data, 
               id_col = "unique_id", 
-              data_col = "dep_all_phrases", 
+              data_col = "harmonytexts", 
               stopwords = stopwords::stopwords("en", source = "snowball"))
 
 # Checking the results from the dtm
@@ -51,7 +51,7 @@ setequal(model1$summary, model2$summary) # TRUE
 preds <- ldaPreds(model = model1,
                   data=data,
                   id_col="unique_id",
-                  data_col="dep_all_words")
+                  data_col="harmonytexts")
 
 
 preds
@@ -60,7 +60,7 @@ preds
 test_line <- ldaTest(model = model1,
                 data=data,
                 preds = preds,
-                pred_var = "minidep_diagnose",
+                pred_var = "age",
                 test_method = "linear_regression")
 
 
