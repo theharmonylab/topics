@@ -1,10 +1,10 @@
-citHeader("To cite ldatext in publications use:")
+citHeader("To cite the topics-package in publications use:")
 
 bibentry(
    bibtype = "Misc",
-   title = "Visualizing different language formats.",
+   title = "An R-package for visualizing text in topics.",
    author = as.person("Leon Ackermann,Oscar Kjell [aut]"),
    journal = " ",
    doi = "https://doi.org/10.5281/zenodo.11165378",
    year = 2024,
-   url = "https://github.com/theharmonylab/ldatext")
+   url = "https://github.com/theharmonylab/topics")

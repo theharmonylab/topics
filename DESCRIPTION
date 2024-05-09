@@ -1,4 +1,4 @@
-Package: ldatext
+Package: topics
 Type: Package
 Title: Creating and significance testing LDA topics
 Version: 0.9.0.9
