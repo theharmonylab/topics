@@ -4,7 +4,7 @@ Title: Creating and significance testing LDA topics
 Version: 0.9.0.9
 Authors@R: c(
     person("Leon", "Ackermann", , "leonmax.ackermann@gmail.com", role = c("aut", "cre"), 
-      comment = c(ORCID = "0000-0000-0000-0000"),
+      comment = c(ORCID = "0009-0008-8583-8748"),
     ),
     person("Oscar", "Kjell", role = c("aut"), 
       comment = c(ORCID = "0000-0002-2728-6278"))

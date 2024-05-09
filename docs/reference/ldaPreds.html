@@ -52,8 +52,10 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ldaPreds</span><span class="op">(</span></span>
 <span>  <span class="va">model</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">id_col</span>,</span>
+<span>  <span class="va">data_col</span>,</span>
 <span>  num_iterations <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>  <span class="va">dtm</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">42</span>,</span>
 <span>  save_dir <span class="op">=</span> <span class="st">"./results"</span>,</span>
 <span>  load_dir <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -66,12 +68,20 @@
 <dd><p>(list) The trained model</p></dd>
 
 
+<dt>data</dt>
+<dd><p>(tibble) The new data</p></dd>
+
+
+<dt>id_col</dt>
+<dd><p>(string) The data column with the ids of the new documents</p></dd>
+
+
+<dt>data_col</dt>
+<dd><p>(string) The data column with the text of the new documents</p></dd>
+
+
 <dt>num_iterations</dt>
 <dd><p>(integer) The number of iterations to run the model</p></dd>
-
-
-<dt>dtm</dt>
-<dd><p>(R_obj) The document term matrix</p></dd>
 
 
 <dt>seed</dt>

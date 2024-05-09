@@ -68,8 +68,8 @@ create_topic_words_dfs <- function(summary){
 #' @param test (data.frame) the test returned from textTopicTest()
 #' @param test_type (string) "linear_regression", or "binary_regression"
 #' @param cor_var (string) Variable for t-test, linear, binary or ridge regression
-#' @param color_negative_cor (scale_color_gradient) color of topic cloud with negative correlation
-#' @param color_positive_cor (scale_color_gradient) color of topic cloud with positive correlation
+#' @param color_negative_cor (function) color of topic cloud with negative correlation
+#' @param color_positive_cor (function) color of topic cloud with positive correlation
 #' @param scale_size (bool) if True, then the size of the topic cloud is scaled by the prevalence of the topic
 #' @param plot_topics_idx (list) if specified, then only the specified topics are plotted
 #' @param p_threshold (float) set threshold which determines which topics are plotted
@@ -78,7 +78,7 @@ create_topic_words_dfs <- function(summary){
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
 #' @param seed (int) seed is needed for saving the plots in the correct directory
 #' @importFrom ggwordcloud geom_text_wordcloud
-#' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes
+#' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient
 #' @noRd
 create_plots <- function(df_list, 
                          summary,
@@ -91,7 +91,7 @@ create_plots <- function(df_list,
                          plot_topics_idx = NULL,
                          p_threshold = NULL,
                          save_dir = "./results",
-                         figure_format = ".svg",
+                         figure_format = ".png",
                          seed = 42){
   if (is.null(plot_topics_idx)){
     plot_topics_idx <- seq(1, length(df_list))

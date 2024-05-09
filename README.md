@@ -91,12 +91,16 @@ The function takes the following arguments:
 To infer the topic term distribution of the documents, run the following command:
 ```R
 preds <- ldaPreds(model = model,
-                  dtm = dtm)
+                  data = data,
+                  id_col = "id",
+                  data_col = "text")
 ```
 The function takes the following arguments:
 - `model` (list): The trained model.
+- `data` (tibble): The data frame containing the text data to infer the topic document distribution from.
+- `id_col` (string): The name of the column containing the unique id.
+- `data_col` (string): The name of the column containing the text data.
 - `num_iterations` (integer): The number of iterations to run the model.
-- `dtm` (R_obj): The document term matrix for the new document.
 - `seed` (integer): The seed to set for reproducibility.
 - `save_dir` (string): The directory to save the predictions. If NULL, the predictions will not be saved.
 - `load_dir` (string): The directory to load the model from. If NULL, the predictions will not be loaded.
@@ -105,16 +109,16 @@ The function takes the following arguments:
 To analyze the relationship between the topics and the prediction variable, run the following command:
 ```R
 test <- ldaTest(model = model,
+                data = data,
                 preds = preds,
-                dtm = dtm,
                 pred_var = "phq9",
                 control_vars = c("age",..),
                 test_method = "linear_regression")
 ```
 The function takes the following arguments:
 - `model` (list): The trained LDA model.
+- `data` (tibble): The data frame containing the text data.
 - `preds` (tibble): The predictions made by the model.
-- `dtm` (R_obj): The document term matrix used for testing.
 - `pred_var` (string): The variable to be predicted, necessary only for regression or correlation tests.
 - `group_var` (string): The variable used to group data, necessary only for t-test.
 - `control_vars` (vector): Control variables to adjust for in the testing process.

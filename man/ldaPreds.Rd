@@ -6,8 +6,10 @@
 \usage{
 ldaPreds(
   model,
+  data,
+  id_col,
+  data_col,
   num_iterations = 100,
-  dtm,
   seed = 42,
   save_dir = "./results",
   load_dir = NULL
@@ -16,9 +18,13 @@ ldaPreds(
 \arguments{
 \item{model}{(list) The trained model}
 
-\item{num_iterations}{(integer) The number of iterations to run the model}
+\item{data}{(tibble) The new data}
 
-\item{dtm}{(R_obj) The document term matrix}
+\item{id_col}{(string) The data column with the ids of the new documents}
+
+\item{data_col}{(string) The data column with the text of the new documents}
+
+\item{num_iterations}{(integer) The number of iterations to run the model}
 
 \item{seed}{(integer) The seed to set for reproducibility}
 

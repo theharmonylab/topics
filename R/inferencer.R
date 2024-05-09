@@ -129,6 +129,10 @@ compatible_instances <- function (ids, texts, instances) {
   new_insts <- rJava::.jnew("cc/mallet/types/InstanceList",
                             rJava::.jcast(mallet_pipe, "cc/mallet/pipe/Pipe"))
   
+  java_ids <- rJava::.jarray(ids, "java/lang/String")
+  java_texts <- rJava::.jarray(texts, "java/lang/String")
+  
+  
   rJava::J("cc/mallet/topics/RTopicModel")$addInstances(new_insts, ids, texts)
   
   new_insts

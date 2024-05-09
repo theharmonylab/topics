@@ -53,7 +53,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ldaTest</span><span class="op">(</span></span>
 <span>  <span class="va">model</span>,</span>
 <span>  <span class="va">preds</span>,</span>
-<span>  <span class="va">dtm</span>,</span>
+<span>  <span class="va">data</span>,</span>
 <span>  <span class="va">pred_var</span>,</span>
 <span>  group_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -75,8 +75,8 @@
 <dd><p>(tibble) The predictions</p></dd>
 
 
-<dt>dtm</dt>
-<dd><p>(R_obj) The document term matrix</p></dd>
+<dt>data</dt>
+<dd><p>(tibble) The data to test on</p></dd>
 
 
 <dt>pred_var</dt>

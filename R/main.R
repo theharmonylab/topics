@@ -228,8 +228,10 @@ ldaModel <- function(dtm,
 
 #' The function to predict the topics of a new document with the trained model
 #' @param model (list) The trained model
+#' @param data (tibble) The new data
+#' @param id_col (string) The data column with the ids of the new documents
+#' @param data_col (string) The data column with the text of the new documents
 #' @param num_iterations (integer) The number of iterations to run the model
-#' @param dtm (R_obj) The document term matrix
 #' @param seed (integer) The seed to set for reproducibility
 #' @param save_dir (string) The directory to save the model, if NULL, the predictions will not be saved
 #' @param load_dir (string) The directory to load the model from, if NULL, the predictions will not be loaded
@@ -238,23 +240,32 @@ ldaModel <- function(dtm,
 #' @importFrom dplyr %>%
 #' @export
 ldaPreds <- function(model, # only needed if load_dir==NULL 
-                    num_iterations=100, # only needed if load_dir==NULL, 
-                    dtm, # only needed if load_dir==NULL
-                    seed=42,
-                    save_dir="./results",
-                    load_dir=NULL){
+                     data, 
+                     id_col, # ids to infer distribution for
+                     data_col, # data to infer distribution for
+                     num_iterations=100, # only needed if load_dir==NULL,
+                     seed=42,
+                     save_dir="./results",
+                     load_dir=NULL){
   set.seed(seed)
-  data <- dtm$train_data
-  dtm <- dtm$train_dtm
+  
   if (!is.null(load_dir)){
     preds <- readRDS(paste0(load_dir, "/seed_", seed, "/preds.rds"))
   } else {
+    
+    pred_ids <- as.character(data[[id_col]])
+    pred_text <- data[[data_col]]
+    
+    new_instances <- compatible_instances(ids=pred_ids,
+                                          texts=pred_text,
+                                          instances=model$instances)
     
     inf_model <- model$inferencer
     #print(inf_model)
     preds <- infer_topics(
       inferencer = inf_model,
-      instances = model$instances,
+      #instances = model$instances,
+      instances = new_instances,
       n_iterations= 200,
       sampling_interval = 10, # aka "thinning"
       burn_in = 10,
@@ -288,8 +299,8 @@ ldaPreds <- function(model, # only needed if load_dir==NULL
 
 #' The function to test the lda model
 #' @param model (list) The trained model
+#' @param data (tibble) The data to test on
 #' @param preds (tibble) The predictions
-#' @param dtm (R_obj) The document term matrix
 #' @param pred_var (string) The variable to be predicted (only needed for regression or correlation)
 #' @param group_var (string) The variable to group by (only needed for t-test)
 #' @param control_vars (vector) The control variables
@@ -305,7 +316,7 @@ ldaPreds <- function(model, # only needed if load_dir==NULL
 #' @export
 ldaTest <- function(model,
                     preds, 
-                    dtm,
+                    data,
                     pred_var, # when regression
                     group_var=NULL, # only one in the case of t-test
                     control_vars=c(),
@@ -315,7 +326,6 @@ ldaTest <- function(model,
                     load_dir=NULL,
                     save_dir="./results"){
   
-  data <- dtm$train_data
   control_vars <- c(pred_var, control_vars)
   
   if (!is.null(load_dir)){

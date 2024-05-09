@@ -1,4 +1,7 @@
-
+devtools::document()
+rcmdcheck::rcmdcheck()
+pkgdown::build_site(new_process = FALSE)
+devtools::build()
 # Before sourcing, consider setting this option (can increase 5000); 
 #  without it the code may ran out of memory
 options(java.parameters = "-Xmx5000m")
@@ -45,21 +48,27 @@ setequal(model1$summary, model2$summary) # TRUE
 # tests
 # "topics"
 
-preds <- ldaPreds(model = model,
-                  dtm = dtm)
+preds <- ldaPreds(model = model1,
+                  data=data,
+                  id_col="unique_id",
+                  data_col="dep_all_words")
 
 
+preds
 
-test_line <- ldaTest(model = model,
+
+test_line <- ldaTest(model = model1,
+                data=data,
                 preds = preds,
-                dtm = dtm,
                 pred_var = "minidep_diagnose",
                 test_method = "linear_regression")
 
 
-ldaWordclouds(model = model, 
-              test = test_log)
-
+ldaWordclouds(model = model1, 
+              test = test_line,
+              color_negative_cor=ggplot2::scale_color_gradient(low = "darkgreen", high = "green"),
+              color_positive_cor=ggplot2::scale_color_gradient(low = "darkred", high = "red"))
+  
 
 
 

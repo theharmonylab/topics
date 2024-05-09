@@ -7,7 +7,7 @@
 ldaTest(
   model,
   preds,
-  dtm,
+  data,
   pred_var,
   group_var = NULL,
   control_vars = c(),
@@ -23,7 +23,7 @@ ldaTest(
 
 \item{preds}{(tibble) The predictions}
 
-\item{dtm}{(R_obj) The document term matrix}
+\item{data}{(tibble) The data to test on}
 
 \item{pred_var}{(string) The variable to be predicted (only needed for regression or correlation)}
 
