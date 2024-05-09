@@ -1,6 +1,7 @@
-# ldatext
+# topics
+[![DOI](https://zenodo.org/badge/785738351.svg)](https://zenodo.org/doi/10.5281/zenodo.11165377)
 
-ldatext is an R-package based on mallet for LDA (Latent Dirichlet Allocation) Topic Modeling.
+topics is an R-package based on mallet for LDA (Latent Dirichlet Allocation) Topic Modeling.
 
 When using this code, please reference "Leon Ackermann & Oscar Kjell (in progress). Visualizing different language formats.
 
