@@ -54,7 +54,7 @@ In an example where the topics are used to predict the PHQ-9 score, the pipeline
 To preprocess the data, run the following command:
 ```R
 data <- read.csv("data.csv")
-dtm <- ldaDtm(data = data,
+dtm <- topicsDtm(data = data,
               id_col = "id",
               data_col = "text")
 ```
@@ -77,7 +77,7 @@ The function takes the following arguments:
 **2. Model Training**<br>
 To train the LDA model, run the following command:
 ```R
-model <- ldaModel(dtm = dtm,
+model <- topicsModel(dtm = dtm,
                   num_topics = 20,
                   num_iterations = 1000)
 ```
@@ -93,7 +93,7 @@ The function takes the following arguments:
 **3. Model Inference**<br>
 To infer the topic term distribution of the documents, run the following command:
 ```R
-preds <- ldaPreds(model = model,
+preds <- topicsPreds(model = model,
                   data = data,
                   id_col = "id",
                   data_col = "text")
@@ -111,7 +111,7 @@ The function takes the following arguments:
 **4. Statistical Analysis**<br>
 To analyze the relationship between the topics and the prediction variable, run the following command:
 ```R
-test <- ldaTest(model = model,
+test <- topicsTest(model = model,
                 data = data,
                 preds = preds,
                 pred_var = "phq9",
@@ -133,7 +133,7 @@ The function takes the following arguments:
 **5. Visualization**<br>
 To visualize the significant topics as wordclouds, run the following command:
 ```R
-ldaWordclouds(model = model,
+topicsWordclouds(model = model,
               test = test)
 ```
 The function takes the following arguments:

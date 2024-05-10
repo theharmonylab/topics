@@ -27,4 +27,19 @@
   <url>
     <loc>/reference/ldaWordclouds.html</loc>
   </url>
+  <url>
+    <loc>/reference/topicsDtm.html</loc>
+  </url>
+  <url>
+    <loc>/reference/topicsModel.html</loc>
+  </url>
+  <url>
+    <loc>/reference/topicsPreds.html</loc>
+  </url>
+  <url>
+    <loc>/reference/topicsTest.html</loc>
+  </url>
+  <url>
+    <loc>/reference/topicsWordclouds.html</loc>
+  </url>
 </urlset>

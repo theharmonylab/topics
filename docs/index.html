@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Creating and significance testing LDA topics • ldatext</title>
+<title>Creating and significance testing LDA topics • topics</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -32,7 +32,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">ldatext</a>
+        <a class="navbar-link" href="index.html">topics</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.9</span>
       </span>
     </div>
@@ -67,7 +67,8 @@
 </h1></div>
 <p><a href="https://zenodo.org/doi/10.5281/zenodo.11165377" class="external-link"><img src="https://zenodo.org/badge/785738351.svg" alt="DOI"></a></p>
 <p>topics is an R-package based on mallet for LDA (Latent Dirichlet Allocation) Topic Modeling.</p>
-<p>When using this code, please reference “Leon Ackermann &amp; Oscar Kjell (in progress). Visualizing different language formats.</p>
+<p>When using this code, please reference:</p>
+<p>Ackermann L. &amp; Kjell O.N.E. (2024). An R-package for visualizing text in topics. <a href="https://github.com/theharmonylab/topics" class="external-link uri">https://github.com/theharmonylab/topics</a>. <a href="DOI:https://zenodo.org/doi/10.5281/zenodo.11165377" class="external-link uri">DOI:https://zenodo.org/doi/10.5281/zenodo.11165377</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -108,26 +109,26 @@
 <p><strong>1. Data Preprocessing</strong><br> To preprocess the data, run the following command:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"data.csv"</span><span class="op">)</span></span>
-<span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ldaDtm.html">ldaDtm</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>,</span>
+<span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topicsDtm.html">topicsDtm</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>,</span>
 <span>              id_col <span class="op">=</span> <span class="st">"id"</span>,</span>
 <span>              data_col <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span></span></code></pre></div>
 <p>The function takes the following arguments: - <code>data</code> (tibble): the data frame containing the text data - <code>id_col</code> (string): the name of the column containing the unique id - <code>data_col</code> (string): the name of the column containing the text data - <code>ngram_window</code> (list): the minimum and maximum n-gram length, e.g. <code>c(1,3)</code> - <code>stopwords</code> (stopwords): the stopwords to remove, e.g. <code>stopwords::stopwords("en", source = "snowball")</code> - <code>removalword</code> (string): the word to remove - <code>occ_rate</code> (integer): the rate of occurence of a word to be removed - <code>removal_mode</code> (string): the mode of removal (“most” or “least”) - <code>removal_rate_most</code> (integer): the rate of most frequent words to be removed - <code>removal_rate_least</code> (integer): the rate of least frequent words to be removed - <code>split</code> (float): the proportion of the data to be used for training - <code>seed</code> (integer): the random seed for reproducibility - <code>save_dir</code> (string): the directory to save the results, default is “./results”, if NULL, no results are saved</p>
 <p><strong>2. Model Training</strong><br> To train the LDA model, run the following command:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ldaModel.html">ldaModel</a></span><span class="op">(</span>dtm <span class="op">=</span> <span class="va">dtm</span>,</span>
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topicsModel.html">topicsModel</a></span><span class="op">(</span>dtm <span class="op">=</span> <span class="va">dtm</span>,</span>
 <span>                  num_topics <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>                  num_iterations <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
 <p>The function takes the following arguments: - <code>dtm</code> (R_obj): The document term matrix. - <code>num_topics</code> (integer): The number of topics to be created. - <code>num_top_words</code> (integer): The number of top words to be displayed per topic. - <code>num_iterations</code> (integer): The number of iterations to run the model for. - <code>seed</code> (integer): The seed to set for reproducibility. - <code>save_dir</code> (string): The directory to save the model. If NULL, the model will not be saved. - <code>load_dir</code> (string): The directory to load the model from. If NULL, the model will not be loaded.</p>
 <p><strong>3. Model Inference</strong><br> To infer the topic term distribution of the documents, run the following command:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ldaPreds.html">ldaPreds</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>,</span>
+<code class="sourceCode R"><span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topicsPreds.html">topicsPreds</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>,</span>
 <span>                  data <span class="op">=</span> <span class="va">data</span>,</span>
 <span>                  id_col <span class="op">=</span> <span class="st">"id"</span>,</span>
 <span>                  data_col <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span></span></code></pre></div>
 <p>The function takes the following arguments: - <code>model</code> (list): The trained model. - <code>data</code> (tibble): The data frame containing the text data to infer the topic document distribution from. - <code>id_col</code> (string): The name of the column containing the unique id. - <code>data_col</code> (string): The name of the column containing the text data. - <code>num_iterations</code> (integer): The number of iterations to run the model. - <code>seed</code> (integer): The seed to set for reproducibility. - <code>save_dir</code> (string): The directory to save the predictions. If NULL, the predictions will not be saved. - <code>load_dir</code> (string): The directory to load the model from. If NULL, the predictions will not be loaded.</p>
 <p><strong>4. Statistical Analysis</strong><br> To analyze the relationship between the topics and the prediction variable, run the following command:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ldaTest.html">ldaTest</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>,</span>
+<code class="sourceCode R"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topicsTest.html">topicsTest</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>,</span>
 <span>                data <span class="op">=</span> <span class="va">data</span>,</span>
 <span>                preds <span class="op">=</span> <span class="va">preds</span>,</span>
 <span>                pred_var <span class="op">=</span> <span class="st">"phq9"</span>,</span>
@@ -136,7 +137,7 @@
 <p>The function takes the following arguments: - <code>model</code> (list): The trained LDA model. - <code>data</code> (tibble): The data frame containing the text data. - <code>preds</code> (tibble): The predictions made by the model. - <code>pred_var</code> (string): The variable to be predicted, necessary only for regression or correlation tests. - <code>group_var</code> (string): The variable used to group data, necessary only for t-test. - <code>control_vars</code> (vector): Control variables to adjust for in the testing process. - <code>test_method</code> (string): The test method to use. Options include “correlation”, “t-test”, “linear_regression”, “logistic_regression”, or “ridge_regression”. - <code>seed</code> (integer): The seed to set for reproducibility. - <code>load_dir</code> (string): The directory to load the test from. If NULL, the test will not be loaded. - <code>save_dir</code> (string): The directory to save the test results. If NULL, the test will not be saved.</p>
 <p><strong>5. Visualization</strong><br> To visualize the significant topics as wordclouds, run the following command:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/ldaWordclouds.html">ldaWordclouds</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/topicsWordclouds.html">topicsWordclouds</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>,</span>
 <span>              test <span class="op">=</span> <span class="va">test</span><span class="op">)</span></span></code></pre></div>
 <p>The function takes the following arguments: - <code>model</code> (list): The trained model. - <code>test</code> (list): The test results, typically containing topic distributions and associated metrics. - <code>color_negative_cor</code> (R_obj): The color gradient for negative correlations, specifying colors from low to high, default: <code>scale_color_gradient(low = "darkgreen", high = "green")</code> - <code>color_positive_cor</code> (R_obj): The color gradient for positive correlations, specifying colors from low to high, default: <code>scale_color_gradient(low = "darkred", high = "red")</code> - <code>scale_size</code> (logical): Whether to scale the size of the words in the wordcloud based on frequency or importance. - <code>plot_topics_idx</code> (vector): Indices of the topics to be plotted. - <code>p_threshold</code> (integer): The p-value threshold for determining significance in topic correlations. - <code>save_dir</code> (string): The directory where the wordclouds will be saved. - <code>figure_format</code> (string): Set the figure format, e.g., “.svg” or “.png”. - <code>seed</code> (integer): The seed for reproducibility.</p>
 </div>
@@ -163,7 +164,7 @@
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html#citation">Citing ldatext</a></li>
+<li><a href="authors.html#citation">Citing topics</a></li>
 </ul>
 </div>
 

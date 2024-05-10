@@ -20,7 +20,7 @@
 #' @importFrom stopwords stopwords
 #' @importFrom Matrix colSums
 #' @export
-ldaDtm <- function(data, # provide relative directory path to data
+topicsDtm <- function(data, # provide relative directory path to data
                    id_col,
                    data_col,
                    ngram_window=c(1,3),
@@ -172,7 +172,7 @@ ldaDtm <- function(data, # provide relative directory path to data
 #' @param load_dir (string) The directory to load the model from, if NULL, the model will not be loaded
 #' @return A list of the model, the top terms, the labels, the coherence, and the prevalence
 #' @export
-ldaModel <- function(dtm,
+topicsModel <- function(dtm,
                     num_topics = 20,
                     num_top_words = 10,
                     num_iterations = 1000,
@@ -239,7 +239,7 @@ ldaModel <- function(dtm,
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>%
 #' @export
-ldaPreds <- function(model, # only needed if load_dir==NULL 
+topicsPreds <- function(model, # only needed if load_dir==NULL 
                      data, 
                      id_col, # ids to infer distribution for
                      data_col, # data to infer distribution for
@@ -314,7 +314,7 @@ ldaPreds <- function(model, # only needed if load_dir==NULL
 #' @importFrom dplyr bind_cols
 #' @importFrom readr write_csv
 #' @export
-ldaTest <- function(model,
+topicsTest <- function(model,
                     preds, 
                     data,
                     pred_var, # when regression
@@ -398,7 +398,7 @@ ldaTest <- function(model,
 #' @param seed (integer) The seed to set for reproducibility
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @export
-ldaWordclouds <- function(model,
+topicsWordclouds <- function(model,
                           test,
                           color_negative_cor = scale_color_gradient(low = "darkgreen", high = "green"),
                           color_positive_cor = scale_color_gradient(low = "darkred", high = "red"),
