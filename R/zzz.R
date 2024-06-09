@@ -2,26 +2,24 @@
 #' @noRd
 .onAttach <- function(libname, pkgname) {
   if (!grepl(x = R.Version()$arch, pattern = "64")) {
-    warning("The text package requires running R on a 64-bit systems
-            as it is dependent on torch from ptyhon; and you're
-            system is not 64-bit.")
+    warning("The topic package requires running R on a 64-bit systems.")
   }
 
-  ldatext_version_nr <- tryCatch(
+  topics_version_nr <- tryCatch(
     {
-      ldatext_version_nr1 <- paste(" (version ", 
-                                packageVersion("ldatext"), ")", 
+      topics_version_nr1 <- paste(" (version ", 
+                                packageVersion("topics"), ")", 
                                 sep = "")
     },
     error = function(e) {
-      ldatext_version_nr1 <- ""
+      topics_version_nr1 <- ""
     }
   )
 
   packageStartupMessage(
     colourise(
-      paste("This is ldatext",
-            ldatext_version_nr,
+      paste("This is topics",
+            topics_version_nr,
         ".\n",
         sep = ""
       ),
@@ -30,7 +28,7 @@
     colourise("Please send us feedback based on your experience.",
       fg = "green", bg = NULL
     ),
-    colourise("\n\nFor more information about the package see www.r-text.org.",
+    colourise("\n\nFor more information about the topics package see www.r-text.org.",
       fg = "purple", bg = NULL
     )
   )
