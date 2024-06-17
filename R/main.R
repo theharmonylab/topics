@@ -2,8 +2,6 @@
 
 #' the function for creating a document term matrix
 #' @param data (tibble) the data frame containing the text data with each row belonging to a unique id
-#' @param id_col (string) the name of the column containing the unique id
-#' @param data_col (string) the name of the column containing the text data
 #' @param ngram_window (list) the minimum and maximum n-gram length, e.g. c(1,3)
 #' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
 #' @param removalword (string) the word to remove
@@ -19,6 +17,7 @@
 #' @importFrom stats complete.cases
 #' @importFrom stopwords stopwords
 #' @importFrom Matrix colSums
+#' @importFrom tibble as_tibble
 #' @export
 topicsDtm <- function(data, # 
                    #id_col,
@@ -41,7 +40,7 @@ topicsDtm <- function(data, #
   data_col = "text"
   text_cols <- data.frame(text = data)
   text_cols[[id_col]] <- 1:nrow(text_cols) # create unique id
-  View(text_cols)
+  text_cols <- as_tibble(text_cols)
   text_cols <- text_cols[stats::complete.cases(text_cols), ] # remove rows without values
   text_cols = text_cols[sample(1:nrow(text_cols)), ] # shuffle
   split_index <- round(nrow(text_cols) * split) 
@@ -56,12 +55,12 @@ topicsDtm <- function(data, #
     train[[data_col]] <- gsub(paste0("\\b", removalword, "\\b"), "", train[[data_col]]) 
   }
   
-  View(train)
-
+  print(train[[data_col]])
+  print(train[[id_col]])
   # create a document term matrix for training set help(CreateDtm)
   train_dtm <- textmineR::CreateDtm(
-    doc_vec = train[[data_col]], # character vector of documents
-    doc_names = train[[id_col]], # document names
+    doc_vec = train[["text"]], # character vector of documents
+    doc_names = train[["id"]], # document names
     ngram_window = ngram_window, # minimum and maximum n-gram length
     stopword_vec = stopwords, #::stopwords("en", source = "snowball"),
     lower = TRUE, # lowercase - this is the default value
