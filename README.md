@@ -55,6 +55,12 @@ To preprocess the data, run the following command:
 ```R
 data <- read.csv("data.csv")
 dtm <- topicsDtm(data = data)
+
+# Checking the results from the dtm
+length(Matrix::colSums(dtm$train_dtm))
+Matrix::colSums(dtm$train_dtm)[1:20]
+Matrix::colSums(dtm$train_dtm)[(length(Matrix::colSums(dtm$train_dtm)) - 100):length(Matrix::colSums(dtm$train_dtm))]
+
 ```
 The function takes the following arguments:
 - `data` (list): a list containing the data
@@ -76,6 +82,7 @@ To train the LDA model, run the following command:
 model <- topicsModel(dtm = dtm,
                   num_topics = 20,
                   num_iterations = 1000)
+                  
 ```
 The function takes the following arguments:
 - `dtm` (R_obj): The document term matrix.
