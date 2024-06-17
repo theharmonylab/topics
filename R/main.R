@@ -1,14 +1,14 @@
 
 
 #' the function for creating a document term matrix
-#' @param data (tibble) the data frame containing the text data
+#' @param data (tibble) the data frame containing the text data with each row belonging to a unique id
 #' @param id_col (string) the name of the column containing the unique id
 #' @param data_col (string) the name of the column containing the text data
 #' @param ngram_window (list) the minimum and maximum n-gram length, e.g. c(1,3)
 #' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
 #' @param removalword (string) the word to remove
 #' @param occ_rate (integer) the rate of occurence of a word to be removed
-#' @param removal_mode (string) the mode of removal -> "most" or "least"
+#' @param removal_mode (string) the mode of removal -> "threshold", "absolute" or "percent"
 #' @param removal_rate_most (integer) the rate of most frequent words to be removed
 #' @param removal_rate_least (integer) the rate of least frequent words to be removed
 #' @param split (float) the proportion of the data to be used for training
@@ -20,29 +20,30 @@
 #' @importFrom stopwords stopwords
 #' @importFrom Matrix colSums
 #' @export
-topicsDtm <- function(data, # provide relative directory path to data
-                   id_col,
-                   data_col,
+topicsDtm <- function(data, # 
+                   #id_col,
+                   #data_col,
                    ngram_window=c(1,3),
                    stopwords=stopwords::stopwords("en", source = "snowball"),
                    removalword="",
                    occ_rate=0,
-                   removal_mode="",
+                   removal_mode="threshold",
                    removal_rate_most=0,
                    removal_rate_least=0,
                    split=1,
-                   seed=42,
+                   seed=42L,
                    save_dir="./results"){
   
 
   set.seed(seed)
   
-  # Data
-  text <- data
-  text_cols <- text
+  id_col = "id"
+  data_col = "text"
+  text_cols <- data.frame(text = data)
+  text_cols[[id_col]] <- 1:nrow(text_cols) # create unique id
+  View(text_cols)
   text_cols <- text_cols[stats::complete.cases(text_cols), ] # remove rows without values
   text_cols = text_cols[sample(1:nrow(text_cols)), ] # shuffle
-  
   split_index <- round(nrow(text_cols) * split) 
   train <- text_cols[1:split_index, ] # split training set
   if (split<1){
@@ -53,10 +54,10 @@ topicsDtm <- function(data, # provide relative directory path to data
   
   if (removalword != ""){
     train[[data_col]] <- gsub(paste0("\\b", removalword, "\\b"), "", train[[data_col]]) 
-    
   }
-  #id_col = "id"
-  #ngram_window <- c(1,2)
+  
+  View(train)
+
   # create a document term matrix for training set help(CreateDtm)
   train_dtm <- textmineR::CreateDtm(
     doc_vec = train[[data_col]], # character vector of documents
@@ -71,11 +72,7 @@ topicsDtm <- function(data, # provide relative directory path to data
 
   
   if (occ_rate>0){
-    #print("rows in train")
-    #print(nrow(train))
     removal_frequency <- round(nrow(train)*occ_rate) -1
-    #print("removal frequency")
-    #print(removal_frequency)
     train_dtm <- train_dtm[,Matrix::colSums(train_dtm) > removal_frequency]
   }
   if (removal_mode != "threshold"){
@@ -176,7 +173,7 @@ topicsModel <- function(dtm,
                     num_topics = 20,
                     num_top_words = 10,
                     num_iterations = 1000,
-                    seed = 42L,
+                    seed = 42,
                     save_dir = "./results",
                     load_dir = NULL){
   dtm <- dtm$train_dtm
@@ -240,9 +237,9 @@ topicsModel <- function(dtm,
 #' @importFrom dplyr %>%
 #' @export
 topicsPreds <- function(model, # only needed if load_dir==NULL 
-                     data, 
-                     id_col, # ids to infer distribution for
-                     data_col, # data to infer distribution for
+                     data, # data to infer distribution for
+                     #id_col, # ids to infer distribution for
+                     #data_col, # data to infer distribution for
                      num_iterations=100, # only needed if load_dir==NULL,
                      seed=42,
                      save_dir="./results",
@@ -253,7 +250,9 @@ topicsPreds <- function(model, # only needed if load_dir==NULL
     preds <- readRDS(paste0(load_dir, "/seed_", seed, "/preds.rds"))
   } else {
     
-    pred_ids <- as.character(data[[id_col]])
+    # create an id column for the data
+    pred_ids <- 1:nrow(data)
+    #pred_ids <- as.character(data[[id_col]])
     pred_text <- data[[data_col]]
     
     new_instances <- compatible_instances(ids=pred_ids,
@@ -320,7 +319,7 @@ topicsTest <- function(model,
                     pred_var, # when regression
                     group_var=NULL, # only one in the case of t-test
                     control_vars=c(),
-                    test_method,
+                    test_method="linear_regression",
                     p_adjust_method = "fdr",
                     seed=42,
                     load_dir=NULL,

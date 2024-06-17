@@ -707,7 +707,7 @@ get_mallet_model <- function(dtm,
   # set seed (it does not make the entire ldaModel() output 
   # object setqual TRUE, but many more objectis within the object becomes equal)
   # https://stackoverflow.com/questions/37356001/using-a-random-seed-in-rmallet
-  model$setRandomSeed(seed)
+  #model$setRandomSeed(seed)
   model$loadDocuments(instances)
 
   model$train(num_iterations)
