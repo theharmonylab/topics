@@ -1,12 +1,10 @@
-
-
 #' the function for creating a document term matrix
-#' @param data (tibble) the data frame containing the text data with each row belonging to a unique id
+#' @param data (list) the list containing the text data with each entry belonging to a unique id
 #' @param ngram_window (list) the minimum and maximum n-gram length, e.g. c(1,3)
 #' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
 #' @param removalword (string) the word to remove
 #' @param occ_rate (integer) the rate of occurence of a word to be removed
-#' @param removal_mode (string) the mode of removal -> "threshold", "absolute" or "percent"
+#' @param removal_mode (string) the mode of removal -> "none", "threshold", "absolute" or "percent"
 #' @param removal_rate_most (integer) the rate of most frequent words to be removed
 #' @param removal_rate_least (integer) the rate of least frequent words to be removed
 #' @param split (float) the proportion of the data to be used for training
@@ -20,128 +18,140 @@
 #' @importFrom tibble as_tibble
 #' @export
 topicsDtm <- function(data, # 
-                   #id_col,
-                   #data_col,
                    ngram_window=c(1,3),
                    stopwords=stopwords::stopwords("en", source = "snowball"),
                    removalword="",
                    occ_rate=0,
-                   removal_mode="threshold",
+                   removal_mode="none",
                    removal_rate_most=0,
                    removal_rate_least=0,
                    split=1,
                    seed=42L,
-                   save_dir="./results"){
+                   save_dir="./results",
+                   load_dir=NULL){
   
 
-  set.seed(seed)
-  
-  id_col = "id"
-  data_col = "text"
-  text_cols <- data.frame(text = data)
-  text_cols[[id_col]] <- 1:nrow(text_cols) # create unique id
-  text_cols <- as_tibble(text_cols)
-  text_cols <- text_cols[stats::complete.cases(text_cols), ] # remove rows without values
-  text_cols = text_cols[sample(1:nrow(text_cols)), ] # shuffle
-  split_index <- round(nrow(text_cols) * split) 
-  train <- text_cols[1:split_index, ] # split training set
-  if (split<1){
-    test <- text_cols[split_index:nrow(text_cols), ] # split test set
+
+  if (!is.null(load_dir)){
+    dtms <- readRDS(paste0(load_dir, 
+                            "/seed_",
+                            seed, 
+                            "/dtms.rds"))
+    
   } else {
-    test <- train
-  }
-  
-  if (removalword != ""){
-    train[[data_col]] <- gsub(paste0("\\b", removalword, "\\b"), "", train[[data_col]]) 
-  }
-  
-  print(train[[data_col]])
-  print(train[[id_col]])
-  # create a document term matrix for training set help(CreateDtm)
-  train_dtm <- textmineR::CreateDtm(
-    doc_vec = train[["text"]], # character vector of documents
-    doc_names = train[["id"]], # document names
-    ngram_window = ngram_window, # minimum and maximum n-gram length
-    stopword_vec = stopwords, #::stopwords("en", source = "snowball"),
-    lower = TRUE, # lowercase - this is the default value
-    remove_punctuation = TRUE, # punctuation - this is the default
-    remove_numbers = TRUE, # numbers - this is the default
-    verbose = FALSE, # Turn off status bar for this demo
-    cpus = 4) # default is all available cpus on the system
-
-  
-  if (occ_rate>0){
-    removal_frequency <- round(nrow(train)*occ_rate) -1
-    train_dtm <- train_dtm[,Matrix::colSums(train_dtm) > removal_frequency]
-  }
-  if (removal_mode != "threshold"){
-    if (removal_rate_least > 0){
-      removal_columns <- get_removal_columns(train_dtm, removal_rate_least, "least", removal_mode)
-      if (removal_rate_most > 0){
-        removal_columns_most <- get_removal_columns(train_dtm, removal_rate_most, "most", removal_mode)
-        removal_columns <- c(removal_columns, removal_columns_most)
-      }
-      train_dtm <- train_dtm[,-removal_columns]
-    } else if (removal_rate_most > 0){
-      removal_columns <- get_removal_columns(train_dtm, removal_rate_most, "most", removal_mode)
-      train_dtm <- train_dtm[,-removal_columns]
-    }
-  } else if (removal_mode == "threshold"){
-    if (!is.null(removal_rate_least)){
-      train_dtm <- train_dtm[,Matrix::colSums(train_dtm) > removal_rate_least]
-    }
-    if (!is.null(removal_rate_most)){
-      train_dtm <- train_dtm[,Matrix::colSums(train_dtm) < removal_rate_most]
-    }
-  }
-  
-  
-  # create a document term matrix for test set
-  test_dtm <- textmineR::CreateDtm(
-    doc_vec = test[[data_col]], # character vector of documents
-    doc_names = test[[id_col]], # document names
-    ngram_window = ngram_window, # minimum and maximum n-gram length
-    stopword_vec = stopwords::stopwords("en", source = "snowball"),
-    lower = TRUE, # lowercase - this is the default value
-    remove_punctuation = TRUE, # punctuation - this is the default
-    remove_numbers = TRUE, # numbers - this is the default
-    verbose = FALSE, # Turn off status bar for this demo
-    cpus = 4) # default is all available cpus on the system
-  
-  if (occ_rate>0){
     
-    removal_frequency <- round(nrow(test)*occ_rate) -1
+    if (length(data) == 0){
+      print("The data provided is empty. Please provide a list of text data.")
+      return(NULL)
+    }
     
-    test_dtm <- test_dtm[, Matrix::colSums(test_dtm) > removal_frequency]
-  }
-  #removal_frequency <- get_occ_frequency(test_dtm, occ_rate)
-  #test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_frequency]
+    set.seed(seed)
+    
+    id_col = "id"
+    data_col = "text"
+    text_cols <- data.frame(text = data)
+    text_cols[[id_col]] <- 1:nrow(text_cols) # create unique id
+    text_cols <- as_tibble(text_cols)
+    text_cols <- text_cols[stats::complete.cases(text_cols), ] # remove rows without values
+    text_cols = text_cols[sample(1:nrow(text_cols)), ] # shuffle
+    split_index <- round(nrow(text_cols) * split) 
+    train <- text_cols[1:split_index, ] # split training set
+    if (split<1){
+      test <- text_cols[split_index:nrow(text_cols), ] # split test set
+    } else {
+      test <- train
+    }
+    
+    if (removalword != ""){
+      train[[data_col]] <- gsub(paste0("\\b", removalword, "\\b"), "", train[[data_col]]) 
+    }
+    
+    # create a document term matrix for training set help(CreateDtm)
+    train_dtm <- textmineR::CreateDtm(
+      doc_vec = train[["text"]], # character vector of documents
+      doc_names = train[["id"]], # document names
+      ngram_window = ngram_window, # minimum and maximum n-gram length
+      stopword_vec = stopwords, #::stopwords("en", source = "snowball"),
+      lower = TRUE, # lowercase - this is the default value
+      remove_punctuation = TRUE, # punctuation - this is the default
+      remove_numbers = TRUE, # numbers - this is the default
+      verbose = FALSE, # Turn off status bar for this demo
+      cpus = 4) # default is all available cpus on the system
   
-  if (removal_mode != "threshold"){
-    if (removal_rate_least > 0){
-      removal_columns <- get_removal_columns(test_dtm, removal_rate_least, "least", removal_mode)
-      if (removal_rate_most > 0){
-        removal_columns_most <- get_removal_columns(test_dtm, removal_rate_most, "most", removal_mode)
-        removal_columns <- c(removal_columns, removal_columns_most)
+    
+    if (occ_rate>0){
+      removal_frequency <- round(nrow(train)*occ_rate) -1
+      train_dtm <- train_dtm[,Matrix::colSums(train_dtm) > removal_frequency]
+    }
+    if (removal_mode != "threshold"){
+      if (removal_rate_least > 0){
+        removal_columns <- get_removal_columns(train_dtm, removal_rate_least, "least", removal_mode)
+        if (removal_rate_most > 0){
+          removal_columns_most <- get_removal_columns(train_dtm, removal_rate_most, "most", removal_mode)
+          removal_columns <- c(removal_columns, removal_columns_most)
+        }
+        train_dtm <- train_dtm[,-removal_columns]
+      } else if (removal_rate_most > 0){
+        removal_columns <- get_removal_columns(train_dtm, removal_rate_most, "most", removal_mode)
+        train_dtm <- train_dtm[,-removal_columns]
       }
-      test_dtm <- test_dtm[,-removal_columns]
-    } else if (removal_rate_most > 0){
-      removal_columns <- get_removal_columns(test_dtm, removal_rate_most, "most", removal_mode)
-      test_dtm <- test_dtm[,-removal_columns]
+    } else if (removal_mode == "threshold"){
+      if (!is.null(removal_rate_least)){
+        train_dtm <- train_dtm[,Matrix::colSums(train_dtm) > removal_rate_least]
+      }
+      if (!is.null(removal_rate_most)){
+        train_dtm <- train_dtm[,Matrix::colSums(train_dtm) < removal_rate_most]
+      }
     }
-  } else if (removal_mode == "threshold"){
-    if (!is.null(removal_rate_least)){
-      test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_rate_least]
+    
+    
+    # create a document term matrix for test set
+    test_dtm <- textmineR::CreateDtm(
+      doc_vec = test[[data_col]], # character vector of documents
+      doc_names = test[[id_col]], # document names
+      ngram_window = ngram_window, # minimum and maximum n-gram length
+      stopword_vec = stopwords::stopwords("en", source = "snowball"),
+      lower = TRUE, # lowercase - this is the default value
+      remove_punctuation = TRUE, # punctuation - this is the default
+      remove_numbers = TRUE, # numbers - this is the default
+      verbose = FALSE, # Turn off status bar for this demo
+      cpus = 4) # default is all available cpus on the system
+    
+    if (occ_rate>0){
+      
+      removal_frequency <- round(nrow(test)*occ_rate) -1
+      
+      test_dtm <- test_dtm[, Matrix::colSums(test_dtm) > removal_frequency]
     }
-    if (!is.null(removal_rate_most)){
-      test_dtm <- test_dtm[,Matrix::colSums(test_dtm) < removal_rate_most]
+    #removal_frequency <- get_occ_frequency(test_dtm, occ_rate)
+    #test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_frequency]
+    
+    if (removal_mode != "threshold"){
+      if (removal_rate_least > 0){
+        removal_columns <- get_removal_columns(test_dtm, removal_rate_least, "least", removal_mode)
+        if (removal_rate_most > 0){
+          removal_columns_most <- get_removal_columns(test_dtm, removal_rate_most, "most", removal_mode)
+          removal_columns <- c(removal_columns, removal_columns_most)
+        }
+        test_dtm <- test_dtm[,-removal_columns]
+      } else if (removal_rate_most > 0){
+        removal_columns <- get_removal_columns(test_dtm, removal_rate_most, "most", removal_mode)
+        test_dtm <- test_dtm[,-removal_columns]
+      }
+    } else if (removal_mode == "threshold"){
+      if (!is.null(removal_rate_least)){
+        test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_rate_least]
+      }
+      if (!is.null(removal_rate_most)){
+        test_dtm <- test_dtm[,Matrix::colSums(test_dtm) < removal_rate_most]
+      }
     }
+    
+    dtms <- list(train_dtm = train_dtm, 
+                 test_dtm = test_dtm, 
+                 train_data = train, 
+                 test_data = test)
   }
-  
-  dtms <- list(train_dtm = train_dtm, 
-               test_dtm = test_dtm, 
-               train_data = train, 
-               test_data = test)
   
   if (!is.null(save_dir)){
     if (!dir.exists(save_dir)) {
@@ -155,6 +165,7 @@ topicsDtm <- function(data, #
     print(paste0("The Dtm, data, and summary are saved in", save_dir,"/seed_", seed,"/dtms.rds"))
     saveRDS(dtms, paste0(save_dir, "/seed_", seed, "/dtms.rds"))
   }
+  
   return(dtms)
 }
 
@@ -175,8 +186,7 @@ topicsModel <- function(dtm,
                     seed = 42,
                     save_dir = "./results",
                     load_dir = NULL){
-  dtm <- dtm$train_dtm
-  set.seed(seed)
+
   
   if (!is.null(load_dir)){
     model <- readRDS(paste0(load_dir, 
@@ -184,6 +194,16 @@ topicsModel <- function(dtm,
                             seed, 
                             "/model.rds"))
   } else {
+    
+    dtm <- dtm$train_dtm
+    
+    if (length(Matrix::colSums(dtm)) == 0) {
+      print("The document term matrix is empty. Please provide a valid document term matrix.")
+      return(NULL)
+    }
+    
+    set.seed(seed)
+    
     model <- get_mallet_model(
       dtm = dtm,
       num_topics = num_topics,
@@ -225,8 +245,6 @@ topicsModel <- function(dtm,
 #' The function to predict the topics of a new document with the trained model
 #' @param model (list) The trained model
 #' @param data (tibble) The new data
-#' @param id_col (string) The data column with the ids of the new documents
-#' @param data_col (string) The data column with the text of the new documents
 #' @param num_iterations (integer) The number of iterations to run the model
 #' @param seed (integer) The seed to set for reproducibility
 #' @param save_dir (string) The directory to save the model, if NULL, the predictions will not be saved
@@ -236,23 +254,27 @@ topicsModel <- function(dtm,
 #' @importFrom dplyr %>%
 #' @export
 topicsPreds <- function(model, # only needed if load_dir==NULL 
-                     data, # data to infer distribution for
-                     #id_col, # ids to infer distribution for
-                     #data_col, # data to infer distribution for
+                     data, # data vector to infer distribution for
                      num_iterations=100, # only needed if load_dir==NULL,
                      seed=42,
                      save_dir="./results",
                      load_dir=NULL){
   set.seed(seed)
   
+
+  
   if (!is.null(load_dir)){
     preds <- readRDS(paste0(load_dir, "/seed_", seed, "/preds.rds"))
   } else {
     
+    if (length(data) == 0){
+      print("The data provided is empty. Please provide a list of text data.")
+      return(NULL)
+    }
     # create an id column for the data
-    pred_ids <- 1:nrow(data)
+    pred_ids <- as.character(1:length(data))
     #pred_ids <- as.character(data[[id_col]])
-    pred_text <- data[[data_col]]
+    pred_text <- data
     
     new_instances <- compatible_instances(ids=pred_ids,
                                           texts=pred_text,
@@ -315,7 +337,7 @@ topicsPreds <- function(model, # only needed if load_dir==NULL
 topicsTest <- function(model,
                     preds, 
                     data,
-                    pred_var, # when regression
+                    pred_var=NULL, # for all test types except t-test
                     group_var=NULL, # only one in the case of t-test
                     control_vars=c(),
                     test_method="linear_regression",
@@ -324,11 +346,49 @@ topicsTest <- function(model,
                     load_dir=NULL,
                     save_dir="./results"){
   
-  control_vars <- c(pred_var, control_vars)
+  
   
   if (!is.null(load_dir)){
+    if (!file.exists(test_path)) {
+      print(paste0("Test file not found at: ", paste0(load_dir, "/seed_", seed, "/test.rds"), ". Exiting function."))
+      return(NULL)
+    }
     test <- readRDS(paste0(load_dir, "/seed_", seed, "/test.rds"))
   } else {
+    
+    if (is.null(pred_var) && test_method != "t-test") {
+      print("Prediction variable is missing. Please input a prediction variable for all test types except t-test.")
+      return(NULL)
+    }
+    
+    if (test_method == "t-test" && is.null(group_var)){
+      print("Group variable is missing. Please input a group variable for t-test.")
+      return(NULL)
+    }
+    
+    if (!is.list(model)){
+      print("Input a model created with topicsModel")
+      return(NULL)
+    }
+    
+    if (length(data) == 0){
+      print("The data provided is empty. Please provide a list of text data.")
+      return(NULL)
+    }
+    
+    if (nrow(preds) == 0){
+      print("The predictions provided are empty. Please provide a list of predictions.")
+      return(NULL)
+    }
+    
+    if (nrow(data) != nrow(preds)){
+      print("The number of data points and predictions do not match. Please provide predictions that were created from the same data.")
+      return(NULL)
+    }
+    
+    control_vars <- c(pred_var, control_vars)
+    
+    
     if (!is.null(group_var)){
       if (!(group_var %in% names(preds))){
         preds <- dplyr::bind_cols(data[group_var], preds)
@@ -342,6 +402,7 @@ topicsTest <- function(model,
     if (test_method=="ridge_regression"){
       group_var <- pred_var
     }
+    
     preds <- preds %>% tibble::tibble()
     
     test <- topic_test(topic_terms = model$summary,
@@ -367,7 +428,7 @@ topicsTest <- function(model,
       dir.create(paste0(save_dir, "/seed_", seed))
     }
     
-    if (test_method == "textTrain_regression"){
+    if (test_method == "ridge_regression"){
       df <- list(variable = group_var,
                  estimate = test$estimate,
                  t_value = test$statistic,
