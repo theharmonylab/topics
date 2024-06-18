@@ -1,8 +1,7 @@
 # tests/test-topicsTest.R
 library(testthat)
 library(topics)  # Replace with your package name
-
-
+library(text)
 
 
 test_that("topicsTest performs linear regression correctly", {

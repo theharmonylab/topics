@@ -1,6 +1,7 @@
 # tests/test-topicsWordclouds.R
 library(testthat)
 library(topics)  # Replace with your package name
+library(text)
 
 test_that("topicsWordclouds", {
   model <- topicsModel(load_dir = "./results")

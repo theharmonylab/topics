@@ -1,7 +1,7 @@
 # tests/test-topicsPreds.R
 library(testthat)
 library(topics)  # Replace with your package name
-
+library(text)
 
 test_that("topicsPreds generates predictions with default parameters", {
   data <- Language_based_assessment_data_8$harmonytexts

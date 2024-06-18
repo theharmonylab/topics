@@ -2,7 +2,7 @@ library(testthat)
 library(topics)  # Replace with your package name
 library(tibble)
 library(dplyr)
-
+library(text)
 test_that("topicsDtm creates a DTM correctly with default parameters", {
 
   data <- Language_based_assessment_data_8$harmonytexts

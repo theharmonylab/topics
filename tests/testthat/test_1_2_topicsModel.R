@@ -1,7 +1,7 @@
 # tests/test-topicsModel.R
 library(testthat)
 library(topics)  # Replace with your package name
-
+library(text)
 test_that("topicsModel creates an LDA model correctly with default parameters", {
   dtm <- topicsDtm(list("This is a test document.", "This is another test."))$train_dtm
   result <- topicsModel(dtm)
