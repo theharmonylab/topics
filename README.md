@@ -54,14 +54,16 @@ In an example where the topics are used to predict the PHQ-9 score, the pipeline
 To preprocess the data, run the following command:
 ```R
 data <- read.csv("data.csv")
-dtm <- topicsDtm(data = data,
-              id_col = "id",
-              data_col = "text")
+dtm <- topicsDtm(data = data)
+
+# Checking the results from the dtm
+length(Matrix::colSums(dtm$train_dtm))
+Matrix::colSums(dtm$train_dtm)[1:20]
+Matrix::colSums(dtm$train_dtm)[(length(Matrix::colSums(dtm$train_dtm)) - 100):length(Matrix::colSums(dtm$train_dtm))]
+
 ```
 The function takes the following arguments:
-- `data` (tibble): the data frame containing the text data
-- `id_col` (string): the name of the column containing the unique id
-- `data_col` (string): the name of the column containing the text data
+- `data` (list): a list containing the data
 - `ngram_window` (list): the minimum and maximum n-gram length, e.g. `c(1,3)`
 - `stopwords` (stopwords): the stopwords to remove, e.g. `stopwords::stopwords("en", source = "snowball")`
 - `removalword` (string): the word to remove
@@ -80,6 +82,7 @@ To train the LDA model, run the following command:
 model <- topicsModel(dtm = dtm,
                   num_topics = 20,
                   num_iterations = 1000)
+                  
 ```
 The function takes the following arguments:
 - `dtm` (R_obj): The document term matrix.
@@ -94,15 +97,11 @@ The function takes the following arguments:
 To infer the topic term distribution of the documents, run the following command:
 ```R
 preds <- topicsPreds(model = model,
-                  data = data,
-                  id_col = "id",
-                  data_col = "text")
+                  data = data)
 ```
 The function takes the following arguments:
 - `model` (list): The trained model.
-- `data` (tibble): The data frame containing the text data to infer the topic document distribution from.
-- `id_col` (string): The name of the column containing the unique id.
-- `data_col` (string): The name of the column containing the text data.
+- `data` (list): The list containing the text data to infer the topic document distribution from.
 - `num_iterations` (integer): The number of iterations to run the model.
 - `seed` (integer): The seed to set for reproducibility.
 - `save_dir` (string): The directory to save the predictions. If NULL, the predictions will not be saved.

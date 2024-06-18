@@ -6,26 +6,21 @@
 \usage{
 topicsDtm(
   data,
-  id_col,
-  data_col,
   ngram_window = c(1, 3),
   stopwords = stopwords::stopwords("en", source = "snowball"),
   removalword = "",
   occ_rate = 0,
-  removal_mode = "",
+  removal_mode = "none",
   removal_rate_most = 0,
   removal_rate_least = 0,
   split = 1,
-  seed = 42,
-  save_dir = "./results"
+  seed = 42L,
+  save_dir = "./results",
+  load_dir = NULL
 )
 }
 \arguments{
-\item{data}{(tibble) the data frame containing the text data}
-
-\item{id_col}{(string) the name of the column containing the unique id}
-
-\item{data_col}{(string) the name of the column containing the text data}
+\item{data}{(list) the list containing the text data with each entry belonging to a unique id}
 
 \item{ngram_window}{(list) the minimum and maximum n-gram length, e.g. c(1,3)}
 
@@ -35,7 +30,7 @@ topicsDtm(
 
 \item{occ_rate}{(integer) the rate of occurence of a word to be removed}
 
-\item{removal_mode}{(string) the mode of removal -> "most" or "least"}
+\item{removal_mode}{(string) the mode of removal -> "none", "threshold", "absolute" or "percent"}
 
 \item{removal_rate_most}{(integer) the rate of most frequent words to be removed}
 

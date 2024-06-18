@@ -7,8 +7,6 @@
 topicsPreds(
   model,
   data,
-  id_col,
-  data_col,
   num_iterations = 100,
   seed = 42,
   save_dir = "./results",
@@ -19,10 +17,6 @@ topicsPreds(
 \item{model}{(list) The trained model}
 
 \item{data}{(tibble) The new data}
-
-\item{id_col}{(string) The data column with the ids of the new documents}
-
-\item{data_col}{(string) The data column with the text of the new documents}
 
 \item{num_iterations}{(integer) The number of iterations to run the model}
 

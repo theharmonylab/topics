@@ -7,12 +7,14 @@ devtools::build()
 options(java.parameters = "-Xmx5000m")
 library(ldatext)
 library(dplyr)
-data <- Language_based_assessment_data_8 %>% mutate(unique_id = row_number())
-colnames(data)
-dtm <- topicsDtm(data = data, 
-              id_col = "unique_id", 
-              data_col = "harmonytexts", 
+data <- Language_based_assessment_data_8 
+View(data)
+dtm <- topicsDtm(data = data[["harmonytexts"]], 
+              #id_col = "unique_id", 
+              #data_col = "harmonytexts", 
               stopwords = stopwords::stopwords("en", source = "snowball"))
+
+dtm <- topicsDtm(load_dir = "./results")
 
 # Checking the results from the dtm
 length(Matrix::colSums(dtm$train_dtm))
@@ -48,10 +50,12 @@ setequal(model1$summary, model2$summary) # TRUE
 # tests
 # "topics"
 
+length(data$harmonytexts)
+
 preds <- topicsPreds(model = model1,
-                  data=data,
-                  id_col="unique_id",
-                  data_col="harmonytexts")
+                  data=data[["harmonytexts"]])
+                  #id_col="unique_id",
+                  #data_col="harmonytexts")
 
 
 preds
@@ -60,12 +64,15 @@ preds
 test_line <- topicsTest(model = model1,
                 data=data,
                 preds = preds,
-                pred_var = "age",
-                test_method = "linear_regression")
+                pred_var = "age")
+
+length(data)
+View(test_line)
 
 
 topicsWordclouds(model = model1, 
               test = test_line,
+              p_threshold = 1,
               color_negative_cor=ggplot2::scale_color_gradient(low = "darkgreen", high = "green"),
               color_positive_cor=ggplot2::scale_color_gradient(low = "darkred", high = "red"))
   
