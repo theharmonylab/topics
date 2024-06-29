@@ -10,10 +10,7 @@ Ackermann L. & Kjell O.N.E. (2024). An R-package for visualizing text in topics.
 ## Installation
 ``` r
 # install.packages("devtools")
-devtools::install_github("theharmonylab/ldatext", auth_token = " .... ")
-
-# see how to make your private auth token here: https://github.com/settings/tokens
-
+devtools::install_github("theharmonylab/topics")
 
 
 # Before open the library, consider setting this option (can increase 5000);  without it the code may ran out of memory
