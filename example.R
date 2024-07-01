@@ -5,11 +5,12 @@ devtools::build()
 # Before sourcing, consider setting this option (can increase 5000); 
 #  without it the code may ran out of memory
 options(java.parameters = "-Xmx5000m")
-library(ldatext)
+library(topics)
 library(dplyr)
 data <- Language_based_assessment_data_8 
 View(data)
-dtm <- topicsDtm(data = data[["harmonytexts"]], 
+class(data["dep_all_phrases"])
+dtm <- topicsDtm(data = data$dep_all_phrases, 
               #id_col = "unique_id", 
               #data_col = "harmonytexts", 
               stopwords = stopwords::stopwords("en", source = "snowball"))
@@ -51,9 +52,12 @@ setequal(model1$summary, model2$summary) # TRUE
 # "topics"
 
 length(data$harmonytexts)
+temp1 <- data[["dep_all_phrases"]]
+temp2 <- data["dep_all_phrases"]
+temp2[,1] ==  temp1
 
 preds <- topicsPreds(model = model1,
-                  data=data[["harmonytexts"]])
+                  data=data$dep_all_phrases)
                   #id_col="unique_id",
                   #data_col="harmonytexts")
 
@@ -70,12 +74,13 @@ length(data)
 View(test_line)
 
 
-topicsWordclouds(model = model1, 
+topicsPlot(model = model1, 
               test = test_line,
               p_threshold = 1,
+              figure_format = "svg",
               color_negative_cor=ggplot2::scale_color_gradient(low = "darkgreen", high = "green"),
               color_positive_cor=ggplot2::scale_color_gradient(low = "darkred", high = "red"))
-  
+    
 
 
 

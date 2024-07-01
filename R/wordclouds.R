@@ -91,7 +91,7 @@ create_plots <- function(df_list,
                          plot_topics_idx = NULL,
                          p_threshold = NULL,
                          save_dir = "./results",
-                         figure_format = ".png",
+                         figure_format = "png",
                          seed = 42){
   if (is.null(plot_topics_idx)){
     plot_topics_idx <- seq(1, length(df_list))
@@ -170,8 +170,11 @@ create_plots <- function(df_list,
       ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
                     "/wordclouds/t_", i, "_r_", 
                     estimate, "_p_", 
-                    p_adjusted, figure_format), 
-             plot = plot, width = 10, height = 8, units = "in")
+                    p_adjusted,".", figure_format),
+                    plot = plot, 
+                    width = 10, 
+                    height = 8, 
+                    units = "in")
     }
   }
 }

@@ -2,9 +2,9 @@
 
 export(topicsDtm)
 export(topicsModel)
+export(topicsPlot)
 export(topicsPreds)
 export(topicsTest)
-export(topicsWordclouds)
 importFrom(Matrix,colSums)
 importFrom(dplyr,"%>%")
 importFrom(dplyr,arrange)
