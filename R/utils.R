@@ -493,9 +493,7 @@ topic_test <- function(topic_terms,
   }
   if (test_method == "linear_regression" | test_method == "logistic_regression"){
     # still get number of topics automatically
-    num_topics <- sum(grepl("^t_[0-9]+$", names(topics_loadings)))
-
-    #num_topics <- sum(grepl("t_", names(topics_loadings)))
+    num_topics <- sum(grepl("t_", names(topics_loadings)))
     
     lda_topics <- character(num_topics)
     # Create the list of LDA topics
@@ -503,11 +501,13 @@ topic_test <- function(topic_terms,
       lda_topics[i] <- paste("t_", i, sep = "")
     }
     
+    #view(preds)
+    
     preds <- topics_loadings # load topics_loading into different variable to reduce naming errors
     for (topic in lda_topics) {
       #view(preds[[topic]])
-      mean_value <- mean(preds[[topic]], na.rm = TRUE)
-      std_dev <- stats::sd(preds[[topic]], na.rm = TRUE)
+      mean_value <- mean(preds[[topic]])
+      std_dev <- stats::sd(preds[[topic]])
       preds[[paste0("z_",topic)]] <- (preds[[topic]] - mean_value) / std_dev#preds[[topic]] # scale(preds[[topic]])
     }
     #view(preds)

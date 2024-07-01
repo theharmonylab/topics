@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">topics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.10</span>
       </span>
     </div>
 
@@ -53,8 +53,6 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">topicsPreds</span><span class="op">(</span></span>
 <span>  <span class="va">model</span>,</span>
 <span>  <span class="va">data</span>,</span>
-<span>  <span class="va">id_col</span>,</span>
-<span>  <span class="va">data_col</span>,</span>
 <span>  num_iterations <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">42</span>,</span>
 <span>  save_dir <span class="op">=</span> <span class="st">"./results"</span>,</span>
@@ -70,14 +68,6 @@
 
 <dt>data</dt>
 <dd><p>(tibble) The new data</p></dd>
-
-
-<dt>id_col</dt>
-<dd><p>(string) The data column with the ids of the new documents</p></dd>
-
-
-<dt>data_col</dt>
-<dd><p>(string) The data column with the text of the new documents</p></dd>
 
 
 <dt>num_iterations</dt>

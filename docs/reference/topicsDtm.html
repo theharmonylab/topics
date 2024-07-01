@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">topics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.10</span>
       </span>
     </div>
 
@@ -52,33 +52,24 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">topicsDtm</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
-<span>  <span class="va">id_col</span>,</span>
-<span>  <span class="va">data_col</span>,</span>
 <span>  ngram_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span>,</span>
 <span>  stopwords <span class="op">=</span> <span class="fu">stopwords</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/stopwords/man/stopwords.html" class="external-link">stopwords</a></span><span class="op">(</span><span class="st">"en"</span>, source <span class="op">=</span> <span class="st">"snowball"</span><span class="op">)</span>,</span>
 <span>  removalword <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  occ_rate <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  removal_mode <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  removal_mode <span class="op">=</span> <span class="st">"none"</span>,</span>
 <span>  removal_rate_most <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  removal_rate_least <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  split <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">42</span>,</span>
-<span>  save_dir <span class="op">=</span> <span class="st">"./results"</span></span>
+<span>  seed <span class="op">=</span> <span class="fl">42L</span>,</span>
+<span>  save_dir <span class="op">=</span> <span class="st">"./results"</span>,</span>
+<span>  load_dir <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>data</dt>
-<dd><p>(tibble) the data frame containing the text data</p></dd>
-
-
-<dt>id_col</dt>
-<dd><p>(string) the name of the column containing the unique id</p></dd>
-
-
-<dt>data_col</dt>
-<dd><p>(string) the name of the column containing the text data</p></dd>
+<dd><p>(list) the list containing the text data with each entry belonging to a unique id</p></dd>
 
 
 <dt>ngram_window</dt>
@@ -98,15 +89,15 @@
 
 
 <dt>removal_mode</dt>
-<dd><p>(string) the mode of removal -&gt; "most" or "least"</p></dd>
+<dd><p>(string) the mode of removal -&gt; "none", "threshold", "absolute" or "percent", Threshold removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, Absolute removes an absolute amount of terms that are most frequent and least frequent, Percent the amount of words indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix</p></dd>
 
 
 <dt>removal_rate_most</dt>
-<dd><p>(integer) the rate of most frequent words to be removed</p></dd>
+<dd><p>(integer) the rate of most frequent words to be removed, functionality depends on removal_mode</p></dd>
 
 
 <dt>removal_rate_least</dt>
-<dd><p>(integer) the rate of least frequent words to be removed</p></dd>
+<dd><p>(integer) the rate of least frequent words to be removed, functionality depends on removal_mode</p></dd>
 
 
 <dt>split</dt>

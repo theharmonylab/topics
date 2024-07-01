@@ -4,9 +4,9 @@
 #' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
 #' @param removalword (string) the word to remove
 #' @param occ_rate (integer) the rate of occurence of a word to be removed
-#' @param removal_mode (string) the mode of removal -> "none", "threshold", "absolute" or "percent"
-#' @param removal_rate_most (integer) the rate of most frequent words to be removed
-#' @param removal_rate_least (integer) the rate of least frequent words to be removed
+#' @param removal_mode (string) the mode of removal -> "none", "threshold", "absolute" or "percent", Threshold removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, Absolute removes an absolute amount of terms that are most frequent and least frequent, Percent the amount of words indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix
+#' @param removal_rate_most (integer) the rate of most frequent words to be removed, functionality depends on removal_mode
+#' @param removal_rate_least (integer) the rate of least frequent words to be removed, functionality depends on removal_mode
 #' @param split (float) the proportion of the data to be used for training
 #' @param seed (integer) the random seed for reproducibility
 #' @param save_dir (string) the directory to save the results, default is "./results", if NULL, no results are saved
@@ -49,6 +49,9 @@ topicsDtm <- function(data, #
     
     id_col = "id"
     data_col = "text"
+    if (is.data.frame(data)){
+      data <- data[,1]
+    } 
     text_cols <- data.frame(text = data)
     text_cols[[id_col]] <- 1:nrow(text_cols) # create unique id
     text_cols <- as_tibble(text_cols)
@@ -272,9 +275,15 @@ topicsPreds <- function(model, # only needed if load_dir==NULL
       return(NULL)
     }
     # create an id column for the data
+    
+    if (is.data.frame(data)){
+      pred_text <- data[, 1]
+    } else {
+      pred_text <- data
+    }
+    
     pred_ids <- as.character(1:length(data))
     #pred_ids <- as.character(data[[id_col]])
-    pred_text <- data
     
     new_instances <- compatible_instances(ids=pred_ids,
                                           texts=pred_text,
@@ -291,7 +300,7 @@ topicsPreds <- function(model, # only needed if load_dir==NULL
       burn_in = 10,
       random_seed = seed
     )
-    
+  
     preds <- tibble::as_tibble(preds)
     colnames(preds) <- paste("t_", 1:ncol(preds), sep="")
     #if (!is.null(group_var)){
@@ -453,20 +462,20 @@ topicsTest <- function(model,
 #' @param plot_topics_idx (vector) The topics to plot determined by index
 #' @param p_threshold (integer) The p-value threshold to use for significance
 #' @param save_dir (string) The directory to save the wordclouds
-#' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
+#' @param figure_format (string) Set the figure format, e.g., svg, or png.
 #' @param seed (integer) The seed to set for reproducibility
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @export
-topicsWordclouds <- function(model,
-                          test,
-                          color_negative_cor = scale_color_gradient(low = "darkgreen", high = "green"),
-                          color_positive_cor = scale_color_gradient(low = "darkred", high = "red"),
-                          scale_size = FALSE,
-                          plot_topics_idx = NULL,
-                          p_threshold = 0.05,
-                          save_dir = "./results",
-                          figure_format = ".svg",
-                          seed = 42){
+topicsPlot <- function(model,
+                       test,
+                       color_negative_cor = scale_color_gradient(low = "darkgreen", high = "green"),
+                       color_positive_cor = scale_color_gradient(low = "darkred", high = "red"),
+                       scale_size = FALSE,
+                       plot_topics_idx = NULL,
+                       p_threshold = 0.05,
+                       save_dir = "./results",
+                       figure_format = "svg",
+                       seed = 42){
   
   model <- name_cols_with_vocab(model, "phi", model$vocabulary)
   test_type = test$test_method
@@ -485,6 +494,7 @@ topicsWordclouds <- function(model,
                scale_size = scale_size,
                plot_topics_idx = plot_topics_idx,
                p_threshold = p_threshold,
+               figure_format = figure_format,
                save_dir = save_dir,
                seed = seed)
   print(paste0("The plots are saved in ", save_dir, "/seed", seed, "/wordclouds"))
