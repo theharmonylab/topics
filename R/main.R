@@ -465,7 +465,7 @@ topicsNumAssign_dim2 <- function(topic_loadings_all,
   
   if (dimNo == 1){
     num1 <- 1:3
-    topic_loadings_all1 <- topic_loadings_all %>%
+    topic_loadings_all <- topic_loadings_all %>%
       dplyr::mutate(color_categories = dplyr::case_when(
         x_plotted < 0 & adjusted_p_values.x < p_alpha ~ num1[1],
         adjusted_p_values.x > p_alpha ~ num1[2],
@@ -473,7 +473,7 @@ topicsNumAssign_dim2 <- function(topic_loadings_all,
       ))
   }else{
     num1 <- 1:9
-    topic_loadings_all1 <- topic_loadings_all %>%
+    topic_loadings_all <- topic_loadings_all %>%
       dplyr::mutate(color_categories = dplyr::case_when(
         x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[1],
         adjusted_p_values.x > p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[2],
@@ -487,16 +487,20 @@ topicsNumAssign_dim2 <- function(topic_loadings_all,
       ))
   }
   
-  return (topic_loadings_all1)
+  return (topic_loadings_all)
 }
 
 # model = model
 # preds = preds
-# data = text::Language_based_assessment_data_3_100
+# data = cbind(text::Language_based_assessment_data_3_100,
+#              text::Language_based_assessment_data_3_100$hilstotal,
+#              text::Language_based_assessment_data_3_100$swlstotal)
+# colnames(data)[4:5] <- c('age','gender')
+# data = tibble::as_tibble(data,.name_repair='minimal')
 # pred_var_x = 'hilstotal'
-# pred_var_y = NULL
+# pred_var_y = 'swlstotal'
 # group_var=NULL
-# control_vars=c()
+# control_vars=c('age','gender')
 # test_method="linear_regression"
 # p_alpha = 0.5
 # p_adjust_method = "fdr"
@@ -512,7 +516,7 @@ topicsNumAssign_dim2 <- function(topic_loadings_all,
 #' @param pred_var_x (string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)
 #' @param pred_var_y (string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)
 #' @param group_var (string) The variable to group by (only needed for t-test)
-#' @param control_vars (vector) The control variables
+#' @param control_vars (vector) The control variables (not supported yet)
 #' @param test_method (string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"
 #' @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
@@ -538,6 +542,7 @@ topicsTest <- function(model,
                        load_dir=NULL,
                        save_dir="./results"){
   
+  control_vars <- c() # not supported yet
   if (is.null(pred_var_x)){
     print('Please input the pred_var_x!')
     return (NULL)
@@ -601,7 +606,7 @@ topicsTest <- function(model,
     print('The parameter pred_var_y is not set! Output 1 dimensional results.')
     topic_loadings_all[[2]] <- list()
     topic_loadings_all[[3]] <- list()
-    topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]]
+    topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]][,1:6]
     topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
     topic_loadings_all[[3]]$pred_var <- topic_loadings_all[[1]]$pred_var
     
@@ -664,10 +669,18 @@ topicsPlot1 <- function(model,
                figure_format = figure_format,
                save_dir = save_dir,
                seed = seed)
-  print(paste0("The plots of ",
-               pred_var, " of grid position ", grid_pos,
-               " are saved in ", 
-               save_dir, "/seed", seed, "/wordclouds"))
+  if (grid_pos == ""){
+    print(paste0("The plots of ",
+                 pred_var,
+                 " are saved in ", 
+                 save_dir, "/seed", seed, "/wordclouds"))
+  }else{
+    print(paste0("The plots of ",
+                 pred_var, " of grid position ", grid_pos,
+                 " are saved in ", 
+                 save_dir, "/seed", seed, "/wordclouds"))
+  }
+  
 }
 
 
@@ -693,7 +706,7 @@ topicsPlot1 <- function(model,
 #' @param test (list) The test results
 #' @param p_threshold (integer) The p-value threshold to use for significance
 #' @param grid (boolean) Set TRUE if plotting the topics grid
-#' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensioal color plots for grid plots. Otherwisse just topic plots.
+#' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensioal color plots for grid plots. 
 #' @param color_scheme (string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE. The vector should contain 9 color codes.
 #' @param scale_size (logical) Whether to scale the size of the words
 #' @param save_dir (string) The directory to save the wordclouds
@@ -710,7 +723,7 @@ topicsPlot <- function(model,
                              color_scheme = 'default',
                              scale_size = FALSE,
                              save_dir = "./results",
-                             figure_format = ".png",
+                             figure_format = "png",
                              seed = 42){
   
   if (is.character(color_scheme) && length(color_scheme) == 1 && color_scheme == "default"){
