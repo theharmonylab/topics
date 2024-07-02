@@ -713,7 +713,7 @@ topicsPlot <- function(model,
                              figure_format = ".png",
                              seed = 42){
   
-  if (class(color_scheme) == 'character'){
+  if (!is.vector(color_scheme)){
     if (color_scheme == 'default'){
       if (dim == 2){
         bivariate_color_codes <- c(
