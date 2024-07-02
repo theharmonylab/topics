@@ -713,7 +713,7 @@ topicsPlot <- function(model,
                              figure_format = ".png",
                              seed = 42){
   
-  if (!is.vector(color_scheme)){
+  if (is.character(color_scheme) && length(color_scheme) == 1 && color_scheme == "default"){
     if (color_scheme == 'default'){
       if (dim == 2){
         bivariate_color_codes <- c(
@@ -725,7 +725,7 @@ topicsPlot <- function(model,
           "#e07f6a", "#EAEAEA", "#40DD52")
       }  
     }else{print("Error in color_scheme. Consider using 'default'.")}
-  }else if (is.vector(color_scheme)){
+  }else if (is.character(color_scheme) && length(color_scheme) > 1){
     bivariate_color_codes <- color_scheme
   }else{
     print('The parameter color_scheme should be a vector! Or try with the default color scheme.')
