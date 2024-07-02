@@ -713,16 +713,18 @@ topicsPlot <- function(model,
                              figure_format = ".png",
                              seed = 42){
   
-  if (class(color_scheme) == 'character' && color_scheme == 'default'){
-    if (dim == 2){
-      bivariate_color_codes <- c(
-        "#398CF9", "#60A1F7", "#5dc688",
-        "#e07f6a", "#EAEAEA", "#40DD52",
-        "#FF0000", "#EA7467", "#85DB8E")
-    }else if (dim == 1){
-      bivariate_color_codes <- c(
-        "#e07f6a", "#EAEAEA", "#40DD52")
-    }  
+  if (class(color_scheme) == 'character'){
+    if (color_scheme == 'default'){
+      if (dim == 2){
+        bivariate_color_codes <- c(
+          "#398CF9", "#60A1F7", "#5dc688",
+          "#e07f6a", "#EAEAEA", "#40DD52",
+          "#FF0000", "#EA7467", "#85DB8E")
+      }else if (dim == 1){
+        bivariate_color_codes <- c(
+          "#e07f6a", "#EAEAEA", "#40DD52")
+      }  
+    }else{print("Error in color_scheme. Consider using 'default'.")}
   }else if (is.vector(color_scheme)){
     bivariate_color_codes <- color_scheme
   }else{
