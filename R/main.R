@@ -585,8 +585,8 @@ topicsTest <- function(model,
   if (!is.null(pred_var_y)){
     # create the x.y.word.category
     topic_loadings_all[[3]] <- list()
-    topic_loadings_all[[3]]$test <- dplyr::left_join(topic_loadings_all[[1]][[1]], 
-                                                     topic_loadings_all[[2]][[1]],
+    topic_loadings_all[[3]]$test <- dplyr::left_join(topic_loadings_all[[1]][[1]][,1:6], 
+                                                     topic_loadings_all[[2]][[1]][,1:6],
                                                      by = c("topic", "top_terms"))
     topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
     topic_loadings_all[[3]]$pred_var <- paste0(topic_loadings_all[[1]]$pred_var, '_',
