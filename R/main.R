@@ -492,15 +492,15 @@ topicsNumAssign_dim2 <- function(topic_loadings_all,
 
 # model = model
 # preds = preds
-# data = cbind(text::Language_based_assessment_data_3_100,
-#              text::Language_based_assessment_data_3_100$hilstotal,
-#              text::Language_based_assessment_data_3_100$swlstotal)
-# colnames(data)[4:5] <- c('age','gender')
+#data = cbind(text::Language_based_assessment_data_3_100)
+             #text::Language_based_assessment_data_3_100$hilstotal,
+             #text::Language_based_assessment_data_3_100$swlstotal)
+#colnames(data)[4:5] <- c('age','gender')
 # data = tibble::as_tibble(data,.name_repair='minimal')
 # pred_var_x = 'hilstotal'
-# pred_var_y = 'swlstotal'
+# pred_var_y = NULL#'swlstotal'
 # group_var=NULL
-# control_vars=c('age','gender')
+# control_vars=c()#c('age','gender')
 # test_method="linear_regression"
 # p_alpha = 0.5
 # p_adjust_method = "fdr"
@@ -542,7 +542,9 @@ topicsTest <- function(model,
                        load_dir=NULL,
                        save_dir="./results"){
   
-  control_vars <- c() # not supported yet
+  if (!is.null(pred_var_y)){
+    control_vars <- c() # not supported yet
+  }
   if (is.null(pred_var_x)){
     print('Please input the pred_var_x!')
     return (NULL)
@@ -620,7 +622,7 @@ topicsTest <- function(model,
 }
 
 
-# test = filtered_test
+#test = filtered_test
 
 #' The function to create lda wordclouds
 #' @param model (list) The trained model
@@ -638,14 +640,14 @@ topicsTest <- function(model,
 #' @export
 topicsPlot1 <- function(model,
                        test,
-                       color_negative_cor = scale_color_gradient(low = "darkgreen", high = "green"),
-                       color_positive_cor = scale_color_gradient(low = "darkred", high = "red"),
+                       color_negative_cor = ggplot2::scale_color_gradient(low = "darkgreen", high = "green"),
+                       color_positive_cor = ggplot2::scale_color_gradient(low = "darkred", high = "red"),
                        grid_pos = "",
                        scale_size = FALSE,
                        plot_topics_idx = NULL,
                        p_threshold = 0.05,
                        save_dir = "./results",
-                       figure_format = "svg",
+                       figure_format = "png",
                        seed = 42){
   
   model <- name_cols_with_vocab(model, "phi", model$vocabulary)
@@ -687,11 +689,11 @@ topicsPlot1 <- function(model,
 
 # source('./R/wordclouds.R')
 # j <- 1
-# grid_pos = 3
+# grid_pos = 5
 # model = model
 # test = topic_loadings_all
-# grid = TRUE
-# dim = 1
+# grid = FALSE
+# dim = 2
 # color_scheme = 'default'
 # scale_size = FALSE
 # plot_topics_idx = NULL
@@ -706,7 +708,7 @@ topicsPlot1 <- function(model,
 #' @param test (list) The test results
 #' @param p_threshold (integer) The p-value threshold to use for significance
 #' @param grid (boolean) Set TRUE if plotting the topics grid
-#' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensioal color plots for grid plots. 
+#' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensioal color plots if grid = TRUE. 
 #' @param color_scheme (string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE. The vector should contain 9 color codes.
 #' @param scale_size (logical) Whether to scale the size of the words
 #' @param save_dir (string) The directory to save the wordclouds
@@ -745,7 +747,7 @@ topicsPlot <- function(model,
     return (NULL)
   }
   
-  if (dim == 1){
+  if (dim == 1 && grid){
     print('Dim is set to 1 to plot pred_var_x. This needs pred_var_x in topicsTest.')
     if (color_scheme == 'default'){bivariate_color_codes <-  bivariate_color_codes[4:6]}else{
       if (length(bivariate_color_codes) != 3){
@@ -753,7 +755,7 @@ topicsPlot <- function(model,
         return (NULL)
       }
     }
-  }else if(dim == 2){
+  }else if(dim == 2 && grid){
     if (length(bivariate_color_codes) != 9){
       print('Please input 9 color codes for the paramter color_scheme!')
       return (NULL)
@@ -774,14 +776,12 @@ topicsPlot <- function(model,
       seed = seed)
   }else{
     if (dim == 1){
-      for (i in 1){
-        for (j in 1:3){
-          if (! (j %in% test[[3]]$test$color_categories)){next}
-          test[[i]]$test$color_categories <- test[[3]]$test$color_categories
-          filtered_test <- test[[i]]
+        for (i in 1:3){
+          if (! (i %in% test[[3]]$test$color_categories)){next}
+          filtered_test <- test[[3]]
           filtered_test$test <- dplyr::filter(tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
-                                              color_categories == j)
-          color1 <- bivariate_color_codes[j]
+                                              color_categories == i)
+          color1 <- bivariate_color_codes[i]
           plot_topics_idx <- as.numeric(sub(".*_", "", filtered_test[["test"]]$topic))
           
           topicsPlot1(
@@ -789,7 +789,7 @@ topicsPlot <- function(model,
             test = filtered_test,
             color_negative_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
             color_positive_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
-            grid_pos = j,
+            grid_pos = i,
             scale_size = scale_size,
             plot_topics_idx = plot_topics_idx,
             p_threshold = p_threshold,
@@ -797,13 +797,12 @@ topicsPlot <- function(model,
             figure_format = figure_format,
             seed = seed
           )
-        }}
+        }
     }else if (dim == 2){
-      for (i in 1:2){
+      #for (i in 1:2){
         for (k in 1:9){
           if (! (k %in% test[[3]]$test$color_categories)){next}
-          test[[i]]$test$color_categories <- test[[3]]$test$color_categories
-          filtered_test <- test[[i]]
+          filtered_test <- test[[3]]
           filtered_test$test <- dplyr::filter(tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
                                               color_categories == k)
           color1 <- bivariate_color_codes[k]
@@ -822,7 +821,8 @@ topicsPlot <- function(model,
             figure_format = figure_format,
             seed = seed
           )
-        }}
+        }
+    #  }
     }else{
       print('Dim should be either 1 or 2 if grid = TRUE.')
       return (NULL)
