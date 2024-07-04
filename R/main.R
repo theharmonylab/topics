@@ -647,7 +647,7 @@ topicsPlot1 <- function(model,
                        plot_topics_idx = NULL,
                        p_threshold = 0.05,
                        save_dir = "./results",
-                       figure_format = "png",
+                       figure_format = "svg",
                        seed = 42){
   
   model <- name_cols_with_vocab(model, "phi", model$vocabulary)
@@ -725,7 +725,7 @@ topicsPlot <- function(model,
                              color_scheme = 'default',
                              scale_size = FALSE,
                              save_dir = "./results",
-                             figure_format = "png",
+                             figure_format = "svg",
                              seed = 42){
   
   if (is.character(color_scheme) && length(color_scheme) == 1 && color_scheme == "default"){
