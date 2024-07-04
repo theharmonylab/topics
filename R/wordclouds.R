@@ -104,7 +104,7 @@ create_plots <- function(df_list,
                          plot_topics_idx = NULL,
                          p_threshold = NULL,
                          save_dir = "./results",
-                         figure_format = "png",
+                         figure_format = "svg",
                          seed = 42){
   
   if (is.null(plot_topics_idx)){
