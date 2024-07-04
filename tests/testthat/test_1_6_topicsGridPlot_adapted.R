@@ -20,48 +20,40 @@ tests <- topicsTest(
   preds = preds,
   data =  Language_based_assessment_data_3_100,
   pred_var_x = 'hilstotal',
-  pred_var_y = NULL#'swlstotal'
+  pred_var_y = 'swlstotal'
 )
 
-# tests <- topicsTest(
-#   model=model,
-#   preds = preds,
-#   data =  Language_based_assessment_data_3_100,
-#   pred_var_x = 'hilstotal',
-#   pred_var_y = NULL
-# )
 
-# topicsPlot(model = model,
-#            test = tests,
-#            dim = 1
-#            ,seed = 42)
-# topicsPlot(model = model,
-#                  test = tests,
-#                  dim = 2
-#                  ,seed = 42)
-# topicsPlot(model = model,
-#            test = tests,
-#            dim = 3
-#            ,seed = 42)
+topicsPlot(model = model,
+           test = tests,
+           grid = TRUE,
+           p_threshold = 0.99,
+           dim = 1
+           ,seed = 42)
 
-# topicsPlot(model = model,
-#            test = tests,
-#            grid = TRUE,
-#            dim = 1
-#            ,seed = 42)
+topicsPlot(model = model,
+           test = tests,
+           grid = TRUE,
+           p_threshold = 0.99,
+           dim = 2
+           ,seed = 42)
+
+topicsPlot(model = model,
+           test = tests,
+           grid = TRUE,
+           dim = 3
+           ,seed = 42)
+
+tests <- topicsTest(
+  model=model,
+  preds = preds,
+  data =  Language_based_assessment_data_3_100,
+  pred_var_x = 'hilstotal',
+  pred_var_y = NULL
+)
+
 topicsPlot(model = model,
            test = tests,
            grid = FALSE,
            p_threshold = 0.99,
-           #dim = 1,
            seed = 42)
-
-# topicsPlot(model = model,
-#            test = tests,
-#            dim = 3
-#            ,seed = 42)
-
-# topicsPlot(model = model,
-#            test = tests,
-#            grid = FALSE,
-#            ,seed = 42)
