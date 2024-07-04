@@ -738,10 +738,14 @@ topicsPlot <- function(model,
       }else if (dim == 1){
         bivariate_color_codes <- c(
           "#e07f6a", "#EAEAEA", "#40DD52")
-      }  
+      }else{print('Dim parameter should be either 1 or 2.')}
     }else{print("Error in color_scheme. Consider using 'default'.")}
   }else if (is.character(color_scheme) && length(color_scheme) > 1){
-    bivariate_color_codes <- color_scheme
+    if (dim == 2){
+      bivariate_color_codes <- color_scheme
+    }else if (dim == 1){
+      bivariate_color_codes <- color_scheme[4:6]
+    }else{print('Dim parameter should be either 1 or 2.')}
   }else{
     print('The parameter color_scheme should be a vector! Or try with the default color scheme.')
     return (NULL)
