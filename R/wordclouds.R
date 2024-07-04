@@ -248,7 +248,7 @@ create_plots <- function(df_list,
                                i, "_r_", 
                                estimate, "_p_", 
                                p_adjusted,
-                               #".",
+                               ".",
                                figure_format),
                         plot = plot, 
                         width = 10, 
@@ -262,14 +262,14 @@ create_plots <- function(df_list,
             "_rx_", estimate_x,
             "_ry_", estimate_y, 
             "_px_", p_adjusted_x,
-            "_py_", p_adjusted_y,#".",
+            "_py_", p_adjusted_y, ".",
             figure_format
           )
         }else{
           p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
           fileMsg <- paste0(
             "_rx_", estimate_x, 
-            "_px_", p_adjusted_x,#".",
+            "_px_", p_adjusted_x, ".",
             figure_format
           )
         }
