@@ -894,7 +894,7 @@ topicsPlot1 <- function(model,
 #' @param model (list) The trained model
 #' @param test (list) The test results
 #' @param p_threshold (integer) The p-value threshold to use for significance
-#' @param grid (boolean) Set TRUE if plotting the topics grid
+#' @param grid_plot (boolean) Set TRUE if plotting the topics grid
 #' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensioal color plots if grid = TRUE. 
 #' @param color_scheme (string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE. The vector should contain 9 color codes.
 #' @param scale_size (logical) Whether to scale the size of the words
