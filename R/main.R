@@ -490,23 +490,20 @@ topicsNumAssign_dim2 <- function(topic_loadings_all,
   return (topic_loadings_all)
 }
 
-# model = model
-# preds = preds
-#data = cbind(text::Language_based_assessment_data_3_100)
-             #text::Language_based_assessment_data_3_100$hilstotal,
-             #text::Language_based_assessment_data_3_100$swlstotal)
-#colnames(data)[4:5] <- c('age','gender')
-# data = tibble::as_tibble(data,.name_repair='minimal')
-# pred_var_x = 'hilstotal'
-# pred_var_y = NULL#'swlstotal'
-# group_var=NULL
-# control_vars=c()#c('age','gender')
-# test_method="linear_regression"
-# p_alpha = 0.5
-# p_adjust_method = "fdr"
-# seed=42
-# load_dir=NULL
-# save_dir="./results"
+model = model
+preds = preds
+data = cbind(text::Language_based_assessment_data_3_100)
+data = tibble::as_tibble(data,.name_repair='minimal')
+pred_var_x = 'hilstotal'
+pred_var_y = 'swlstotal'
+group_var=NULL
+control_vars=c()#c('age','gender')
+test_method="linear_regression"
+p_alpha = 0.5
+p_adjust_method = "fdr"
+seed=42
+load_dir=NULL
+save_dir="./results"
 
 
 #' The function to test the lda model for multiple dimensions, e.g., 2.
@@ -622,6 +619,199 @@ topicsTest <- function(model,
 }
 
 
+bivariate_color_codes = bivariate_color_codes
+cor_var = tests[[3]]$pred_var
+save_dir = "./results"
+figure_format = 'svg'
+seed = 42
+y_axes_1 = ""#"only_x_dimension"
+grid = TRUE
+legend_title = "legend_title"
+legend_title_size = 20
+titles_color <- 'black'
+legend_x_axes_label = "legend_x_axes_label"
+legend_y_axes_label = "legend_y_axes_label"
+topic_data_all = tests[[3]][["test"]]
+legend_number_size = 20
+legend_number_color = 'black'
+titles_color = "black"
+figure_format = 'svg'
+y_axes_1 = 1
+
+
+
+#' Creates the legend for the plot.
+#' @return A legend plot saved that can be combined with the plot object.
+#' @noRd
+topicLegend <- function(bivariate_color_codes = bivariate_color_codes,
+                        cor_var = "",
+                        save_dir = "./results",
+                        figure_format = 'svg',
+                        seed = 42,
+                        y_axes_1 = 2,
+                        legend_title,
+                        legend_title_size,
+                        titles_color,
+                        legend_x_axes_label,
+                        legend_y_axes_label,
+                        topic_data_all,
+                        legend_number_color,
+                        legend_number_size
+) {
+  if (y_axes_1 == 2){y_axes_1 <- ""}else{y_axes_1 <- "only_x_dimension"}
+  legCor <- bivariate_color_codes
+  if(y_axes_1 == "only_x_dimension"){
+    bivariate_color_data <- tibble::tibble(
+      "1 - 3" = '', "2 - 3" = '', "3 - 3" = '',
+      "1 - 2" = legCor[1], "2 - 2" = legCor[2], "3 - 2" = legCor[3],
+      "1 - 1" = '', "2 - 1" = '', "3 - 1" = '')
+  }else{bivariate_color_data <- tibble::tibble(
+    "1 - 3" = legCor[1], "2 - 3" = legCor[2], "3 - 3" = legCor[3],
+    "1 - 2" = legCor[4], "2 - 2" = legCor[5], "3 - 2" = legCor[6],
+    "1 - 1" = legCor[7], "2 - 1" = legCor[8], "3 - 1" = legCor[9]
+  )}
+  bivariate_color_data <- rbind(bivariate_color_data, bivariate_color_codes)
+  bivariate_color_data <- bivariate_color_data[-1, ]
+  
+  if (y_axes_1 == "only_x_dimension") {
+    # Only select 3 colors
+    bivariate_color_data <- bivariate_color_data[, c(4, 5, 6)]
+    colnames(bivariate_color_data) <- c("1 - 2", "2 - 2", "3 - 2")
+    #bivariate_color_data
+    # Remove the y axes title on the legend
+    legend_y_axes_label <- " "}
+  # To output the number of categories for dim 1 and dim 2 (plot 1dim or 2dim)
+  if (y_axes_1 == "only_x_dimension") {
+    # for future only x dim grid in topicsTest
+    categoryTotal_x_axes = c(
+      sum(topic_data_all$color_categories == 4,
+          na.rm = TRUE),
+      sum(topic_data_all$color_categories == 5,
+          na.rm = TRUE),
+      sum(topic_data_all$color_categories == 6,
+          na.rm = TRUE))
+  }else{ categoryTotal_x_axes = c(
+    sum(topic_data_all$color_categories == 4,
+        na.rm = TRUE),
+    sum(topic_data_all$color_categories == 5,
+        na.rm = TRUE),
+    sum(topic_data_all$color_categories == 6,
+        na.rm = TRUE))}
+  
+  legend <- bivariate_color_data %>%
+    tidyr::gather("group", "fill") %>%
+    tidyr::separate(group, into = c("x", "y"), sep = " - ") %>%
+    dplyr::mutate(
+      x = as.integer(x),
+      y = as.integer(y)
+    ) %>%
+    ggplot2::ggplot(ggplot2::aes(x, y)) +
+    ggplot2::geom_tile(ggplot2::aes(fill = fill)) +
+    ggplot2::ggtitle(paste0(legend_title)) +
+    ggplot2::scale_fill_identity() +
+    ggplot2::labs(
+      x = legend_x_axes_label,
+      y = legend_y_axes_label
+    ) +
+    ggplot2::theme_void() +
+    #    ggplot2::annotate(geom="text", x=2, y=2, label="ns",
+    #               color = titles_color, size=legend_number_size)+
+    {
+      if (y_axes_1 != "only_x_dimension") {
+        ggplot2::annotate(
+          geom = "text", x = 1, y = 3, label = sum(topic_data_all$color_categories == 1,
+                                                   na.rm = TRUE
+          ),
+          color = legend_number_color, size = legend_number_size#bivariate_color_codes[1]
+        )
+      }
+    } +
+    {
+      if (y_axes_1 != "only_x_dimension") {
+        ggplot2::annotate(
+          geom = "text", x = 2, y = 3, label = sum(topic_data_all$color_categories == 2,
+                                                   na.rm = TRUE
+          ),
+          color = legend_number_color, size = legend_number_size
+        )
+      }
+    } +
+    {
+      if (y_axes_1 != "only_x_dimension") {
+        ggplot2::annotate(
+          geom = "text", x = 3, y = 3, label = sum(topic_data_all$color_categories == 3,
+                                                   na.rm = TRUE
+          ),
+          color = legend_number_color, size = legend_number_size
+        )
+      }
+    } +
+    ggplot2::annotate(
+      geom = "text", x = 1, y = 2, label = categoryTotal_x_axes[1],
+      color = legend_number_color, size = legend_number_size
+    ) +
+    ggplot2::annotate(
+      geom = "text", x = 2, y = 2, label = categoryTotal_x_axes[2],
+      color = legend_number_color, size = legend_number_size
+    ) +
+    ggplot2::annotate(
+      geom = "text", x = 3, y = 2, label = categoryTotal_x_axes[3],
+      color = legend_number_color, size = legend_number_size
+    ) +
+    {
+      if (y_axes_1 != "only_x_dimension") {
+        ggplot2::annotate(
+          geom = "text", x = 1, y = 1, label = sum(topic_data_all$color_categories == 7,
+                                                   na.rm = TRUE
+          ),
+          color = legend_number_color, size = legend_number_size
+        )
+      }
+    } +
+    {
+      if (y_axes_1 != "only_x_dimension") {
+        ggplot2::annotate(
+          geom = "text", x = 2, y = 1, label = sum(topic_data_all$color_categories == 8,
+                                                   na.rm = TRUE
+          ),
+          color = legend_number_color, size = legend_number_size
+        )
+      }
+    } +
+    {
+      if (y_axes_1 != "only_x_dimension") {
+        ggplot2::annotate(
+          geom = "text", x = 3, y = 1, label = sum(topic_data_all$color_categories == 9,
+                                                   na.rm = TRUE
+          ),
+          color = legend_number_color, size = legend_number_size
+        )
+      }
+    } +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust = 0.5, size = legend_title_size + 1),
+      title = ggplot2::element_text(color = titles_color),
+      axis.title.x = ggplot2::element_text(color = titles_color),
+      axis.title = ggplot2::element_text(size = legend_title_size),
+      axis.title.y = ggplot2::element_text(angle = 90, color = titles_color)
+    ) +
+    ggplot2::coord_fixed()
+  if (grid){
+    ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                           "/wordclouds/",
+                           "grid_legend_",
+                           "corvar_", cor_var,
+                           ".",
+                           figure_format),
+                    plot = legend, 
+                    width = 10, 
+                    height = 8, 
+                    units = "in")
+  }
+}
+
+
+
 #test = filtered_test
 
 #' The function to create lda wordclouds
@@ -688,18 +878,17 @@ topicsPlot1 <- function(model,
 
 
 # source('./R/wordclouds.R')
-# j <- 1
 # grid_pos = 5
 # model = model
 # test = topic_loadings_all
-# grid = FALSE
+# grid = TRUE
 # dim = 2
 # color_scheme = 'default'
 # scale_size = FALSE
 # plot_topics_idx = NULL
 # p_threshold = 0.5
 # save_dir = "./results"
-# figure_format = ".png"
+# figure_format = "png"
 # seed = 42
 
 
@@ -714,6 +903,13 @@ topicsPlot1 <- function(model,
 #' @param save_dir (string) The directory to save the wordclouds
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
 #' @param seed (integer) The seed to set for reproducibility
+#' @param grid_legend_title The title of grid topic plot if grid = TRUE
+#' @param grid_legend_title_size The size of the title of the plot if grid = TRUE
+#' @param grid_titles_color The color of the legend title if grid = TRUE
+#' @param grid_legend_x_axes_label The label of the x axes if grid = TRUE
+#' @param grid_legend_y_axes_label The label of the y axes if grid = TRUE
+#' @param grid_legend_number_color The color in the text in the legend if grid = TRUE
+#' @param grid_legend_number_size The color in the text in the legend if grid = TRUE
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @importFrom dplyr filter
 #' @export
@@ -726,7 +922,15 @@ topicsPlot <- function(model,
                              scale_size = FALSE,
                              save_dir = "./results",
                              figure_format = "svg",
-                             seed = 42){
+                             seed = 42,
+                             grid_legend_title = "legend_title",
+                             grid_legend_title_size = 5,
+                             grid_titles_color = 'black',
+                             grid_legend_x_axes_label = "legend_x_axes_label",
+                             grid_legend_y_axes_label = "legend_y_axes_label",
+                             grid_legend_number_color = 'black',
+                             grid_legend_number_size = 5
+                             ){
   
   if (is.character(color_scheme) && length(color_scheme) == 1 && color_scheme == "default"){
     if (color_scheme == 'default'){
@@ -803,7 +1007,6 @@ topicsPlot <- function(model,
           )
         }
     }else if (dim == 2){
-      #for (i in 1:2){
         for (k in 1:9){
           if (! (k %in% test[[3]]$test$color_categories)){next}
           filtered_test <- test[[3]]
@@ -826,11 +1029,28 @@ topicsPlot <- function(model,
             seed = seed
           )
         }
-    #  }
     }else{
       print('Dim should be either 1 or 2 if grid = TRUE.')
       return (NULL)
     }
+    
+    if (grid){
+      topicLegend(
+        bivariate_color_codes = bivariate_color_codes,
+        cor_var = test[[3]]$pred_var,
+        save_dir = save_dir,
+        figure_format = figure_format,
+        seed = seed,
+        y_axes_1 = dim,
+        legend_title = grid_legend_title,
+        legend_title_size = grid_legend_title_size,
+        titles_color = grid_titles_color,
+        legend_x_axes_label = grid_legend_x_axes_label,
+        legend_y_axes_label = grid_legend_y_axes_label,
+        topic_data_all = test[[3]][["test"]],
+        legend_number_color = grid_legend_number_color,
+        legend_number_size = grid_legend_number_size
+      )
+    }
   }
-
 }
