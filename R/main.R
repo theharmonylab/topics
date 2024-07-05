@@ -879,7 +879,7 @@ topicsPlot1 <- function(model,
 # grid_pos = 5
 # model = model
 # test = topic_loadings_all
-# grid = TRUE
+# grid_plot = TRUE
 # dim = 2
 # color_scheme = 'default'
 # scale_size = FALSE
@@ -1028,7 +1028,7 @@ topicsPlot <- function(model,
           )
         }
     }else{
-      print('Dim should be either 1 or 2 if grid = TRUE.')
+      print('Dim should be either 1 or 2 if grid_plot = TRUE.')
       return (NULL)
     }
     
