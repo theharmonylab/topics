@@ -901,13 +901,13 @@ topicsPlot1 <- function(model,
 #' @param save_dir (string) The directory to save the wordclouds
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
 #' @param seed (integer) The seed to set for reproducibility
-#' @param grid_legend_title The title of grid topic plot if grid = TRUE
-#' @param grid_legend_title_size The size of the title of the plot if grid = TRUE
-#' @param grid_titles_color The color of the legend title if grid = TRUE
-#' @param grid_legend_x_axes_label The label of the x axes if grid = TRUE
-#' @param grid_legend_y_axes_label The label of the y axes if grid = TRUE
-#' @param grid_legend_number_color The color in the text in the legend if grid = TRUE
-#' @param grid_legend_number_size The color in the text in the legend if grid = TRUE
+#' @param grid_legend_title The title of grid topic plot if grid_plot = TRUE
+#' @param grid_legend_title_size The size of the title of the plot if grid_plot = TRUE
+#' @param grid_titles_color The color of the legend title if grid_plot = TRUE
+#' @param grid_legend_x_axes_label The label of the x axes if grid_plot = TRUE
+#' @param grid_legend_y_axes_label The label of the y axes if grid_plot = TRUE
+#' @param grid_legend_number_color The color in the text in the legend if grid_plot = TRUE
+#' @param grid_legend_number_size The color in the text in the legend if grid_plot = TRUE
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @importFrom dplyr filter
 #' @export
