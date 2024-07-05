@@ -796,7 +796,6 @@ topicLegend <- function(bivariate_color_codes = bivariate_color_codes,
       axis.title.y = ggplot2::element_text(angle = 90, color = titles_color)
     ) +
     ggplot2::coord_fixed()
-  if (grid){
     ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
                            "/wordclouds/",
                            "grid_legend_",
@@ -807,7 +806,6 @@ topicLegend <- function(bivariate_color_codes = bivariate_color_codes,
                     width = 10, 
                     height = 8, 
                     units = "in")
-  }
 }
 
 
@@ -916,7 +914,7 @@ topicsPlot1 <- function(model,
 topicsPlot <- function(model,
                              test,
                              p_threshold = 0.05,
-                             grid = TRUE,
+                             grid_plot = TRUE,
                              dim = 2,
                              color_scheme = 'default',
                              scale_size = FALSE,
@@ -955,7 +953,7 @@ topicsPlot <- function(model,
     return (NULL)
   }
   
-  if (dim == 1 && grid){
+  if (dim == 1 && grid_plot){
     print('Dim is set to 1 to plot pred_var_x. This needs pred_var_x in topicsTest.')
     if (color_scheme == 'default'){bivariate_color_codes <-  bivariate_color_codes[4:6]}else{
       if (length(bivariate_color_codes) != 3){
@@ -963,15 +961,15 @@ topicsPlot <- function(model,
         return (NULL)
       }
     }
-  }else if(dim == 2 && grid){
+  }else if(dim == 2 && grid_plot){
     if (length(bivariate_color_codes) != 9){
       print('Please input 9 color codes for the paramter color_scheme!')
       return (NULL)
     }
   }
   
-  if (!grid){
-    print('The parameter grid = FALSE will output all the topic plots for the pred_var_x in topicsTest.')
+  if (!grid_plot){
+    print('The parameter grid_plot = FALSE will output all the topic plots for the pred_var_x in topicsTest.')
     topicsPlot1(
       model = model,
       test = test[[1]],
@@ -1034,7 +1032,7 @@ topicsPlot <- function(model,
       return (NULL)
     }
     
-    if (grid){
+    if (grid_plot){
       topicLegend(
         bivariate_color_codes = bivariate_color_codes,
         cor_var = test[[3]]$pred_var,
