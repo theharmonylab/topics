@@ -490,20 +490,20 @@ topicsNumAssign_dim2 <- function(topic_loadings_all,
   return (topic_loadings_all)
 }
 
-model = model
-preds = preds
-data = cbind(text::Language_based_assessment_data_3_100)
-data = tibble::as_tibble(data,.name_repair='minimal')
-pred_var_x = 'hilstotal'
-pred_var_y = 'swlstotal'
-group_var=NULL
-control_vars=c()#c('age','gender')
-test_method="linear_regression"
-p_alpha = 0.5
-p_adjust_method = "fdr"
-seed=42
-load_dir=NULL
-save_dir="./results"
+# model = model
+# preds = preds
+# data = cbind(text::Language_based_assessment_data_3_100)
+# data = tibble::as_tibble(data,.name_repair='minimal')
+# pred_var_x = 'hilstotal'
+# pred_var_y = 'swlstotal'
+# group_var=NULL
+# control_vars=c()#c('age','gender')
+# test_method="linear_regression"
+# p_alpha = 0.5
+# p_adjust_method = "fdr"
+# seed=42
+# load_dir=NULL
+# save_dir="./results"
 
 
 #' The function to test the lda model for multiple dimensions, e.g., 2.
@@ -619,24 +619,24 @@ topicsTest <- function(model,
 }
 
 
-bivariate_color_codes = bivariate_color_codes
-cor_var = tests[[3]]$pred_var
-save_dir = "./results"
-figure_format = 'svg'
-seed = 42
-y_axes_1 = ""#"only_x_dimension"
-grid = TRUE
-legend_title = "legend_title"
-legend_title_size = 20
-titles_color <- 'black'
-legend_x_axes_label = "legend_x_axes_label"
-legend_y_axes_label = "legend_y_axes_label"
-topic_data_all = tests[[3]][["test"]]
-legend_number_size = 20
-legend_number_color = 'black'
-titles_color = "black"
-figure_format = 'svg'
-y_axes_1 = 1
+# bivariate_color_codes = bivariate_color_codes
+# cor_var = tests[[3]]$pred_var
+# save_dir = "./results"
+# figure_format = 'svg'
+# seed = 42
+# y_axes_1 = ""#"only_x_dimension"
+# grid = TRUE
+# legend_title = "legend_title"
+# legend_title_size = 20
+# titles_color <- 'black'
+# legend_x_axes_label = "legend_x_axes_label"
+# legend_y_axes_label = "legend_y_axes_label"
+# topic_data_all = tests[[3]][["test"]]
+# legend_number_size = 20
+# legend_number_color = 'black'
+# titles_color = "black"
+# figure_format = 'svg'
+# y_axes_1 = 1
 
 
 
