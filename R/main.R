@@ -1049,6 +1049,7 @@ topicsPlot <- function(model,
         legend_number_color = grid_legend_number_color,
         legend_number_size = grid_legend_number_size
       )
+      print('The grid plot legend is saved under the same folder.')
     }
   }
 }
