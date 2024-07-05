@@ -286,6 +286,3 @@ create_plots <- function(df_list,
     }
   }
 }
-
-
-
