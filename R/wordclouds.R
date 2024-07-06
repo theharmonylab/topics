@@ -76,6 +76,8 @@ create_topic_words_dfs <- function(summary){
 #' @param save_dir (string) save plots in specified directory, if left blank, plots is not saved,
 #' thus save_dir is necessary
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
+#' @param width (integer) The width of the topic (units = "in"). 
+#' @param height (integer) The width of the topic (units = "in"). 
 #' @param seed (int) seed is needed for saving the plots in the correct directory
 #' @importFrom ggwordcloud geom_text_wordcloud
 #' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient
@@ -92,6 +94,8 @@ create_plots <- function(df_list,
                          p_threshold = NULL,
                          save_dir = "./results",
                          figure_format = "png",
+                         width = 10, 
+                         height = 8, 
                          seed = 42){
   if (is.null(plot_topics_idx)){
     plot_topics_idx <- seq(1, length(df_list))
@@ -172,8 +176,8 @@ create_plots <- function(df_list,
                     estimate, "_p_", 
                     p_adjusted,".", figure_format),
                     plot = plot, 
-                    width = 10, 
-                    height = 8, 
+                    width = width, 
+                    height = height, 
                     units = "in")
     }
   }

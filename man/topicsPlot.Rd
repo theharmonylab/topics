@@ -14,6 +14,8 @@ topicsPlot(
   p_threshold = 0.05,
   save_dir = "./results",
   figure_format = "svg",
+  width = 10,
+  height = 8,
   seed = 42
 )
 }
@@ -35,6 +37,10 @@ topicsPlot(
 \item{save_dir}{(string) The directory to save the wordclouds}
 
 \item{figure_format}{(string) Set the figure format, e.g., svg, or png.}
+
+\item{width}{(integer) The width of the topic (units = "in").}
+
+\item{height}{(integer) The width of the topic (units = "in").}
 
 \item{seed}{(integer) The seed to set for reproducibility}
 }

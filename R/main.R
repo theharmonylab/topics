@@ -463,6 +463,8 @@ topicsTest <- function(model,
 #' @param p_threshold (integer) The p-value threshold to use for significance
 #' @param save_dir (string) The directory to save the wordclouds
 #' @param figure_format (string) Set the figure format, e.g., svg, or png.
+#' @param width (integer) The width of the topic (units = "in"). 
+#' @param height (integer) The width of the topic (units = "in").
 #' @param seed (integer) The seed to set for reproducibility
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @export
@@ -475,6 +477,8 @@ topicsPlot <- function(model,
                        p_threshold = 0.05,
                        save_dir = "./results",
                        figure_format = "svg",
+                       width = 10, 
+                       height = 8,
                        seed = 42){
   
   model <- name_cols_with_vocab(model, "phi", model$vocabulary)
@@ -495,6 +499,8 @@ topicsPlot <- function(model,
                plot_topics_idx = plot_topics_idx,
                p_threshold = p_threshold,
                figure_format = figure_format,
+               width = width, 
+               height = height,
                save_dir = save_dir,
                seed = seed)
   print(paste0("The plots are saved in ", save_dir, "/seed", seed, "/wordclouds"))
