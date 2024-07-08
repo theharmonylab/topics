@@ -465,6 +465,7 @@ topicsTest <- function(model,
 #' @param figure_format (string) Set the figure format, e.g., svg, or png.
 #' @param width (integer) The width of the topic (units = "in"). 
 #' @param height (integer) The width of the topic (units = "in").
+#' @param max_size (integer) The max size of the words.
 #' @param seed (integer) The seed to set for reproducibility
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @export
@@ -479,6 +480,7 @@ topicsPlot <- function(model,
                        figure_format = "svg",
                        width = 10, 
                        height = 8,
+                       max_size = 10, 
                        seed = 42){
   
   model <- name_cols_with_vocab(model, "phi", model$vocabulary)

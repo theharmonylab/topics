@@ -16,6 +16,7 @@ topicsPlot(
   figure_format = "svg",
   width = 10,
   height = 8,
+  max_size = 10,
   seed = 42
 )
 }
@@ -41,6 +42,8 @@ topicsPlot(
 \item{width}{(integer) The width of the topic (units = "in").}
 
 \item{height}{(integer) The width of the topic (units = "in").}
+
+\item{max_size}{(integer) The max size of the words.}
 
 \item{seed}{(integer) The seed to set for reproducibility}
 }

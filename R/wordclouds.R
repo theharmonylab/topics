@@ -78,6 +78,7 @@ create_topic_words_dfs <- function(summary){
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
 #' @param width (integer) The width of the topic (units = "in"). 
 #' @param height (integer) The width of the topic (units = "in"). 
+#' @param max_size (integer) The max size of the words.
 #' @param seed (int) seed is needed for saving the plots in the correct directory
 #' @importFrom ggwordcloud geom_text_wordcloud
 #' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient
@@ -95,7 +96,8 @@ create_plots <- function(df_list,
                          save_dir = "./results",
                          figure_format = "png",
                          width = 10, 
-                         height = 8, 
+                         height = 8,
+                         max_size = 10,
                          seed = 42){
   if (is.null(plot_topics_idx)){
     plot_topics_idx <- seq(1, length(df_list))
@@ -142,18 +144,19 @@ create_plots <- function(df_list,
         color_scheme <- color_positive_cor # scale_color_gradient(low = "darkred", high = "red")
       }
       if (scale_size == TRUE){
-        max_size <- 10*log(prevalence)
+        max_size <- max_size * log(prevalence)
         y <- paste0("P = ", prevalence)
       } else {
-        max_size <- 10
+        max_size <- max_size
         y <- ""
       }
       #view(df_list[[i]]) help(ggplot) library(ggplot2)
+      df_list[[i]]$phi_max_size <- df_list[[i]]$phi * max_size
       help(geom_text_wordcloud)
       plot <- ggplot2::ggplot(df_list[[i]], 
                               ggplot2::aes(label = Word, 
-                                           size = phi, 
-                                           color = phi)) + #,x=estimate)) +
+                                           size = phi_max_size, 
+                                           color = phi_max_size)) + #,x=estimate)) +
         ggwordcloud::geom_text_wordcloud() +
         ggplot2::scale_size_area(max_size = max_size) +
         ggplot2::theme_minimal() +
