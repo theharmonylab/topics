@@ -10,6 +10,7 @@
 #' @param split (float) the proportion of the data to be used for training
 #' @param seed (integer) the random seed for reproducibility
 #' @param save_dir (string) the directory to save the results, default is "./results", if NULL, no results are saved
+#' @param load_dir (string) the directory to load from.
 #' @return the document term matrix
 #' @importFrom textmineR CreateDtm
 #' @importFrom stats complete.cases
