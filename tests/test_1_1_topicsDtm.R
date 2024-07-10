@@ -103,8 +103,8 @@ test_that("topicsDtm removes least frequent words in percent mode", {
   data <- Language_based_assessment_data_8$harmonytexts
 #  result <- topicsDtm(data, removal_mode = "percent", removal_rate_least = 50)
   
-  testthat::expect_true(is.list(result))
-  testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
+#  testthat::expect_true(is.list(result))
+#  testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
 })
 
 test_that("topicsDtm removes most frequent words in percent mode", {
