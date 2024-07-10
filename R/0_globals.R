@@ -3,6 +3,6 @@
 utils::globalVariables(c(
   "Word", "phi", "scale_color_gradient", "p.value", "adjust.p_value", "adjusted_p.value", 
   "top_terms", "prevalence", "coherence", "topic_name", "label_1", 
-  "mean_group_1", "mean_group_2", "seed", "cohen_d", "value"
-
+  "mean_group_1", "mean_group_2", "seed", "cohen_d", "value",
+  "phi_max_size", "test_path"
 ))

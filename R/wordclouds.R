@@ -152,7 +152,7 @@ create_plots <- function(df_list,
       }
       #view(df_list[[i]]) help(ggplot) library(ggplot2)
       df_list[[i]]$phi_max_size <- df_list[[i]]$phi * max_size
-      help(geom_text_wordcloud)
+      
       plot <- ggplot2::ggplot(df_list[[i]], 
                               ggplot2::aes(label = Word, 
                                            size = phi_max_size, 

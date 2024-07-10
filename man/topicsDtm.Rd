@@ -41,6 +41,8 @@ topicsDtm(
 \item{seed}{(integer) the random seed for reproducibility}
 
 \item{save_dir}{(string) the directory to save the results, default is "./results", if NULL, no results are saved}
+
+\item{load_dir}{(string) the directory to load from.}
 }
 \value{
 the document term matrix
