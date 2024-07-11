@@ -101,12 +101,12 @@ jobs:
         run: covr::codecov()
         shell: Rscript {0}
 
+#      - name: Upload coverage reports to Codecov
+#        uses: codecov/codecov-action@v4.0.1
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }}
 
 
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
 #      - name: Upload check results
 #        if: failure()
 #        uses: actions/upload-artifact@main
