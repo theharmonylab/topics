@@ -5,7 +5,7 @@ topics is an R-package based on mallet for LDA (Latent Dirichlet Allocation) Top
 
 When using this code, please reference:
 
-Ackermann L., Zhuojun Gu. & Kjell O.N.E. (2024). An R-package for visualizing text in topics. https://github.com/theharmonylab/topics. DOI:https://zenodo.org/doi/10.5281/zenodo.11165377. 
+Ackermann L., Zhuojun G. & Kjell O.N.E. (2024). An R-package for visualizing text in topics. https://github.com/theharmonylab/topics. DOI:https://zenodo.org/doi/10.5281/zenodo.11165377. 
 
 ## Installation
 ``` r
