@@ -949,7 +949,7 @@ topicsPlot <- function(model,
       bivariate_color_codes <- color_scheme[4:6]
     }else{print('Dim parameter should be either 1 or 2.')}
   }else{
-    print('The parameter color_scheme should be a vector! Or try with the default color scheme.')
+    print('The parameter color_scheme should be a vector and should contain 9 colors! Or try with the default color scheme.')
     return (NULL)
   }
   
