@@ -157,7 +157,7 @@ create_plots <- function(df_list,
       if (length(strsplit(cor_var, "_")[[1]]) > 1){
         estimate_y <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[estimate_col_y]]
         p_adjusted_y <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[p_adjusted_col_y]]
-        p_adjusted <- (p_adjusted_x + p_adjusted_y) / 2
+        p_adjusted <- max(p_adjusted_x, p_adjusted_y)
       }else{
         estimate <- estimate_x
         p_adjusted <- p_adjusted_x
