@@ -32,3 +32,8 @@ A tibble of the predictions
 \description{
 The function to predict the topics of a new document with the trained model
 }
+\examples{
+# Predict topics for new data with the trained model
+preds <- topicsPreds(model = model, # output of topicsModel()
+                     data = data$text)
+}

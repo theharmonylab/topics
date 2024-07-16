@@ -66,4 +66,8 @@ dtm <- topicsDtm(data = data$text,
                  removal_mode = "percentage",
                  removal_rate_least = 5,
                  removal_rate_most = 1)
+                 
+# Load precomputed Dtm from directory
+dtm <- topicsDtm(load_dir = "./results",
+                 seed = 42)
 }
