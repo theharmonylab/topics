@@ -3,8 +3,7 @@
 #' @param ngram_window (list) the minimum and maximum n-gram length, e.g. c(1,3)
 #' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
 #' @param removalword (string) the word to remove
-#' @param occ_rate (integer) the rate of occurence of a word to be removed
-#' @param removal_mode (string) the mode of removal -> "none", "threshold", "absolute" or "percent", Threshold removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, Absolute removes an absolute amount of terms that are most frequent and least frequent, Percent the amount of words indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix
+#' @param removal_mode (string) the mode of removal -> "none", "frequency", "term" or "percentage", frequency removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, term removes an absolute amount of terms that are most frequent and least frequent, percentage the amount of terms indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix
 #' @param removal_rate_most (integer) the rate of most frequent words to be removed, functionality depends on removal_mode
 #' @param removal_rate_least (integer) the rate of least frequent words to be removed, functionality depends on removal_mode
 #' @param split (float) the proportion of the data to be used for training
@@ -16,7 +15,31 @@
 #' @importFrom stopwords stopwords
 #' @importFrom Matrix colSums
 #' @importFrom tibble as_tibble
+#' 
 #' @export
+#' @examples
+#' # Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
+#' dtm <- topicsDtm(data = data$text,
+#'                  removal_mode = "frequency",
+#'                  removal_rate_least = 4,
+#'                  removal_rate_most = 500)
+#' 
+#' # Create Dtm and remove the 5 least and 5 most frequent terms.
+#' dtm <- topicsDtm(data = data$text,
+#'                  removal_mode = "term",
+#'                  removal_rate_least = 5,
+#'                  removal_rate_most = 5)
+#' 
+#' # Create Dtm and remove the 5% least frequent and 1% most frequent terms.
+#' dtm <- topicsDtm(data = data$text,
+#'                  removal_mode = "percentage",
+#'                  removal_rate_least = 5,
+#'                  removal_rate_most = 1)
+#'                  
+#' # Load precomputed Dtm from directory
+#' dtm <- topicsDtm(load_dir = "./results",
+#'                  seed = 42)
+
 topicsDtm <- function(data, # 
                    ngram_window=c(1,3),
                    stopwords=stopwords::stopwords("en", source = "snowball"),
@@ -182,6 +205,19 @@ topicsDtm <- function(data, #
 #' @param load_dir (string) The directory to load the model from, if NULL, the model will not be loaded
 #' @return A list of the model, the top terms, the labels, the coherence, and the prevalence
 #' @export
+#' 
+#' @examples
+#' # Create LDA Topic Model 
+#' model <- topicsModel(dtm = dtm, # output of topicsDtm()
+#'                      num_topics = 20,
+#'                      num_top_words = 10,
+#'                      num_iterations = 1000,
+#'                      seed = 42,
+#'                      save_dir = "./results")
+#'                    
+#' # Load precomputed LDA Topic Model
+#' model <- topicsModel(load_dir = "./results",
+#'                      seed = 42)
 topicsModel <- function(dtm,
                     num_topics = 20,
                     num_top_words = 10,
@@ -256,6 +292,12 @@ topicsModel <- function(dtm,
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>%
 #' @export
+#' 
+#' @examples
+#' # Predict topics for new data with the trained model
+#' preds <- topicsPreds(model = model, # output of topicsModel()
+#'                      data = data$text)
+
 topicsPreds <- function(model, # only needed if load_dir==NULL 
                      data, # data vector to infer distribution for
                      num_iterations=100, # only needed if load_dir==NULL,
@@ -343,6 +385,15 @@ topicsPreds <- function(model, # only needed if load_dir==NULL
 #' @importFrom dplyr bind_cols
 #' @importFrom readr write_csv
 #' @export
+#' 
+#' @examples
+#' # Test the topic document distribution in respect to a variable
+#' test <- topicsTest(model = model, # output of topicsModel()
+#'                    data=data,
+#'                    preds = preds, # output of topicsPreds()
+#'                    test_method = "linear_regression"
+#'                    pred_var = "age")
+#'                    
 topicsTest <- function(model,
                     preds, 
                     data,

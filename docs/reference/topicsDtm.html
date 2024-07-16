@@ -84,12 +84,8 @@
 <dd><p>(string) the word to remove</p></dd>
 
 
-<dt>occ_rate</dt>
-<dd><p>(integer) the rate of occurence of a word to be removed</p></dd>
-
-
 <dt>removal_mode</dt>
-<dd><p>(string) the mode of removal -&gt; "none", "threshold", "absolute" or "percent", Threshold removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, Absolute removes an absolute amount of terms that are most frequent and least frequent, Percent the amount of words indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix</p></dd>
+<dd><p>(string) the mode of removal -&gt; "none", "frequency", "term" or "percentage", frequency removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, term removes an absolute amount of terms that are most frequent and least frequent, percentage the amount of terms indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix</p></dd>
 
 
 <dt>removal_rate_most</dt>
@@ -119,6 +115,30 @@
 <p>the document term matrix</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.</span></span></span>
+<span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">text</span>,</span></span>
+<span class="r-in"><span>                 removal_mode <span class="op">=</span> <span class="st">"frequency"</span>,</span></span>
+<span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">4</span>,</span></span>
+<span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The data provided is empty. Please provide a list of text data."</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Create Dtm and remove the 5 least and 5 most frequent terms.</span></span></span>
+<span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">text</span>,</span></span>
+<span class="r-in"><span>                 removal_mode <span class="op">=</span> <span class="st">"term"</span>,</span></span>
+<span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The data provided is empty. Please provide a list of text data."</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Create Dtm and remove the 5% least frequent and 1% most frequent terms.</span></span></span>
+<span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">text</span>,</span></span>
+<span class="r-in"><span>                 removal_mode <span class="op">=</span> <span class="st">"percentage"</span>,</span></span>
+<span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The data provided is empty. Please provide a list of text data."</span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

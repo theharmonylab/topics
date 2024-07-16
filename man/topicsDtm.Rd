@@ -28,9 +28,7 @@ topicsDtm(
 
 \item{removalword}{(string) the word to remove}
 
-\item{occ_rate}{(integer) the rate of occurence of a word to be removed}
-
-\item{removal_mode}{(string) the mode of removal -> "none", "threshold", "absolute" or "percent", Threshold removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, Absolute removes an absolute amount of terms that are most frequent and least frequent, Percent the amount of words indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix}
+\item{removal_mode}{(string) the mode of removal -> "none", "frequency", "term" or "percentage", frequency removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, term removes an absolute amount of terms that are most frequent and least frequent, percentage the amount of terms indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix}
 
 \item{removal_rate_most}{(integer) the rate of most frequent words to be removed, functionality depends on removal_mode}
 
@@ -47,4 +45,23 @@ the document term matrix
 }
 \description{
 the function for creating a document term matrix
+}
+\examples{
+# Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
+dtm <- topicsDtm(data = data$text,
+                 removal_mode = "frequency",
+                 removal_rate_least = 4,
+                 removal_rate_most = 500)
+
+# Create Dtm and remove the 5 least and 5 most frequent terms.
+dtm <- topicsDtm(data = data$text,
+                 removal_mode = "term",
+                 removal_rate_least = 5,
+                 removal_rate_most = 5)
+
+# Create Dtm and remove the 5\% least frequent and 1\% most frequent terms.
+dtm <- topicsDtm(data = data$text,
+                 removal_mode = "percentage",
+                 removal_rate_least = 5,
+                 removal_rate_most = 1)
 }
