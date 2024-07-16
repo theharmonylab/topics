@@ -2,8 +2,11 @@
 library(testthat)
 library(topics)  # Replace with your package name
 library(text)
+
+
+
 test_that("topicsModel creates an LDA model correctly with default parameters", {
-  dtm <- topicsDtm(list("This is a test document.", "This is another test."))$train_dtm
+  dtm <- topicsDtm(c("This is a test document.", "This is another test."))
   result <- topicsModel(dtm)
   
   testthat::expect_true(is.list(result))
