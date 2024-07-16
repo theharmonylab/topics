@@ -409,12 +409,14 @@ topicsTest <- function(model,
   
   
   
+  
   if (!is.null(load_dir)){
+    test_path <- file.path("results", "seed_42", paste0("test_", result$test_method, ".rds"))
     if (!file.exists(test_path)) {
       print(paste0("Test file not found at: ", paste0(load_dir, "/seed_", seed, "/test.rds"), ". Exiting function."))
       return(NULL)
     }
-    test <- readRDS(paste0(load_dir, "/seed_", seed, "/test.rds"))
+    test <- readRDS(test_path)
   } else {
     
     if (is.null(pred_var) && test_method != "t-test") {

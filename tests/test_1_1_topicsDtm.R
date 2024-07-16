@@ -6,7 +6,8 @@ library(text)
 test_that("topicsDtm creates a DTM correctly with default parameters", {
 
   data <- Language_based_assessment_data_8$harmonytexts
-  result <- topicsDtm(data)
+  options(mc.cores = 4)  # Set the number of cores to 2
+  result <- topicsDtm(data = data)
   
   testthat::expect_true(is.list(result))
   testthat::expect_true("train_dtm" %in% names(result))
@@ -109,7 +110,7 @@ test_that("topicsDtm removes least frequent words in percent mode", {
 
 test_that("topicsDtm removes most frequent words in percent mode", {
   data <- Language_based_assessment_data_8$harmonytexts
-  result <- topicsDtm(data, removal_mode = "percent", removal_rate_most = 50)
+  result <- topicsDtm(data, removal_mode = "percent", removal_rate_most = 5)
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")

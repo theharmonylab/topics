@@ -48,3 +48,12 @@ A list of the test results, test method, and prediction variable
 \description{
 The function to test the lda model
 }
+\examples{
+# Test the topic document distribution in respect to a variable
+test <- topicsTest(model = model, # output of topicsModel()
+                   data=data,
+                   preds = preds, # output of topicsPreds()
+                   test_method = "linear_regression"
+                   pred_var = "age")
+                   
+}

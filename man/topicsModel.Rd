@@ -35,3 +35,16 @@ A list of the model, the top terms, the labels, the coherence, and the prevalenc
 \description{
 The function to create and train and lda Model
 }
+\examples{
+# Create LDA Topic Model 
+model <- topicsModel(dtm = dtm, # output of topicsDtm()
+                     num_topics = 20,
+                     num_top_words = 10,
+                     num_iterations = 1000,
+                     seed = 42,
+                     save_dir = "./results")
+                   
+# Load precomputed LDA Topic Model
+model <- topicsModel(load_dir = "./results",
+                     seed = 42)
+}
