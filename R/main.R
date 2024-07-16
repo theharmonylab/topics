@@ -343,7 +343,7 @@ topicsPreds <- function(model, # only needed if load_dir==NULL
 #' @importFrom dplyr bind_cols
 #' @importFrom readr write_csv
 #' @export
-topicsTest <- function(model,
+topicsTest1 <- function(model,
                     preds, 
                     data,
                     pred_var=NULL, # for all test types except t-test
@@ -444,8 +444,8 @@ topicsTest <- function(model,
                  p_value = test$p.value)
       readr::write_csv(data.frame(df), paste0(save_dir, "/seed_", seed, "/textTrain_regression.csv"))
     }
-    saveRDS(test, paste0(save_dir, "/seed_", seed, "/test_",test_method, ".rds"))
-    print(paste0("The test was saved in: ", save_dir,"/seed_", seed, "/test_",test_method, ".rds"))
+    saveRDS(test, paste0(save_dir, "/seed_", seed, "/test_",test_method, "_", pred_var,".rds"))
+    print(paste0("The test object of ", pred_var, " was saved in: ", save_dir,"/seed_", seed, "/test_",test_method, "_", pred_var,".rds"))
   }
   
   return(list(test = test, 
@@ -453,11 +453,371 @@ topicsTest <- function(model,
               pred_var = pred_var))
 }
 
+#' Assgning numeric categories for further topic visualization colors.
+#' @param topic_loadings_all (tibble) The tibble from topicsTest1
+#' @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
+#' @param dimNo (numeric) 1 dimension or 2 dimensions
+#' @return A new tibble with the assigned numbers
+#' importFrom dplyr mutate
+#' @noRd
+topicsNumAssign_dim2 <- function(topic_loadings_all,
+                                 p_alpha = 0.05, dimNo = 2){
+  
+  if (dimNo == 1){
+    num1 <- 1:3
+    topic_loadings_all <- topic_loadings_all %>%
+      dplyr::mutate(color_categories = dplyr::case_when(
+        x_plotted < 0 & adjusted_p_values.x < p_alpha ~ num1[1],
+        adjusted_p_values.x > p_alpha ~ num1[2],
+        x_plotted > 0 & adjusted_p_values.x < p_alpha ~ num1[3]
+      ))
+  }else{
+    num1 <- 1:9
+    topic_loadings_all <- topic_loadings_all %>%
+      dplyr::mutate(color_categories = dplyr::case_when(
+        x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[1],
+        adjusted_p_values.x > p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[2],
+        x_plotted > 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[3],
+        x_plotted < 0 & adjusted_p_values.x < p_alpha & adjusted_p_values.y > p_alpha ~ num1[4],
+        adjusted_p_values.x > p_alpha & adjusted_p_values.y > p_alpha ~ num1[5],
+        x_plotted > 0 & adjusted_p_values.x < p_alpha & adjusted_p_values.y > p_alpha ~ num1[6],
+        x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[7],
+        adjusted_p_values.x > p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[8],
+        x_plotted > 0 & adjusted_p_values.x < p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[9]
+      ))
+  }
+  
+  return (topic_loadings_all)
+}
+
+# model = model
+# preds = preds
+# data = cbind(text::Language_based_assessment_data_3_100)
+# data = tibble::as_tibble(data,.name_repair='minimal')
+# pred_var_x = 'hilstotal'
+# pred_var_y = 'swlstotal'
+# group_var=NULL
+# control_vars=c()#c('age','gender')
+# test_method="linear_regression"
+# p_alpha = 0.5
+# p_adjust_method = "fdr"
+# seed=42
+# load_dir=NULL
+# save_dir="./results"
+
+
+#' The function to test the lda model for multiple dimensions, e.g., 2.
+#' @param model (list) The trained model
+#' @param data (tibble) The data to test on
+#' @param preds (tibble) The predictions
+#' @param pred_var_x (string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)
+#' @param pred_var_y (string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)
+#' @param group_var (string) The variable to group by (only needed for t-test)
+#' @param control_vars (vector) The control variables (not supported yet)
+#' @param test_method (string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"
+#' @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
+#' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
+#' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
+#' @param seed (integer) The seed to set for reproducibility
+#' @param load_dir (string) The directory to load the test from, if NULL, the test will not be loaded
+#' @param save_dir (string) The directory to save the test, if NULL, the test will not be saved
+#' @return A list of the test results, test method, and prediction variable
+#' @importFrom dplyr bind_cols
+#' @importFrom readr write_csv
+#' @export
+topicsTest <- function(model,
+                       preds, 
+                       data,
+                       pred_var_x=NULL, # for all test types except t-test
+                       pred_var_y=NULL,
+                       group_var=NULL, # only one in the case of t-test
+                       control_vars=c(),
+                       test_method="linear_regression",
+                       p_alpha = 0.05,
+                       p_adjust_method = "fdr",
+                       seed=42,
+                       load_dir=NULL,
+                       save_dir="./results"){
+  
+  if (!is.null(pred_var_y)){
+    control_vars <- c() # not supported yet
+  }
+  if (is.null(pred_var_x)){
+    print('Please input the pred_var_x!')
+    return (NULL)
+  }
+  pred_vars_all <- c(pred_var_x, pred_var_y)
+  
+  # TBD: Change the column of pred_var into the numeric variable.
+  # for (pred_var in pred_vars_all){
+  #   if (any(grepl(pred_var, colnames(preds)))){
+  #     if (!is.numeric(preds[[pred_var]])){
+  #       print(paste0("Change the variable ", pred_var, ' into a numeric variable in the `pred` object.'))
+  #       return (NULL)
+  #     }}
+  #   if (any(grepl(pred_var, colnames(data)))){
+  #     if (!is.numeric(data[[pred_var]])){
+  #       print(paste0("Change the variable ", pred_var, ' into a numeric variable in the `data` object.'))
+  #       return (NULL)
+  #     }}
+  # }
+  topic_loadings_all <- list()
+  pre <- c('x','y')
+  for (i in 1:length(pred_vars_all)){
+    
+    topic_loading <- topicsTest1(
+      model = model,
+      preds = preds, 
+      data = data,
+      pred_var = pred_vars_all[i], # for all test types except t-test
+      group_var= group_var, # only one in the case of t-test
+      control_vars= control_vars,
+      test_method= test_method,
+      p_adjust_method = p_adjust_method,
+      seed=seed,
+      load_dir = load_dir,
+      save_dir = save_dir
+    )
+    colnames(topic_loading$test) <- c("topic", "top_terms", 
+                                      paste(pre[i], 
+                                            colnames(topic_loading$test)[3:6], 
+                                            sep = "."))
+    
+    topic_loadings_all[[i]] <- topic_loading
+  }
+  
+  if (!is.null(pred_var_y)){
+    # create the x.y.word.category
+    topic_loadings_all[[3]] <- list()
+    topic_loadings_all[[3]]$test <- dplyr::left_join(topic_loadings_all[[1]][[1]][,1:6], 
+                                                     topic_loadings_all[[2]][[1]][,1:6],
+                                                     by = c("topic", "top_terms"))
+    topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
+    topic_loadings_all[[3]]$pred_var <- paste0(topic_loadings_all[[1]]$pred_var, '_',
+                                               topic_loadings_all[[2]]$pred_var) 
+    
+    bak1 <- colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)]
+    colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)] <- c('x_plotted', 'adjusted_p_values.x',
+                                                             'y_plotted', 'adjusted_p_values.y')
+    topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 2)
+    colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)] <- bak1
+  }else{
+    print('The parameter pred_var_y is not set! Output 1 dimensional results.')
+    topic_loadings_all[[2]] <- list()
+    topic_loadings_all[[3]] <- list()
+    topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]][,1:6]
+    topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
+    topic_loadings_all[[3]]$pred_var <- topic_loadings_all[[1]]$pred_var
+    
+    bak1 <- colnames(topic_loadings_all[[3]]$test)[c(3,6)]
+    colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- c('x_plotted', 'adjusted_p_values.x')
+    topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 1)
+    colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- bak1
+  }
+  
+  return(topic_loadings_all)
+}
+
+
+# bivariate_color_codes = bivariate_color_codes
+# cor_var = tests[[3]]$pred_var
+# save_dir = "./results"
+# figure_format = 'svg'
+# seed = 42
+# y_axes_1 = ""#"only_x_dimension"
+# grid = TRUE
+# legend_title = "legend_title"
+# legend_title_size = 20
+# titles_color <- 'black'
+# legend_x_axes_label = "legend_x_axes_label"
+# legend_y_axes_label = "legend_y_axes_label"
+# topic_data_all = tests[[3]][["test"]]
+# legend_number_size = 20
+# legend_number_color = 'black'
+# titles_color = "black"
+# figure_format = 'svg'
+# y_axes_1 = 1
+
+
+
+#' Creates the legend for the plot.
+#' @return A legend plot saved that can be combined with the plot object.
+#' @noRd
+topicLegend <- function(bivariate_color_codes = bivariate_color_codes,
+                        cor_var = "",
+                        save_dir = "./results",
+                        figure_format = 'svg',
+                        seed = 42,
+                        y_axes_1 = 2,
+                        legend_title,
+                        legend_title_size,
+                        titles_color,
+                        legend_x_axes_label,
+                        legend_y_axes_label,
+                        topic_data_all,
+                        legend_number_color,
+                        legend_number_size
+) {
+  if (y_axes_1 == 2){y_axes_1 <- ""}else{y_axes_1 <- "only_x_dimension"}
+  legCor <- bivariate_color_codes
+  if(y_axes_1 == "only_x_dimension"){
+    bivariate_color_data <- tibble::tibble(
+      "1 - 3" = '', "2 - 3" = '', "3 - 3" = '',
+      "1 - 2" = legCor[1], "2 - 2" = legCor[2], "3 - 2" = legCor[3],
+      "1 - 1" = '', "2 - 1" = '', "3 - 1" = '')
+  }else{bivariate_color_data <- tibble::tibble(
+    "1 - 3" = legCor[1], "2 - 3" = legCor[2], "3 - 3" = legCor[3],
+    "1 - 2" = legCor[4], "2 - 2" = legCor[5], "3 - 2" = legCor[6],
+    "1 - 1" = legCor[7], "2 - 1" = legCor[8], "3 - 1" = legCor[9]
+  )}
+  bivariate_color_data <- rbind(bivariate_color_data, bivariate_color_codes)
+  bivariate_color_data <- bivariate_color_data[-1, ]
+  
+  if (y_axes_1 == "only_x_dimension") {
+    # Only select 3 colors
+    bivariate_color_data <- bivariate_color_data[, c(4, 5, 6)]
+    colnames(bivariate_color_data) <- c("1 - 2", "2 - 2", "3 - 2")
+    #bivariate_color_data
+    # Remove the y axes title on the legend
+    legend_y_axes_label <- " "}
+  # To output the number of categories for dim 1 and dim 2 (plot 1dim or 2dim)
+  if (y_axes_1 == "only_x_dimension") {
+    # for future only x dim grid in topicsTest
+    categoryTotal_x_axes = c(
+      sum(topic_data_all$color_categories == 4,
+          na.rm = TRUE),
+      sum(topic_data_all$color_categories == 5,
+          na.rm = TRUE),
+      sum(topic_data_all$color_categories == 6,
+          na.rm = TRUE))
+  }else{ categoryTotal_x_axes = c(
+    sum(topic_data_all$color_categories == 4,
+        na.rm = TRUE),
+    sum(topic_data_all$color_categories == 5,
+        na.rm = TRUE),
+    sum(topic_data_all$color_categories == 6,
+        na.rm = TRUE))}
+  
+  legend <- bivariate_color_data %>%
+    tidyr::gather("group", "fill") %>%
+    tidyr::separate(group, into = c("x", "y"), sep = " - ") %>%
+    dplyr::mutate(
+      x = as.integer(x),
+      y = as.integer(y)
+    ) %>%
+    ggplot2::ggplot(ggplot2::aes(x, y)) +
+    ggplot2::geom_tile(ggplot2::aes(fill = fill)) +
+    ggplot2::ggtitle(paste0(legend_title)) +
+    ggplot2::scale_fill_identity() +
+    ggplot2::labs(
+      x = legend_x_axes_label,
+      y = legend_y_axes_label
+    ) +
+    ggplot2::theme_void() +
+    #    ggplot2::annotate(geom="text", x=2, y=2, label="ns",
+    #               color = titles_color, size=legend_number_size)+
+    {
+      if (y_axes_1 != "only_x_dimension") {
+        ggplot2::annotate(
+          geom = "text", x = 1, y = 3, label = sum(topic_data_all$color_categories == 1,
+                                                   na.rm = TRUE
+          ),
+          color = legend_number_color, size = legend_number_size#bivariate_color_codes[1]
+        )
+      }
+    } +
+    {
+      if (y_axes_1 != "only_x_dimension") {
+        ggplot2::annotate(
+          geom = "text", x = 2, y = 3, label = sum(topic_data_all$color_categories == 2,
+                                                   na.rm = TRUE
+          ),
+          color = legend_number_color, size = legend_number_size
+        )
+      }
+    } +
+    {
+      if (y_axes_1 != "only_x_dimension") {
+        ggplot2::annotate(
+          geom = "text", x = 3, y = 3, label = sum(topic_data_all$color_categories == 3,
+                                                   na.rm = TRUE
+          ),
+          color = legend_number_color, size = legend_number_size
+        )
+      }
+    } +
+    ggplot2::annotate(
+      geom = "text", x = 1, y = 2, label = categoryTotal_x_axes[1],
+      color = legend_number_color, size = legend_number_size
+    ) +
+    ggplot2::annotate(
+      geom = "text", x = 2, y = 2, label = categoryTotal_x_axes[2],
+      color = legend_number_color, size = legend_number_size
+    ) +
+    ggplot2::annotate(
+      geom = "text", x = 3, y = 2, label = categoryTotal_x_axes[3],
+      color = legend_number_color, size = legend_number_size
+    ) +
+    {
+      if (y_axes_1 != "only_x_dimension") {
+        ggplot2::annotate(
+          geom = "text", x = 1, y = 1, label = sum(topic_data_all$color_categories == 7,
+                                                   na.rm = TRUE
+          ),
+          color = legend_number_color, size = legend_number_size
+        )
+      }
+    } +
+    {
+      if (y_axes_1 != "only_x_dimension") {
+        ggplot2::annotate(
+          geom = "text", x = 2, y = 1, label = sum(topic_data_all$color_categories == 8,
+                                                   na.rm = TRUE
+          ),
+          color = legend_number_color, size = legend_number_size
+        )
+      }
+    } +
+    {
+      if (y_axes_1 != "only_x_dimension") {
+        ggplot2::annotate(
+          geom = "text", x = 3, y = 1, label = sum(topic_data_all$color_categories == 9,
+                                                   na.rm = TRUE
+          ),
+          color = legend_number_color, size = legend_number_size
+        )
+      }
+    } +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust = 0.5, size = legend_title_size + 1),
+      title = ggplot2::element_text(color = titles_color),
+      axis.title.x = ggplot2::element_text(color = titles_color),
+      axis.title = ggplot2::element_text(size = legend_title_size),
+      axis.title.y = ggplot2::element_text(angle = 90, color = titles_color)
+    ) +
+    ggplot2::coord_fixed()
+    ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                           "/wordclouds/",
+                           "grid_legend_",
+                           "corvar_", cor_var,
+                           ".",
+                           figure_format),
+                    plot = legend, 
+                    width = 10, 
+                    height = 8, 
+                    units = "in")
+}
+
+
+
+#test = filtered_test
+
 #' The function to create lda wordclouds
 #' @param model (list) The trained model
 #' @param test (list) The test results
 #' @param color_negative_cor (R_obj) The color gradient for negative correlations
 #' @param color_positive_cor (R_obj) The color gradient for positive correlations
+#' @param grid_pos (numeric) The position for grid topics
 #' @param scale_size (logical) Whether to scale the size of the words
 #' @param plot_topics_idx (vector) The topics to plot determined by index
 #' @param p_threshold (integer) The p-value threshold to use for significance
@@ -466,10 +826,11 @@ topicsTest <- function(model,
 #' @param seed (integer) The seed to set for reproducibility
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @export
-topicsPlot <- function(model,
+topicsPlot1 <- function(model,
                        test,
-                       color_negative_cor = scale_color_gradient(low = "darkgreen", high = "green"),
-                       color_positive_cor = scale_color_gradient(low = "darkred", high = "red"),
+                       color_negative_cor = ggplot2::scale_color_gradient(low = "darkgreen", high = "green"),
+                       color_positive_cor = ggplot2::scale_color_gradient(low = "darkred", high = "red"),
+                       grid_pos = "",
                        scale_size = FALSE,
                        plot_topics_idx = NULL,
                        p_threshold = 0.05,
@@ -491,11 +852,204 @@ topicsPlot <- function(model,
                cor_var = pred_var,
                color_negative_cor = color_negative_cor,
                color_positive_cor = color_positive_cor,
+               grid_pos = grid_pos,
                scale_size = scale_size,
                plot_topics_idx = plot_topics_idx,
                p_threshold = p_threshold,
                figure_format = figure_format,
                save_dir = save_dir,
                seed = seed)
-  print(paste0("The plots are saved in ", save_dir, "/seed", seed, "/wordclouds"))
+  if (grid_pos == ""){
+    print(paste0("The plots of ",
+                 pred_var,
+                 " are saved in ", 
+                 save_dir, "/seed", seed, "/wordclouds"))
+  }else{
+    print(paste0("The plots of ",
+                 pred_var, " of grid position ", grid_pos,
+                 " are saved in ", 
+                 save_dir, "/seed", seed, "/wordclouds"))
+  }
+  
+}
+
+
+
+# source('./R/wordclouds.R')
+# grid_pos = 5
+# model = model
+# test = topic_loadings_all
+# grid_plot = TRUE
+# dim = 2
+# color_scheme = 'default'
+# scale_size = FALSE
+# plot_topics_idx = NULL
+# p_threshold = 0.5
+# save_dir = "./results"
+# figure_format = "png"
+# seed = 42
+
+
+#' The function to create lda wordclouds
+#' @param model (list) The trained model
+#' @param test (list) The test results
+#' @param p_threshold (integer) The p-value threshold to use for significance
+#' @param grid_plot (boolean) Set TRUE if plotting the topics grid
+#' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensioal color plots if grid = TRUE. 
+#' @param color_scheme (string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE. The vector should contain 9 color codes.
+#' @param scale_size (logical) Whether to scale the size of the words
+#' @param save_dir (string) The directory to save the wordclouds
+#' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
+#' @param seed (integer) The seed to set for reproducibility
+#' @param grid_legend_title The title of grid topic plot if grid_plot = TRUE
+#' @param grid_legend_title_size The size of the title of the plot if grid_plot = TRUE
+#' @param grid_titles_color The color of the legend title if grid_plot = TRUE
+#' @param grid_legend_x_axes_label The label of the x axes if grid_plot = TRUE
+#' @param grid_legend_y_axes_label The label of the y axes if grid_plot = TRUE
+#' @param grid_legend_number_color The color in the text in the legend if grid_plot = TRUE
+#' @param grid_legend_number_size The color in the text in the legend if grid_plot = TRUE
+#' @return nothing is returned, the wordclouds are saved in the save_dir
+#' @importFrom dplyr filter
+#' @export
+topicsPlot <- function(model,
+                             test,
+                             p_threshold = 0.05,
+                             grid_plot = TRUE,
+                             dim = 2,
+                             color_scheme = 'default',
+                             scale_size = FALSE,
+                             save_dir = "./results",
+                             figure_format = "svg",
+                             seed = 42,
+                             grid_legend_title = "legend_title",
+                             grid_legend_title_size = 5,
+                             grid_titles_color = 'black',
+                             grid_legend_x_axes_label = "legend_x_axes_label",
+                             grid_legend_y_axes_label = "legend_y_axes_label",
+                             grid_legend_number_color = 'black',
+                             grid_legend_number_size = 5
+                             ){
+  
+  if (is.character(color_scheme) && length(color_scheme) == 1 && color_scheme == "default"){
+    if (color_scheme == 'default'){
+      if (dim == 2){
+        bivariate_color_codes <- c(
+          "#398CF9", "#60A1F7", "#5dc688",
+          "#e07f6a", "#EAEAEA", "#40DD52",
+          "#FF0000", "#EA7467", "#85DB8E")
+      }else if (dim == 1){
+        bivariate_color_codes <- c(
+          "#e07f6a", "#EAEAEA", "#40DD52")
+      }else{print('Dim parameter should be either 1 or 2.')}
+    }else{print("Error in color_scheme. Consider using 'default'.")}
+  }else if (is.character(color_scheme) && length(color_scheme) > 1){
+    if (dim == 2){
+      bivariate_color_codes <- color_scheme
+    }else if (dim == 1){
+      bivariate_color_codes <- color_scheme[4:6]
+    }else{print('Dim parameter should be either 1 or 2.')}
+  }else{
+    print('The parameter color_scheme should be a vector and should contain 9 colors! Or try with the default color scheme.')
+    return (NULL)
+  }
+  
+  if (dim == 1 && grid_plot){
+    print('Dim is set to 1 to plot pred_var_x. This needs pred_var_x in topicsTest.')
+    if (color_scheme == 'default'){bivariate_color_codes <-  bivariate_color_codes[4:6]}else{
+      if (length(bivariate_color_codes) != 3){
+        print('Please input 3 color codes for the paramter color_scheme!')
+        return (NULL)
+      }
+    }
+  }else if(dim == 2 && grid_plot){
+    if (length(bivariate_color_codes) != 9){
+      print('Please input 9 color codes for the paramter color_scheme!')
+      return (NULL)
+    }
+  }
+  
+  if (!grid_plot){
+    print('The parameter grid_plot = FALSE will output all the topic plots for the pred_var_x in topicsTest.')
+    topicsPlot1(
+      model = model,
+      test = test[[1]],
+      grid_pos = "",
+      scale_size = scale_size,
+      plot_topics_idx = NULL,
+      p_threshold = p_threshold,
+      save_dir = save_dir,
+      figure_format = figure_format,
+      seed = seed)
+  }else{
+    if (dim == 1){
+        for (i in 1:3){
+          if (! (i %in% test[[3]]$test$color_categories)){next}
+          filtered_test <- test[[3]]
+          filtered_test$test <- dplyr::filter(tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
+                                              color_categories == i)
+          color1 <- bivariate_color_codes[i]
+          plot_topics_idx <- as.numeric(sub(".*_", "", filtered_test[["test"]]$topic))
+          
+          topicsPlot1(
+            model = model,
+            test = filtered_test,
+            color_negative_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
+            color_positive_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
+            grid_pos = i,
+            scale_size = scale_size,
+            plot_topics_idx = plot_topics_idx,
+            p_threshold = p_threshold,
+            save_dir = save_dir,
+            figure_format = figure_format,
+            seed = seed
+          )
+        }
+    }else if (dim == 2){
+        for (k in 1:9){
+          if (! (k %in% test[[3]]$test$color_categories)){next}
+          filtered_test <- test[[3]]
+          filtered_test$test <- dplyr::filter(tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
+                                              color_categories == k)
+          color1 <- bivariate_color_codes[k]
+          plot_topics_idx <- as.numeric(sub(".*_", "", filtered_test[["test"]]$topic))
+          
+          topicsPlot1(
+            model = model,
+            test = filtered_test,
+            color_negative_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
+            color_positive_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
+            grid_pos = k,
+            scale_size = scale_size,
+            plot_topics_idx = plot_topics_idx,
+            p_threshold = p_threshold,
+            save_dir = save_dir,
+            figure_format = figure_format,
+            seed = seed
+          )
+        }
+    }else{
+      print('Dim should be either 1 or 2 if grid_plot = TRUE.')
+      return (NULL)
+    }
+    
+    if (grid_plot){
+      topicLegend(
+        bivariate_color_codes = bivariate_color_codes,
+        cor_var = test[[3]]$pred_var,
+        save_dir = save_dir,
+        figure_format = figure_format,
+        seed = seed,
+        y_axes_1 = dim,
+        legend_title = grid_legend_title,
+        legend_title_size = grid_legend_title_size,
+        titles_color = grid_titles_color,
+        legend_x_axes_label = grid_legend_x_axes_label,
+        legend_y_axes_label = grid_legend_y_axes_label,
+        topic_data_all = test[[3]][["test"]],
+        legend_number_color = grid_legend_number_color,
+        legend_number_size = grid_legend_number_size
+      )
+      print('The grid plot legend is saved under the same folder.')
+    }
+  }
 }
