@@ -5,7 +5,7 @@ gc()
 
 library(topics)
 dtmtest <- topicsDtm(
-  data = topics::data$harmonywords
+  data = topics::data$harmonytexts
 )
 
 model = topicsModel(dtmtest,num_topics = 50)
