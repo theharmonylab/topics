@@ -568,6 +568,15 @@ topicsTest1 <- function(model,
 #' @importFrom dplyr bind_cols
 #' @importFrom readr write_csv
 #' @export
+#' 
+#' @examples
+#' # Test the topic document distribution in respect to a variable
+#' test <- topicsTest(model = model, # output of topicsModel()
+#'                    data=data,
+#'                    preds = preds, # output of topicsPreds()
+#'                    test_method = "linear_regression"
+#'                    pred_var = "age")
+#'                   
 topicsTest <- function(model,
                        preds, 
                        data,
@@ -692,6 +701,8 @@ topicsScatterLegend <- function(
     label_y_name = "y",
     save_dir = "./results",
     figure_format = "svg",
+    width = 10, 
+    height = 8,
     seed = 42
 ){
   if (y_axes_1 == 2){
@@ -785,8 +796,8 @@ topicsScatterLegend <- function(
                          ".",
                          figure_format),
                   plot = plot, 
-                  width = 10, 
-                  height = 8, 
+                  width = width, 
+                  height = height, 
                   units = "in")   
 }
 
@@ -825,6 +836,8 @@ topicsGridLegend <- function(
     save_dir = "./results",
     figure_format = 'svg',
     seed = 42,
+    width = 10, 
+    height = 8, 
     y_axes_1 = 2,
     legend_title,
     legend_title_size,
@@ -980,8 +993,8 @@ topicsGridLegend <- function(
                          ".",
                          figure_format),
                   plot = legend, 
-                  width = 10, 
-                  height = 8, 
+                  width = width, 
+                  height = height, 
                   units = "in")
 }
 
@@ -1000,6 +1013,9 @@ topicsGridLegend <- function(
 #' @param p_threshold (integer) The p-value threshold to use for significance
 #' @param save_dir (string) The directory to save the wordclouds
 #' @param figure_format (string) Set the figure format, e.g., svg, or png.
+#' @param width (integer) The width of the topic (units = "in"). 
+#' @param height (integer) The width of the topic (units = "in").
+#' @param max_size (integer) The max size of the words.
 #' @param seed (integer) The seed to set for reproducibility
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @export
@@ -1013,6 +1029,9 @@ topicsPlot1 <- function(model,
                         p_threshold = 0.05,
                         save_dir = "./results",
                         figure_format = "svg",
+                        width = 10, 
+                        height = 8,
+                        max_size = 10, 
                         seed = 42){
   
   model <- name_cols_with_vocab(model, "phi", model$vocabulary)
@@ -1034,6 +1053,9 @@ topicsPlot1 <- function(model,
                plot_topics_idx = plot_topics_idx,
                p_threshold = p_threshold,
                figure_format = figure_format,
+               width = width, 
+               height = height,
+               max_size = max_size,
                save_dir = save_dir,
                seed = seed)
   if (grid_pos == ""){
@@ -1077,6 +1099,9 @@ topicsPlot1 <- function(model,
 #' @param scale_size (logical) Whether to scale the size of the words
 #' @param save_dir (string) The directory to save the wordclouds
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
+#' @param width (integer) The width of the topic (units = "in"). 
+#' @param height (integer) The width of the topic (units = "in").
+#' @param max_size (integer) The max size of the words.
 #' @param seed (integer) The seed to set for reproducibility
 #' @param grid_legend_title The title of grid topic plot if grid_plot = TRUE
 #' @param grid_legend_title_size The size of the title of the plot if grid_plot = TRUE
@@ -1097,6 +1122,9 @@ topicsPlot <- function(model,
                        scale_size = FALSE,
                        save_dir = "./results",
                        figure_format = "svg",
+                       width = 10, 
+                       height = 8,
+                       max_size = 10, 
                        seed = 42,
                        grid_legend_title = "legend_title",
                        grid_legend_title_size = 5,
@@ -1154,6 +1182,9 @@ topicsPlot <- function(model,
       p_threshold = p_threshold,
       save_dir = save_dir,
       figure_format = figure_format,
+      width = width, 
+      height = height,
+      max_size = max_size, 
       seed = seed)
   }else{
     if (dim == 1){
@@ -1176,6 +1207,9 @@ topicsPlot <- function(model,
           p_threshold = p_threshold,
           save_dir = save_dir,
           figure_format = figure_format,
+          width = width, 
+          height = height,
+          max_size = max_size, 
           seed = seed
         )
       }
@@ -1199,6 +1233,9 @@ topicsPlot <- function(model,
           p_threshold = p_threshold,
           save_dir = save_dir,
           figure_format = figure_format,
+          width = width, 
+          height = height,
+          max_size = max_size, 
           seed = seed
         )
       }
@@ -1217,6 +1254,8 @@ topicsPlot <- function(model,
         label_y_name = grid_legend_y_axes_label,
         save_dir = save_dir,
         figure_format = figure_format,
+        # width = 10, 
+        # height = 8,
         seed = seed
       )
       topicsGridLegend(
@@ -1226,6 +1265,8 @@ topicsPlot <- function(model,
         save_dir = save_dir,
         figure_format = figure_format,
         seed = seed,
+        # width = 10, 
+        # height = 8,
         y_axes_1 = dim,
         legend_title = grid_legend_title,
         legend_title_size = grid_legend_title_size,
