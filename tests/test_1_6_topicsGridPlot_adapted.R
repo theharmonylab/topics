@@ -1,14 +1,13 @@
-# TODO: Put the dot plot function in the main to plot every category. Just some ggplot.
-
 rm(list=ls())
 gc()
 
 library(topics)
+
 dtmtest <- topicsDtm(
   data = topics::data$harmonytexts
 )
 
-model = topicsModel(dtmtest,num_topics = 50)
+model <- topicsModel(dtmtest)
 
 preds = topicsPreds(
   model = model, 
@@ -48,7 +47,7 @@ topicsPlot(model = model,
 tests <- topicsTest(
   model=model,
   preds = preds,
-  data =  Language_based_assessment_data_3_100,
+  data =  topics::data,
   pred_var_x = 'hilstotal',
   pred_var_y = NULL
 )
