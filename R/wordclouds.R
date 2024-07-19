@@ -105,7 +105,7 @@ create_plots <- function(df_list,
                          figure_format = "svg",
                          width = 10, 
                          height = 8,
-                         max_size = 10
+                         max_size = 10,
                          seed = 42){
   
   if (is.null(plot_topics_idx)){
