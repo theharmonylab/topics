@@ -1,5 +1,3 @@
-
-
 #' A private function used by ldaWordclouds to rename the columns of a model with the vocabulary
 #' @param model (list) the model to be modified
 #' @param col (string) the column to be modified
@@ -63,6 +61,17 @@ create_topic_words_dfs <- function(summary){
 }
 
 
+# df_list = df_list
+# summary = model$summary
+# test = filtered_test$test
+# test_type = 'linear_regression'
+# plot_topics_idx = NULL#c(11)
+# cor_var = pred_var
+# color_negative_cor =  ggplot2::scale_color_gradient(low = color1, high = color1)
+# color_positive_cor =  ggplot2::scale_color_gradient(low = color1, high = color1)
+# p_threshold = 0.8
+# seed = 42
+
 #' This is a private function and used internally by ldaWordclouds
 #' @param df_list (list) list of data.frames with topics most frequent words and assigned topic term scores
 #' @param test (data.frame) the test returned from textTopicTest()
@@ -94,6 +103,9 @@ create_plots <- function(df_list,
                          p_threshold = NULL,
                          save_dir = "./results",
                          figure_format = "svg",
+                         width = 10, 
+                         height = 8,
+                         max_size = 10
                          seed = 42){
   
   if (is.null(plot_topics_idx)){
@@ -179,10 +191,10 @@ create_plots <- function(df_list,
         color_scheme <- color_positive_cor # scale_color_gradient(low = "darkred", high = "red")
       }
       if (scale_size == TRUE){
-        max_size <- 10*log(prevalence)
+        max_size <- max_size*log(prevalence)
         y <- paste0("P = ", prevalence)
       } else {
-        max_size <- 10
+        max_size <- max_size
         y <- ""
       }
       #view(df_list[[i]]) help(ggplot) library(ggplot2)
@@ -240,8 +252,8 @@ create_plots <- function(df_list,
                                ".",
                                figure_format),
                         plot = plot, 
-                        width = 10, 
-                        height = 8, 
+                        width = width, 
+                        height = height, 
                         units = "in")
       }else{
         if (length(strsplit(cor_var, "_")[[1]]) > 1){
@@ -268,8 +280,8 @@ create_plots <- function(df_list,
                                "corvar_", cor_var,"_",
                                i, fileMsg),
                         plot = plot, 
-                        width = 10, 
-                        height = 8, 
+                        width = width, 
+                        height = height, 
                         units = "in")
       }
     }
