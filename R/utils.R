@@ -705,9 +705,9 @@ get_mallet_model <- function(dtm,
     token.regexp = "[\\p{L}\\p{N}_]+|[\\p{P}]+\ ")
   
   # set seed (it does not make the entire ldaModel() output 
-  # object setqual TRUE, but many more objectis within the object becomes equal)
   # https://stackoverflow.com/questions/37356001/using-a-random-seed-in-rmallet
-  #model$setRandomSeed(seed)
+  # object setqual TRUE, but many more objectis within the object becomes equal)
+  model$setRandomSeed(as.integer(seed))
   model$loadDocuments(instances)
 
   model$train(num_iterations)
