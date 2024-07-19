@@ -3,10 +3,9 @@
 rm(list=ls())
 gc()
 
-library(text)
 library(topics)
 dtmtest <- topicsDtm(
-  data = Language_based_assessment_data_3_100$harmonywords
+  data = topics::data$harmonywords
 )
 
 model = topicsModel(dtmtest,num_topics = 50)
