@@ -12,16 +12,17 @@ model = topicsModel(dtmtest,num_topics = 50)
 
 preds = topicsPreds(
   model = model, 
-  data = Language_based_assessment_data_3_100$harmonywords
+  data = topics::data$harmonywords
 )
 
 
 tests <- topicsTest(
   model = model,
   preds = preds,
-  data =  Language_based_assessment_data_3_100,
+  data =  topics::data,
   pred_var_x = 'hilstotal',
-  pred_var_y = 'swlstotal'
+  pred_var_y = 'swlstotal',
+  control_vars = c('age','gender')
 )
 
 topicsPlot(model = model,
