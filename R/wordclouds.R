@@ -70,15 +70,13 @@ create_topic_words_dfs <- function(summary){
 #' @param cor_var (string) Variable for t-test, linear, binary or ridge regression
 #' @param color_negative_cor (function) color of topic cloud with negative correlation
 #' @param color_positive_cor (function) color of topic cloud with positive correlation
+#' @param grid_pos (numeric) position of grid plots
 #' @param scale_size (bool) if True, then the size of the topic cloud is scaled by the prevalence of the topic
 #' @param plot_topics_idx (list) if specified, then only the specified topics are plotted
 #' @param p_threshold (float) set threshold which determines which topics are plotted
 #' @param save_dir (string) save plots in specified directory, if left blank, plots is not saved,
 #' thus save_dir is necessary
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
-#' @param width (integer) The width of the topic (units = "in"). 
-#' @param height (integer) The width of the topic (units = "in"). 
-#' @param max_size (integer) The max size of the words.
 #' @param seed (int) seed is needed for saving the plots in the correct directory
 #' @importFrom ggwordcloud geom_text_wordcloud
 #' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient
@@ -90,25 +88,46 @@ create_plots <- function(df_list,
                          cor_var,
                          color_negative_cor,
                          color_positive_cor,
+                         grid_pos = "",
                          scale_size = FALSE,
                          plot_topics_idx = NULL,
                          p_threshold = NULL,
                          save_dir = "./results",
-                         figure_format = "png",
-                         width = 10, 
-                         height = 8,
-                         max_size = 10,
+                         figure_format = "svg",
                          seed = 42){
+  
   if (is.null(plot_topics_idx)){
+    grid <- ""
     plot_topics_idx <- seq(1, length(df_list))
-  } 
-  for (i in plot_topics_idx){
+  }else{
+    grid <- paste0("grid_pos_",grid_pos, "_")
+    pred_var_x <- strsplit(cor_var, "_")[[1]][1]
+    if (length(strsplit(cor_var, "_")[[1]]) > 1){
+      pred_var_y <- strsplit(cor_var, "_")[[1]][2]
+    }
+  }
+  for (i in paste0('t_', plot_topics_idx)){ 
     #for (i in 1:length(df_list)){
     #view(df_list[[i]])
     if (test_type == "linear_regression"){
-      estimate_col <- paste0(cor_var,".estimate") # grep(partial_name, data_frame_names, value = TRUE)
-      p_adjusted_col <- paste0(cor_var,".p_adjusted")
-      
+      if (grid == ""){
+        colNo.estimate <- grep(paste0(cor_var, '.estimate'),colnames(test))
+        colNo.p_adjusted <- grep(paste0(cor_var, '.p_adjusted'),colnames(test))
+        estimate_col <- colnames(test)[colNo.estimate] 
+        p_adjusted_col <- colnames(test)[colNo.p_adjusted]
+        #estimate_col <- paste0(cor_var,".estimate") # grep(partial_name, data_frame_names, value = TRUE)
+        #p_adjusted_col <- paste0(cor_var,".p_adjusted")
+      }else{
+        colNo.estimate.x <- grep(paste0(pred_var_x, '.estimate'),colnames(test))
+        colNo.p_adjusted.x <- grep(paste0(pred_var_x, '.p_adjusted'),colnames(test))
+        estimate_col_x <- colnames(test)[colNo.estimate.x] 
+        p_adjusted_col_x <- colnames(test)[colNo.p_adjusted.x]
+        if (length(strsplit(cor_var, "_")[[1]]) > 1){
+          colNo.estimate.y <- grep(paste0(pred_var_y, '.estimate'),colnames(test))
+          colNo.p_adjusted.y <- grep(paste0(pred_var_y, '.p_adjusted'),colnames(test))
+          estimate_col_y <- colnames(test)[colNo.estimate.y] 
+          p_adjusted_col_y <- colnames(test)[colNo.p_adjusted.y]
+        }}
     } else if (test_type == "t-test"){
       estimate_col <- "cohens d" # probably doesn't work yet
       
@@ -117,8 +136,23 @@ create_plots <- function(df_list,
       p_adjusted_col <- "p_adjusted"
       
     }
-    estimate <- test[i,][[estimate_col]]# $PHQtot.estimate
-    p_adjusted <- test[i,][[p_adjusted_col]] # $PHQtot.p_adjustedfdr
+    if (grid == ""){
+      estimate <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[estimate_col]] # $PHQtot.estimate
+      p_adjusted <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[p_adjusted_col]] # $PHQtot.p_adjustedfdr
+    }else{
+      estimate_x <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[estimate_col_x]]
+      p_adjusted_x <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[p_adjusted_col_x]]
+      estimate <- estimate_x
+      if (length(strsplit(cor_var, "_")[[1]]) > 1){
+        estimate_y <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[estimate_col_y]]
+        p_adjusted_y <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[p_adjusted_col_y]]
+        p_adjusted <- min(p_adjusted_x, p_adjusted_y)
+      }else{
+        estimate <- estimate_x
+        p_adjusted <- p_adjusted_x
+      }
+    }
+    
 
     if (scale_size==TRUE){
       prevalence <- summary[paste0("t_",i),]$prevalence
@@ -128,8 +162,9 @@ create_plots <- function(df_list,
     
     # this will ensure that all topics are plotted
     if (is.null(p_threshold) ){
-      p_threshold <- p_adjusted +1 
-      
+      if (grid == ""){
+        p_threshold <- p_adjusted +1 
+      }
     }
     
     #print(is.null(p_threshold))
@@ -144,26 +179,46 @@ create_plots <- function(df_list,
         color_scheme <- color_positive_cor # scale_color_gradient(low = "darkred", high = "red")
       }
       if (scale_size == TRUE){
-        max_size <- max_size * log(prevalence)
+        max_size <- 10*log(prevalence)
         y <- paste0("P = ", prevalence)
       } else {
-        max_size <- max_size
+        max_size <- 10
         y <- ""
       }
       #view(df_list[[i]]) help(ggplot) library(ggplot2)
-      df_list[[i]]$phi_max_size <- df_list[[i]]$phi * max_size
+      #help(geom_text_wordcloud)
+      if (grid == ""){
+        plot <- ggplot2::ggplot(df_list[[as.numeric(sub(".*_", "", i))]], 
+                                ggplot2::aes(label = Word, 
+                                             size = phi, 
+                                             color = phi)) + #,x=estimate)) +
+          ggwordcloud::geom_text_wordcloud() +
+          ggplot2::scale_size_area(max_size = max_size) +
+          ggplot2::theme_minimal() +
+          #theme(plot.margin = margin(0,0,0,0, "cm")) +
+          color_scheme + 
+          ggplot2::labs(x = paste0("r = ", estimate),
+                        y= y)
+      }else{
+        if (length(strsplit(cor_var, "_")[[1]]) > 1){
+          x_message = paste0("r_x = ", round(estimate_x,4), "\n",
+                             "r_y = ", round(estimate_y,4))
+        }else{
+          x_message = paste0("r_x = ", round(estimate_x,4))                    
+        }
+        plot <- ggplot2::ggplot(df_list[[as.numeric(sub(".*_", "", i))]], 
+                                ggplot2::aes(label = Word, 
+                                             size = phi, 
+                                             color = phi)) + #,x=estimate)) +
+          ggwordcloud::geom_text_wordcloud() +
+          ggplot2::scale_size_area(max_size = max_size) +
+          ggplot2::theme_minimal() +
+          #theme(plot.margin = margin(0,0,0,0, "cm")) +
+          color_scheme + 
+          ggplot2::labs(x = x_message,
+                        y= y)
+      }
       
-      plot <- ggplot2::ggplot(df_list[[i]], 
-                              ggplot2::aes(label = Word, 
-                                           size = phi_max_size, 
-                                           color = phi_max_size)) + #,x=estimate)) +
-        ggwordcloud::geom_text_wordcloud() +
-        ggplot2::scale_size_area(max_size = max_size) +
-        ggplot2::theme_minimal() +
-        #theme(plot.margin = margin(0,0,0,0, "cm")) +
-        color_scheme + 
-        ggplot2::labs(x = paste0("r = ", estimate),
-             y= y)
       
       if (!dir.exists(save_dir)) {
         # Create the directory
@@ -174,17 +229,49 @@ create_plots <- function(df_list,
         dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
       }
       p_adjusted <- sprintf("%.2e", p_adjusted)
-      ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
-                    "/wordclouds/t_", i, "_r_", 
-                    estimate, "_p_", 
-                    p_adjusted,".", figure_format),
-                    plot = plot, 
-                    width = width, 
-                    height = height, 
-                    units = "in")
+      if (grid == ""){
+        ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                               "/wordclouds/",
+                               grid,
+                               "corvar_", cor_var,"_",
+                               i, "_r_", 
+                               estimate, "_p_", 
+                               p_adjusted,
+                               ".",
+                               figure_format),
+                        plot = plot, 
+                        width = 10, 
+                        height = 8, 
+                        units = "in")
+      }else{
+        if (length(strsplit(cor_var, "_")[[1]]) > 1){
+          p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
+          p_adjusted_y <- sprintf("%.2e", p_adjusted_y)
+          fileMsg <- paste0(
+            "_rx_", estimate_x,
+            "_ry_", estimate_y, 
+            "_px_", p_adjusted_x,
+            "_py_", p_adjusted_y, ".",
+            figure_format
+          )
+        }else{
+          p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
+          fileMsg <- paste0(
+            "_rx_", estimate_x, 
+            "_px_", p_adjusted_x, ".",
+            figure_format
+          )
+        }
+        ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                               "/wordclouds/",
+                               grid,
+                               "corvar_", cor_var,"_",
+                               i, fileMsg),
+                        plot = plot, 
+                        width = 10, 
+                        height = 8, 
+                        units = "in")
+      }
     }
   }
 }
-
-
-
