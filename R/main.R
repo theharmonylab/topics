@@ -1283,21 +1283,21 @@ topicsPlot <- function(model,
   if (is.vector(scatter_legend_way_popout_topics) && length(scatter_legend_way_popout_topics) == 3){
     scatter_legend_way_popout_topics <- "mean"
   }else if (!is.character(scatter_legend_way_popout_topics)){
-    cat('Parameter way_popout_topics is not correctly set.\nUsing "mean".')
+    cat('Parameter scatter_legend_way_popout_topics is not correctly set.\nUsing "mean".')
     scatter_legend_way_popout_topics <- "mean"
   }else{
-    cat('Parameter way_popout_topics should be either "mean", "max_x", or "max_y".\nUsing "mean".')
+    cat('Parameter scatter_legend_way_popout_topics should be either "mean", "max_x", or "max_y".\nUsing "mean".\n')
     scatter_legend_way_popout_topics <- "mean"
   }
   if (!is.null(scatter_legend_user_spec_topics)){
     if (!is.vector(scatter_legend_user_spec_topics)){
-      cat('Parameter user_spec_topics should be a vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
+      cat('Parameter scatter_legend_user_spec_topics should be a vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
       scatter_legend_user_spec_topics <- c("t_1")
     }else if (!is.character(scatter_legend_user_spec_topics)){
-      cat('Parameter user_spec_topics should be a character vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
+      cat('Parameter scatter_legend_user_spec_topics should be a character vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
       scatter_legend_user_spec_topics <- c("t_1")
     }else if (! TRUE %in% grepl("t_", scatter_legend_user_spec_topics)){
-      cat('Parameter user_spec_topics should specify topics with c("t_1", "t_12") like input.\nThe function will pop out the "t_1" topic only in the scatter legend.')
+      cat('Parameter scatter_legend_user_spec_topics should specify topics with c("t_1", "t_12") like input.\nThe function will pop out the "t_1" topic only in the scatter legend.')
       scatter_legend_user_spec_topics <- c("t_1")
     }
   } 
