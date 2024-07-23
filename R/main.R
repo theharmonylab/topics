@@ -496,20 +496,21 @@ topicsTest1 <- function(model,
               pred_var = pred_var))
 }
 
-# model = model
-# preds = preds
-# data = cbind(topics::data)
-# data = tibble::as_tibble(data,.name_repair='minimal')
-# pred_var_x = 'hilstotal'
-# pred_var_y = 'swlstotal'
-# group_var=NULL
-# control_vars=c()#c('age','gender')
-# test_method="linear_regression"
-# p_alpha = 0.5
-# p_adjust_method = "fdr"
-# seed=42
-# load_dir=NULL
-# save_dir="./results"
+source("./R/utils.R")
+model = model
+preds = preds
+data = cbind(topics::data)
+data = tibble::as_tibble(data,.name_repair='minimal')
+pred_var_x = 'hilstotal'
+pred_var_y = 'swlstotal'
+group_var=NULL
+control_vars=c()#c('age','gender')
+test_method="linear_regression"
+p_alpha = 0.5
+p_adjust_method = "fdr"
+seed=42
+load_dir=NULL
+save_dir="./results"
 
 
 #' The function to test the lda model for multiple dimensions, e.g., 2.
@@ -634,22 +635,25 @@ topicsTest <- function(model,
 }
 
 
-# bivariate_color_codes = c(
-#   "#398CF9", "#60A1F7", "#5dc688",
-#   "#e07f6a", "#EAEAEA", "#40DD52",
-#   "#FF0000", "#EA7467", "#85DB8E")
-# filtered_test = test[[3]]$test
-# cor_var = test[[3]]$pred_var
-# label_x_name = "grid_legend_x_axes_label"
-# label_y_name = "grid_legend_y_axes_label"
-# save_dir = save_dir
-# figure_format = "png"
-# seed = seed
-# y_axes_1 = 2
-# set.seed(42)
-# scatter_popout_dot_size = 15
-# scatter_bg_dot_size = 9
-# filtered_test$color_categories <- sample(1:9, nrow(filtered_test), replace = TRUE)
+bivariate_color_codes = c(
+  "#398CF9", "#60A1F7", "#5dc688",
+  "#e07f6a", "#EAEAEA", "#40DD52",
+  "#FF0000", "#EA7467", "#85DB8E")
+test = topic_loadings_all
+filtered_test = test[[3]]$test
+cor_var = test[[3]]$pred_var
+label_x_name = "grid_legend_x_axes_label"
+label_y_name = "grid_legend_y_axes_label"
+save_dir = save_dir
+figure_format = "png"
+seed = seed
+y_axes_1 = 2
+set.seed(42)
+scatter_popout_dot_size = 15
+scatter_bg_dot_size = 9
+filtered_test$color_categories <- sample(1:9, nrow(filtered_test), replace = TRUE)
+way_popout_topics = "mean"
+user_spec_topics = NULL
 
 #' The function to create lda wordclouds
 #' @return nothing is returned, the dot cloud legend is saved in the save_dir
@@ -817,11 +821,12 @@ topicsScatterLegend <- function(
                                 y = !!sym(y_column),
                                 color = as.factor(.data[[color_column]])), 
                             size = scatter_popout_dot_size, alpha = 0.8) +
-        # ggplot2::geom_text(data = popout,
-        #                    aes(x = !!sym(x_column),
-        #                        y = !!sym(y_column),
-        #                        label = topic_number),
-        #                    size = 8, hjust = 0.5,vjust = 0.5, color = "black") + 
+        # add topic number
+        ggplot2::geom_text(data = popout,
+                           aes(x = !!sym(x_column),
+                               y = !!sym(y_column),
+                               label = topic_number),
+                           size = scatter_popout_dot_size, hjust = 0.5,vjust = 0.5, color = "black") +
         ggplot2::scale_color_manual(values = bivariate_color_codes) +
         ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
         ggplot2::theme_minimal() +
@@ -850,10 +855,11 @@ topicsScatterLegend <- function(
                             aes(x = !!rlang::sym(x_column), y = 1,
                                 color = as.factor(.data[[color_column]])), 
                             size = scatter_popout_dot_size, alpha = 0.7) +
-        # ggplot2::geom_text(data = plot_only3,
-        #                    aes(x = !!sym(x_column),
-        #                        label = topic_number),
-        #                    size = 8, hjust = 0.5,vjust = 0.5, color = "black") + 
+        # add topic number
+        ggplot2::geom_text(data = plot_only3,
+                           aes(x = !!sym(x_column),
+                               label = topic_number),
+                           size = scatter_popout_dot_size, hjust = 0.5,vjust = 0.5, color = "black") +
         ggplot2::scale_color_manual(values = bivariate_color_codes[4:6]) +
         ggplot2::labs(x = label_x_name, y = "", color = '') +
         ggplot2::theme_minimal() + 
