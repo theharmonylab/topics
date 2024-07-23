@@ -849,7 +849,7 @@ topicsScatterLegend <- function(
                                   color_categories == 4 | color_categories == 5 | color_categories == 6)
       plot_only3_bg <- dplyr::filter(tibble::as_tibble(backgr_dots,.name_repair="minimal"),
                                      color_categories == 4 | color_categories == 5 | color_categories == 6)
-      popout <- popout %>%
+      plot_only3 <- plot_only3 %>%
         dplyr::mutate(topic_number = as.numeric(sub("t_", "", topic)))
       plot <- ggplot2::ggplot() +
         ggplot2::geom_point(data = plot_only3_bg, 
