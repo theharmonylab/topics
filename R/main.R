@@ -748,7 +748,7 @@ topicsScatterLegend <- function(
         popout <- filtered_test %>%
           dplyr::filter(color_categories != 5) %>%
           dplyr::group_by(color_categories) %>%
-          dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_y)), n = 1, with_ties = FALSE) %>%
+          dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_y)), n = 1, with_ties = TRUE) %>%
           dplyr::ungroup()
       }else if(way_popout_topics == "mean" && y_axes_1 == 2){
         estimate_col_y <- colnames(filtered_test)[7]
@@ -758,13 +758,13 @@ topicsScatterLegend <- function(
             abs(abs(!!rlang::sym(estimate_col_x)) + 
                   abs(!!rlang::sym(estimate_col_y))))) %>%
           dplyr::group_by(color_categories) %>%
-          dplyr::slice_max(order_by = mean_value, n = 1, with_ties = FALSE) %>%
+          dplyr::slice_max(order_by = mean_value, n = 1, with_ties = TRUE) %>%
           dplyr::ungroup()
       }else{
         popout <- filtered_test %>%
           dplyr::filter(color_categories != 5) %>%
           dplyr::group_by(color_categories) %>%
-          dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = 1, with_ties = FALSE) %>%
+          dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = 1, with_ties = TRUE) %>%
           dplyr::ungroup()
       }
     }
@@ -857,7 +857,7 @@ topicsScatterLegend <- function(
         ggplot2::geom_point(data = plot_only3, 
                             aes(x = !!rlang::sym(x_column), y = 1,
                                 color = as.factor(.data[[color_column]])), 
-                            size = scatter_popout_dot_size, alpha = 0.7) +
+                            size = scatter_popout_dot_size, alpha = 0.8) +
         ggplot2::scale_color_manual(values = bivariate_color_codes[4:6]) +
         ggplot2::labs(x = label_x_name, y = "", color = '') +
         ggplot2::theme_minimal() + 
