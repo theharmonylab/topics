@@ -1281,14 +1281,15 @@ topicsPlot <- function(model,
   
   
   if (is.vector(scatter_legend_way_popout_topics) && length(scatter_legend_way_popout_topics) == 3){
+    cat('One can use a string "mean" instead of a vector for parameter scatter_legend_way_popout_topics.\n')
     scatter_legend_way_popout_topics <- "mean"
   }else if (!is.character(scatter_legend_way_popout_topics)){
-    cat('Parameter scatter_legend_way_popout_topics is not correctly set.\nUsing "mean".')
+    cat('Parameter scatter_legend_way_popout_topics is not correctly set.\nUsing "mean".\n')
     scatter_legend_way_popout_topics <- "mean"
-  }else{
+  }else if(is.character(scatter_legend_way_popout_topics) && !scatter_legend_way_popout_topics %in% c("mean", "max_x", "max_y") ){
     cat('Parameter scatter_legend_way_popout_topics should be either "mean", "max_x", or "max_y".\nUsing "mean".\n')
     scatter_legend_way_popout_topics <- "mean"
-  }
+  }else{scatter_legend_way_popout_topics <- "mean"}
   if (!is.null(scatter_legend_user_spec_topics)){
     if (!is.vector(scatter_legend_user_spec_topics)){
       cat('Parameter scatter_legend_user_spec_topics should be a vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
