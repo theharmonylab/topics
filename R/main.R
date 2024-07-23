@@ -703,7 +703,7 @@ topicsScatterLegend <- function(
         #                    aes(x = !!sym(x_column),
         #                        label = topic_number),
         #                    size = 8, hjust = 0.5,vjust = 0.5, color = "black") + 
-        ggplot2::scale_color_manual(values = bivariate_color_codes[4:6]) +
+        ggplot2::scale_color_manual(values = bivariate_color_codes) +
         ggplot2::labs(x = label_x_name, y = "", color = '') +
         ggplot2::theme_minimal() + 
         ggplot2::theme(
@@ -762,11 +762,20 @@ topicsScatterLegend <- function(
           dplyr::slice_max(order_by = mean_value, n = 1, with_ties = FALSE) %>%
           dplyr::ungroup()
       }else{
-        popout <- filtered_test %>%
-          dplyr::filter(color_categories != 5) %>%
-          dplyr::group_by(color_categories) %>%
-          dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = 1, with_ties = FALSE) %>%
-          dplyr::ungroup()
+        if (y_axes_1 == 2){ # 2dims but plot 1 dim
+          popout <- filtered_test %>%
+            dplyr::filter(color_categories != 5) %>%
+            dplyr::group_by(color_categories) %>%
+            dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = 1, with_ties = FALSE) %>%
+            dplyr::ungroup()
+        }else{ # 1dim plot 1 dim
+          popout <- filtered_test %>%
+            dplyr::filter(color_categories != 2) %>%
+            dplyr::group_by(color_categories) %>%
+            dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = 1, with_ties = FALSE) %>%
+            dplyr::ungroup()
+        }
+      
       }
     }
     backgr_dots <- filtered_test %>%
@@ -845,10 +854,12 @@ topicsScatterLegend <- function(
       #bivariate_color_codes <- bivariate_color_codes[4:6]
       x_column <- names(filtered_test)[3]
       color_column <- names(filtered_test)[ncol(filtered_test)]
+      # 2dims but plot 1 dim & 1 dim to plot 1
       plot_only3 <- dplyr::filter(tibble::as_tibble(popout,.name_repair="minimal"),
-                                  color_categories == 4 | color_categories == 5 | color_categories == 6)
+                                  color_categories == 1 | color_categories == 2 | color_categories == 3 | color_categories == 4 | color_categories == 5 | color_categories == 6)
       plot_only3_bg <- dplyr::filter(tibble::as_tibble(backgr_dots,.name_repair="minimal"),
-                                     color_categories == 4 | color_categories == 5 | color_categories == 6)
+                                     color_categories == 1 | color_categories == 2 | color_categories == 3 | color_categories == 4 | color_categories == 5 | color_categories == 6)
+
       plot_only3 <- plot_only3 %>%
         dplyr::mutate(topic_number = as.numeric(sub("t_", "", topic)))
       plot <- ggplot2::ggplot() +
@@ -860,7 +871,7 @@ topicsScatterLegend <- function(
                    ggplot2::aes(x = !!rlang::sym(x_column), y = 1,
                                 color = as.factor(.data[[color_column]])), 
                             size = scatter_popout_dot_size, alpha = 0.8) +
-        ggplot2::scale_color_manual(values = bivariate_color_codes[4:6]) +
+        ggplot2::scale_color_manual(values = bivariate_color_codes) +
         ggplot2::labs(x = label_x_name, y = "", color = '') +
         ggplot2::theme_minimal() + 
         ggplot2::theme(
