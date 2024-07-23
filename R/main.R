@@ -682,7 +682,6 @@ topicsScatterLegend <- function(
     seed = 42
 ){
 
-  # TODO: only 5 in the color category
   only_five <- filtered_test %>%
     dplyr::summarise(contains_only_five = all(color_categories %in% 5)) %>%
     dplyr::pull(contains_only_five)
@@ -1278,7 +1277,7 @@ topicsPlot <- function(model,
   }else if (!is.character(way_popout_topics)){
     cat('Parameter way_popout_topics is not correctly set.\nUsing "mean".')
     way_popout_topics <- "mean"
-  }else if (way_popout_topics != "mean" | way_popout_topics != "max_x" | way_popout_topics != "max_y"){
+  }else{
     cat('Parameter way_popout_topics should be either "mean", "max_x", or "max_y".\nUsing "mean".')
     way_popout_topics <- "mean"
   }
