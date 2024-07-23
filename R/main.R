@@ -369,43 +369,6 @@ topicsPreds <- function(model, # only needed if load_dir==NULL
   return(preds)
 }
 
-#' Assgning numeric categories for further topic visualization colors.
-#' @param topic_loadings_all (tibble) The tibble from topicsTest1
-#' @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
-#' @param dimNo (numeric) 1 dimension or 2 dimensions
-#' @return A new tibble with the assigned numbers
-#' importFrom dplyr mutate
-#' @noRd
-topicsNumAssign_dim2 <- function(topic_loadings_all,
-                                 p_alpha = 0.05, dimNo = 2){
-  
-  if (dimNo == 1){
-    num1 <- 1:3
-    topic_loadings_all <- topic_loadings_all %>%
-      dplyr::mutate(color_categories = dplyr::case_when(
-        x_plotted < 0 & adjusted_p_values.x < p_alpha ~ num1[1],
-        adjusted_p_values.x > p_alpha ~ num1[2],
-        x_plotted > 0 & adjusted_p_values.x < p_alpha ~ num1[3]
-      ))
-  }else{
-    num1 <- 1:9
-    topic_loadings_all <- topic_loadings_all %>%
-      dplyr::mutate(color_categories = dplyr::case_when(
-        x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[1],
-        adjusted_p_values.x > p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[2],
-        x_plotted > 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[3],
-        x_plotted < 0 & adjusted_p_values.x < p_alpha & adjusted_p_values.y > p_alpha ~ num1[4],
-        adjusted_p_values.x > p_alpha & adjusted_p_values.y > p_alpha ~ num1[5],
-        x_plotted > 0 & adjusted_p_values.x < p_alpha & adjusted_p_values.y > p_alpha ~ num1[6],
-        x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[7],
-        adjusted_p_values.x > p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[8],
-        x_plotted > 0 & adjusted_p_values.x < p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[9]
-      ))
-  }
-  
-  return (topic_loadings_all)
-}
-
 #' The function to test the lda model
 #' @param model (list) The trained model
 #' @param data (tibble) The data to test on
@@ -535,7 +498,7 @@ topicsTest1 <- function(model,
 
 # model = model
 # preds = preds
-# data = cbind(text::Language_based_assessment_data_3_100)
+# data = cbind(topics::data)
 # data = tibble::as_tibble(data,.name_repair='minimal')
 # pred_var_x = 'hilstotal'
 # pred_var_y = 'swlstotal'
@@ -677,117 +640,237 @@ topicsTest <- function(model,
 #   "#FF0000", "#EA7467", "#85DB8E")
 # filtered_test = test[[3]]$test
 # cor_var = test[[3]]$pred_var
-# label_x_name = grid_legend_x_axes_label
-# label_y_name = grid_legend_y_axes_label
+# label_x_name = "grid_legend_x_axes_label"
+# label_y_name = "grid_legend_y_axes_label"
 # save_dir = save_dir
-# figure_format = figure_format
+# figure_format = "png"
 # seed = seed
-# y_axes_1 = 1
+# y_axes_1 = 2
+# set.seed(42)
+# scatter_popout_dot_size = 15
+# scatter_bg_dot_size = 9
+# filtered_test$color_categories <- sample(1:9, nrow(filtered_test), replace = TRUE)
 
 #' The function to create lda wordclouds
 #' @return nothing is returned, the dot cloud legend is saved in the save_dir
 # @importFrom ggplot2 ggplot geom_point scale_color_manual labs theme_minimal themes element_blank
 #' @importFrom rlang sym !!
+#' @importFrom dplyr anti_join summarise pull
 #' @noRd
 topicsScatterLegend <- function(
     bivariate_color_codes = c(
       "#398CF9", "#60A1F7", "#5dc688",
       "#e07f6a", "#EAEAEA", "#40DD52",
       "#FF0000", "#EA7467", "#85DB8E"),
-    filtered_test, 
+    filtered_test,
+    way_popout_topics = "mean",
+    user_spec_topics = NULL,
     y_axes_1 = 2,
     cor_var = "",
     label_x_name = "x",
     label_y_name = "y",
     save_dir = "./results",
     figure_format = "svg",
+    scatter_popout_dot_size = 15,
+    scatter_bg_dot_size = 9,
     width = 10, 
     height = 8,
     seed = 42
 ){
-  if (y_axes_1 == 2){
-    bivariate_color_codes <- bivariate_color_codes
-    x_column <- names(filtered_test)[3]
-    y_column <- names(filtered_test)[7]
-    color_column <- names(filtered_test)[11]
-    if (FALSE){
-      # Add labels
-      # filtered_test <- filtered_test %>%
-      #   dplyr::mutate(first_word = stringr::str_extract(top_terms, "^[^,]*"))
-      # plot <- ggplot(filtered_test, ggplot2::aes(x = !!rlang::sym(x_column), y = !!rlang::sym(y_column), label = first_word)) +
-      #   geom_point(ggplot2::aes(color = as.factor(.data[[color_column]]))) +
-      #   geom_text(hjust = 1.5, vjust = 1.5) + # Adjust text position as needed
-      #   scale_color_manual(values = bivariate_color_codes) +
-      #   labs(x = label_x_name, y = label_y_name, color = '') +
-      #   theme_minimal() + 
-      #   theme(
-      #     axis.text.x = element_blank(), # Remove x-axis text
-      #     axis.text.y = element_blank(), # Remove y-axis text
-      #     axis.ticks.x = element_blank(), # Remove x-axis ticks
-      #     axis.ticks.y = element_blank()  # Remove y-axis ticks
-      #   )
-      # Add no of topic
-      # filtered_test <- filtered_test %>%
-      #   dplyr::mutate(topic_number = as.numeric(sub("t_", "", topic)))
-      # plot <- ggplot(filtered_test, aes(x = !!rlang::sym(x_column), y = !!rlang::sym(y_column))) +
-      #   geom_point(aes(color = as.factor(.data[[color_column]])), size = 15, alpha = 0.3) +  # Larger points without jitter
-      #   #geom_text(aes(label = topic_number), vjust = 0.5, hjust = 0.5, color = "black", size = 15) +  # Centered text, adjust size as needed
-      #   scale_color_manual(values = bivariate_color_codes) +
-      #   labs(x = label_x_name, y = label_y_name, color = '') +
-      #   theme_minimal() +
-      #   theme(
-      #     axis.text.x = element_blank(),
-      #     axis.text.y = element_blank(),
-      #     axis.ticks.x = element_blank(),
-      #     axis.ticks.y = element_blank()
-      #   )
+
+  # TODO: only 5 in the color category
+  only_five <- filtered_test %>%
+    dplyr::summarise(contains_only_five = all(color_categories %in% 5)) %>%
+    dplyr::pull(contains_only_five)
+  if (only_five){
+    cat('There are only non-significant topics. Only generate the scatter legend of these.')
+    if (y_axes_1 == 1){
+      x_column <- names(filtered_test)[3]
+      color_column <- names(filtered_test)[ncol(filtered_test)]
+      plot_only3 <- dplyr::filter(tibble::as_tibble(filtered_test,.name_repair="minimal"),
+                                  color_categories == 4 | color_categories == 5 | color_categories == 6)
+      plot <- ggplot2::ggplot() +
+        ggplot2::geom_point(data = plot_only3, 
+                            aes(x = !!rlang::sym(x_column), y = 1,
+                                color = as.factor(.data[[color_column]])),
+                            size = scatter_popout_dot_size, alpha = 0.8) +
+        # ggplot2::geom_text(data = plot_only3,
+        #                    aes(x = !!sym(x_column),
+        #                        label = topic_number),
+        #                    size = 8, hjust = 0.5,vjust = 0.5, color = "black") + 
+        ggplot2::scale_color_manual(values = bivariate_color_codes[4:6]) +
+        ggplot2::labs(x = label_x_name, y = "", color = '') +
+        ggplot2::theme_minimal() + 
+        ggplot2::theme(
+          axis.text.x = ggplot2::element_blank(), # Remove x-axis text
+          axis.text.y = ggplot2::element_blank(), # Remove y-axis text
+          axis.ticks.x = ggplot2::element_blank(), # Remove x-axis ticks
+          axis.ticks.y = ggplot2::element_blank(),  # Remove y-axis ticks
+          legend.position = "none"
+        )
+    }else if (y_axes_1 == 2){
+      bivariate_color_codes <- bivariate_color_codes
+      x_column <- names(filtered_test)[3]
+      y_column <- names(filtered_test)[7]
+      color_column <- names(filtered_test)[ncol(filtered_test)]
+      plot <- ggplot2::ggplot() +
+        ggplot2::geom_point(data = filtered_test,
+                            aes(x = !!sym(x_column),
+                                y = !!sym(y_column),
+                                color = as.factor(.data[[color_column]])), 
+                            size = scatter_popout_dot_size, alpha = 0.8) +
+        ggplot2::scale_color_manual(values = bivariate_color_codes) +
+        ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(
+          axis.text.x = ggplot2::element_blank(), # Remove x-axis text
+          axis.text.y = ggplot2::element_blank(), # Remove y-axis text
+          axis.ticks.x = ggplot2::element_blank(), # Remove x-axis ticks
+          axis.ticks.y = ggplot2::element_blank(),  # Remove y-axis ticks
+          legend.position = "none"
+        )
+    }else{
+      cat('Error in dim param. It should be either 1 or 2.')
+      return (NULL)
     }
-    
-    # Warning message:
-    #   Use of `filtered_test[[color_column]]`
-    # is discouraged.
-    # ℹ Use `.data[[color_column]]` instead.
-    plot <- ggplot2::ggplot(filtered_test,
-                            ggplot2::aes(x = !!rlang::sym(x_column),
-                                         y = !!rlang::sym(y_column))) +
-      ggplot2::geom_point(aes(color = as.factor(.data[[color_column]])), 
-                          size = 15, alpha = 0.7) +
-      ggplot2::scale_color_manual(values = bivariate_color_codes) +
-      ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
-      ggplot2::theme_minimal() +
-      ggplot2::theme(
-        axis.text.x = ggplot2::element_blank(), # Remove x-axis text
-        axis.text.y = ggplot2::element_blank(), # Remove y-axis text
-        axis.ticks.x = ggplot2::element_blank(), # Remove x-axis ticks
-        axis.ticks.y = ggplot2::element_blank(),  # Remove y-axis ticks
-        legend.position = "none"
-      )
-  }else if (y_axes_1 == 1){
-    # TODO: Add keywords??
-    #bivariate_color_codes <- bivariate_color_codes[4:6]
-    x_column <- names(filtered_test)[3]
-    color_column <- names(filtered_test)[11]
-    plot_only3 <- dplyr::filter(tibble::as_tibble(filtered_test,.name_repair="minimal"),
-                                color_categories == 4 | color_categories == 5 | color_categories == 6)
-    
-    plot <- ggplot2::ggplot(plot_only3, 
-                            ggplot2::aes(x = !!rlang::sym(x_column), y = 1)) + 
-      ggplot2::geom_point(aes(color = as.factor(.data[[color_column]])), 
-                          size = 15, alpha = 0.7) +
-      ggplot2::scale_color_manual(values = bivariate_color_codes[4:6]) +
-      ggplot2::labs(x = label_x_name, y = "", color = '') +
-      ggplot2::theme_minimal() + 
-      ggplot2::theme(
-        axis.text.x = ggplot2::element_blank(), # Remove x-axis text
-        axis.text.y = ggplot2::element_blank(), # Remove y-axis text
-        axis.ticks.x = ggplot2::element_blank(), # Remove x-axis ticks
-        axis.ticks.y = ggplot2::element_blank(),  # Remove y-axis ticks
-        legend.position = "none"
-      )
   }else{
-    print('Error in dim param. It should be either 1 or 2.')
-    return (NULL)
+    estimate_col_x <- colnames(filtered_test)[3]
+    if (!is.null(user_spec_topics)){
+      popout <- filtered_test %>%
+        dplyr::filter(topic %in% user_spec_topics)
+    }else{
+      if(way_popout_topics == "max_y" && y_axes_1 == 2){
+        estimate_col_y <- colnames(filtered_test)[7]
+        popout <- filtered_test %>%
+          dplyr::filter(color_categories != 5) %>%
+          dplyr::group_by(color_categories) %>%
+          dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_y)), n = 1, with_ties = FALSE) %>%
+          dplyr::ungroup()
+      }else if(way_popout_topics == "mean" && y_axes_1 == 2){
+        estimate_col_y <- colnames(filtered_test)[7]
+        popout <- filtered_test %>%
+          dplyr::filter(color_categories != 5) %>%
+          dplyr::mutate(mean_value = mean(
+            abs(abs(!!rlang::sym(estimate_col_x)) - 
+                  abs(!!rlang::sym(estimate_col_y))))) %>%
+          dplyr::group_by(color_categories) %>%
+          dplyr::slice_max(order_by = mean_value, n = 1, with_ties = FALSE)
+        dplyr::ungroup()
+      }else{
+        popout <- filtered_test %>%
+          dplyr::filter(color_categories != 5) %>%
+          dplyr::group_by(color_categories) %>%
+          dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = 1, with_ties = FALSE) %>%
+          dplyr::ungroup()
+      }
+    }
+    backgr_dots <- filtered_test %>%
+      dplyr::anti_join(popout, by = colnames(filtered_test))
+    
+    if (y_axes_1 == 2){
+      bivariate_color_codes <- bivariate_color_codes
+      x_column <- names(filtered_test)[3]
+      y_column <- names(filtered_test)[7]
+      color_column <- names(filtered_test)[ncol(filtered_test)]
+      if (FALSE){
+        # Add labels
+        # filtered_test <- filtered_test %>%
+        #   dplyr::mutate(first_word = stringr::str_extract(top_terms, "^[^,]*"))
+        # plot <- ggplot(filtered_test, ggplot2::aes(x = !!rlang::sym(x_column), y = !!rlang::sym(y_column), label = first_word)) +
+        #   geom_point(ggplot2::aes(color = as.factor(.data[[color_column]]))) +
+        #   geom_text(hjust = 1.5, vjust = 1.5) + # Adjust text position as needed
+        #   scale_color_manual(values = bivariate_color_codes) +
+        #   labs(x = label_x_name, y = label_y_name, color = '') +
+        #   theme_minimal() + 
+        #   theme(
+        #     axis.text.x = element_blank(), # Remove x-axis text
+        #     axis.text.y = element_blank(), # Remove y-axis text
+        #     axis.ticks.x = element_blank(), # Remove x-axis ticks
+        #     axis.ticks.y = element_blank()  # Remove y-axis ticks
+        #   )
+        # Add no of topic
+        # filtered_test <- filtered_test %>%
+        #   dplyr::mutate(topic_number = as.numeric(sub("t_", "", topic)))
+        # plot <- ggplot(filtered_test, aes(x = !!rlang::sym(x_column), y = !!rlang::sym(y_column))) +
+        #   geom_point(aes(color = as.factor(.data[[color_column]])), size = 15, alpha = 0.3) +  # Larger points without jitter
+        #   #geom_text(aes(label = topic_number), vjust = 0.5, hjust = 0.5, color = "black", size = 15) +  # Centered text, adjust size as needed
+        #   scale_color_manual(values = bivariate_color_codes) +
+        #   labs(x = label_x_name, y = label_y_name, color = '') +
+        #   theme_minimal() +
+        #   theme(
+        #     axis.text.x = element_blank(),
+        #     axis.text.y = element_blank(),
+        #     axis.ticks.x = element_blank(),
+        #     axis.ticks.y = element_blank()
+        #   )
+      }
+      popout <- popout %>%
+        dplyr::mutate(topic_number = as.numeric(sub("t_", "", topic)))
+      plot <- ggplot2::ggplot() +
+        ggplot2::geom_point(data = backgr_dots,
+                            aes(x = !!sym(x_column),
+                                y = !!sym(y_column),
+                                color = as.factor(.data[[color_column]])), 
+                            size = scatter_bg_dot_size, alpha = 0.3) +
+        ggplot2::geom_point(data = popout,
+                            aes(x = !!sym(x_column),
+                                y = !!sym(y_column),
+                                color = as.factor(.data[[color_column]])), 
+                            size = scatter_popout_dot_size, alpha = 0.8) +
+        # ggplot2::geom_text(data = popout,
+        #                    aes(x = !!sym(x_column),
+        #                        y = !!sym(y_column),
+        #                        label = topic_number),
+        #                    size = 8, hjust = 0.5,vjust = 0.5, color = "black") + 
+        ggplot2::scale_color_manual(values = bivariate_color_codes) +
+        ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(
+          axis.text.x = ggplot2::element_blank(), # Remove x-axis text
+          axis.text.y = ggplot2::element_blank(), # Remove y-axis text
+          axis.ticks.x = ggplot2::element_blank(), # Remove x-axis ticks
+          axis.ticks.y = ggplot2::element_blank(),  # Remove y-axis ticks
+          legend.position = "none"
+        )
+    }else if (y_axes_1 == 1){
+      #bivariate_color_codes <- bivariate_color_codes[4:6]
+      x_column <- names(filtered_test)[3]
+      color_column <- names(filtered_test)[ncol(filtered_test)]
+      plot_only3 <- dplyr::filter(tibble::as_tibble(popout,.name_repair="minimal"),
+                                  color_categories == 4 | color_categories == 5 | color_categories == 6)
+      plot_only3_bg <- dplyr::filter(tibble::as_tibble(backgr_dots,.name_repair="minimal"),
+                                     color_categories == 4 | color_categories == 5 | color_categories == 6)
+      
+      plot <- ggplot2::ggplot() +
+        ggplot2::geom_point(data = plot_only3_bg, 
+                            aes(x = !!rlang::sym(x_column), y = 1,
+                                color = as.factor(.data[[color_column]])),
+                            size = scatter_bg_dot_size, alpha = 0.3) + 
+        ggplot2::geom_point(data = plot_only3, 
+                            aes(x = !!rlang::sym(x_column), y = 1,
+                                color = as.factor(.data[[color_column]])), 
+                            size = scatter_popout_dot_size, alpha = 0.7) +
+        # ggplot2::geom_text(data = plot_only3,
+        #                    aes(x = !!sym(x_column),
+        #                        label = topic_number),
+        #                    size = 8, hjust = 0.5,vjust = 0.5, color = "black") + 
+        ggplot2::scale_color_manual(values = bivariate_color_codes[4:6]) +
+        ggplot2::labs(x = label_x_name, y = "", color = '') +
+        ggplot2::theme_minimal() + 
+        ggplot2::theme(
+          axis.text.x = ggplot2::element_blank(), # Remove x-axis text
+          axis.text.y = ggplot2::element_blank(), # Remove y-axis text
+          axis.ticks.x = ggplot2::element_blank(), # Remove x-axis ticks
+          axis.ticks.y = ggplot2::element_blank(),  # Remove y-axis ticks
+          legend.position = "none"
+        )
+    }else{
+      cat('Error in dim param. It should be either 1 or 2.')
+      return (NULL)
+    }
   }
+  
+  
   
   ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
                          "/wordclouds/",
@@ -1087,6 +1170,10 @@ topicsPlot1 <- function(model,
 # seed = 42
 # grid_legend_x_axes_label = "legend_x_axes_label"
 # grid_legend_y_axes_label = "legend_y_axes_label"
+# way_popout_topics =  "max_y"
+# user_spec_topics = c("t_1", "t_2")
+# scatter_legend_popout_dot_size = 15
+# scatter_legend_bg_dot_size = 9
 
 
 #' The function to create lda wordclouds
@@ -1094,8 +1181,10 @@ topicsPlot1 <- function(model,
 #' @param test (list) The test results
 #' @param p_threshold (integer) The p-value threshold to use for significance
 #' @param grid_plot (boolean) Set TRUE if plotting the topics grid
-#' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensioal color plots if grid = TRUE. 
+#' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensioal color plots if grid = TRUE 
 #' @param color_scheme (string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE. The vector should contain 9 color codes.
+#' @param way_popout_topics (string) The way to filter topics to popout. Can be either "mean", "max_x", or "max_y"
+#' @param user_spec_topics (vector) User can specify which topic to be poped out. Should be like c("t_1", "t_2", ...). If set, way_popout_topics will have no effect.
 #' @param scale_size (logical) Whether to scale the size of the words
 #' @param save_dir (string) The directory to save the wordclouds
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
@@ -1103,6 +1192,8 @@ topicsPlot1 <- function(model,
 #' @param height (integer) The width of the topic (units = "in").
 #' @param max_size (integer) The max size of the words.
 #' @param seed (integer) The seed to set for reproducibility
+#' @param scatter_legend_popout_dot_size (integer) The dot size of scatter legend to popout
+#' @param scatter_legend_bg_dot_size (integer) The dot size of scatter legend in the background
 #' @param grid_legend_title The title of grid topic plot if grid_plot = TRUE
 #' @param grid_legend_title_size The size of the title of the plot if grid_plot = TRUE
 #' @param grid_titles_color The color of the legend title if grid_plot = TRUE
@@ -1119,6 +1210,8 @@ topicsPlot <- function(model,
                        grid_plot = TRUE,
                        dim = 2,
                        color_scheme = 'default',
+                       way_popout_topics = c("mean", "max_x", "max_y"),
+                       user_spec_topics = NULL,
                        scale_size = FALSE,
                        save_dir = "./results",
                        figure_format = "svg",
@@ -1126,6 +1219,8 @@ topicsPlot <- function(model,
                        height = 8,
                        max_size = 10, 
                        seed = 42,
+                       scatter_legend_popout_dot_size = 15,
+                       scatter_legend_bg_dot_size = 9,
                        grid_legend_title = "legend_title",
                        grid_legend_title_size = 5,
                        grid_titles_color = 'black',
@@ -1170,6 +1265,30 @@ topicsPlot <- function(model,
       return (NULL)
     }
   }
+  
+  
+  if (is.vector(way_popout_topics) && length(way_popout_topics) == 3){
+    way_popout_topics <- "mean"
+  }else if (!is.character(way_popout_topics)){
+    cat('Parameter way_popout_topics is not correctly set.\nUsing "mean".')
+    way_popout_topics <- "mean"
+  }else if (way_popout_topics != "mean" | way_popout_topics != "max_x" | way_popout_topics != "max_y"){
+    cat('Parameter way_popout_topics should be either "mean", "max_x", or "max_y".\nUsing "mean".')
+    way_popout_topics <- "mean"
+  }
+  if (!is.null(user_spec_topics)){
+    if (!is.vector(user_spec_topics)){
+      cat('Parameter user_spec_topics should be a vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
+      user_spec_topics <- c("t_1")
+    }else if (!is.character(user_spec_topics)){
+      cat('Parameter user_spec_topics should be a character vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
+      user_spec_topics <- c("t_1")
+    }else if (! TRUE %in% grepl("t_", user_spec_topics)){
+      cat('Parameter user_spec_topics should specify topics with c("t_1", "t_12") like input.\nThe function will pop out the "t_1" topic only in the scatter legend.')
+      user_spec_topics <- c("t_1")
+    }
+  } 
+  
   
   if (!grid_plot){
     print('The parameter grid_plot = FALSE will output all the topic plots for the pred_var_x in topicsTest.')
@@ -1252,6 +1371,10 @@ topicsPlot <- function(model,
         cor_var = test[[3]]$pred_var,
         label_x_name = grid_legend_x_axes_label,
         label_y_name = grid_legend_y_axes_label,
+        way_popout_topics = way_popout_topics,
+        user_spec_topics = user_spec_topics,
+        scatter_popout_dot_size = scatter_legend_popout_dot_size,
+        scatter_bg_dot_size = scatter_legend_bg_dot_size,
         save_dir = save_dir,
         figure_format = figure_format,
         # width = 10, 
