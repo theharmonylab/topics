@@ -4,6 +4,9 @@
 
 rm(list=ls())
 gc()
+if (dir.exists("./results")){
+  unlink("./results", recursive = TRUE)
+}
 
 library(topics)
 
@@ -62,7 +65,15 @@ topicsPlot(model = model,
            grid_plot = TRUE,
            p_threshold = 0.99,
            dim = 2,
-           way_popout_topics = 'max_y',
+           scatter_legend_way_popout_topics = 'max_y',
+           seed = 42)
+
+topicsPlot(model = model,
+           test = tests,
+           grid_plot = TRUE,
+           p_threshold = 0.99,
+           dim = 1,
+           scatter_legend_way_popout_topics = 'mean',
            seed = 42)
 
 topicsPlot(model = model,
@@ -70,7 +81,15 @@ topicsPlot(model = model,
            grid_plot = TRUE,
            p_threshold = 0.99,
            dim = 2,
-           user_spec_topics = c('t_1', 't_20'),
+           scatter_legend_user_spec_topics = c('t_1', 't_2'),
+           seed = 42)
+
+topicsPlot(model = model,
+           test = tests,
+           grid_plot = TRUE,
+           p_threshold = 0.99,
+           dim = 1,
+           scatter_legend_user_spec_topics = c('t_1', 't_2'),
            seed = 42)
 
 topicsPlot(model = model,
@@ -92,3 +111,15 @@ topicsPlot(model = model,
            grid_plot = FALSE,
            p_threshold = 0.99,
            seed = 42)
+
+topicsPlot(model = model,
+           test = tests,
+           grid_plot = TRUE,
+           p_threshold = 0.99,
+           dim = 1,
+           scatter_legend_user_spec_topics = c('t_1', 't_2'),
+           seed = 42)
+
+if (dir.exists("./results")){
+  unlink("./results", recursive = TRUE)
+}
