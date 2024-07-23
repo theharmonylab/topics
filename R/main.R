@@ -496,21 +496,21 @@ topicsTest1 <- function(model,
               pred_var = pred_var))
 }
 
-source("./R/utils.R")
-model = model
-preds = preds
-data = cbind(topics::data)
-data = tibble::as_tibble(data,.name_repair='minimal')
-pred_var_x = 'hilstotal'
-pred_var_y = 'swlstotal'
-group_var=NULL
-control_vars=c()#c('age','gender')
-test_method="linear_regression"
-p_alpha = 0.5
-p_adjust_method = "fdr"
-seed=42
-load_dir=NULL
-save_dir="./results"
+# source("./R/utils.R")
+# model = model
+# preds = preds
+# data = cbind(topics::data)
+# data = tibble::as_tibble(data,.name_repair='minimal')
+# pred_var_x = 'hilstotal'
+# pred_var_y = 'swlstotal'
+# group_var=NULL
+# control_vars=c()#c('age','gender')
+# test_method="linear_regression"
+# p_alpha = 0.5
+# p_adjust_method = "fdr"
+# seed=42
+# load_dir=NULL
+# save_dir="./results"
 
 
 #' The function to test the lda model for multiple dimensions, e.g., 2.
@@ -654,6 +654,7 @@ topicsTest <- function(model,
 # filtered_test$color_categories <- sample(1:9, nrow(filtered_test), replace = TRUE)
 # way_popout_topics = "mean"
 # user_spec_topics = NULL
+# allow_topic_num_legend = TRUE
 
 #' The function to create lda wordclouds
 #' @return nothing is returned, the dot cloud legend is saved in the save_dir
@@ -754,9 +755,9 @@ topicsScatterLegend <- function(
         estimate_col_y <- colnames(filtered_test)[7]
         popout <- filtered_test %>%
           dplyr::filter(color_categories != 5) %>%
-          dplyr::mutate(mean_value = mean(
-            abs(abs(!!rlang::sym(estimate_col_x)) + 
-                  abs(!!rlang::sym(estimate_col_y))))) %>%
+          dplyr::mutate(mean_value = rowMeans(cbind(
+            abs(!!rlang::sym(estimate_col_x)), 
+            abs(!!rlang::sym(estimate_col_y))))) %>%
           dplyr::group_by(color_categories) %>%
           dplyr::slice_max(order_by = mean_value, n = 1, with_ties = FALSE) %>%
           dplyr::ungroup()
@@ -1166,26 +1167,26 @@ topicsPlot1 <- function(model,
   
 }
 
-source('./R/wordclouds.R')
-grid_pos = 1
-model = model
-test = topic_loadings_all
-grid_plot = TRUE
-dim = 2
-color_scheme = 'default'
-scale_size = FALSE
-plot_topics_idx = NULL
-p_threshold = 0.5
-save_dir = "./results"
-figure_format = "png"
-seed = 42
-grid_legend_x_axes_label = "legend_x_axes_label"
-grid_legend_y_axes_label = "legend_y_axes_label"
-scatter_legend_way_popout_topics =  "max_y"
-scatter_legend_user_spec_topics = c("t_1", "t_2")
-scatter_legend_topic_num = TRUE
-scatter_legend_popout_dot_size = 15
-scatter_legend_bg_dot_size = 9
+# source('./R/wordclouds.R')
+# grid_pos = 1
+# model = model
+# test = topic_loadings_all
+# grid_plot = TRUE
+# dim = 2
+# color_scheme = 'default'
+# scale_size = FALSE
+# plot_topics_idx = NULL
+# p_threshold = 0.5
+# save_dir = "./results"
+# figure_format = "png"
+# seed = 42
+# grid_legend_x_axes_label = "legend_x_axes_label"
+# grid_legend_y_axes_label = "legend_y_axes_label"
+# scatter_legend_way_popout_topics =  "max_y"
+# scatter_legend_user_spec_topics = c("t_1", "t_2")
+# scatter_legend_topic_num = TRUE
+# scatter_legend_popout_dot_size = 15
+# scatter_legend_bg_dot_size = 9
 
 
 #' The function to create lda wordclouds
