@@ -1208,7 +1208,7 @@ topicsPlot1 <- function(model,
 #' @param scatter_legend_bg_dot_size (integer) The dot size of scatter legend in the background
 #' @param grid_legend_title The title of grid topic plot if grid_plot = TRUE
 #' @param grid_legend_title_size The size of the title of the plot if grid_plot = TRUE
-#' @param grid_legend_titles_color The color of the legend title if grid_plot = TRUE
+#' @param grid_legend_title_color The color of the legend title if grid_plot = TRUE
 #' @param grid_legend_x_axes_label The label of the x axes if grid_plot = TRUE
 #' @param grid_legend_y_axes_label The label of the y axes if grid_plot = TRUE
 #' @param grid_legend_number_color The color in the text in the legend if grid_plot = TRUE
@@ -1236,7 +1236,7 @@ topicsPlot <- function(model,
                        scatter_legend_bg_dot_size = 9,
                        grid_legend_title = "legend_title",
                        grid_legend_title_size = 5,
-                       grid_legend_titles_color = 'black',
+                       grid_legend_title_color = 'black',
                        grid_legend_x_axes_label = "legend_x_axes_label",
                        grid_legend_y_axes_label = "legend_y_axes_label",
                        grid_legend_number_color = 'black',
@@ -1386,7 +1386,7 @@ topicsPlot <- function(model,
         label_y_name = grid_legend_y_axes_label,
         way_popout_topics = scatter_legend_way_popout_topics,
         user_spec_topics = scatter_legend_user_spec_topics,
-        allow_topic_num_legend = scatter_Legend_topic_num,
+        allow_topic_num_legend = scatter_legend_topic_num,
         scatter_popout_dot_size = scatter_legend_popout_dot_size,
         scatter_bg_dot_size = scatter_legend_bg_dot_size,
         save_dir = save_dir,
@@ -1407,7 +1407,7 @@ topicsPlot <- function(model,
         y_axes_1 = dim,
         legend_title = grid_legend_title,
         legend_title_size = grid_legend_title_size,
-        titles_color = grid_legend_titles_color,
+        titles_color = grid_legend_title_color,
         legend_x_axes_label = grid_legend_x_axes_label,
         legend_y_axes_label = grid_legend_y_axes_label,
         topic_data_all = test[[3]][["test"]],
