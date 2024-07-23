@@ -502,7 +502,7 @@ topicsTest1 <- function(model,
 # data = cbind(topics::data)
 # data = tibble::as_tibble(data,.name_repair='minimal')
 # pred_var_x = 'hilstotal'
-# pred_var_y = 'swlstotal'
+# pred_var_y = NULL#'swlstotal'
 # group_var=NULL
 # control_vars=c()#c('age','gender')
 # test_method="linear_regression"
@@ -647,7 +647,7 @@ topicsTest <- function(model,
 # save_dir = save_dir
 # figure_format = "png"
 # seed = seed
-# y_axes_1 = 2
+# y_axes_1 = 1
 # set.seed(42)
 # scatter_popout_dot_size = 15
 # scatter_bg_dot_size = 9
@@ -813,12 +813,12 @@ topicsScatterLegend <- function(
         dplyr::mutate(topic_number = as.numeric(sub("t_", "", topic)))
       plot <- ggplot2::ggplot() +
         ggplot2::geom_point(data = backgr_dots,
-                            aes(x = !!sym(x_column),
+                   ggplot2::aes(x = !!sym(x_column),
                                 y = !!sym(y_column),
                                 color = as.factor(.data[[color_column]])), 
                             size = scatter_bg_dot_size, alpha = 0.3) +
         ggplot2::geom_point(data = popout,
-                            aes(x = !!sym(x_column),
+                   ggplot2::aes(x = !!sym(x_column),
                                 y = !!sym(y_column),
                                 color = as.factor(.data[[color_column]])), 
                             size = scatter_popout_dot_size, alpha = 0.8) +
@@ -836,10 +836,10 @@ topicsScatterLegend <- function(
       if (allow_topic_num_legend){
         plot <- plot + 
           ggplot2::geom_text(data = popout,
-                             aes(x = !!sym(x_column),
+                    ggplot2::aes(x = !!sym(x_column),
                                  y = !!sym(y_column),
                                  label = topic_number),
-                             size = scatter_popout_dot_size, hjust = 0.5,vjust = 0.5, color = "black") 
+                             size = scatter_popout_dot_size - 3, hjust = 0.5,vjust = 0.5, color = "black") 
       }
     }else if (y_axes_1 == 1){
       #bivariate_color_codes <- bivariate_color_codes[4:6]
@@ -853,11 +853,11 @@ topicsScatterLegend <- function(
         dplyr::mutate(topic_number = as.numeric(sub("t_", "", topic)))
       plot <- ggplot2::ggplot() +
         ggplot2::geom_point(data = plot_only3_bg, 
-                            aes(x = !!rlang::sym(x_column), y = 1,
+                   ggplot2::aes(x = !!rlang::sym(x_column), y = 1,
                                 color = as.factor(.data[[color_column]])),
                             size = scatter_bg_dot_size, alpha = 0.3) + 
         ggplot2::geom_point(data = plot_only3, 
-                            aes(x = !!rlang::sym(x_column), y = 1,
+                   ggplot2::aes(x = !!rlang::sym(x_column), y = 1,
                                 color = as.factor(.data[[color_column]])), 
                             size = scatter_popout_dot_size, alpha = 0.8) +
         ggplot2::scale_color_manual(values = bivariate_color_codes[4:6]) +
@@ -873,9 +873,10 @@ topicsScatterLegend <- function(
       if (allow_topic_num_legend){
         # add topic number
         plot <- plot + ggplot2::geom_text(data = plot_only3,
-                           aes(x = !!sym(x_column),
+                  ggplot2::aes(x = !!sym(x_column),
+                               y = 1,
                                label = topic_number),
-                           size = scatter_popout_dot_size, hjust = 0.5,vjust = 0.5, color = "black")
+                           size = scatter_popout_dot_size - 3, hjust = 0.5,vjust = 0.5, color = "black")
       }
     }else{
       cat('Error in dim param. It should be either 1 or 2.')
