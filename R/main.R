@@ -754,8 +754,8 @@ topicsScatterLegend <- function(
             abs(abs(!!rlang::sym(estimate_col_x)) - 
                   abs(!!rlang::sym(estimate_col_y))))) %>%
           dplyr::group_by(color_categories) %>%
-          dplyr::slice_max(order_by = mean_value, n = 1, with_ties = FALSE)
-        dplyr::ungroup()
+          dplyr::slice_max(order_by = mean_value, n = 1, with_ties = FALSE) %>%
+          dplyr::ungroup()
       }else{
         popout <- filtered_test %>%
           dplyr::filter(color_categories != 5) %>%
