@@ -669,6 +669,7 @@ topicsScatterLegend <- function(
     filtered_test,
     way_popout_topics = "mean",
     user_spec_topics = NULL,
+    allow_topic_num_legend = FALSE,
     y_axes_1 = 2,
     cor_var = "",
     label_x_name = "x",
@@ -820,12 +821,6 @@ topicsScatterLegend <- function(
                                 y = !!sym(y_column),
                                 color = as.factor(.data[[color_column]])), 
                             size = scatter_popout_dot_size, alpha = 0.8) +
-        # add topic number
-        ggplot2::geom_text(data = popout,
-                           aes(x = !!sym(x_column),
-                               y = !!sym(y_column),
-                               label = topic_number),
-                           size = scatter_popout_dot_size, hjust = 0.5,vjust = 0.5, color = "black") +
         ggplot2::scale_color_manual(values = bivariate_color_codes) +
         ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
         ggplot2::theme_minimal() +
@@ -836,6 +831,15 @@ topicsScatterLegend <- function(
           axis.ticks.y = ggplot2::element_blank(),  # Remove y-axis ticks
           legend.position = "none"
         )
+      # add topic number
+      if (allow_topic_num_legend){
+        plot <- plot + 
+          ggplot2::geom_text(data = popout,
+                             aes(x = !!sym(x_column),
+                                 y = !!sym(y_column),
+                                 label = topic_number),
+                             size = scatter_popout_dot_size, hjust = 0.5,vjust = 0.5, color = "black") 
+      }
     }else if (y_axes_1 == 1){
       #bivariate_color_codes <- bivariate_color_codes[4:6]
       x_column <- names(filtered_test)[3]
@@ -854,11 +858,6 @@ topicsScatterLegend <- function(
                             aes(x = !!rlang::sym(x_column), y = 1,
                                 color = as.factor(.data[[color_column]])), 
                             size = scatter_popout_dot_size, alpha = 0.7) +
-        # add topic number
-        ggplot2::geom_text(data = plot_only3,
-                           aes(x = !!sym(x_column),
-                               label = topic_number),
-                           size = scatter_popout_dot_size, hjust = 0.5,vjust = 0.5, color = "black") +
         ggplot2::scale_color_manual(values = bivariate_color_codes[4:6]) +
         ggplot2::labs(x = label_x_name, y = "", color = '') +
         ggplot2::theme_minimal() + 
@@ -869,6 +868,13 @@ topicsScatterLegend <- function(
           axis.ticks.y = ggplot2::element_blank(),  # Remove y-axis ticks
           legend.position = "none"
         )
+      if (allow_topic_num_legend){
+        # add topic number
+        plot <- plot + ggplot2::geom_text(data = plot_only3,
+                           aes(x = !!sym(x_column),
+                               label = topic_number),
+                           size = scatter_popout_dot_size, hjust = 0.5,vjust = 0.5, color = "black")
+      }
     }else{
       cat('Error in dim param. It should be either 1 or 2.')
       return (NULL)
@@ -1188,8 +1194,9 @@ topicsPlot1 <- function(model,
 #' @param grid_plot (boolean) Set TRUE if plotting the topics grid
 #' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensioal color plots if grid = TRUE 
 #' @param color_scheme (string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE. The vector should contain 9 color codes.
-#' @param way_popout_topics (string) The way to filter topics to popout. Can be either "mean", "max_x", or "max_y"
-#' @param user_spec_topics (vector) User can specify which topic to be poped out. Should be like c("t_1", "t_2", ...). If set, way_popout_topics will have no effect.
+#' @param scatter_legend_way_popout_topics (string) The way to filter topics to popout in the scatter legend. Can be either "mean", "max_x", or "max_y"
+#' @param scatter_legend_user_spec_topics (vector) User can specify which topic to be poped out in the scatter legend. Should be like c("t_1", "t_2", ...). If set, way_popout_topics will have no effect.
+#' @param scatter_legend_topic_num (boolean) Allow showing the topic number or not in the scatter legend
 #' @param scale_size (logical) Whether to scale the size of the words
 #' @param save_dir (string) The directory to save the wordclouds
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
@@ -1201,7 +1208,7 @@ topicsPlot1 <- function(model,
 #' @param scatter_legend_bg_dot_size (integer) The dot size of scatter legend in the background
 #' @param grid_legend_title The title of grid topic plot if grid_plot = TRUE
 #' @param grid_legend_title_size The size of the title of the plot if grid_plot = TRUE
-#' @param grid_titles_color The color of the legend title if grid_plot = TRUE
+#' @param grid_legend_titles_color The color of the legend title if grid_plot = TRUE
 #' @param grid_legend_x_axes_label The label of the x axes if grid_plot = TRUE
 #' @param grid_legend_y_axes_label The label of the y axes if grid_plot = TRUE
 #' @param grid_legend_number_color The color in the text in the legend if grid_plot = TRUE
@@ -1215,8 +1222,9 @@ topicsPlot <- function(model,
                        grid_plot = TRUE,
                        dim = 2,
                        color_scheme = 'default',
-                       way_popout_topics = c("mean", "max_x", "max_y"),
-                       user_spec_topics = NULL,
+                       scatter_legend_way_popout_topics = c("mean", "max_x", "max_y"),
+                       scatter_legend_user_spec_topics = NULL,
+                       scatter_legend_topic_num = FALSE,
                        scale_size = FALSE,
                        save_dir = "./results",
                        figure_format = "svg",
@@ -1228,7 +1236,7 @@ topicsPlot <- function(model,
                        scatter_legend_bg_dot_size = 9,
                        grid_legend_title = "legend_title",
                        grid_legend_title_size = 5,
-                       grid_titles_color = 'black',
+                       grid_legend_titles_color = 'black',
                        grid_legend_x_axes_label = "legend_x_axes_label",
                        grid_legend_y_axes_label = "legend_y_axes_label",
                        grid_legend_number_color = 'black',
@@ -1272,25 +1280,25 @@ topicsPlot <- function(model,
   }
   
   
-  if (is.vector(way_popout_topics) && length(way_popout_topics) == 3){
-    way_popout_topics <- "mean"
-  }else if (!is.character(way_popout_topics)){
+  if (is.vector(scatter_legend_way_popout_topics) && length(scatter_legend_way_popout_topics) == 3){
+    scatter_legend_way_popout_topics <- "mean"
+  }else if (!is.character(scatter_legend_way_popout_topics)){
     cat('Parameter way_popout_topics is not correctly set.\nUsing "mean".')
-    way_popout_topics <- "mean"
+    scatter_legend_way_popout_topics <- "mean"
   }else{
     cat('Parameter way_popout_topics should be either "mean", "max_x", or "max_y".\nUsing "mean".')
-    way_popout_topics <- "mean"
+    scatter_legend_way_popout_topics <- "mean"
   }
-  if (!is.null(user_spec_topics)){
-    if (!is.vector(user_spec_topics)){
+  if (!is.null(scatter_legend_user_spec_topics)){
+    if (!is.vector(scatter_legend_user_spec_topics)){
       cat('Parameter user_spec_topics should be a vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
-      user_spec_topics <- c("t_1")
-    }else if (!is.character(user_spec_topics)){
+      scatter_legend_user_spec_topics <- c("t_1")
+    }else if (!is.character(scatter_legend_user_spec_topics)){
       cat('Parameter user_spec_topics should be a character vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
-      user_spec_topics <- c("t_1")
-    }else if (! TRUE %in% grepl("t_", user_spec_topics)){
+      scatter_legend_user_spec_topics <- c("t_1")
+    }else if (! TRUE %in% grepl("t_", scatter_legend_user_spec_topics)){
       cat('Parameter user_spec_topics should specify topics with c("t_1", "t_12") like input.\nThe function will pop out the "t_1" topic only in the scatter legend.')
-      user_spec_topics <- c("t_1")
+      scatter_legend_user_spec_topics <- c("t_1")
     }
   } 
   
@@ -1376,8 +1384,9 @@ topicsPlot <- function(model,
         cor_var = test[[3]]$pred_var,
         label_x_name = grid_legend_x_axes_label,
         label_y_name = grid_legend_y_axes_label,
-        way_popout_topics = way_popout_topics,
-        user_spec_topics = user_spec_topics,
+        way_popout_topics = scatter_legend_way_popout_topics,
+        user_spec_topics = scatter_legend_user_spec_topics,
+        allow_topic_num_legend = scatter_Legend_topic_num,
         scatter_popout_dot_size = scatter_legend_popout_dot_size,
         scatter_bg_dot_size = scatter_legend_bg_dot_size,
         save_dir = save_dir,
@@ -1398,7 +1407,7 @@ topicsPlot <- function(model,
         y_axes_1 = dim,
         legend_title = grid_legend_title,
         legend_title_size = grid_legend_title_size,
-        titles_color = grid_titles_color,
+        titles_color = grid_legend_titles_color,
         legend_x_axes_label = grid_legend_x_axes_label,
         legend_y_axes_label = grid_legend_y_axes_label,
         topic_data_all = test[[3]][["test"]],
