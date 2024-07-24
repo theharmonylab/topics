@@ -30,7 +30,7 @@ tests <- topicsTest(
   pred_var_y = 'swlstotal'
 )
 
-tests <- topicsTest(
+tests2D <- topicsTest(
   model = model,
   preds = preds,
   data =  topics::data,
@@ -41,43 +41,43 @@ tests <- topicsTest(
 
 
 topicsPlot(model = model,
-           test = tests,
+           test = tests2D,
            grid_plot = FALSE,
            p_threshold = 0.99
            ,seed = 42)
 
 topicsPlot(model = model,
-           test = tests,
+           test = tests2D,
            grid_plot = TRUE,
            p_threshold = 0.99,
            dim = 1
            ,seed = 42)
 
 topicsPlot(model = model,
-           test = tests,
+           test = tests2D,
            grid_plot = TRUE,
            p_threshold = 0.99,
            dim = 2
            ,seed = 42)
 
 topicsPlot(model = model,
-           test = tests,
+           test = tests2D,
            grid_plot = TRUE,
            p_threshold = 0.99,
            dim = 2,
-           scatter_legend_way_popout_topics = 'max_y',
-           seed = 42)
-
-topicsPlot(model = model,
-           test = tests,
-           grid_plot = TRUE,
-           p_threshold = 0.99,
-           dim = 1,
            scatter_legend_way_popout_topics = 'mean',
            seed = 42)
 
 topicsPlot(model = model,
-           test = tests,
+           test = tests2D,
+           grid_plot = TRUE,
+           p_threshold = 0.99,
+           dim = 1,
+           scatter_legend_way_popout_topics = 'max_x',
+           seed = 42)
+
+topicsPlot(model = model,
+           test = tests2D,
            grid_plot = TRUE,
            p_threshold = 0.99,
            dim = 2,
@@ -85,7 +85,7 @@ topicsPlot(model = model,
            seed = 42)
 
 topicsPlot(model = model,
-           test = tests,
+           test = tests2D,
            grid_plot = TRUE,
            p_threshold = 0.99,
            dim = 1,
@@ -93,12 +93,12 @@ topicsPlot(model = model,
            seed = 42)
 
 topicsPlot(model = model,
-           test = tests,
+           test = tests2D,
            grid_plot = TRUE,
            dim = 3
            ,seed = 42)
 
-tests <- topicsTest(
+tests1D <- topicsTest(
   model=model,
   preds = preds,
   data =  topics::data,
@@ -107,13 +107,13 @@ tests <- topicsTest(
 )
 
 topicsPlot(model = model,
-           test = tests,
+           test = tests1D,
            grid_plot = FALSE,
            p_threshold = 0.99,
            seed = 42)
 
 topicsPlot(model = model,
-           test = tests,
+           test = tests1D,
            grid_plot = TRUE,
            p_threshold = 0.99,
            dim = 1,
