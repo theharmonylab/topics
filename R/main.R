@@ -688,7 +688,7 @@ topicsScatterLegend <- function(
     dplyr::summarise(contains_only_five = all(color_categories %in% 5)) %>%
     dplyr::pull(contains_only_five)
   if (only_five){
-    cat('There are only non-significant topics. Only generate the scatter legend of these.')
+    cat('There are only non-significant topics. Only generate the scatter legend of these.\n')
     if (y_axes_1 == 1){
       x_column <- names(filtered_test)[3]
       color_column <- names(filtered_test)[ncol(filtered_test)]
@@ -762,20 +762,19 @@ topicsScatterLegend <- function(
           dplyr::slice_max(order_by = mean_value, n = 1, with_ties = FALSE) %>%
           dplyr::ungroup()
       }else{
-        if (y_axes_1 == 2){ # 2dims but plot 1 dim
-          popout <- filtered_test %>%
-            dplyr::filter(color_categories != 5) %>%
-            dplyr::group_by(color_categories) %>%
-            dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = 1, with_ties = FALSE) %>%
-            dplyr::ungroup()
-        }else{ # 1dim plot 1 dim
+        # if (y_axes_1 == 2){ # backup # 2dims but plot 1 dim
+        #   popout <- filtered_test %>%
+        #     dplyr::filter(color_categories != 5) %>%
+        #     dplyr::group_by(color_categories) %>%
+        #     dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = 1, with_ties = FALSE) %>%
+        #     dplyr::ungroup()
+        # }else{ # 1dim plot 1 dim
           popout <- filtered_test %>%
             dplyr::filter(color_categories != 2) %>%
             dplyr::group_by(color_categories) %>%
             dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = 1, with_ties = FALSE) %>%
             dplyr::ungroup()
-        }
-      
+        # }
       }
     }
     backgr_dots <- filtered_test %>%
@@ -818,6 +817,9 @@ topicsScatterLegend <- function(
         #     axis.ticks.y = element_blank()
         #   )
       }
+      # For future:check if 2dim plot only 1dim
+      # if (length(strsplit(cor_var, "_")[[1]]) > 1){
+      #   bivariate_color_codes <- bivariate_color_codes[4:6]}
       popout <- popout %>%
         dplyr::mutate(topic_number = as.numeric(sub("t_", "", topic)))
       plot <- ggplot2::ggplot() +
@@ -854,12 +856,14 @@ topicsScatterLegend <- function(
       #bivariate_color_codes <- bivariate_color_codes[4:6]
       x_column <- names(filtered_test)[3]
       color_column <- names(filtered_test)[ncol(filtered_test)]
-      # 2dims but plot 1 dim & 1 dim to plot 1
       plot_only3 <- dplyr::filter(tibble::as_tibble(popout,.name_repair="minimal"),
                                   color_categories == 1 | color_categories == 2 | color_categories == 3 | color_categories == 4 | color_categories == 5 | color_categories == 6)
       plot_only3_bg <- dplyr::filter(tibble::as_tibble(backgr_dots,.name_repair="minimal"),
                                      color_categories == 1 | color_categories == 2 | color_categories == 3 | color_categories == 4 | color_categories == 5 | color_categories == 6)
 
+      # cat("\n\n\nHere is the 'bivariate_color_codes': \n")
+      # print(bivariate_color_codes)
+      
       plot_only3 <- plot_only3 %>%
         dplyr::mutate(topic_number = as.numeric(sub("t_", "", topic)))
       plot <- ggplot2::ggplot() +
@@ -982,11 +986,11 @@ topicsGridLegend <- function(
   if (y_axes_1 == "only_x_dimension") {
     # for future only x dim grid in topicsTest
     categoryTotal_x_axes = c(
-      sum(topic_data_all$color_categories == 4,
+      sum(topic_data_all$color_categories == 1,
           na.rm = TRUE),
-      sum(topic_data_all$color_categories == 5,
+      sum(topic_data_all$color_categories == 2,
           na.rm = TRUE),
-      sum(topic_data_all$color_categories == 6,
+      sum(topic_data_all$color_categories == 3,
           na.rm = TRUE))
   }else{ categoryTotal_x_axes = c(
     sum(topic_data_all$color_categories == 4,
@@ -1268,32 +1272,35 @@ topicsPlot <- function(model,
       }else if (dim == 1){
         bivariate_color_codes <- c(
           "#e07f6a", "#EAEAEA", "#40DD52")
-      }else{print('Dim parameter should be either 1 or 2.')}
-    }else{print("Error in color_scheme. Consider using 'default'.")}
+      }else{cat('Dim parameter should be either 1 or 2.\n')}
+    }else{cat("Error in color_scheme. Consider using 'default'.\n")}
   }else if (is.character(color_scheme) && length(color_scheme) > 1){
     if (dim == 2){
       bivariate_color_codes <- color_scheme
     }else if (dim == 1){
       bivariate_color_codes <- color_scheme[4:6]
-    }else{print('Dim parameter should be either 1 or 2.')}
+    }else{cat('Dim parameter should be either 1 or 2.\n')}
   }else{
-    print('The parameter color_scheme should be a vector and should contain 9 colors! Or try with the default color scheme.')
+    cat('The parameter color_scheme should be a vector and should contain 9 colors! Or try with the default color scheme.\n')
     return (NULL)
   }
   
   if (dim == 1 && grid_plot){
-    print('Dim is set to 1 to plot pred_var_x. This needs pred_var_x in topicsTest.')
+    cat('Dim is set to 1 to plot pred_var_x. This needs pred_var_x in topicsTest.\n')
     if (length(bivariate_color_codes) != 3){
-      print('Please input 9 color codes for the paramter color_scheme!')
+      cat('Please input 9 color codes for the paramter color_scheme!\n')
+      return (NULL)
+    }
+    if(length(strsplit(test[[3]]$pred_var, "_")[[1]]) > 1){
+      cat('Cannot output grid plot if having two pred_var while dim = 1.\n')
       return (NULL)
     }
   }else if(dim == 2 && grid_plot){
     if (length(bivariate_color_codes) != 9){
-      print('Please input 9 color codes for the paramter color_scheme!')
+      cat('Please input 9 color codes for the paramter color_scheme!\n')
       return (NULL)
     }
   }
-  
   
   if (is.vector(scatter_legend_way_popout_topics) && length(scatter_legend_way_popout_topics) == 3){
     cat('One can use a string "mean" instead of a vector for parameter scatter_legend_way_popout_topics.\n')
