@@ -1177,10 +1177,12 @@ topicsPlot1 <- function(model,
                  " are saved in ", 
                  save_dir, "/seed", seed, "/wordclouds"))
   }else{
-    print(paste0("The plots of ",
-                 pred_var, " of grid position ", grid_pos,
-                 " are saved in ", 
-                 save_dir, "/seed", seed, "/wordclouds"))
+    if (grid_pos != 5){
+      print(paste0("The plots of ",
+                   pred_var, " of grid position ", grid_pos,
+                   " are saved in ", 
+                   save_dir, "/seed", seed, "/wordclouds"))
+    }
   }
   
 }
