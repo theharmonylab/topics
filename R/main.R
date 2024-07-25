@@ -750,7 +750,7 @@ topicsScatterLegend <- function(
         popout <- filtered_test %>%
           dplyr::filter(color_categories != 5) %>%
           dplyr::group_by(color_categories) %>%
-          dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_y)), n = 1, with_ties = FALSE) %>%
+          dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_y)), n = num_popout, with_ties = FALSE) %>%
           dplyr::ungroup()
       }else if(way_popout_topics == "mean" && y_axes_1 == 2){
         estimate_col_y <- colnames(filtered_test)[7]
@@ -760,20 +760,20 @@ topicsScatterLegend <- function(
             abs(!!rlang::sym(estimate_col_x)), 
             abs(!!rlang::sym(estimate_col_y))))) %>%
           dplyr::group_by(color_categories) %>%
-          dplyr::slice_max(order_by = mean_value, n = 1, with_ties = FALSE) %>%
+          dplyr::slice_max(order_by = mean_value, n = num_popout, with_ties = FALSE) %>%
           dplyr::ungroup()
       }else{
         # if (y_axes_1 == 2){ # backup # 2dims but plot 1 dim
         #   popout <- filtered_test %>%
         #     dplyr::filter(color_categories != 5) %>%
         #     dplyr::group_by(color_categories) %>%
-        #     dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = 1, with_ties = FALSE) %>%
+        #     dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = num_popout, with_ties = FALSE) %>%
         #     dplyr::ungroup()
         # }else{ # 1dim plot 1 dim
           popout <- filtered_test %>%
             dplyr::filter(color_categories != 2) %>%
             dplyr::group_by(color_categories) %>%
-            dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = 1, with_ties = FALSE) %>%
+            dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = num_popout, with_ties = FALSE) %>%
             dplyr::ungroup()
         # }
       }
