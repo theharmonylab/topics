@@ -744,6 +744,7 @@ topicsScatterLegend <- function(
     cat('Error in dim param. It should be either 1 or 2.')
     return (NULL)
   }
+  
   estimate_col_x <- colnames(filtered_test)[3]
   # User specifies the topics to popout
   if (!only_five && !is.null(user_spec_topics)){
@@ -752,13 +753,25 @@ topicsScatterLegend <- function(
       dplyr::filter(topic %in% user_spec_topics)
   }
   # No user specification
-  if (!only_five && is.null(user_spec_topics) && length(length(num_popout) > 1)){
+  if (!only_five && is.null(user_spec_topics) && length(num_popout) > 1){
     legend_map_num_pop <- c(
       "1" = num_popout[1], "2" = num_popout[2], "3" = num_popout[3],
-      "4" = num_popout[4], "5" = 0,#num_popout[5] # Skip non-sig center topics
+      "4" = num_popout[4], "5" = num_popout[5], # 0 if skip non-sig center topics
       "6" = num_popout[6], "7" = num_popout[7], 
       "8" = num_popout[8], "9" = num_popout[9]
     )
+    # check if there are too many specificied dots in each grid.
+    table1 <- table(filtered_test$color_categories)
+    for (i in 1:9){
+      if (legend_map_num_pop[[i]] > table1[[i]]){
+        cat(paste0('Grid ', as.character(i), ' has only ',
+                   table1[[i]], ' popped out topics. Cannot specify ',
+                   as.character(legend_map_num_pop[[i]]), 
+                   ' topics in it!\n'))
+        cat('Cannot save the scatter legend!\n')
+        return (NULL)
+      }
+    }
   }
   if (!only_five && is.null(user_spec_topics) && way_popout_topics == "max_y" && y_axes_1 == 2){
     cat('Generate popout topics based on "max_y" as the scatter legend.\n')
@@ -766,7 +779,7 @@ topicsScatterLegend <- function(
     if (length(num_popout) > 1){
       popout <- filtered_test %>%
         dplyr::filter(color_categories != 5) %>%
-        dplyr::mutate(map_num = recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
+        dplyr::mutate(map_num = dplyr::recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
         dplyr::group_by(color_categories) %>%
         dplyr::group_modify(~ slice_max(.x, order_by = abs(!!sym(estimate_col_y)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
         dplyr::ungroup() # Will change the order of columns
@@ -789,7 +802,7 @@ topicsScatterLegend <- function(
     if (length(num_popout) > 1){
       popout <- filtered_test %>%
         dplyr::filter(color_categories != 5) %>%
-        dplyr::mutate(map_num = recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
+        dplyr::mutate(map_num = dplyr::recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
         dplyr::group_by(color_categories) %>%
         dplyr::group_modify(~ slice_max(.x, order_by = rowMeans(cbind(
           abs(!!rlang::sym(estimate_col_x)), 
@@ -824,7 +837,7 @@ topicsScatterLegend <- function(
     if (length(num_popout) > 1){
       popout <- filtered_test %>%
         dplyr::filter(color_categories != 5) %>%
-        dplyr::mutate(map_num = recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
+        dplyr::mutate(map_num = dplyr::recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
         dplyr::group_by(color_categories) %>%
         dplyr::group_modify(~ slice_max(.x, order_by = abs(!!sym(estimate_col_x)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
         dplyr::ungroup() # Will change the order of columns
@@ -846,7 +859,7 @@ topicsScatterLegend <- function(
       if (length(num_popout) > 1){
         popout <- filtered_test %>%
           dplyr::filter(color_categories != 2) %>%
-          dplyr::mutate(map_num = recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
+          dplyr::mutate(map_num = dplyr::recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
           dplyr::group_by(color_categories) %>%
           dplyr::group_modify(~ slice_max(.x, order_by = abs(!!sym(estimate_col_x)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
           dplyr::ungroup() # Will change the order of columns
@@ -872,7 +885,7 @@ topicsScatterLegend <- function(
     bivariate_color_codes <- bivariate_color_codes
     x_column <- names(filtered_test)[3]
     y_column <- names(filtered_test)[7]
-    color_column <- names(filtered_test)[ncol(filtered_test) - 1]
+    color_column <- names(filtered_test)[ncol(filtered_test)]
     if (FALSE){
       # Add labels
       # filtered_test <- filtered_test %>%
@@ -920,7 +933,7 @@ topicsScatterLegend <- function(
   if(y_axes_1 == 1){
     #bivariate_color_codes <- bivariate_color_codes[4:6]
     x_column <- names(filtered_test)[3]
-    color_column <- names(filtered_test)[ncol(filtered_test) - 1]
+    color_column <- names(filtered_test)[ncol(filtered_test)]
     plot_only3 <- dplyr::filter(tibble::as_tibble(popout,.name_repair="minimal"),
                                 color_categories == 1 | color_categories == 2 | color_categories == 3 | color_categories == 4 | color_categories == 5 | color_categories == 6)
     plot_only3_bg <- dplyr::filter(tibble::as_tibble(backgr_dots,.name_repair="minimal"),
