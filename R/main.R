@@ -1212,9 +1212,10 @@ topicsPlot1 <- function(model,
 #' @param test (list) The test results
 #' @param p_threshold (integer) The p-value threshold to use for significance
 #' @param grid_plot (boolean) Set TRUE if plotting the topics grid
-#' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensioal color plots if grid = TRUE 
+#' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensional color plots if grid = TRUE 
 #' @param color_scheme (string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE. The vector should contain 9 color codes.
-#' @param scatter_legend_way_popout_topics (string) The way to filter topics to popout in the scatter legend. Can be either "mean", "max_x", or "max_y"
+#' @param scatter_legend_num_popout (numeric) The number of pop outs in the scatter legend.
+#' @param scatter_legend_way_popout_topics (string) The way to filter topics to pop out in the scatter legend. Can be either "mean", "max_x", or "max_y"
 #' @param scatter_legend_user_spec_topics (vector) User can specify which topic to be poped out in the scatter legend. Should be like c("t_1", "t_2", ...). If set, way_popout_topics will have no effect.
 #' @param scatter_legend_topic_num (boolean) Allow showing the topic number or not in the scatter legend
 #' @param scale_size (logical) Whether to scale the size of the words
