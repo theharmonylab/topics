@@ -835,6 +835,7 @@ topicsScatterLegend <- function(
     }
   }
   if (!only_five && is.null(user_spec_topics) && way_popout_topics == "max_x" && y_axes_1 == 1){
+    cat('Generate popout topics based on "max_x" as the scatter legend in 1 dim legend.\n')
     if (length(num_popout) > 1){
       popout <- filtered_test %>%
         dplyr::filter(color_categories != 2) %>%
