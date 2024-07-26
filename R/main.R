@@ -689,6 +689,7 @@ topicsScatterLegend <- function(
     cat('Error in dim param. It should be either 1 or 2.')
     return (NULL)
   }
+  
   only_five <- filtered_test %>%
     dplyr::summarise(contains_only_five = all(color_categories %in% 5)) %>%
     dplyr::pull(contains_only_five)
@@ -739,10 +740,6 @@ topicsScatterLegend <- function(
         axis.ticks.y = ggplot2::element_blank(),  # Remove y-axis ticks
         legend.position = "none"
       )
-  }
-  if (only_five && y_axes_1 != 1 && y_axes_1 != 2){
-    cat('Error in dim param. It should be either 1 or 2.')
-    return (NULL)
   }
   
   estimate_col_x <- colnames(filtered_test)[3]
@@ -1358,6 +1355,11 @@ topicsPlot <- function(model,
     }else{cat('Dim parameter should be either 1 or 2.\n')}
   }else{
     cat('The parameter color_scheme should be a vector and should contain 9 colors! Or try with the default color scheme.\n')
+    return (NULL)
+  }
+  
+  if (!is.vector(scatter_legend_popout_num) || !is.numeric(scatter_legend_popout_num)){
+    cat('The parameter "scatter_legend_popout_num" should be either a numeric vector or a number.\n')
     return (NULL)
   }
   
