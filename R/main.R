@@ -653,14 +653,14 @@ topicsScatterLegend <- function(
   }
   
   only_five <- filtered_test %>%
-    dplyr::summarise(contains_only_five = all(color_categories %in% 5)) %>%
+    dplyr::summarise(contains_only_five = all(color_categories %in% 2)) %>%
     dplyr::pull(contains_only_five)
   if (only_five && y_axes_1 == 1){
     cat('There are only non-significant topics. Only generate the scatter legend of these.\n')
     x_column <- names(filtered_test)[3]
     color_column <- names(filtered_test)[ncol(filtered_test)]
     plot_only3 <- dplyr::filter(tibble::as_tibble(filtered_test,.name_repair="minimal"),
-                                color_categories == 4 | color_categories == 5 | color_categories == 6)
+                                color_categories == 1 | color_categories == 2 | color_categories == 3)
     plot <- ggplot2::ggplot() +
       ggplot2::geom_point(data = plot_only3, 
                           aes(x = !!rlang::sym(x_column), y = 1,
@@ -680,7 +680,10 @@ topicsScatterLegend <- function(
         axis.ticks.y = ggplot2::element_blank(),  # Remove y-axis ticks
         legend.position = "none"
       )
-  }   
+  }
+  only_five <- filtered_test %>%
+    dplyr::summarise(contains_only_five = all(color_categories %in% 5)) %>%
+    dplyr::pull(contains_only_five)
   if (only_five && y_axes_1 == 2){
     bivariate_color_codes <- bivariate_color_codes
     x_column <- names(filtered_test)[3]
@@ -712,7 +715,7 @@ topicsScatterLegend <- function(
       dplyr::filter(topic %in% user_spec_topics)
   }
   # No user specification
-  if (!only_five && is.null(user_spec_topics) && length(num_popout) > 1){
+  if (!only_five && is.null(user_spec_topics) && length(num_popout) != 1 && length(num_popout) == 9 && y_axes_1 == 2){
     legend_map_num_pop <- c(
       "1" = num_popout[1], "2" = num_popout[2], "3" = num_popout[3],
       "4" = num_popout[4], "5" = num_popout[5], # 0 if skip non-sig center topics
@@ -722,6 +725,24 @@ topicsScatterLegend <- function(
     # check if there are too many specificied dots in each grid.
     table1 <- table(filtered_test$color_categories)
     for (i in 1:9){
+      if (legend_map_num_pop[[i]] > table1[[i]]){
+        cat(paste0('Grid ', as.character(i), ' has only ',
+                   table1[[i]], ' popped out topics. Cannot specify ',
+                   as.character(legend_map_num_pop[[i]]), 
+                   ' topics in it!\n'))
+        cat('Cannot save the scatter legend!\n')
+        return (NULL)
+      }
+    }
+  }
+  if (!only_five && is.null(user_spec_topics) && length(num_popout) != 1 && length(num_popout) == 3 && y_axes_1 == 1){
+    legend_map_num_pop <- c(
+      "1" = num_popout[1], "2" = num_popout[2], # 0 if skip non-sig center topics
+      "3" = num_popout[3]
+    )
+    # check if there are too many specificied dots in each grid.
+    table1 <- table(filtered_test$color_categories)
+    for (i in 1:3){
       if (legend_map_num_pop[[i]] > table1[[i]]){
         cat(paste0('Grid ', as.character(i), ' has only ',
                    table1[[i]], ' popped out topics. Cannot specify ',
@@ -815,18 +836,16 @@ topicsScatterLegend <- function(
   }
   if (!only_five && is.null(user_spec_topics) && way_popout_topics == "max_x" && y_axes_1 == 1){
     if (length(num_popout) > 1){
-      if (length(num_popout) > 1){
-        popout <- filtered_test %>%
-          dplyr::filter(color_categories != 2) %>%
-          dplyr::mutate(map_num = dplyr::recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
-          dplyr::group_by(color_categories) %>%
-          dplyr::group_modify(~ slice_max(.x, order_by = abs(!!sym(estimate_col_x)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
-          dplyr::ungroup() # Will change the order of columns
-        # Re-arrange the columns to keep the same.
-        colname_bak <- names(filtered_test)
-        popout <- popout %>%
-          dplyr::select(dplyr::all_of(colname_bak), map_num)
-      }
+      popout <- filtered_test %>%
+        dplyr::filter(color_categories != 2) %>%
+        dplyr::mutate(map_num = dplyr::recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
+        dplyr::group_by(color_categories) %>%
+        dplyr::group_modify(~ slice_max(.x, order_by = abs(!!sym(estimate_col_x)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
+        dplyr::ungroup() # Will change the order of columns
+      # Re-arrange the columns to keep the same.
+      colname_bak <- names(filtered_test)
+      popout <- popout %>%
+        dplyr::select(dplyr::all_of(colname_bak), map_num)
     }
     if (length(num_popout) == 1){
       popout <- filtered_test %>%
