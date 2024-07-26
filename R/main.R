@@ -496,22 +496,6 @@ topicsTest1 <- function(model,
               pred_var = pred_var))
 }
 
-# source("./R/utils.R")
-# model = model
-# preds = preds
-# data = cbind(topics::data)
-# data = tibble::as_tibble(data,.name_repair='minimal')
-# pred_var_x = 'hilstotal'
-# pred_var_y = NULL#'swlstotal'
-# group_var=NULL
-# control_vars=c()#c('age','gender')
-# test_method="linear_regression"
-# p_alpha = 0.5
-# p_adjust_method = "fdr"
-# seed=42
-# load_dir=NULL
-# save_dir="./results"
-
 
 #' The function to test the lda model for multiple dimensions, e.g., 2.
 #' @param model (list) The trained model
@@ -633,28 +617,6 @@ topicsTest <- function(model,
   
   return(topic_loadings_all)
 }
-
-
-# bivariate_color_codes = c(
-#   "#398CF9", "#60A1F7", "#5dc688",
-#   "#e07f6a", "#EAEAEA", "#40DD52",
-#   "#FF0000", "#EA7467", "#85DB8E")
-# test = topic_loadings_all
-# filtered_test = test[[3]]$test
-# cor_var = test[[3]]$pred_var
-# label_x_name = "grid_legend_x_axes_label"
-# label_y_name = "grid_legend_y_axes_label"
-# save_dir = save_dir
-# figure_format = "png"
-# seed = seed
-# y_axes_1 = 1
-# set.seed(42)
-# scatter_popout_dot_size = 15
-# scatter_bg_dot_size = 9
-# filtered_test$color_categories <- sample(1:9, nrow(filtered_test), replace = TRUE)
-# way_popout_topics = "mean"
-# user_spec_topics = NULL
-# allow_topic_num_legend = TRUE
 
 #' The function to create lda wordclouds
 #' @return nothing is returned, the dot cloud legend is saved in the save_dir
@@ -982,28 +944,6 @@ topicsScatterLegend <- function(
                   units = "in")   
 }
 
-
-# bivariate_color_codes = bivariate_color_codes
-# cor_var = tests[[3]]$pred_var
-# save_dir = "./results"
-# figure_format = 'svg'
-# seed = 42
-# y_axes_1 = ""#"only_x_dimension"
-# grid = TRUE
-# legend_title = "legend_title"
-# legend_title_size = 20
-# titles_color <- 'black'
-# legend_x_axes_label = "legend_x_axes_label"
-# legend_y_axes_label = "legend_y_axes_label"
-# topic_data_all = tests[[3]][["test"]]
-# legend_number_size = 20
-# legend_number_color = 'black'
-# titles_color = "black"
-# figure_format = 'svg'
-# y_axes_1 = 1
-
-
-
 #' Creates the legend for the plot.
 #' @return A legend plot saved that can be combined with the plot object.
 #' @noRd
@@ -1179,10 +1119,6 @@ topicsGridLegend <- function(
                   units = "in")
 }
 
-
-
-#test = filtered_test
-
 #' The function to create lda wordclouds
 #' @param model (list) The trained model
 #' @param test (list) The test results
@@ -1254,28 +1190,6 @@ topicsPlot1 <- function(model,
   }
   
 }
-
-# source('./R/wordclouds.R')
-# grid_pos = 1
-# model = model
-# test = topic_loadings_all
-# grid_plot = TRUE
-# dim = 2
-# color_scheme = 'default'
-# scale_size = FALSE
-# plot_topics_idx = NULL
-# p_threshold = 0.5
-# save_dir = "./results"
-# figure_format = "png"
-# seed = 42
-# grid_legend_x_axes_label = "legend_x_axes_label"
-# grid_legend_y_axes_label = "legend_y_axes_label"
-# scatter_legend_way_popout_topics =  "max_y"
-# scatter_legend_user_spec_topics = c("t_1", "t_2")
-# scatter_legend_topic_num = TRUE
-# scatter_legend_popout_dot_size = 15
-# scatter_legend_bg_dot_size = 9
-
 
 #' The function to create lda wordclouds
 #' @param model (list) The trained model
