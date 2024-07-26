@@ -60,18 +60,6 @@ create_topic_words_dfs <- function(summary){
   return(df_list)
 }
 
-
-# df_list = df_list
-# summary = model$summary
-# test = filtered_test$test
-# test_type = 'linear_regression'
-# plot_topics_idx = NULL#c(11)
-# cor_var = pred_var
-# color_negative_cor =  ggplot2::scale_color_gradient(low = color1, high = color1)
-# color_positive_cor =  ggplot2::scale_color_gradient(low = color1, high = color1)
-# p_threshold = 0.8
-# seed = 42
-
 #' This is a private function and used internally by ldaWordclouds
 #' @param df_list (list) list of data.frames with topics most frequent words and assigned topic term scores
 #' @param test (data.frame) the test returned from textTopicTest()
