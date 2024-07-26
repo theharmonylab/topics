@@ -912,7 +912,6 @@ get_removal_columns <- function(dtm, n, type, mode="absolute"){
   return(column_indices_to_remove)
 }
 
-# TODO: put it to the git.
 #' Assgning numeric categories for further topic visualization colors.
 #' @param topic_loadings_all (tibble) The tibble from topicsTest1
 #' @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
