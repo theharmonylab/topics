@@ -857,10 +857,12 @@ topicsScatterLegend <- function(
     }
   }
   # Background dots in the scatter legend.
-  backgr_dots <- filtered_test %>%
-    dplyr::anti_join(popout, by = colnames(filtered_test))  
+  if (!only_five){
+    backgr_dots <- filtered_test %>%
+      dplyr::anti_join(popout, by = colnames(filtered_test))
+  }
 
-  if(y_axes_1 == 2){
+  if(!only_five && y_axes_1 == 2){
     bivariate_color_codes <- bivariate_color_codes
     x_column <- names(filtered_test)[3]
     y_column <- names(filtered_test)[7]
@@ -909,7 +911,7 @@ topicsScatterLegend <- function(
                            size = scatter_popout_dot_size - 3, hjust = 0.5,vjust = 0.5, color = "black") 
     }
   }  
-  if(y_axes_1 == 1){
+  if(!only_five && y_axes_1 == 1){
     #bivariate_color_codes <- bivariate_color_codes[4:6]
     x_column <- names(filtered_test)[3]
     color_column <- names(filtered_test)[ncol(filtered_test)]
