@@ -1,8 +1,5 @@
 rm(list=ls())
 gc()
-if (dir.exists("./results")){
-  unlink("./results", recursive = TRUE)
-}
 
 library(testthat)
 library(topics)  # Replace with your package name
@@ -12,6 +9,11 @@ library(topics)
 
 
 test_that('Save all topics without the topic grid plot by using the topicsPlot function.',{
+  
+  if (dir.exists("./results")){
+    unlink("./results", recursive = TRUE)
+  }
+  
   dtmtest <- topicsDtm(
     data = topics::data$harmonytexts
   )
@@ -45,6 +47,11 @@ test_that('Save all topics without the topic grid plot by using the topicsPlot f
 })
 
 test_that('Save the scatter legend and grid legend for topic grids using default parameters.',{
+  
+  if (dir.exists("./results")){
+    unlink("./results", recursive = TRUE)
+  }
+  
   dtmtest <- topicsDtm(
     data = topics::data$harmonytexts
   )
@@ -76,6 +83,11 @@ test_that('Save the scatter legend and grid legend for topic grids using default
 })
 
 test_that('Setting dimension = 1 or 3 for 2 dimensional plots shall return nothing.',{
+  
+  if (dir.exists("./results")){
+    unlink("./results", recursive = TRUE)
+  }
+  
   dtmtest <- topicsDtm(
     data = topics::data$harmonytexts
   )
@@ -119,6 +131,11 @@ test_that('Setting dimension = 1 or 3 for 2 dimensional plots shall return nothi
 })
 
 test_that('Set dimension = 2 for successfully saving the legends.',{
+  
+  if (dir.exists("./results")){
+    unlink("./results", recursive = TRUE)
+  }
+  
   dtmtest <- topicsDtm(
     data = topics::data$harmonytexts
   )
@@ -157,6 +174,11 @@ test_that('Set dimension = 2 for successfully saving the legends.',{
 })
 
 test_that('Change the popout method to "max_x", and "max_y".',{
+  
+  if (dir.exists("./results")){
+    unlink("./results", recursive = TRUE)
+  }
+  
   dtmtest <- topicsDtm(
     data = topics::data$harmonytexts
   )
@@ -213,6 +235,11 @@ test_that('Change the popout method to "max_x", and "max_y".',{
 
 
 test_that('Manually set the topic numbers to save topics',{
+  
+  if (dir.exists("./results")){
+    unlink("./results", recursive = TRUE)
+  }
+  
   dtmtest <- topicsDtm(
     data = topics::data$harmonytexts
   )
@@ -302,3 +329,7 @@ test_that('Set dimension = 1 for successfully saving the legends',{
       './results/seed_42/wordclouds/grid_legend_corvar_hilstotal.svg'))
   
 })
+
+
+
+
