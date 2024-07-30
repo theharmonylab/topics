@@ -725,6 +725,8 @@ topicsScatterLegend <- function(
     # check if there are too many specificied dots in each grid.
     table1 <- table(filtered_test$color_categories)
     for (i in 1:9){
+      if (is.na(names(table1)[i])){next} # longer than the list table1 for lacking categories
+      if (as.numeric(names(table1)[i]) != i){next} # skip the categories that not existing in the table1
       if (legend_map_num_pop[[i]] > table1[[i]]){
         cat(paste0('Grid ', as.character(i), ' has only ',
                    table1[[i]], ' popped out topics. Cannot specify ',
@@ -743,6 +745,8 @@ topicsScatterLegend <- function(
     # check if there are too many specificied dots in each grid.
     table1 <- table(filtered_test$color_categories)
     for (i in 1:3){
+      if (is.na(names(table1)[i])){next} # longer than the list table1 for lacking categories
+      if (as.numeric(names(table1)[i]) != i){next} # skip the categories that not existing in the table1
       if (legend_map_num_pop[[i]] > table1[[i]]){
         cat(paste0('Grid ', as.character(i), ' has only ',
                    table1[[i]], ' popped out topics. Cannot specify ',
