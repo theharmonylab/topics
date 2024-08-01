@@ -885,6 +885,7 @@ topicsScatterLegend <- function(
     popout <- popout %>%
       dplyr::mutate(topic_number = as.numeric(sub("t_", "", topic)))
     plot <- ggplot2::ggplot() +
+      # !!! NOTE: If only 1 topic in a certain category, the ggplot will add a new factor to the popout layer, causing an error of color assignments (like 7 is under 6,8,9 in the legend but having the color of 9 in the color_scheme).
       ggplot2::geom_point(data = backgr_dots,
                           ggplot2::aes(x = !!rlang::sym(x_column),
                                        y = !!rlang::sym(y_column),
