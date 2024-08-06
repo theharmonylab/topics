@@ -893,12 +893,12 @@ topicsScatterLegend <- function(
       ggplot2::geom_point(data = backgr_dots,
                           ggplot2::aes(x = !!rlang::sym(x_column),
                                        y = !!rlang::sym(y_column),
-                                       color = as.factor(.data[[color_column]])), 
+                                       color = as.factor(.data[[color_column]])),
                           size = scatter_bg_dot_size, alpha = 0.3) +
       ggplot2::geom_point(data = popout,
                           ggplot2::aes(x = !!rlang::sym(x_column),
                                        y = !!rlang::sym(y_column),
-                                       color = as.factor(.data[[color_column]])), 
+                                       color = as.factor(.data[[color_column]])),
                           size = scatter_popout_dot_size, alpha = 0.8) +
       ggplot2::scale_color_manual(values = bivariate_color_codes) +
       ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
