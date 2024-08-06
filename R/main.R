@@ -539,8 +539,11 @@ topicsTest <- function(model,
                        load_dir=NULL,
                        save_dir="./results"){
   
-  if (!is.null(control_vars)){
-    control_vars <- c() # not supported yet
+  for (control_var in control_vars){
+    if (!is.numeric(data[[control_var]])){
+      cat(paste0("The control variable '",control_var, "' should be numeric!\n"))
+      return (NULL)
+    }
   }
   if (is.null(pred_var_x)){
     print('Please input the pred_var_x!')
