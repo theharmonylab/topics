@@ -2,13 +2,12 @@ rm(list=ls())
 gc()
 
 library(testthat)
-library(topics)  # Replace with your package name
 library(tibble)
 library(dplyr)
-library(topics)
+library(topics) # Replace with your package name
 
 
-test_that('Save all topics without the topic grid plot by using the topicsPlot function.',{
+test_that('Case 1: Save all topics without the topic grid plot by using the topicsPlot function.',{
   
   if (dir.exists("./results")){
     unlink("./results", recursive = TRUE)
@@ -25,10 +24,12 @@ test_that('Save all topics without the topic grid plot by using the topicsPlot f
     data = topics::data$harmonywords
   )
 
+  dat1 <- dplyr::mutate(topics::data,gender = ifelse(gender == "male", 0, 1))
+  
   tests2D <- topicsTest(
     model = model,
     preds = preds,
-    data =  topics::data,
+    data =  dat1,
     pred_var_x = 'hilstotal',
     pred_var_y = 'swlstotal',
     control_vars = c('age','gender')
@@ -46,7 +47,7 @@ test_that('Save all topics without the topic grid plot by using the topicsPlot f
 
 })
 
-test_that('Save the scatter legend and grid legend for topic grids using default parameters.',{
+test_that('Case 2: Save the scatter legend and grid legend for topic grids using default parameters.',{
   
   if (dir.exists("./results")){
     unlink("./results", recursive = TRUE)
@@ -63,10 +64,11 @@ test_that('Save the scatter legend and grid legend for topic grids using default
     data = topics::data$harmonywords
   )
   
+  dat1 <- dplyr::mutate(topics::data,gender = ifelse(gender == "male", 0, 1))
   tests2D <- topicsTest(
     model = model,
     preds = preds,
-    data =  topics::data,
+    data =  dat1,
     pred_var_x = 'hilstotal',
     pred_var_y = 'swlstotal',
     control_vars = c('age','gender')
@@ -82,7 +84,7 @@ test_that('Save the scatter legend and grid legend for topic grids using default
   
 })
 
-test_that('Setting dimension = 1 or 3 for 2 dimensional plots shall return nothing.',{
+test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall return nothing.',{
   
   if (dir.exists("./results")){
     unlink("./results", recursive = TRUE)
@@ -99,10 +101,11 @@ test_that('Setting dimension = 1 or 3 for 2 dimensional plots shall return nothi
     data = topics::data$harmonywords
   )
   
+  dat1 <- dplyr::mutate(topics::data,gender = ifelse(gender == "male", 0, 1))
   tests2D <- topicsTest(
     model = model,
     preds = preds,
-    data =  topics::data,
+    data =  dat1,
     pred_var_x = 'hilstotal',
     pred_var_y = 'swlstotal',
     control_vars = c('age','gender')
@@ -130,7 +133,7 @@ test_that('Setting dimension = 1 or 3 for 2 dimensional plots shall return nothi
   
 })
 
-test_that('Set dimension = 2 for successfully saving the legends.',{
+test_that('Case 4: Set dimension = 2 for successfully saving the legends.',{
   
   if (dir.exists("./results")){
     unlink("./results", recursive = TRUE)
@@ -147,10 +150,11 @@ test_that('Set dimension = 2 for successfully saving the legends.',{
     data = topics::data$harmonywords
   )
   
+  dat1 <- dplyr::mutate(topics::data,gender = ifelse(gender == "male", 0, 1))
   tests2D <- topicsTest(
     model = model,
     preds = preds,
-    data =  topics::data,
+    data = dat1,
     pred_var_x = 'hilstotal',
     pred_var_y = 'swlstotal',
     control_vars = c('age','gender')
@@ -173,7 +177,7 @@ test_that('Set dimension = 2 for successfully saving the legends.',{
   
 })
 
-test_that('Change the popout method to "max_x", and "max_y".',{
+test_that('Case 5: Change the popout method to "max_x", and "max_y".',{
   
   if (dir.exists("./results")){
     unlink("./results", recursive = TRUE)
@@ -190,6 +194,7 @@ test_that('Change the popout method to "max_x", and "max_y".',{
     data = topics::data$harmonywords
   )
   
+  dat1 <- dplyr::mutate(topics::data,gender = ifelse(gender == "male", 0, 1))
   tests2D <- topicsTest(
     model = model,
     preds = preds,
@@ -234,7 +239,7 @@ test_that('Change the popout method to "max_x", and "max_y".',{
 })
 
 
-test_that('Manually set the topic numbers to save topics',{
+test_that('Case 6: Manually set the topic numbers to save topics',{
   
   if (dir.exists("./results")){
     unlink("./results", recursive = TRUE)
@@ -259,10 +264,11 @@ test_that('Manually set the topic numbers to save topics',{
     pred_var_y = 'swlstotal'
   )
   
+  dat1 <- dplyr::mutate(topics::data,gender = ifelse(gender == "male", 0, 1))
   tests2D <- topicsTest(
     model = model,
     preds = preds,
-    data =  topics::data,
+    data =  dat1,
     pred_var_x = 'hilstotal',
     pred_var_y = 'swlstotal',
     control_vars = c('age','gender')
@@ -288,7 +294,7 @@ test_that('Manually set the topic numbers to save topics',{
   
 })
 
-test_that('Set dimension = 1 for successfully saving the legends',{
+test_that('Case 7: Set dimension = 1 for successfully saving the legends',{
   if (dir.exists("./results")){
     unlink("./results", recursive = TRUE)
   }
@@ -329,7 +335,3 @@ test_that('Set dimension = 1 for successfully saving the legends',{
       './results/seed_42/wordclouds/grid_legend_corvar_hilstotal.svg'))
   
 })
-
-
-
-
