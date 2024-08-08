@@ -1,7 +1,7 @@
 Package: topics
 Type: Package
 Title: Creating and significance testing LDA topics
-Version: 0.9.0.12
+Version: 0.9.0.13
 Authors@R: c(
     person("Leon", "Ackermann", , "leonmax.ackermann@gmail.com", role = c("aut", "cre"), 
       comment = c(ORCID = "0009-0008-8583-8748"),

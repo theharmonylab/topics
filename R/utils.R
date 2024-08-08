@@ -705,9 +705,9 @@ get_mallet_model <- function(dtm,
     token.regexp = "[\\p{L}\\p{N}_]+|[\\p{P}]+\ ")
   
   # set seed (it does not make the entire ldaModel() output 
-  # object setqual TRUE, but many more objectis within the object becomes equal)
   # https://stackoverflow.com/questions/37356001/using-a-random-seed-in-rmallet
-  #model$setRandomSeed(seed)
+  # object setqual TRUE, but many more objectis within the object becomes equal)
+  model$setRandomSeed(as.integer(seed))
   model$loadDocuments(instances)
 
   model$train(num_iterations)
@@ -912,5 +912,39 @@ get_removal_columns <- function(dtm, n, type, mode="absolute"){
   return(column_indices_to_remove)
 }
 
-
-
+#' Assgning numeric categories for further topic visualization colors.
+#' @param topic_loadings_all (tibble) The tibble from topicsTest1
+#' @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
+#' @param dimNo (numeric) 1 dimension or 2 dimensions
+#' @return A new tibble with the assigned numbers
+#' importFrom dplyr mutate
+#' @noRd
+topicsNumAssign_dim2 <- function(topic_loadings_all,
+                                 p_alpha = 0.05, dimNo = 2){
+  
+  if (dimNo == 1){
+    num1 <- 1:3
+    topic_loadings_all <- topic_loadings_all %>%
+      dplyr::mutate(color_categories = dplyr::case_when(
+        x_plotted < 0 & adjusted_p_values.x < p_alpha ~ num1[1],
+        adjusted_p_values.x > p_alpha ~ num1[2],
+        x_plotted > 0 & adjusted_p_values.x < p_alpha ~ num1[3]
+      ))
+  }else{
+    num1 <- 1:9
+    topic_loadings_all <- topic_loadings_all %>%
+      dplyr::mutate(color_categories = dplyr::case_when(
+        x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[1],
+        adjusted_p_values.x > p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[2],
+        x_plotted > 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[3],
+        x_plotted < 0 & adjusted_p_values.x < p_alpha & adjusted_p_values.y > p_alpha ~ num1[4],
+        adjusted_p_values.x > p_alpha & adjusted_p_values.y > p_alpha ~ num1[5],
+        x_plotted > 0 & adjusted_p_values.x < p_alpha & adjusted_p_values.y > p_alpha ~ num1[6],
+        x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[7],
+        adjusted_p_values.x > p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[8],
+        x_plotted > 0 & adjusted_p_values.x < p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[9]
+      ))
+  }
+  
+  return (topic_loadings_all)
+}
