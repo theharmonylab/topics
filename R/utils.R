@@ -743,7 +743,7 @@ get_mallet_model <- function(dtm,
   return_model$instances <- instances #model$instances()
   return_model$inferencer <- model$getInferencer()
   #view(return_model$instances)
-  return_model$top_terms_mallet <- df_top_terms
+  #return_model$top_terms_mallet <- df_top_terms
   return_model$top_terms <- return_model$top_terms_mallet
   #return_model$phi <- mallet.topic.w
   return_model$phi <- mallet::mallet.topic.words(model, 

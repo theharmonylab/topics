@@ -451,6 +451,17 @@ topicsTest <- function(model,
     
     control_vars <- c(pred_var, control_vars)
     
+    for (control_var in control_vars){
+      if (!(control_var %in% names(preds))){
+        print(paste0("Variable:", control_var, " not found. Ensure that the prediction and control variable is part of the data."))
+        return(NULL)
+      }
+    }
+    
+    if (!(group_var %in% names(preds))){
+      print(paste0("Variable:", group_var, " not found. Ensure that the group variable is part of the data."))
+      return(NULL)
+    }
     
     if (!is.null(group_var)){
       if (!(group_var %in% names(preds))){

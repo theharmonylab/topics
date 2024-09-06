@@ -6,6 +6,7 @@ library(text)
 data <- Language_based_assessment_data_8$harmonytexts
 dtm <- topicsDtm(data = data)
 model <- topicsModel(dtm = dtm)
+model$
 
 result <- topicsPreds(model = model, data = data)
 
