@@ -156,3 +156,4 @@ test_that("topicsTest performs ridge regression correctly", {
   expect_true(any(grepl("statistic", names(result$test))))
   expect_true(any(grepl("p.value", names(result$test))))
 })
+

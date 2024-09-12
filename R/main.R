@@ -439,11 +439,12 @@ topicsTest1 <- function(model,
   
   
   if (!is.null(load_dir)){
+    test_path <- paste0(load_dir, "/seed_", seed, "/test.rds")
     if (!file.exists(test_path)) {
-      print(paste0("Test file not found at: ", paste0(load_dir, "/seed_", seed, "/test.rds"), ". Exiting function."))
+      print(paste0("Test file not found at: ", test_path, ". Exiting function."))
       return(NULL)
     }
-    test <- readRDS(paste0(load_dir, "/seed_", seed, "/test.rds"))
+    test <- readRDS(test_path)
   } else {
     
     if (is.null(pred_var) && test_method != "t-test") {
@@ -576,6 +577,9 @@ topicsTest <- function(model,
                        seed=42,
                        load_dir=NULL,
                        save_dir="./results"){
+  if (!is.null(load_dir)){
+    test <- topicsTest1(load_dir = load_dir)
+  }
   
   if (length(control_vars) > 0){
     for (control_var in control_vars){
@@ -584,8 +588,8 @@ topicsTest <- function(model,
         return (NULL)
     }}
   }
-  if (is.null(pred_var_x)){
-    print('Please input the pred_var_x!')
+  if (is.null(pred_var_x) & is.null(group_var)){
+    print('Please input the pred_var_x or group_var!')
     return (NULL)
   }
   pred_vars_all <- c(pred_var_x, pred_var_y)
@@ -620,12 +624,16 @@ topicsTest <- function(model,
       load_dir = load_dir,
       save_dir = save_dir
     )
-    colnames(topic_loading$test) <- c("topic", "top_terms", 
-                                      paste(pre[i], 
-                                            colnames(topic_loading$test)[3:6], 
-                                            sep = "."))
+    if (test_method != "ridge_regression") {
+      
     
-    topic_loadings_all[[i]] <- topic_loading
+      colnames(topic_loading$test) <- c("topic", "top_terms", 
+                                        paste(pre[i], 
+                                              colnames(topic_loading$test)[3:6], 
+                                              sep = "."))
+      
+      topic_loadings_all[[i]] <- topic_loading
+    }
   }
   
   if (!is.null(pred_var_y)){
@@ -644,17 +652,23 @@ topicsTest <- function(model,
     topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 2)
     colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)] <- bak1
   }else{
-    print('The parameter pred_var_y is not set! Output 1 dimensional results.')
-    topic_loadings_all[[2]] <- list()
-    topic_loadings_all[[3]] <- list()
-    topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]][,1:6]
-    topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
-    topic_loadings_all[[3]]$pred_var <- topic_loadings_all[[1]]$pred_var
+    if (test_method == "linear_regression" | test_method == "logistic_regression"){
+      
     
-    bak1 <- colnames(topic_loadings_all[[3]]$test)[c(3,6)]
-    colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- c('x_plotted', 'adjusted_p_values.x')
-    topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 1)
-    colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- bak1
+      print('The parameter pred_var_y is not set! Output 1 dimensional results.')
+      topic_loadings_all[[2]] <- list()
+      topic_loadings_all[[3]] <- list()
+      topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]][,1:6]
+      topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
+      topic_loadings_all[[3]]$pred_var <- topic_loadings_all[[1]]$pred_var
+      
+      bak1 <- colnames(topic_loadings_all[[3]]$test)[c(3,6)]
+      colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- c('x_plotted', 'adjusted_p_values.x')
+      topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 1)
+      colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- bak1
+    } else if (test_method == "ridge_regression"){
+      topic_loadings_all[[1]] <- topic_loading
+    }
   }
   
   return(topic_loadings_all)
