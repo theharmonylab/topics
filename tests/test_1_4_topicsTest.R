@@ -2,9 +2,7 @@
 library(testthat)
 library(topics)  # Replace with your package name
 library(text)
-pkgdown::build_site(new_process = FALSE)
-devtools::build()
-devtools::document()
+
 data <- Language_based_assessment_data_8
 dtm <- topicsDtm(data = data$harmonytexts)
 model <- topicsModel(dtm = dtm)
