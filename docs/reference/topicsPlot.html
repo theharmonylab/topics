@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">topics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0.14</span>
       </span>
     </div>
 
@@ -51,19 +51,34 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">topicsPlot</span><span class="op">(</span></span>
-<span>  <span class="va">model</span>,</span>
-<span>  <span class="va">test</span>,</span>
-<span>  color_negative_cor <span class="op">=</span> <span class="fu">scale_color_gradient</span><span class="op">(</span>low <span class="op">=</span> <span class="st">"darkgreen"</span>, high <span class="op">=</span> <span class="st">"green"</span><span class="op">)</span>,</span>
-<span>  color_positive_cor <span class="op">=</span> <span class="fu">scale_color_gradient</span><span class="op">(</span>low <span class="op">=</span> <span class="st">"darkred"</span>, high <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span>,</span>
+<span>  model <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ngrams <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  test <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_threshold <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  grid_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  dim <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  color_scheme <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  scatter_legend_popout_num <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  scatter_legend_way_popout_topics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"max_x"</span>, <span class="st">"max_y"</span><span class="op">)</span>,</span>
+<span>  scatter_legend_user_spec_topics <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  scatter_legend_topic_num <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  scale_size <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  plot_topics_idx <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  p_threshold <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  save_dir <span class="op">=</span> <span class="st">"./results"</span>,</span>
 <span>  figure_format <span class="op">=</span> <span class="st">"svg"</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  height <span class="op">=</span> <span class="fl">8</span>,</span>
 <span>  max_size <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">42</span></span>
+<span>  seed <span class="op">=</span> <span class="fl">42</span>,</span>
+<span>  scatter_legend_popout_dot_size <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>  scatter_legend_bg_dot_size <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>  grid_legend_title <span class="op">=</span> <span class="st">"legend_title"</span>,</span>
+<span>  grid_legend_title_size <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  grid_legend_title_color <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  grid_legend_x_axes_label <span class="op">=</span> <span class="st">"legend_x_axes_label"</span>,</span>
+<span>  grid_legend_y_axes_label <span class="op">=</span> <span class="st">"legend_y_axes_label"</span>,</span>
+<span>  grid_legend_number_color <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  grid_legend_number_size <span class="op">=</span> <span class="fl">5</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -77,24 +92,40 @@
 <dd><p>(list) The test results</p></dd>
 
 
-<dt>color_negative_cor</dt>
-<dd><p>(R_obj) The color gradient for negative correlations</p></dd>
+<dt>p_threshold</dt>
+<dd><p>(integer) The p-value threshold to use for significance</p></dd>
 
 
-<dt>color_positive_cor</dt>
-<dd><p>(R_obj) The color gradient for positive correlations</p></dd>
+<dt>grid_plot</dt>
+<dd><p>(boolean) Set TRUE if plotting the topics grid</p></dd>
+
+
+<dt>dim</dt>
+<dd><p>(numeric) Generate 1 dimensional color plots or 2 dimensional color plots if grid = TRUE</p></dd>
+
+
+<dt>color_scheme</dt>
+<dd><p>(string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE. The vector should contain 9 color codes.</p></dd>
+
+
+<dt>scatter_legend_popout_num</dt>
+<dd><p>(numeric or vector) The vector of num of pop outs of each grid in the scatter legend.</p></dd>
+
+
+<dt>scatter_legend_way_popout_topics</dt>
+<dd><p>(string) The way to filter topics to pop out in the scatter legend. Can be either "mean", "max_x", or "max_y"</p></dd>
+
+
+<dt>scatter_legend_user_spec_topics</dt>
+<dd><p>(vector) User can specify which topic to be poped out in the scatter legend. Should be like c("t_1", "t_2", ...). If set, way_popout_topics will have no effect.</p></dd>
+
+
+<dt>scatter_legend_topic_num</dt>
+<dd><p>(boolean) Allow showing the topic number or not in the scatter legend</p></dd>
 
 
 <dt>scale_size</dt>
 <dd><p>(logical) Whether to scale the size of the words</p></dd>
-
-
-<dt>plot_topics_idx</dt>
-<dd><p>(vector) The topics to plot determined by index</p></dd>
-
-
-<dt>p_threshold</dt>
-<dd><p>(integer) The p-value threshold to use for significance</p></dd>
 
 
 <dt>save_dir</dt>
@@ -102,7 +133,7 @@
 
 
 <dt>figure_format</dt>
-<dd><p>(string) Set the figure format, e.g., svg, or png.</p></dd>
+<dd><p>(string) Set the figure format, e.g., .svg, or .png.</p></dd>
 
 
 <dt>width</dt>
@@ -119,6 +150,42 @@
 
 <dt>seed</dt>
 <dd><p>(integer) The seed to set for reproducibility</p></dd>
+
+
+<dt>scatter_legend_popout_dot_size</dt>
+<dd><p>(integer) The dot size of scatter legend to popout</p></dd>
+
+
+<dt>scatter_legend_bg_dot_size</dt>
+<dd><p>(integer) The dot size of scatter legend in the background</p></dd>
+
+
+<dt>grid_legend_title</dt>
+<dd><p>The title of grid topic plot if grid_plot = TRUE</p></dd>
+
+
+<dt>grid_legend_title_size</dt>
+<dd><p>The size of the title of the plot if grid_plot = TRUE</p></dd>
+
+
+<dt>grid_legend_title_color</dt>
+<dd><p>The color of the legend title if grid_plot = TRUE</p></dd>
+
+
+<dt>grid_legend_x_axes_label</dt>
+<dd><p>The label of the x axes if grid_plot = TRUE</p></dd>
+
+
+<dt>grid_legend_y_axes_label</dt>
+<dd><p>The label of the y axes if grid_plot = TRUE</p></dd>
+
+
+<dt>grid_legend_number_color</dt>
+<dd><p>The color in the text in the legend if grid_plot = TRUE</p></dd>
+
+
+<dt>grid_legend_number_size</dt>
+<dd><p>The color in the text in the legend if grid_plot = TRUE</p></dd>
 
 </dl></div>
     <div id="value">

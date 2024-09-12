@@ -280,6 +280,44 @@ topicsModel <- function(dtm,
   return(model)
 }
 
+#' The function computes ngrams from a text
+#' @param data (tibble) The data
+#' @param n (integer) The length of ngram
+#' @param sep (string) The separator
+#' @importFrom ngram ngram get.ngrams get.phrasetable
+#' @importFrom tibble as_tibble tibble
+#' @importFrom stringr str_count
+#' @return A list containing tibble of the ngrams with the frequency and probability and a tibble containing the relative frequency of the ngrams for each user
+#' @export
+#' 
+topicsGrams <- function(data, n=2, sep = " ", top_n = NULL){
+  data <- tolower(data)
+  ngrams <- ngram::ngram(data, n = n, sep = sep)
+  ngrams <- ngram::get.phrasetable(ngrams)
+  if (!is.null(top_n)){
+    ngrams <- ngrams[1:top_n,]
+  }
+  freq_per_user <- list()
+  freq_per_user$usertexts <- data
+  
+  #for (i in 1:nrow(ngrams)) {
+  #  temp <- c()
+  #  
+  #  for (j in 1:length(data)) {
+  #    print(data[j])
+  #    print(ngrams$ngrams[i])
+  #    ngram_count <- str_count(data[j], ngrams$ngrams[i])
+  #    relative_frequency <- ngram_count / ngrams$freq[i]
+  #    temp <- c(temp, relative_frequency)
+  #  }
+  #  col <- paste(unlist(strsplit(ngrams$ngrams[i], " ")), collapse = "_")
+  #  freq_per_user[[col]] <- temp
+  #}
+  ngrams$ngrams <- sapply(ngrams$ngrams, function(x) paste(unlist(strsplit(x, " ")), collapse = "_"))
+
+  return(list(ngrams=as_tibble(ngrams),
+              freq_per_user = as_tibble(freq_per_user)))
+}
 
 
 #' The function to predict the topics of a new document with the trained model
@@ -1168,8 +1206,9 @@ topicsGridLegend <- function(
 #' @param seed (integer) The seed to set for reproducibility
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @export
-topicsPlot1 <- function(model,
-                        test,
+topicsPlot1 <- function(model = NULL,
+                        ngrams = NULL,
+                        test = NULL,
                         color_negative_cor = ggplot2::scale_color_gradient(low = "darkgreen", high = "green"),
                         color_positive_cor = ggplot2::scale_color_gradient(low = "darkred", high = "red"),
                         grid_pos = "",
@@ -1182,43 +1221,73 @@ topicsPlot1 <- function(model,
                         height = 8,
                         max_size = 10, 
                         seed = 42){
+  if (!is.null(model)){
+    model <- name_cols_with_vocab(model, "phi", model$vocabulary)
+    df_list <- create_topic_words_dfs(model$summary)
+    df_list <- assign_phi_to_words(df_list, model$phi, "mallet")
+  }
   
-  model <- name_cols_with_vocab(model, "phi", model$vocabulary)
-  test_type = test$test_method
-  pred_var = test$pred_var
-  df_list <- create_topic_words_dfs(model$summary)
-  df_list <- assign_phi_to_words(df_list, model$phi, "mallet")
+  if (!is.null(test) && !is.null(model)){
+    
   
-  
-  create_plots(df_list = df_list, 
-               summary = model$summary,
-               test = test$test, 
-               test_type = test$test_method,
-               cor_var = pred_var,
-               color_negative_cor = color_negative_cor,
-               color_positive_cor = color_positive_cor,
-               grid_pos = grid_pos,
-               scale_size = scale_size,
-               plot_topics_idx = plot_topics_idx,
-               p_threshold = p_threshold,
-               figure_format = figure_format,
-               width = width, 
-               height = height,
-               max_size = max_size,
-               save_dir = save_dir,
-               seed = seed)
-  if (grid_pos == ""){
-    print(paste0("The plots of ",
-                 pred_var,
-                 " are saved in ", 
-                 save_dir, "/seed", seed, "/wordclouds"))
-  }else{
-    if (grid_pos != 5){
+    test_type = test$test_method
+    pred_var = test$pred_var
+    
+    create_plots(df_list = df_list, 
+                 summary = model$summary,
+                 test = test$test, 
+                 test_type = test$test_method,
+                 cor_var = pred_var,
+                 color_negative_cor = color_negative_cor,
+                 color_positive_cor = color_positive_cor,
+                 grid_pos = grid_pos,
+                 scale_size = scale_size,
+                 plot_topics_idx = plot_topics_idx,
+                 p_threshold = p_threshold,
+                 figure_format = figure_format,
+                 width = width, 
+                 height = height,
+                 max_size = max_size,
+                 save_dir = save_dir,
+                 seed = seed)
+    if (grid_pos == ""){
       print(paste0("The plots of ",
-                   pred_var, " of grid position ", grid_pos,
+                   pred_var,
                    " are saved in ", 
                    save_dir, "/seed", seed, "/wordclouds"))
+    }else{
+      if (grid_pos != 5){
+        print(paste0("The plots of ",
+                     pred_var, " of grid position ", grid_pos,
+                     " are saved in ", 
+                     save_dir, "/seed", seed, "/wordclouds"))
+      }
     }
+  } else if (!is.null(model) && is.null(test)){
+    create_plots(df_list = df_list, 
+                 summary = model$summary,
+                 scale_size = scale_size,
+                 plot_topics_idx = plot_topics_idx,
+                 figure_format = figure_format,
+                 width = width, 
+                 height = height,
+                 max_size = max_size,
+                 save_dir = save_dir,
+                 seed = seed)
+    print(paste0("The plots are saved in ", 
+                 save_dir, "/seed", seed, "/wordclouds"))
+  } else if (is.null(model) && !is.null(ngrams)){
+    create_plots(ngrams = ngrams,
+                 scale_size = scale_size,
+                 plot_topics_idx = plot_topics_idx,
+                 figure_format = figure_format,
+                 width = width, 
+                 height = height,
+                 max_size = max_size,
+                 save_dir = save_dir,
+                 seed = seed)
+    print(paste0("The plots are saved in ", 
+                 save_dir, "/seed", seed, "/wordclouds"))
   }
   
 }
@@ -1253,8 +1322,9 @@ topicsPlot1 <- function(model,
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @importFrom dplyr filter
 #' @export
-topicsPlot <- function(model,
-                       test,
+topicsPlot <- function(model = NULL,
+                       ngrams= NULL,
+                       test = NULL,
                        p_threshold = 0.05,
                        grid_plot = TRUE,
                        dim = 2,
@@ -1264,6 +1334,7 @@ topicsPlot <- function(model,
                        scatter_legend_user_spec_topics = NULL,
                        scatter_legend_topic_num = FALSE,
                        scale_size = FALSE,
+                       plot_topics_idx = NULL,
                        save_dir = "./results",
                        figure_format = "svg",
                        width = 10, 
@@ -1281,188 +1352,215 @@ topicsPlot <- function(model,
                        grid_legend_number_size = 5
 ){
   
-  if (is.character(color_scheme) && length(color_scheme) == 1){
-    if (color_scheme == 'default'){
+  if (!is.null(test) && !is.null(model)){
+  
+    if (is.character(color_scheme) && length(color_scheme) == 1){
+      if (color_scheme == 'default'){
+        if (dim == 2){
+          bivariate_color_codes <- c(
+            "#398CF9", "#60A1F7", "#5dc688",
+            "#e07f6a", "#EAEAEA", "#40DD52",
+            "#FF0000", "#EA7467", "#85DB8E")
+        }else if (dim == 1){
+          bivariate_color_codes <- c(
+            "#e07f6a", "#EAEAEA", "#40DD52")
+        }else{cat('Dim parameter should be either 1 or 2.\n')}
+      }else{cat("Error in color_scheme. Consider using 'default'.\n")}
+    }else if (is.character(color_scheme) && length(color_scheme) > 1){
       if (dim == 2){
-        bivariate_color_codes <- c(
-          "#398CF9", "#60A1F7", "#5dc688",
-          "#e07f6a", "#EAEAEA", "#40DD52",
-          "#FF0000", "#EA7467", "#85DB8E")
+        bivariate_color_codes <- color_scheme
       }else if (dim == 1){
-        bivariate_color_codes <- c(
-          "#e07f6a", "#EAEAEA", "#40DD52")
+        bivariate_color_codes <- color_scheme[4:6]
       }else{cat('Dim parameter should be either 1 or 2.\n')}
-    }else{cat("Error in color_scheme. Consider using 'default'.\n")}
-  }else if (is.character(color_scheme) && length(color_scheme) > 1){
-    if (dim == 2){
-      bivariate_color_codes <- color_scheme
-    }else if (dim == 1){
-      bivariate_color_codes <- color_scheme[4:6]
-    }else{cat('Dim parameter should be either 1 or 2.\n')}
-  }else{
-    cat('The parameter color_scheme should be a vector and should contain 9 colors! Or try with the default color scheme.\n')
-    return (NULL)
-  }
-  
-  if (!is.vector(scatter_legend_popout_num) || !is.numeric(scatter_legend_popout_num)){
-    cat('The parameter "scatter_legend_popout_num" should be either a numeric vector or a number.\n')
-    return (NULL)
-  }
-  
-  if (dim == 1 && grid_plot){
-    cat('Dim is set to 1 to plot pred_var_x. This needs pred_var_x in topicsTest.\n')
-    if (length(bivariate_color_codes) != 3){
-      cat('Please input 9 color codes for the paramter color_scheme!\n')
+    }else{
+      cat('The parameter color_scheme should be a vector and should contain 9 colors! Or try with the default color scheme.\n')
       return (NULL)
     }
-    if(length(strsplit(test[[3]]$pred_var, "_")[[1]]) > 1){
-      cat('Cannot output grid plot if having two pred_var while dim = 1.\n')
+    
+    if (!is.vector(scatter_legend_popout_num) || !is.numeric(scatter_legend_popout_num)){
+      cat('The parameter "scatter_legend_popout_num" should be either a numeric vector or a number.\n')
       return (NULL)
     }
-  }else if(dim == 2 && grid_plot){
-    if (length(bivariate_color_codes) != 9){
-      cat('Please input 9 color codes for the paramter color_scheme!\n')
-      return (NULL)
+    
+    if (dim == 1 && grid_plot){
+      cat('Dim is set to 1 to plot pred_var_x. This needs pred_var_x in topicsTest.\n')
+      if (length(bivariate_color_codes) != 3){
+        cat('Please input 9 color codes for the paramter color_scheme!\n')
+        return (NULL)
+      }
+      if(length(strsplit(test[[3]]$pred_var, "_")[[1]]) > 1){
+        cat('Cannot output grid plot if having two pred_var while dim = 1.\n')
+        return (NULL)
+      }
+    }else if(dim == 2 && grid_plot){
+      if (length(bivariate_color_codes) != 9){
+        cat('Please input 9 color codes for the paramter color_scheme!\n')
+        return (NULL)
+      }
     }
-  }
-  
-  if (is.vector(scatter_legend_way_popout_topics) && length(scatter_legend_way_popout_topics) == 3){
-    cat('One can use a string "mean" instead of a vector for parameter scatter_legend_way_popout_topics.\n')
-    scatter_legend_way_popout_topics <- "mean"
-  }else if (!is.character(scatter_legend_way_popout_topics)){
-    cat('Parameter scatter_legend_way_popout_topics is not correctly set.\nUsing "mean".\n')
-    scatter_legend_way_popout_topics <- "mean"
-  }else if(is.character(scatter_legend_way_popout_topics) && !scatter_legend_way_popout_topics %in% c("mean", "max_x", "max_y") ){
-    cat('Parameter scatter_legend_way_popout_topics should be either "mean", "max_x", or "max_y".\nUsing "mean".\n')
-    scatter_legend_way_popout_topics <- "mean"
-  }else{scatter_legend_way_popout_topics <- scatter_legend_way_popout_topics}
-  if (!is.null(scatter_legend_user_spec_topics)){
-    if (!is.vector(scatter_legend_user_spec_topics)){
-      cat('Parameter scatter_legend_user_spec_topics should be a vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
-      scatter_legend_user_spec_topics <- c("t_1")
-    }else if (!is.character(scatter_legend_user_spec_topics)){
-      cat('Parameter scatter_legend_user_spec_topics should be a character vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
-      scatter_legend_user_spec_topics <- c("t_1")
-    }else if (! TRUE %in% grepl("t_", scatter_legend_user_spec_topics)){
-      cat('Parameter scatter_legend_user_spec_topics should specify topics with c("t_1", "t_12") like input.\nThe function will pop out the "t_1" topic only in the scatter legend.')
-      scatter_legend_user_spec_topics <- c("t_1")
+    
+    if (is.vector(scatter_legend_way_popout_topics) && length(scatter_legend_way_popout_topics) == 3){
+      cat('One can use a string "mean" instead of a vector for parameter scatter_legend_way_popout_topics.\n')
+      scatter_legend_way_popout_topics <- "mean"
+    }else if (!is.character(scatter_legend_way_popout_topics)){
+      cat('Parameter scatter_legend_way_popout_topics is not correctly set.\nUsing "mean".\n')
+      scatter_legend_way_popout_topics <- "mean"
+    }else if(is.character(scatter_legend_way_popout_topics) && !scatter_legend_way_popout_topics %in% c("mean", "max_x", "max_y") ){
+      cat('Parameter scatter_legend_way_popout_topics should be either "mean", "max_x", or "max_y".\nUsing "mean".\n')
+      scatter_legend_way_popout_topics <- "mean"
+    }else{scatter_legend_way_popout_topics <- scatter_legend_way_popout_topics}
+    if (!is.null(scatter_legend_user_spec_topics)){
+      if (!is.vector(scatter_legend_user_spec_topics)){
+        cat('Parameter scatter_legend_user_spec_topics should be a vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
+        scatter_legend_user_spec_topics <- c("t_1")
+      }else if (!is.character(scatter_legend_user_spec_topics)){
+        cat('Parameter scatter_legend_user_spec_topics should be a character vector.\nThe function will pop out the "t_1" topic only in the scatter legend.')
+        scatter_legend_user_spec_topics <- c("t_1")
+      }else if (! TRUE %in% grepl("t_", scatter_legend_user_spec_topics)){
+        cat('Parameter scatter_legend_user_spec_topics should specify topics with c("t_1", "t_12") like input.\nThe function will pop out the "t_1" topic only in the scatter legend.')
+        scatter_legend_user_spec_topics <- c("t_1")
+      }
+    } 
+    
+    
+    if (!grid_plot){
+      print('The parameter grid_plot = FALSE will output all the topic plots for the pred_var_x in topicsTest.')
+      topicsPlot1(
+        model = model,
+        test = test[[1]],
+        grid_pos = "",
+        scale_size = scale_size,
+        plot_topics_idx = NULL,
+        p_threshold = p_threshold,
+        save_dir = save_dir,
+        figure_format = figure_format,
+        width = width, 
+        height = height,
+        max_size = max_size, 
+        seed = seed)
+    }else{
+      if (dim == 1){
+        for (i in 1:3){
+          if (! (i %in% test[[3]]$test$color_categories)){next}
+          filtered_test <- test[[3]]
+          filtered_test$test <- dplyr::filter(tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
+                                              color_categories == i)
+          color1 <- bivariate_color_codes[i]
+          plot_topics_idx <- as.numeric(sub(".*_", "", filtered_test[["test"]]$topic))
+          
+          topicsPlot1(
+            model = model,
+            test = filtered_test,
+            color_negative_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
+            color_positive_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
+            grid_pos = i,
+            scale_size = scale_size,
+            plot_topics_idx = plot_topics_idx,
+            p_threshold = p_threshold,
+            save_dir = save_dir,
+            figure_format = figure_format,
+            width = width, 
+            height = height,
+            max_size = max_size, 
+            seed = seed
+          )
+        }
+      }else if (dim == 2){
+        for (k in 1:9){
+          if (! (k %in% test[[3]]$test$color_categories)){next}
+          filtered_test <- test[[3]]
+          filtered_test$test <- dplyr::filter(tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
+                                              color_categories == k)
+          color1 <- bivariate_color_codes[k]
+          plot_topics_idx <- as.numeric(sub(".*_", "", filtered_test[["test"]]$topic))
+          
+          topicsPlot1(
+            model = model,
+            test = filtered_test,
+            color_negative_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
+            color_positive_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
+            grid_pos = k,
+            scale_size = scale_size,
+            plot_topics_idx = plot_topics_idx,
+            p_threshold = p_threshold,
+            save_dir = save_dir,
+            figure_format = figure_format,
+            width = width, 
+            height = height,
+            max_size = max_size, 
+            seed = seed
+          )
+        }
+      }else{
+        print('Dim should be either 1 or 2 if grid_plot = TRUE.')
+        return (NULL)
+      }
+      
+      if (grid_plot){
+        topicsScatterLegend(
+          bivariate_color_codes = bivariate_color_codes,
+          filtered_test = test[[3]]$test,
+          num_popout = scatter_legend_popout_num,
+          y_axes_1 = dim,
+          cor_var = test[[3]]$pred_var,
+          label_x_name = grid_legend_x_axes_label,
+          label_y_name = grid_legend_y_axes_label,
+          way_popout_topics = scatter_legend_way_popout_topics,
+          user_spec_topics = scatter_legend_user_spec_topics,
+          allow_topic_num_legend = scatter_legend_topic_num,
+          scatter_popout_dot_size = scatter_legend_popout_dot_size,
+          scatter_bg_dot_size = scatter_legend_bg_dot_size,
+          save_dir = save_dir,
+          figure_format = figure_format,
+          # width = 10, 
+          # height = 8,
+          seed = seed
+        )
+        topicsGridLegend(
+          bivariate_color_codes = bivariate_color_codes,
+          filtered_test = test[[3]]$test,
+          cor_var = test[[3]]$pred_var,
+          save_dir = save_dir,
+          figure_format = figure_format,
+          seed = seed,
+          # width = 10, 
+          # height = 8,
+          y_axes_1 = dim,
+          legend_title = grid_legend_title,
+          legend_title_size = grid_legend_title_size,
+          titles_color = grid_legend_title_color,
+          legend_x_axes_label = grid_legend_x_axes_label,
+          legend_y_axes_label = grid_legend_y_axes_label,
+          topic_data_all = test[[3]][["test"]],
+          legend_number_color = grid_legend_number_color,
+          legend_number_size = grid_legend_number_size
+        )
+        print('The grid plot legends are saved under the same folder.')
+      }
     }
-  } 
-  
-  
-  if (!grid_plot){
-    print('The parameter grid_plot = FALSE will output all the topic plots for the pred_var_x in topicsTest.')
+  } else if (is.null(test) && !is.null(model)){
     topicsPlot1(
       model = model,
-      test = test[[1]],
-      grid_pos = "",
       scale_size = scale_size,
-      plot_topics_idx = NULL,
-      p_threshold = p_threshold,
+      plot_topics_idx = plot_topics_idx,
       save_dir = save_dir,
       figure_format = figure_format,
       width = width, 
       height = height,
       max_size = max_size, 
-      seed = seed)
-  }else{
-    if (dim == 1){
-      for (i in 1:3){
-        if (! (i %in% test[[3]]$test$color_categories)){next}
-        filtered_test <- test[[3]]
-        filtered_test$test <- dplyr::filter(tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
-                                            color_categories == i)
-        color1 <- bivariate_color_codes[i]
-        plot_topics_idx <- as.numeric(sub(".*_", "", filtered_test[["test"]]$topic))
-        
-        topicsPlot1(
-          model = model,
-          test = filtered_test,
-          color_negative_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
-          color_positive_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
-          grid_pos = i,
-          scale_size = scale_size,
-          plot_topics_idx = plot_topics_idx,
-          p_threshold = p_threshold,
-          save_dir = save_dir,
-          figure_format = figure_format,
-          width = width, 
-          height = height,
-          max_size = max_size, 
-          seed = seed
-        )
-      }
-    }else if (dim == 2){
-      for (k in 1:9){
-        if (! (k %in% test[[3]]$test$color_categories)){next}
-        filtered_test <- test[[3]]
-        filtered_test$test <- dplyr::filter(tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
-                                            color_categories == k)
-        color1 <- bivariate_color_codes[k]
-        plot_topics_idx <- as.numeric(sub(".*_", "", filtered_test[["test"]]$topic))
-        
-        topicsPlot1(
-          model = model,
-          test = filtered_test,
-          color_negative_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
-          color_positive_cor = ggplot2::scale_color_gradient(low = color1, high = color1),
-          grid_pos = k,
-          scale_size = scale_size,
-          plot_topics_idx = plot_topics_idx,
-          p_threshold = p_threshold,
-          save_dir = save_dir,
-          figure_format = figure_format,
-          width = width, 
-          height = height,
-          max_size = max_size, 
-          seed = seed
-        )
-      }
-    }else{
-      print('Dim should be either 1 or 2 if grid_plot = TRUE.')
-      return (NULL)
-    }
-    
-    if (grid_plot){
-      topicsScatterLegend(
-        bivariate_color_codes = bivariate_color_codes,
-        filtered_test = test[[3]]$test,
-        num_popout = scatter_legend_popout_num,
-        y_axes_1 = dim,
-        cor_var = test[[3]]$pred_var,
-        label_x_name = grid_legend_x_axes_label,
-        label_y_name = grid_legend_y_axes_label,
-        way_popout_topics = scatter_legend_way_popout_topics,
-        user_spec_topics = scatter_legend_user_spec_topics,
-        allow_topic_num_legend = scatter_legend_topic_num,
-        scatter_popout_dot_size = scatter_legend_popout_dot_size,
-        scatter_bg_dot_size = scatter_legend_bg_dot_size,
-        save_dir = save_dir,
-        figure_format = figure_format,
-        # width = 10, 
-        # height = 8,
-        seed = seed
-      )
-      topicsGridLegend(
-        bivariate_color_codes = bivariate_color_codes,
-        filtered_test = test[[3]]$test,
-        cor_var = test[[3]]$pred_var,
-        save_dir = save_dir,
-        figure_format = figure_format,
-        seed = seed,
-        # width = 10, 
-        # height = 8,
-        y_axes_1 = dim,
-        legend_title = grid_legend_title,
-        legend_title_size = grid_legend_title_size,
-        titles_color = grid_legend_title_color,
-        legend_x_axes_label = grid_legend_x_axes_label,
-        legend_y_axes_label = grid_legend_y_axes_label,
-        topic_data_all = test[[3]][["test"]],
-        legend_number_color = grid_legend_number_color,
-        legend_number_size = grid_legend_number_size
-      )
-      print('The grid plot legends are saved under the same folder.')
-    }
+      seed = seed
+    )
+  } else if (is.null(model) && !is.null(ngrams)){
+    topicsPlot1(
+      ngrams = ngrams$ngrams,
+      scale_size = scale_size,
+      plot_topics_idx = plot_topics_idx,
+      save_dir = save_dir,
+      figure_format = figure_format,
+      width = width, 
+      height = height,
+      max_size = max_size, 
+      seed = seed
+    )
   }
 }

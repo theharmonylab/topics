@@ -5,8 +5,9 @@
 \title{The function to create lda wordclouds}
 \usage{
 topicsPlot1(
-  model,
-  test,
+  model = NULL,
+  ngrams = NULL,
+  test = NULL,
   color_negative_cor = ggplot2::scale_color_gradient(low = "darkgreen", high = "green"),
   color_positive_cor = ggplot2::scale_color_gradient(low = "darkred", high = "red"),
   grid_pos = "",

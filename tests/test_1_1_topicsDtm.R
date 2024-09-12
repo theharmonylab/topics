@@ -6,7 +6,7 @@ library(text)
 test_that("topicsDtm creates a DTM correctly with default parameters", {
 
   data <- Language_based_assessment_data_8$harmonytexts
-  options(mc.cores = 4)  # Set the number of cores to 2
+  options(mc.cores = 1)  # Set the number of cores to 2
   result <- topicsDtm(data = data)
   
   testthat::expect_true(is.list(result))

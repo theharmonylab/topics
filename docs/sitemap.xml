@@ -10,6 +10,9 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/fake_topicsTest.html</loc>
+  </url>
+  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
@@ -31,16 +34,25 @@
     <loc>/reference/topicsDtm.html</loc>
   </url>
   <url>
+    <loc>/reference/topicsGrams.html</loc>
+  </url>
+  <url>
     <loc>/reference/topicsModel.html</loc>
   </url>
   <url>
     <loc>/reference/topicsPlot.html</loc>
   </url>
   <url>
+    <loc>/reference/topicsPlot1.html</loc>
+  </url>
+  <url>
     <loc>/reference/topicsPreds.html</loc>
   </url>
   <url>
     <loc>/reference/topicsTest.html</loc>
+  </url>
+  <url>
+    <loc>/reference/topicsTest1.html</loc>
   </url>
   <url>
     <loc>/reference/topicsWordclouds.html</loc>

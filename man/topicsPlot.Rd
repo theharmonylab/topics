@@ -5,8 +5,9 @@
 \title{The function to create lda wordclouds}
 \usage{
 topicsPlot(
-  model,
-  test,
+  model = NULL,
+  ngrams = NULL,
+  test = NULL,
   p_threshold = 0.05,
   grid_plot = TRUE,
   dim = 2,
@@ -16,6 +17,7 @@ topicsPlot(
   scatter_legend_user_spec_topics = NULL,
   scatter_legend_topic_num = FALSE,
   scale_size = FALSE,
+  plot_topics_idx = NULL,
   save_dir = "./results",
   figure_format = "svg",
   width = 10,
