@@ -1,7 +1,7 @@
 Package: topics
 Type: Package
 Title: Creating and significance testing LDA topics
-Version: 0.9.0.14
+Version: 0.9.0.15
 Authors@R: c(
     person("Leon", "Ackermann", , "leonmax.ackermann@gmail.com", role = c("aut", "cre"), 
       comment = c(ORCID = "0009-0008-8583-8748"),
@@ -39,7 +39,7 @@ Imports:
     ngram,
     stringr,
     rlang
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     rmarkdown,

@@ -1,0 +1,86 @@
+
+url: https://r-topics.org
+
+development:
+#  mode: release
+#   mode: auto
+   mode: default
+#   mode: unreleased
+home:
+  title: topics
+  description: Analyses of Text using LDA topics and Differential Language Analysis.
+  links:
+  - text: Ask a question about topics using the r-topics tag
+    href: https://stackoverflow.com/
+
+template:
+  opengraph:
+    image:
+      src: man/figures/logo.png
+      alt: "text analyzes using huggingface transformers"
+#    twitter:
+#      creator: "@leonackermann"
+#      site: "@rstudio"
+#      card: summary_large_image
+
+authors:
+  Leon Ackerman:
+#    href: http://www.salvatoregiorgi.com/
+  Zhuojun Gu: 
+    href: https://portal.research.lu.se/sv/persons/zhuojun-gu 
+  Oscar Kjell:
+    href: https://oscarkjell.se/
+
+
+#twitter:
+#  icon: "fab fa-twitter fa-lg"
+#  href: http://twitter.com/OscarKjell
+
+reference:
+- title: Transform text to topics
+  contents:
+  - topicsGrams
+- title: Transform text to topics
+  contents:
+  - topicsDtm
+  - topicsModel
+- title: Predict topic distribution from text
+  contents:
+  - topicsPreds
+- title: Differential language analysis
+  contents:
+  - topicsTest
+  - topicsTest1
+- title: Plotting word topics
+  contents:
+    - topicsPlot
+    - topicsPlot1
+#- title: Example Data
+#  contents:
+#    - Language_based_assessment_data_8
+
+
+#articles:
+#- title: Set-up
+#  navbar: ~
+#  contents:
+#  - pre_trained_models
+#  - huggingface_in_r_extended_installation_guide
+#  - singularity_transformers_container
+#  - huggingface_in_r_and_computer_capacity
+#  - removing_huggingface_transformers_cache_files
+#- title: Tutorials
+#  desc: >
+#    These tutorials go into detail about various text-analyses.
+#  contents:
+# # - huggingface_in_r
+##  - psychological_methods
+#- title: Comments
+#  desc: >
+#    General comments about text-analyses.
+#  contents:
+##  - pre_registration_and_transformers
+
+news:
+   one_page: true
+   cran_dates: true
