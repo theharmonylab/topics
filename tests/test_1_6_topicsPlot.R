@@ -1,7 +1,7 @@
 # tests/test-topicsWordclouds.R
 library(testthat)
 library(topics)  # Replace with your package name
-library(text)
+#library(text)
 
 test_that("topicsPlot with test", {
   data <- Language_based_assessment_data_8
