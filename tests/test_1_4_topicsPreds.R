@@ -1,7 +1,7 @@
 # tests/test-topicsPreds.R
 library(testthat)
 library(topics)  # Replace with your package name
-library(text)
+#library(text)
 library(tibble)
 
 data <- Language_based_assessment_data_8$harmonytexts

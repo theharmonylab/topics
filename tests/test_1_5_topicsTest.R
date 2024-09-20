@@ -1,7 +1,7 @@
 # tests/test-topicsTest.R
 library(testthat)
 library(topics)  # Replace with your package name
-library(text)
+#library(text)
 
 data <- Language_based_assessment_data_8
 dtm <- topicsDtm(data = data$harmonytexts)

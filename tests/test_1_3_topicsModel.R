@@ -1,7 +1,7 @@
 # tests/test-topicsModel.R
 library(testthat)
 library(topics)  # Replace with your package name
-library(text)
+#library(text)
 
 
 
