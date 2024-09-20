@@ -3,8 +3,11 @@ library(testthat)
 library(topics)  # Replace with your package name
 #library(text)
 
+load(file='./data/Language_based_assessment_data_8.rda')
+
+
 test_that("topicsPlot with test", {
-  data <- Language_based_assessment_data_8
+  data <- Language_based_assessment_data_8 
   dtm <- topicsDtm(data = data$harmonytexts)
   model <- topicsModel(dtm = dtm)
   preds <- topicsPreds(model = model, data = data$harmonytexts)
@@ -18,7 +21,7 @@ test_that("topicsPlot with test", {
 })
 
 test_that("topicsPlot without test and preds", {
-  data <- Language_based_assessment_data_8
+  data <- Language_based_assessment_data_8 
   dtm <- topicsDtm(data = data$harmonytexts)
   model <- topicsModel(dtm = dtm)
   
@@ -29,8 +32,10 @@ test_that("topicsPlot without test and preds", {
 })
 
 test_that("topicsPlot with topicsGrams",{
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- Language_based_assessment_data_8 
+  data <- data$harmonytexts
   ngrams <- topicsGrams(data = data, top_n = 20)
   topics::topicsPlot(ngrams = ngrams, figure_format = "png" )
   testthat::expect_true(file.exists("./results/seed_42/wordclouds/ngrams.png"))
 })
+

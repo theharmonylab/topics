@@ -4,13 +4,13 @@ library(topics)  # Replace with your package name
 #library(text)
 library(tibble)
 
-
+load(file='./data/Language_based_assessment_data_8.rda')
 
 test_that("topicsGrams with default parameters", {
-  
+
   data <- Language_based_assessment_data_8$harmonytexts
   ngrams <- topicsGrams(data = data)
   testthat::expect_true(is.list(ngrams))
-  testthat::expect_true(is.tibble(ngrams$ngrams))
-  testthat::expect_true(is.tibble(ngrams$freq_per_user))
+  testthat::expect_true(is_tibble(ngrams$ngrams))
+  testthat::expect_true(is_tibble(ngrams$freq_per_user))
 })

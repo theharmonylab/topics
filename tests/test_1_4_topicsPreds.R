@@ -4,11 +4,8 @@ library(topics)  # Replace with your package name
 #library(text)
 library(tibble)
 
-data <- Language_based_assessment_data_8$harmonytexts
-dtm <- topicsDtm(data = data)
-model <- topicsModel(dtm = dtm)
+load(file='./data/Language_based_assessment_data_8.rda')
 
-result <- topicsPreds(model = model, data = data)
 
 test_that("topicsPreds generates predictions with default parameters", {
   data <- Language_based_assessment_data_8$harmonytexts

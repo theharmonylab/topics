@@ -3,6 +3,7 @@ library(testthat)
 library(topics)  # Replace with your package name
 #library(text)
 
+load(file='./data/Language_based_assessment_data_8.rda')
 
 
 test_that("topicsModel creates an LDA model correctly with default parameters", {
@@ -62,3 +63,4 @@ test_that("topicsModel loads the model from the specified directory", {
   
   testthat::expect_equal(result1$summary, result2$summary)
 })
+
