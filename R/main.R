@@ -1372,7 +1372,7 @@ topicsPlot <- function(model = NULL,
       return (NULL)
     } 
     if (max(test[[3]]$test$color_categories) == 3 && length(scatter_legend_popout_num) == 9){
-      cat('The "test" object only contains 3 categories but the parameter "scatter_legend_popout_num" has a length of 9 instead of 3!\n Try set it with "[1,0,1]". \nNothing is returned!\n')
+      cat('The "test" object only contains 3 categories but the parameter "scatter_legend_popout_num" has a length of 9 instead of 3!\n Try set it with "c(1,0,1)". \nNothing is returned!\n')
       return (NULL)
     }  
     if (is.character(color_scheme) && length(color_scheme) == 1){
