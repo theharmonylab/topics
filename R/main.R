@@ -707,6 +707,11 @@ topicsScatterLegend <- function(
     cat('Error in dim param. It should be either 1 or 2.')
     return (NULL)
   }
+
+  if (dim == 1 && way_popout_topics == "mean"){
+    cat('The "dim" parameter is 1 so setting "way_popout_topics" to "max_x".\n')
+    way_popout_topics <- "max_x"
+  }
   
   only_five <- filtered_test %>%
     dplyr::summarise(contains_only_five = all(color_categories %in% 2)) %>%
