@@ -1367,7 +1367,10 @@ topicsPlot <- function(model = NULL,
 ){
   
   if (!is.null(test) && !is.null(model)){
-  
+    if (max(test[[3]]$test$color_categories) == 3 && dim == 2 && grid_plot){
+      cat('The test object only contains 3 grids!\nChange the dim parameter to 1!\n')
+      return (NULL)
+    } 
     if (is.character(color_scheme) && length(color_scheme) == 1){
       if (color_scheme == 'default'){
         if (dim == 2){
