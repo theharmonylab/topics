@@ -1306,7 +1306,7 @@ topicsPlot1 <- function(model = NULL,
   
 }
 
-#' The function to create lda wordclouds based on adjusted p value from the topicsPred
+#' The function to create lda wordclouds based on adjusted p value from the topicsPreds
 #' @param model (list) The trained model
 #' @param test (list) The test results
 #' @param p_threshold (integer) The p-value threshold to use for significance
