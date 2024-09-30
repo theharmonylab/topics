@@ -708,7 +708,7 @@ topicsScatterLegend <- function(
     return (NULL)
   }
 
-  if (dim == 1 && way_popout_topics == "mean"){
+  if (y_axes_1 == 1 && way_popout_topics == "mean"){
     cat('The "dim" parameter is 1 so setting "way_popout_topics" to "max_x".\n')
     way_popout_topics <- "max_x"
   }
