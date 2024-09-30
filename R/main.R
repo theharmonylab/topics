@@ -711,6 +711,7 @@ topicsScatterLegend <- function(
   if (y_axes_1 == 1 && way_popout_topics == "mean"){
     cat('The "dim" parameter is 1 so setting "way_popout_topics" to "max_x".\n')
     way_popout_topics <- "max_x"
+    bivariate_color_codes = c("#e07f6a", "#EAEAEA", "#40DD52")
   }
   
   only_five <- filtered_test %>%
