@@ -995,14 +995,14 @@ topicsScatterLegend <- function(
       dplyr::mutate(topic_number = as.numeric(sub("t_", "", topic)))
     plot <- ggplot2::ggplot() +
       ggplot2::geom_point(data = plot_only3_bg, 
-                          ggplot2::aes(x = !!rlang::sym(x_column), y = 1,
-                                       color = as.factor(.data[[color_column]])),
-                          size = scatter_bg_dot_size, alpha = 0.3) + 
+                        ggplot2::aes(x = !!rlang::sym(x_column), y = 1),
+                        color = bivariate_color_codes[2],  # Set color for background points
+                        size = scatter_bg_dot_size, alpha = 0.3) + 
       ggplot2::geom_point(data = plot_only3, 
-                          ggplot2::aes(x = !!rlang::sym(x_column), y = 1,
-                                       color = as.factor(.data[[color_column]])), 
-                          size = scatter_popout_dot_size, alpha = 0.8) +
-      ggplot2::scale_color_manual(values = bivariate_color_codes) +
+                        ggplot2::aes(x = !!rlang::sym(x_column), y = 1,
+                                     color = as.factor(.data[[color_column]])), 
+                        size = scatter_popout_dot_size, alpha = 0.8) +
+      ggplot2::scale_color_manual(values = bivariate_color_codes[c(1,3)]) +
       ggplot2::labs(x = label_x_name, y = "", color = '') +
       ggplot2::theme_minimal() + 
       ggplot2::theme(
