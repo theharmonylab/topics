@@ -298,23 +298,26 @@ topicsGrams <- function(data, n=2, sep = " ", top_n = NULL){
     ngrams <- ngrams[1:top_n,]
   }
   freq_per_user <- list()
-  freq_per_user$usertexts <- data
+  # create unique integer for each row
+  data <- as_tibble(data)
+  data <- data %>% mutate(row_id = row_number())
+  freq_per_user$usertexts <- data$row_id
   
-  #for (i in 1:nrow(ngrams)) {
-  #  temp <- c()
-  #  
-  #  for (j in 1:length(data)) {
-  #    print(data[j])
-  #    print(ngrams$ngrams[i])
-  #    ngram_count <- str_count(data[j], ngrams$ngrams[i])
-  #    relative_frequency <- ngram_count / ngrams$freq[i]
-  #    temp <- c(temp, relative_frequency)
-  #  }
-  #  col <- paste(unlist(strsplit(ngrams$ngrams[i], " ")), collapse = "_")
-  #  freq_per_user[[col]] <- temp
-  #}
+  for (i in 1:nrow(ngrams)) {
+    temp <- c()
+    
+    for (j in 1:length(data$value)) {
+      gram <- as.character(ngrams$ngrams[i])
+      sentence <- as.character(tolower(data$value[j]))
+      ngram_count <- str_count(sentence,gram)
+      frequency <- ngrams$freq[i]
+      relative_frequency <- ngram_count / frequency
+      temp <- c(temp, relative_frequency)
+    }
+    freq_per_user[[paste(unlist(strsplit(as.character(ngrams$ngrams[i]), " ")), collapse = "_")]] <- temp
+  }
   ngrams$ngrams <- sapply(ngrams$ngrams, function(x) paste(unlist(strsplit(x, " ")), collapse = "_"))
-
+  
   return(list(ngrams=as_tibble(ngrams),
               freq_per_user = as_tibble(freq_per_user)))
 }
