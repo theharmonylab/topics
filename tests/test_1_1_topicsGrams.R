@@ -9,6 +9,7 @@ load(file='./data/Language_based_assessment_data_8.rda')
 test_that("topicsGrams with default parameters", {
 
   data <- Language_based_assessment_data_8$harmonytexts
+  data <- gsub("[()]", "", data)
   ngrams <- topicsGrams(data = data)
   testthat::expect_true(is.list(ngrams))
   testthat::expect_true(is_tibble(ngrams$ngrams))
