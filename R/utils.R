@@ -493,7 +493,7 @@ topic_test <- function(topic_terms,
   }
   if (test_method == "linear_regression" | test_method == "logistic_regression"){
     # still get number of topics automatically
-    num_topics <- sum(grepl("t_", names(topics_loadings)))
+    num_topics <- sum(grepl("^t_", names(topics_loadings)))
     
     lda_topics <- character(num_topics)
     # Create the list of LDA topics
