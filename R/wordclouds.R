@@ -319,28 +319,56 @@ create_plots <- function(df_list = NULL,
     }
     
   } else if (is.null(df_list) & is.null(test) & !is.null(ngrams)){
-    if (!dir.exists(save_dir)) {
-      # Create the directory
-      dir.create(save_dir)
-      cat("Directory created successfully.\n")
-    } 
-    if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
-      dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
-    }
-    plot <- ggplot2::ggplot(ngrams, 
-                            ggplot2::aes(label = ngrams, 
-                                         size = prop)) +
-      ggwordcloud::geom_text_wordcloud() +
-      ggplot2::theme_minimal() +
-      ggplot2::scale_color_gradient(low = "grey", high = "black")
-    
-    ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
-                           "/wordclouds/ngrams", 
-                           ".",
-                           figure_format),
-                    plot = plot, 
-                    width = width, 
-                    height = height, 
-                    units = "in") 
+      if (!dir.exists(save_dir)) {
+        # Create the directory
+        dir.create(save_dir)
+        cat("Directory created successfully.\n")
+      } 
+      if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
+        dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
+      }
+      plot <- ggplot2::ggplot(ngrams, 
+                              ggplot2::aes(label = ngrams, 
+                                           size = prop)) +
+        ggwordcloud::geom_text_wordcloud() +
+        ggplot2::theme_minimal() +
+        ggplot2::scale_color_gradient(low = "grey", high = "black")
+      
+      ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                             "/wordclouds/ngrams", 
+                             ".",
+                             figure_format),
+                      plot = plot, 
+                      width = width, 
+                      height = height, 
+                      units = "in") 
+    } else if (is.null(df_list) & !is.null(test) & !is.null(ngrams)){
+        ngrams <- ngrams %>% rename(top_terms = ngrams)
+        test <- test %>% rename(estimate = contains("estimate"))
+        merged_df <- test %>% left_join(ngrams, by = "top_terms")
+        
+        if (!dir.exists(save_dir)) {
+          # Create the directory
+          dir.create(save_dir)
+          cat("Directory created successfully.\n")
+        } 
+        if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
+          dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
+        }
+        # Word cloud with correlation strength mapped to color gradient
+        plot <- ggplot2::ggplot(merged_df, aes(label = top_terms, size = estimate, color = prop)) +
+          geom_text_wordcloud() +
+          scale_size_area(max_size = 15) +  # Adjust max size
+          scale_color_gradient(low = "grey", high = "red") +  # Blue for low, red for high correlation strength
+          theme_minimal() 
+        
+        ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                               "/wordclouds/ngrams", 
+                               ".",
+                               figure_format),
+                        plot = plot, 
+                        width = width, 
+                        height = height, 
+                        units = "in") 
     }
 }

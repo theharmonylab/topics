@@ -51,9 +51,10 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">topicsTest</span><span class="op">(</span></span>
-<span>  <span class="va">model</span>,</span>
-<span>  <span class="va">preds</span>,</span>
 <span>  <span class="va">data</span>,</span>
+<span>  model <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  preds <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ngrams <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pred_var_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pred_var_y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  group_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -69,7 +70,11 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>model</dt>
+    <dl><dt>data</dt>
+<dd><p>(tibble) The data to test on</p></dd>
+
+
+<dt>model</dt>
 <dd><p>(list) The trained model</p></dd>
 
 
@@ -77,8 +82,8 @@
 <dd><p>(tibble) The predictions</p></dd>
 
 
-<dt>data</dt>
-<dd><p>(tibble) The data to test on</p></dd>
+<dt>ngrams</dt>
+<dd><p>(list) output of the ngram function</p></dd>
 
 
 <dt>pred_var_x</dt>

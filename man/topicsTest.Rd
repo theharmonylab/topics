@@ -5,9 +5,10 @@
 \title{The function to test the lda model for multiple dimensions, e.g., 2.}
 \usage{
 topicsTest(
-  model,
-  preds,
   data,
+  model = NULL,
+  preds = NULL,
+  ngrams = NULL,
   pred_var_x = NULL,
   pred_var_y = NULL,
   group_var = NULL,
@@ -21,11 +22,13 @@ topicsTest(
 )
 }
 \arguments{
+\item{data}{(tibble) The data to test on}
+
 \item{model}{(list) The trained model}
 
 \item{preds}{(tibble) The predictions}
 
-\item{data}{(tibble) The data to test on}
+\item{ngrams}{(list) output of the ngram function}
 
 \item{pred_var_x}{(string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)}
 

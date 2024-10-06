@@ -38,6 +38,8 @@ topicsPlot(
 \arguments{
 \item{model}{(list) The trained model}
 
+\item{ngrams}{(list) output from the ngram function}
+
 \item{test}{(list) The test results}
 
 \item{p_threshold}{(integer) The p-value threshold to use for significance}
