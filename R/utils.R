@@ -351,13 +351,14 @@ topic_test <- function(topic_terms,
                        n_min_max = 20,
                        multiple_comparison = "bonferroni"){
 
-  colnames(grouping_variable) <- "value"
-  topics_groupings <- dplyr::bind_cols(topics_loadings,
-                                       grouping_variable)
-  
-  topics_loadings <- topics_loadings[stats::complete.cases(topics_groupings), ]
-  grouping_variable <- grouping_variable[stats::complete.cases(topics_groupings), ]
-  
+  if (is.null(ngrams)){
+    colnames(grouping_variable) <- "value"
+    topics_groupings <- dplyr::bind_cols(topics_loadings,
+                                         grouping_variable)
+    
+    topics_loadings <- topics_loadings[stats::complete.cases(topics_groupings), ]
+    grouping_variable <- grouping_variable[stats::complete.cases(topics_groupings), ]
+  }
   
   if (TRUE){
     # format checker
@@ -493,17 +494,19 @@ topic_test <- function(topic_terms,
   }
   if (test_method == "linear_regression" | test_method == "logistic_regression"){
     # still get number of topics automatically
-    num_topics <- sum(grepl("t_", names(topics_loadings)))
     
+    num_topics <- sum(grepl("t_", names(topics_loadings)))
     lda_topics <- character(num_topics)
+    
     # Create the list of LDA topics
     for (i in 1:num_topics) {
       lda_topics[i] <- paste("t_", i, sep = "")
     }
-    
+   
     #view(preds)
-    
-    preds <- topics_loadings # load topics_loading into different variable to reduce naming errors
+    preds <- topics_loadings
+   
+    #preds <- topics_loadings # load topics_loading into different variable to reduce naming errors
     for (topic in lda_topics) {
       #view(preds[[topic]])
       mean_value <- mean(preds[[topic]])
@@ -622,7 +625,7 @@ topic_test <- function(topic_terms,
     
     #return (control_variable_summary)
     control_variable_summary$topic <- lda_topics
-       
+    #print(topic_terms)
     output <- dplyr::right_join(topic_terms[c("topic", "top_terms")], 
                          data.frame(control_variable_summary), 
                          by = join_by(topic))

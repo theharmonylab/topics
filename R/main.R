@@ -543,6 +543,7 @@ topicsTest1 <- function(model,
 #' @param model (list) The trained model
 #' @param data (tibble) The data to test on
 #' @param preds (tibble) The predictions
+#' @param ngrams (list) output of the ngram function
 #' @param pred_var_x (string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)
 #' @param pred_var_y (string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)
 #' @param group_var (string) The variable to group by (only needed for t-test)
@@ -567,9 +568,10 @@ topicsTest1 <- function(model,
 #'                    test_method = "linear_regression"
 #'                    pred_var = "age")
 #'                   
-topicsTest <- function(model,
-                       preds, 
-                       data,
+topicsTest <- function(data,
+                       model=NULL,
+                       preds=NULL,
+                       ngrams=NULL,
                        pred_var_x=NULL, # for all test types except t-test
                        pred_var_y=NULL,
                        group_var=NULL, # only one in the case of t-test
@@ -594,6 +596,18 @@ topicsTest <- function(model,
   if (is.null(pred_var_x) & is.null(group_var)){
     print('Please input the pred_var_x or group_var!')
     return (NULL)
+  }
+  
+  if (!is.null(ngrams)){
+    #rename each column to t_1, t_2, t_3, ...
+    
+    freq_per_user <- tibble(ngrams$freq_per_user[,2:ncol(ngrams$freq_per_user)])
+    ngrams <- ngrams$ngrams
+    colnames(freq_per_user) <- paste0("t_", 1:ncol(freq_per_user))
+    preds <- freq_per_user
+    model$summary <- list(topic = paste0("t_", 1:ncol(freq_per_user)),
+                          top_terms = ngrams$ngrams)
+    model$summary <- data.frame(model$summary)
   }
   pred_vars_all <- c(pred_var_x, pred_var_y)
   
@@ -1293,8 +1307,21 @@ topicsPlot1 <- function(model = NULL,
                  seed = seed)
     print(paste0("The plots are saved in ", 
                  save_dir, "/seed", seed, "/wordclouds"))
-  } else if (is.null(model) && !is.null(ngrams)){
+  } else if (is.null(model) && !is.null(ngrams) && is.null(test)){
     create_plots(ngrams = ngrams,
+                 scale_size = scale_size,
+                 plot_topics_idx = plot_topics_idx,
+                 figure_format = figure_format,
+                 width = width, 
+                 height = height,
+                 max_size = max_size,
+                 save_dir = save_dir,
+                 seed = seed)
+    print(paste0("The plots are saved in ", 
+                 save_dir, "/seed", seed, "/wordclouds"))
+  } else if (is.null(model) && !is.null(ngrams) && !is.null(test)){
+    create_plots(ngrams = ngrams,
+                 test = test$test,
                  scale_size = scale_size,
                  plot_topics_idx = plot_topics_idx,
                  figure_format = figure_format,
@@ -1311,6 +1338,7 @@ topicsPlot1 <- function(model = NULL,
 
 #' The function to create lda wordclouds
 #' @param model (list) The trained model
+#' @param ngrams (list) output from the ngram function
 #' @param test (list) The test results
 #' @param p_threshold (integer) The p-value threshold to use for significance
 #' @param grid_plot (boolean) Set TRUE if plotting the topics grid
@@ -1567,9 +1595,22 @@ topicsPlot <- function(model = NULL,
       max_size = max_size, 
       seed = seed
     )
-  } else if (is.null(model) && !is.null(ngrams)){
+  } else if (is.null(model) && !is.null(ngrams) && is.null(test)){
     topicsPlot1(
       ngrams = ngrams$ngrams,
+      scale_size = scale_size,
+      plot_topics_idx = plot_topics_idx,
+      save_dir = save_dir,
+      figure_format = figure_format,
+      width = width, 
+      height = height,
+      max_size = max_size, 
+      seed = seed
+    )
+  } else if (is.null(model) && !is.null(ngrams) && !is.null(test)){
+    topicsPlot1(
+      ngrams = ngrams$ngrams,
+      test = test[[1]],
       scale_size = scale_size,
       plot_topics_idx = plot_topics_idx,
       save_dir = save_dir,
