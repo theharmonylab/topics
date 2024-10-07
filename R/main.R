@@ -699,9 +699,9 @@ topicsTest <- function(data,
 #' @noRd
 topicsScatterLegend <- function(
     bivariate_color_codes = c(
-      "#398CF9", "#60A1F7", "#5dc688",
-      "#e07f6a", "#EAEAEA", "#40DD52",
-      "#FF0000", "#EA7467", "#85DB8E"),
+      1="#398CF9", 2="#60A1F7", 3="#5dc688",
+      4="#e07f6a", 5="#EAEAEA", 6="#40DD52",
+      7="#FF0000", 8="#EA7467", 9="#85DB8E"),
     filtered_test,
     num_popout = 1,
     way_popout_topics = "mean",
@@ -723,6 +723,12 @@ topicsScatterLegend <- function(
   if (y_axes_1 != 2 && y_axes_1 != 1){
     cat('Error in dim param. It should be either 1 or 2.')
     return (NULL)
+  }
+
+  if (y_axes_1 == 1 && way_popout_topics == "mean"){
+    cat('The "dim" parameter is 1 so setting "way_popout_topics" to "max_x".\n')
+    way_popout_topics <- "max_x"
+    bivariate_color_codes = c(1="#e07f6a", 2="#EAEAEA", 3="#40DD52")
   }
   
   only_five <- filtered_test %>%
@@ -1007,13 +1013,13 @@ topicsScatterLegend <- function(
     plot <- ggplot2::ggplot() +
       ggplot2::geom_point(data = plot_only3_bg, 
                           ggplot2::aes(x = !!rlang::sym(x_column), y = 1,
-                                       color = as.factor(.data[[color_column]])),
+                                       color = bivariate_color_codes[2], # Set color for background points
                           size = scatter_bg_dot_size, alpha = 0.3) + 
       ggplot2::geom_point(data = plot_only3, 
                           ggplot2::aes(x = !!rlang::sym(x_column), y = 1,
                                        color = as.factor(.data[[color_column]])), 
                           size = scatter_popout_dot_size, alpha = 0.8) +
-      ggplot2::scale_color_manual(values = bivariate_color_codes) +
+      ggplot2::scale_color_manual(values = bivariate_color_codes[c(1,3)]) +
       ggplot2::labs(x = label_x_name, y = "", color = '') +
       ggplot2::theme_minimal() + 
       ggplot2::theme(
@@ -1220,7 +1226,7 @@ topicsGridLegend <- function(
                   units = "in")
 }
 
-#' The function to create lda wordclouds
+#' The function to create lda wordclouds based on adjusted p value from the topicsTest
 #' @param model (list) The trained model
 #' @param test (list) The test results
 #' @param color_negative_cor (R_obj) The color gradient for negative correlations
@@ -1398,7 +1404,14 @@ topicsPlot <- function(model = NULL,
 ){
   
   if (!is.null(test) && !is.null(model)){
-  
+    if (max(test[[3]]$test$color_categories) == 3 && dim == 2 && grid_plot){
+      cat('The "test" object only contains 3 categories!\nChange the "dim" parameter to 1!\nNothing is returned!\n')
+      return (NULL)
+    } 
+    if (max(test[[3]]$test$color_categories) == 3 && length(scatter_legend_popout_num) == 9){
+      cat('The "test" object only contains 3 categories but the parameter "scatter_legend_popout_num" has a length of 9 instead of 3!\n Try set it with "c(1,0,1)". \nNothing is returned!\n')
+      return (NULL)
+    }
     if (is.character(color_scheme) && length(color_scheme) == 1){
       if (color_scheme == 'default'){
         if (dim == 2){
