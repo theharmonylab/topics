@@ -198,7 +198,7 @@ test_that('Case 5: Change the popout method to "max_x", and "max_y".',{
   tests2D <- topicsTest(
     model = model,
     preds = preds,
-    data =  topics::data,
+    data =  dat1,
     pred_var_x = 'hilstotal',
     pred_var_y = 'swlstotal',
     control_vars = c('age','gender')
