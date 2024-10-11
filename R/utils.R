@@ -869,13 +869,13 @@ get_removal_terms <- function(dtm,
   
   # Print the terms with the highest frequencies (e.g., top 10 terms)
   #top_terms <- head(term_frequency_df, n = 10)
-  if (mode=="percent"){
+  if (mode=="percentage"){
     removal_index <- nrow(term_frequency_df)*n 
     
-  } else if (mode == "absolute"){
+  } else if (mode == "term"){
     removal_index <- n-1
     
-  }
+  } 
   if (type=="most"){
     removal_index <- round(removal_index) 
     removal_words <- term_frequency_df[["Term"]][1:removal_index]
