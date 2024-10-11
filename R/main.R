@@ -110,7 +110,7 @@ topicsDtm <- function(data, #
       removal_frequency <- round(nrow(train)*occ_rate) -1
       train_dtm <- train_dtm[,Matrix::colSums(train_dtm) > removal_frequency]
     }
-    if (removal_mode != "threshold"){
+    if (removal_mode != "frequency"){
       if (removal_rate_least > 0){
         removal_columns <- get_removal_columns(train_dtm, removal_rate_least, "least", removal_mode)
         if (removal_rate_most > 0){
@@ -122,7 +122,7 @@ topicsDtm <- function(data, #
         removal_columns <- get_removal_columns(train_dtm, removal_rate_most, "most", removal_mode)
         train_dtm <- train_dtm[,-removal_columns]
       }
-    } else if (removal_mode == "threshold"){
+    } else if (removal_mode == "frequency"){
       if (!is.null(removal_rate_least)){
         train_dtm <- train_dtm[,Matrix::colSums(train_dtm) > removal_rate_least]
       }
@@ -153,7 +153,7 @@ topicsDtm <- function(data, #
     #removal_frequency <- get_occ_frequency(test_dtm, occ_rate)
     #test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_frequency]
     
-    if (removal_mode != "threshold"){
+    if (removal_mode != "frequency"){
       if (removal_rate_least > 0){
         removal_columns <- get_removal_columns(test_dtm, removal_rate_least, "least", removal_mode)
         if (removal_rate_most > 0){
@@ -165,7 +165,7 @@ topicsDtm <- function(data, #
         removal_columns <- get_removal_columns(test_dtm, removal_rate_most, "most", removal_mode)
         test_dtm <- test_dtm[,-removal_columns]
       }
-    } else if (removal_mode == "threshold"){
+    } else if (removal_mode == "frequency"){
       if (!is.null(removal_rate_least)){
         test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_rate_least]
       }
