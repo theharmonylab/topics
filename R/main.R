@@ -287,6 +287,7 @@ topicsModel <- function(dtm,
 #' @importFrom ngram ngram get.ngrams get.phrasetable
 #' @importFrom tibble as_tibble tibble
 #' @importFrom stringr str_count
+#' @importFrom dplyr mutate row_number
 #' @return A list containing tibble of the ngrams with the frequency and probability and a tibble containing the relative frequency of the ngrams for each user
 #' @export
 #' 
