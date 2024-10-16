@@ -16,7 +16,8 @@ topicsDtm(
   split = 1,
   seed = 42L,
   save_dir = "./results",
-  load_dir = NULL
+  load_dir = NULL,
+  cpus = 1
 )
 }
 \arguments{

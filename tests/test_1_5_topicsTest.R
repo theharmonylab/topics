@@ -3,6 +3,7 @@ library(testthat)
 library(topics)  # Replace with your package name
 #library(text)
 library(here)
+library(dplyr)
 
 file_path <- here::here("data", "Language_based_assessment_data_8.rda")
 load(file=file_path)
@@ -115,7 +116,7 @@ test_that("topicsTest saves test results to the specified directory", {
 
 
 test_that("topicsTest performs logistic regression correctly", {
-  data <- data %>% mutate(gender = ifelse(gender == "male", 1, 0))
+  data <- data %>% dplyr::mutate(gender = ifelse(gender == "male", 1, 0))
   data
   dtm <- topicsDtm(data = data$harmonytexts)
   model <- topicsModel(dtm = dtm)

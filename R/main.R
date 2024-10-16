@@ -41,7 +41,7 @@
 #' dtm <- topicsDtm(load_dir = "./results",
 #'                  seed = 42)
 
-topicsDtm <- function(data, # 
+topicsDtm <- function(data, #
                    ngram_window=c(1,3),
                    stopwords=stopwords::stopwords("en", source = "snowball"),
                    removalword="",
@@ -52,7 +52,8 @@ topicsDtm <- function(data, #
                    split=1,
                    seed=42L,
                    save_dir="./results",
-                   load_dir=NULL){
+                   load_dir=NULL,
+                   cpus=1){
   
 
 
@@ -103,7 +104,7 @@ topicsDtm <- function(data, #
       remove_punctuation = TRUE, # punctuation - this is the default
       remove_numbers = TRUE, # numbers - this is the default
       verbose = FALSE, # Turn off status bar for this demo
-      cpus = 4) # default is all available cpus on the system
+      cpus = cpus) # default is all available cpus on the system
   
     
     if (occ_rate>0){
@@ -142,7 +143,7 @@ topicsDtm <- function(data, #
       remove_punctuation = TRUE, # punctuation - this is the default
       remove_numbers = TRUE, # numbers - this is the default
       verbose = FALSE, # Turn off status bar for this demo
-      cpus = 4) # default is all available cpus on the system
+      cpus = cpus) # default is all available cpus on the system
     
     if (occ_rate>0){
       

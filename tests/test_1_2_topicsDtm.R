@@ -13,9 +13,7 @@ load(file=file_path)
 test_that("topicsDtm creates a DTM correctly with default parameters", {
 
   data <- data$harmonytexts
-  options(mc.cores = 1)  # Set the number of cores to 2
-  textmineR::TmParallelApply(X, FUN, cpus = 1)
-  result <- topicsDtm(data = data)
+  result <- topicsDtm(data = data, cpus=1)
   
   testthat::expect_true(is.list(result))
   testthat::expect_true("train_dtm" %in% names(result))
@@ -27,7 +25,7 @@ test_that("topicsDtm creates a DTM correctly with default parameters", {
 
 test_that("topicsDtm handles different ngram_window values", {
   data <- data$harmonytexts
-  result <- topicsDtm(data, ngram_window = c(1, 2))
+  result <- topicsDtm(data, ngram_window = c(1, 2), cpus=1)
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
@@ -118,7 +116,7 @@ test_that("topicsDtm removes most frequent words based on a threshold", {
 
 test_that("topicsDtm removes most frequent words in percent mode", {
   data <- data$harmonytexts
-  result <- topicsDtm(data, removal_mode = "percent", removal_rate_most = 5)
+  result <- topicsDtm(data, removal_mode = "percentage", removal_rate_most = 5)
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
