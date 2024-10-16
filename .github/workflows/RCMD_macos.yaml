@@ -6,20 +6,19 @@ on:
     branches:
       - master
 
-name: CODECOV
+name: R-CMD-check
 
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
+
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - {os: macOS-latest,   r: 'release'}
-          - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-20.04,   r: 'release'}
+          - {os: macOS-latest, r: 'release'}
 
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
@@ -30,15 +29,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # Install libomp via Homebrew for macOS
-      - name: Install libomp on macOS
-        if: runner.os == 'macOS'
+      # Install libomp via Homebrew
+      - name: Install libomp via Homebrew
         run: |
           brew install libomp
 
-      # Set DYLD_LIBRARY_PATH on macOS
-      - name: Set DYLD_LIBRARY_PATH for libomp on macOS
-        if: runner.os == 'macOS'
+      - name: Find and set DYLD_LIBRARY_PATH
+        run: |
+          export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
+          echo "DYLD_LIBRARY_PATH is set to $DYLD_LIBRARY_PATH"
+        shell: bash
+
+      - name: Set global environment variable for DYLD_LIBRARY_PATH
         run: |
           echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
         shell: bash
@@ -55,6 +57,14 @@ jobs:
           auto-update-conda: true
           python-version: 3.9
           miniconda-version: "latest"
+
+      - name: Configure Conda (set default channel and solver)
+        run: |
+          conda config --add channels defaults
+          conda config --set solver classic
+
+      - name: Install numpy via Conda
+        run: conda install -c conda-forge numpy
 
       - name: Query dependencies
         run: |
@@ -92,7 +102,7 @@ jobs:
         run: sudo chown -R $UID $CONDA
 
       - name: Installing text and testing it
-        run:  |
+        run: |
           install.packages("devtools")
           library(devtools)
           devtools::install_github("oscarkjell/text")
@@ -107,11 +117,14 @@ jobs:
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
 
-      # Ensure OMP_MAX_ACTIVE_LEVELS is set to avoid OpenMP issues
-      - name: Test coverage
+      - name: Check
         env:
+          _R_CHECK_CRAN_INCOMING_: false
           OMP_MAX_ACTIVE_LEVELS: 0
-        run: covr::codecov()
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
-# Un
+      - name: Show testthat output
+        if: always()
+        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
