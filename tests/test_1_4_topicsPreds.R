@@ -4,11 +4,15 @@ library(topics)  # Replace with your package name
 #library(text)
 library(tibble)
 
-load(file='./data/Language_based_assessment_data_8.rda')
+library(here)
+
+file_path <- here::here("data", "Language_based_assessment_data_8.rda")
+load(file=file_path)
+
 
 
 test_that("topicsPreds generates predictions with default parameters", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- data$harmonytexts
   dtm <- topicsDtm(data = data)
   model <- topicsModel(dtm = dtm)
   
@@ -20,7 +24,7 @@ test_that("topicsPreds generates predictions with default parameters", {
 })
 
 test_that("topicsPreds handles different numbers of iterations", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- data$harmonytexts
   dtm <- topicsDtm(data = data)
   model <- topicsModel(dtm = dtm)
   result <- topicsPreds(model, data, num_iterations = 200)
@@ -30,7 +34,7 @@ test_that("topicsPreds handles different numbers of iterations", {
 })
 
 test_that("topicsPreds sets seed for reproducibility", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- data$harmonytexts
   dtm <- topicsDtm(data = data)
   model <- topicsModel(dtm = dtm)
   
@@ -41,7 +45,7 @@ test_that("topicsPreds sets seed for reproducibility", {
 })
 
 test_that("topicsPreds saves predictions to the specified directory", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- data$harmonytexts
   dtm <- topicsDtm(data = data)
   model <- topicsModel(dtm = dtm)
   save_dir <- tempfile()
@@ -53,7 +57,7 @@ test_that("topicsPreds saves predictions to the specified directory", {
 
 
 test_that("topicsPreds loads predictions from the specified directory", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- data$harmonytexts
   dtm <- topicsDtm(data = data)
   model <- topicsModel(dtm = dtm)
   # Load predictions

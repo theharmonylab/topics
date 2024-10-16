@@ -11,7 +11,7 @@
 #' @param save_dir (string) the directory to save the results, default is "./results", if NULL, no results are saved
 #' @param load_dir (string) the directory to load from.
 #' @return the document term matrix
-#' @importFrom textmineR CreateDtm
+#' @importFrom textmineR CreateDtm 
 #' @importFrom stats complete.cases
 #' @importFrom stopwords stopwords
 #' @importFrom Matrix colSums

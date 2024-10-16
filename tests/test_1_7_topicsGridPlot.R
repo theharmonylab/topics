@@ -6,6 +6,11 @@ library(tibble)
 library(dplyr)
 library(topics) # Replace with your package name
 
+library(here)
+
+file_path <- here::here("data", "Language_based_assessment_data_8.rda")
+load(file=file_path)
+
 
 test_that('Case 1: Save all topics without the topic grid plot by using the topicsPlot function.',{
   

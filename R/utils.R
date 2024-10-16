@@ -351,14 +351,13 @@ topic_test <- function(topic_terms,
                        n_min_max = 20,
                        multiple_comparison = "bonferroni"){
 
-  if (is.null(ngrams)){
-    colnames(grouping_variable) <- "value"
-    topics_groupings <- dplyr::bind_cols(topics_loadings,
-                                         grouping_variable)
-    
-    topics_loadings <- topics_loadings[stats::complete.cases(topics_groupings), ]
-    grouping_variable <- grouping_variable[stats::complete.cases(topics_groupings), ]
-  }
+  colnames(grouping_variable) <- "value"
+  topics_groupings <- dplyr::bind_cols(topics_loadings,
+                                       grouping_variable)
+  
+  topics_loadings <- topics_loadings[stats::complete.cases(topics_groupings), ]
+  grouping_variable <- grouping_variable[stats::complete.cases(topics_groupings), ]
+  
   
   if (TRUE){
     # format checker
