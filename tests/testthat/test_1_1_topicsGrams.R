@@ -5,12 +5,9 @@ library(topics)  # Replace with your package name
 library(tibble)
 library(here)
 
-file_path <- here::here("data", "Language_based_assessment_data_8.rda")
-load(file=file_path)
-
 test_that("topicsGrams with default parameters", {
 
-  data <- data$harmonytexts
+  data <- Language_based_assessment_data_8$harmonytexts
   data <- gsub("[()]", "", data)
   ngrams <- topicsGrams(data = data)
   testthat::expect_true(is.list(ngrams))

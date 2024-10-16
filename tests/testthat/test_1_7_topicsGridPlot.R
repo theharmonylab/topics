@@ -8,9 +8,6 @@ library(topics) # Replace with your package name
 
 library(here)
 
-file_path <- here::here("data", "Language_based_assessment_data_8.rda")
-load(file=file_path)
-
 
 #test_that('Case 1: Save all topics without the topic grid plot by using the topicsPlot function.',{
 #  
@@ -19,17 +16,17 @@ load(file=file_path)
 #  }
 #  
 #  dtmtest <- topicsDtm(
-#    data = topics::data$harmonytexts
+#    data = topics::Language_based_assessment_data_8$harmonytexts
 #  )
 #  
 #  model <- topicsModel(dtmtest)
 #  
 #  preds <- topicsPreds(
 #    model = model, 
-#    data = topics::data$harmonywords
+#    data = topics::Language_based_assessment_data_8$harmonywords
 #  )
 #
-#  dat1 <- dplyr::mutate(topics::data,gender = ifelse(gender == "male", 0, 1))
+#  dat1 <- dplyr::mutate(topics::Language_based_assessment_data_8,gender = ifelse(gender == "male", 0, 1))
 #  
 #  tests2D <- topicsTest(
 #    model = model,

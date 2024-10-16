@@ -6,13 +6,9 @@ library(tibble)
 
 library(here)
 
-file_path <- here::here("data", "Language_based_assessment_data_8.rda")
-load(file=file_path)
-
-
 
 test_that("topicsPreds generates predictions with default parameters", {
-  data <- data$harmonytexts
+  data <- Language_based_assessment_data_8$harmonytexts
   dtm <- topicsDtm(data = data)
   model <- topicsModel(dtm = dtm)
   
@@ -24,7 +20,7 @@ test_that("topicsPreds generates predictions with default parameters", {
 })
 
 test_that("topicsPreds handles different numbers of iterations", {
-  data <- data$harmonytexts
+  data <- Language_based_assessment_data_8$harmonytexts
   dtm <- topicsDtm(data = data)
   model <- topicsModel(dtm = dtm)
   result <- topicsPreds(model, data, num_iterations = 200)
@@ -34,7 +30,7 @@ test_that("topicsPreds handles different numbers of iterations", {
 })
 
 test_that("topicsPreds sets seed for reproducibility", {
-  data <- data$harmonytexts
+  data <- Language_based_assessment_data_8$harmonytexts
   dtm <- topicsDtm(data = data)
   model <- topicsModel(dtm = dtm)
   
@@ -45,7 +41,7 @@ test_that("topicsPreds sets seed for reproducibility", {
 })
 
 test_that("topicsPreds saves predictions to the specified directory", {
-  data <- data$harmonytexts
+  data <- Language_based_assessment_data_8$harmonytexts
   dtm <- topicsDtm(data = data)
   model <- topicsModel(dtm = dtm)
   save_dir <- tempfile()
@@ -57,7 +53,7 @@ test_that("topicsPreds saves predictions to the specified directory", {
 
 
 test_that("topicsPreds loads predictions from the specified directory", {
-  data <- data$harmonytexts
+  data <- Language_based_assessment_data_8$harmonytexts
   dtm <- topicsDtm(data = data)
   model <- topicsModel(dtm = dtm)
   # Load predictions

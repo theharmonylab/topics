@@ -4,9 +4,6 @@ library(topics)  # Replace with your package name
 #library(text)
 library(here)
 
-file_path <- here::here("data", "Language_based_assessment_data_8.rda")
-load(file=file_path)
-
 
 test_that("topicsModel creates an LDA model correctly with default parameters", {
   dtm <- topicsDtm(c("This is a test document.", "This is another test."))
