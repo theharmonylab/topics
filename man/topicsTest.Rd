@@ -60,9 +60,9 @@ The function to test the lda model for multiple dimensions, e.g., 2.
 \examples{
 # Test the topic document distribution in respect to a variable
 test <- topicsTest(model = model, # output of topicsModel()
-                   data=data,
+                   data=Language_based_assessment_data_8,
                    preds = preds, # output of topicsPreds()
-                   test_method = "linear_regression"
+                   test_method = "linear_regression",
                    pred_var = "age")
                   
 }

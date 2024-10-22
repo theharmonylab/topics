@@ -20,19 +20,19 @@
 #' @export
 #' @examples
 #' # Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
-#' dtm <- topicsDtm(data = data$text,
+#' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
 #'                  removal_mode = "frequency",
 #'                  removal_rate_least = 4,
 #'                  removal_rate_most = 500)
 #' 
 #' # Create Dtm and remove the 5 least and 5 most frequent terms.
-#' dtm <- topicsDtm(data = data$text,
+#' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
 #'                  removal_mode = "term",
 #'                  removal_rate_least = 5,
 #'                  removal_rate_most = 5)
 #' 
 #' # Create Dtm and remove the 5% least frequent and 1% most frequent terms.
-#' dtm <- topicsDtm(data = data$text,
+#' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
 #'                  removal_mode = "percentage",
 #'                  removal_rate_least = 5,
 #'                  removal_rate_most = 1)
@@ -340,7 +340,7 @@ topicsGrams <- function(data, n=2, sep = " ", top_n = NULL){
 #' @examples
 #' # Predict topics for new data with the trained model
 #' preds <- topicsPreds(model = model, # output of topicsModel()
-#'                      data = data$text)
+#'                      data = Language_based_assessment_data_8$harmonytexts)
 
 topicsPreds <- function(model, # only needed if load_dir==NULL 
                      data, # data vector to infer distribution for
@@ -565,9 +565,9 @@ topicsTest1 <- function(model,
 #' @examples
 #' # Test the topic document distribution in respect to a variable
 #' test <- topicsTest(model = model, # output of topicsModel()
-#'                    data=data,
+#'                    data=Language_based_assessment_data_8,
 #'                    preds = preds, # output of topicsPreds()
-#'                    test_method = "linear_regression"
+#'                    test_method = "linear_regression",
 #'                    pred_var = "age")
 #'                   
 topicsTest <- function(data,

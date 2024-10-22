@@ -118,7 +118,7 @@ test_that("topicsTest performs logistic regression correctly", {
   model <- topicsModel(dtm = dtm)
   preds <- topicsPreds(model = model, data = Language_based_assessment_data_8$harmonytexts)
   
-  result <- topicsTest(model = model, preds = preds, data = Language_based_assessment_data_8, pred_var_x = "gender", test_method = "logistic_regression")
+  result <- topicsTest(model = model, preds = preds, data = Language_based_assessment_data_8, pred_var_x = "age", test_method = "logistic_regression")
   
   expect_true(is.list(result[[1]]))
   expect_equal(result[[1]]$test_method, "logistic_regression")

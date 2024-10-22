@@ -51,19 +51,19 @@ the function for creating a document term matrix
 }
 \examples{
 # Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
-dtm <- topicsDtm(data = data$text,
+dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
                  removal_mode = "frequency",
                  removal_rate_least = 4,
                  removal_rate_most = 500)
 
 # Create Dtm and remove the 5 least and 5 most frequent terms.
-dtm <- topicsDtm(data = data$text,
+dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
                  removal_mode = "term",
                  removal_rate_least = 5,
                  removal_rate_most = 5)
 
 # Create Dtm and remove the 5\% least frequent and 1\% most frequent terms.
-dtm <- topicsDtm(data = data$text,
+dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
                  removal_mode = "percentage",
                  removal_rate_least = 5,
                  removal_rate_most = 1)
