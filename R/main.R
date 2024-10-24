@@ -1324,9 +1324,12 @@ topicsPlot1 <- function(model = NULL,
   } else if (is.null(model) && !is.null(ngrams) && !is.null(test)){
     create_plots(ngrams = ngrams,
                  test = test$test,
+                 p_threshold = p_threshold,
                  scale_size = scale_size,
                  plot_topics_idx = plot_topics_idx,
                  figure_format = figure_format,
+                 color_negative_cor = color_negative_cor,
+                 color_positive_cor = color_positive_cor,
                  width = width, 
                  height = height,
                  max_size = max_size,
@@ -1345,7 +1348,8 @@ topicsPlot1 <- function(model = NULL,
 #' @param p_threshold (integer) The p-value threshold to use for significance
 #' @param grid_plot (boolean) Set TRUE if plotting the topics grid
 #' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensional color plots if grid = TRUE 
-#' @param color_scheme (string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE. The vector should contain 9 color codes.
+#' @param color_scheme (string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE or for ngrams. The vector should contain 9 color codes for grid or 4 colors for ngrams with c(positive_low, positive_high, negative_low, negative_high)
+#' @param color_negative_cor (vector) The color scheme for negative correlation
 #' @param scatter_legend_popout_num (numeric or vector) The vector of num of pop outs of each grid in the scatter legend.
 #' @param scatter_legend_way_popout_topics (string) The way to filter topics to pop out in the scatter legend. Can be either "mean", "max_x", or "max_y"
 #' @param scatter_legend_user_spec_topics (vector) User can specify which topic to be poped out in the scatter legend. Should be like c("t_1", "t_2", ...). If set, way_popout_topics will have no effect.
@@ -1408,16 +1412,22 @@ topicsPlot <- function(model = NULL,
             "#398CF9", "#60A1F7", "#5dc688",
             "#e07f6a", "#EAEAEA", "#40DD52",
             "#FF0000", "#EA7467", "#85DB8E")
-        }else if (dim == 1){
+        }else if (dim == 1 && is.null(ngrams)){
           bivariate_color_codes <- c(
             "#e07f6a", "#EAEAEA", "#40DD52")
+        }else if (dim == 1 && !is.null(ngrams)){
+          bivariate_color_codes <- c(
+            "#5dc688","#40DD52",
+            "#EA7467","#FF0000")
         }else{cat('Dim parameter should be either 1 or 2.\n')}
       }else{cat("Error in color_scheme. Consider using 'default'.\n")}
     }else if (is.character(color_scheme) && length(color_scheme) > 1){
       if (dim == 2){
         bivariate_color_codes <- color_scheme
-      }else if (dim == 1){
+      }else if (dim == 1 && is.null(ngrams)){
         bivariate_color_codes <- color_scheme[4:6]
+      }else if (dim == 1 && !is.null(ngrams)){
+        bivariate_color_codes <- color_scheme
       }else{cat('Dim parameter should be either 1 or 2.\n')}
     }else{
       cat('The parameter color_scheme should be a vector and should contain 9 colors! Or try with the default color scheme.\n')
@@ -1610,11 +1620,21 @@ topicsPlot <- function(model = NULL,
       seed = seed
     )
   } else if (is.null(model) && !is.null(ngrams) && !is.null(test)){
+    if (color_scheme == "default"){
+      bivariate_color_codes <- c(
+        "#5dc688","#40DD52",
+        "#FF0000","#EA7467")
+    } else {
+      bivariate_color_codes <- color_scheme
+    }
     topicsPlot1(
       ngrams = ngrams$ngrams,
       test = test[[1]],
+      p_threshold = p_threshold,
       scale_size = scale_size,
       plot_topics_idx = plot_topics_idx,
+      color_negative_cor = ggplot2::scale_color_gradient(low = bivariate_color_codes[3], high = bivariate_color_codes[4]), # grey in hex code
+      color_positive_cor = ggplot2::scale_color_gradient(low = bivariate_color_codes[1], high = bivariate_color_codes[2]),
       save_dir = save_dir,
       figure_format = figure_format,
       width = width, 

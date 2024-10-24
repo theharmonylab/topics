@@ -11,7 +11,7 @@ test_that("topicsPlot with test", {
   model <- topicsModel(dtm = dtm)
   preds <- topicsPreds(model = model, data = Language_based_assessment_data_8$harmonytexts)
   result <- topicsTest(model=model, preds=preds, data=Language_based_assessment_data_8, pred_var_x = "hilstotal")
-  topicsPlot(model, result, p_threshold=1)
+  topicsPlot(model, result, p_threshold=1, figure_format = "png")
   
   # Check if the wordcloud directory exists
   testthat::expect_true(dir.exists("./results/seed_42/wordclouds"))
@@ -21,7 +21,7 @@ test_that("topicsPlot without test and preds", {
   dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
   model <- topicsModel(dtm = dtm)
   
-  topicsPlot(model)
+  topicsPlot(model, figure_format = "png")
   
   # Check if the wordcloud directory exists
   testthat::expect_true(dir.exists("./results/seed_42/wordclouds"))

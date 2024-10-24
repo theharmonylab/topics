@@ -48,7 +48,7 @@ topicsPlot(
 
 \item{dim}{(numeric) Generate 1 dimensional color plots or 2 dimensional color plots if grid = TRUE}
 
-\item{color_scheme}{(string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE. The vector should contain 9 color codes.}
+\item{color_scheme}{(string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE or for ngrams. The vector should contain 9 color codes for grid or 4 colors for ngrams with c(positive_low, positive_high, negative_low, negative_high)}
 
 \item{scatter_legend_popout_num}{(numeric or vector) The vector of num of pop outs of each grid in the scatter legend.}
 
@@ -89,6 +89,8 @@ topicsPlot(
 \item{grid_legend_number_color}{The color in the text in the legend if grid_plot = TRUE}
 
 \item{grid_legend_number_size}{The color in the text in the legend if grid_plot = TRUE}
+
+\item{color_negative_cor}{(vector) The color scheme for negative correlation}
 }
 \value{
 nothing is returned, the wordclouds are saved in the save_dir
