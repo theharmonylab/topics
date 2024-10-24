@@ -191,7 +191,7 @@ create_plots <- function(df_list = NULL,
         }
         #view(df_list[[i]]) help(ggplot) library(ggplot2)
         #help(geom_text_wordcloud)
-        if (grid == ""){
+        if (grid == ""){ .
           plot <- ggplot2::ggplot(df_list[[as.numeric(sub(".*_", "", i))]], 
                                   ggplot2::aes(label = Word, 
                                                size = phi, 
@@ -343,32 +343,60 @@ create_plots <- function(df_list = NULL,
                       height = height, 
                       units = "in") 
     } else if (is.null(df_list) & !is.null(test) & !is.null(ngrams)){
+        
         ngrams <- ngrams %>% rename(top_terms = ngrams)
         test <- test %>% rename(estimate = contains("estimate"))
-        merged_df <- test %>% left_join(ngrams, by = "top_terms")
-        
-        if (!dir.exists(save_dir)) {
-          # Create the directory
-          dir.create(save_dir)
-          cat("Directory created successfully.\n")
-        } 
-        if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
-          dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
+        test <- test %>% rename(p_adjusted = contains("p_adjusted"))
+        test <- test %>% left_join(ngrams, by = "top_terms")
+        if (!is.null(p_threshold)){
+          test <- test %>% filter(p_adjusted < p_threshold)
         }
-        # Word cloud with correlation strength mapped to color gradient
-        plot <- ggplot2::ggplot(merged_df, aes(label = top_terms, size = estimate, color = prop)) +
-          geom_text_wordcloud() +
-          scale_size_area(max_size = 15) +  # Adjust max size
-          scale_color_gradient(low = "grey", high = "red") +  # Blue for low, red for high correlation strength
-          theme_minimal() 
-        
-        ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
-                               "/wordclouds/ngrams", 
-                               ".",
-                               figure_format),
-                        plot = plot, 
-                        width = width, 
-                        height = height, 
-                        units = "in") 
+        # test for the fact that all words could be insignificant
+        if (nrow(test) == 0){
+          cat("No significant terms found, please increase the p_threshold.\n No wordclouds generated.")
+        } else {
+          test_positive <- test%>% filter(estimate > 0)
+          test_negative <- test%>% filter(estimate < 0)
+          if (!dir.exists(save_dir)) {
+            # Create the directory
+            dir.create(save_dir)
+            cat("Directory created successfully.\n")
+          } 
+          if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
+            dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
+          }
+          # Word cloud with correlation strength mapped to color gradient
+          plot <- ggplot2::ggplot(test_positive, aes(label = top_terms, size = estimate, color = prop)) +
+            geom_text_wordcloud() +
+            scale_size_area(max_size = max_size) +  # Adjust max size
+            #scale_color_gradient(low = "grey", high = "red") +  # Blue for low, red for high correlation strength
+            theme_minimal() +
+            color_positive_cor
+          
+          ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                                 "/wordclouds/ngrams_positive", 
+                                 ".",
+                                 figure_format),
+                          plot = plot, 
+                          width = width, 
+                          height = height, 
+                          units = "in") 
+          # Word cloud with correlation strength mapped to color gradient
+          plot <- ggplot2::ggplot(test_negative, aes(label = top_terms, size = estimate, color = prop)) +
+            geom_text_wordcloud() +
+            scale_size_area(max_size = max_size) +  # Adjust max size
+            #scale_color_gradient(low = "grey", high = "red") +  # Blue for low, red for high correlation strength
+            theme_minimal() +
+            color_negative_cor
+          
+          ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                                 "/wordclouds/ngrams_negative", 
+                                 ".",
+                                 figure_format),
+                          plot = plot, 
+                          width = width, 
+                          height = height, 
+                          units = "in") 
+        }
     }
 }
