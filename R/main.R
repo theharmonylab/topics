@@ -34,7 +34,7 @@
 #' # Create Dtm and remove the 5% least frequent and 1% most frequent terms.
 #' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
 #'                  removal_mode = "percentage",
-#'                  removal_rate_least = 5,
+#'                  removal_rate_least = 1,
 #'                  removal_rate_most = 1)
 #'                  
 #' # Load precomputed Dtm from directory
