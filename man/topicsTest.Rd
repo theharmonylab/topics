@@ -59,10 +59,19 @@ The function to test the lda model for multiple dimensions, e.g., 2.
 }
 \examples{
 # Test the topic document distribution in respect to a variable
+dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+model <- topicsModel(dtm = dtm, # output of topicsDtm()
+                     num_topics = 20,
+                     num_top_words = 10,
+                     num_iterations = 1000,
+                     seed = 42,
+                     save_dir = "./results")
+preds <- topicsPreds(model = model, # output of topicsModel()
+                     data = Language_based_assessment_data_8$harmonytexts)
 test <- topicsTest(model = model, # output of topicsModel()
                    data=Language_based_assessment_data_8,
                    preds = preds, # output of topicsPreds()
                    test_method = "linear_regression",
-                   pred_var = "age")
+                   pred_var_x = "age")
                   
 }

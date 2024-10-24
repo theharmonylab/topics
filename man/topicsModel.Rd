@@ -37,6 +37,7 @@ The function to create and train and lda Model
 }
 \examples{
 # Create LDA Topic Model 
+dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
 model <- topicsModel(dtm = dtm, # output of topicsDtm()
                      num_topics = 20,
                      num_top_words = 10,

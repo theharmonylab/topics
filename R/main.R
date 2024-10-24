@@ -10,6 +10,7 @@
 #' @param seed (integer) the random seed for reproducibility
 #' @param save_dir (string) the directory to save the results, default is "./results", if NULL, no results are saved
 #' @param load_dir (string) the directory to load from.
+#' 
 #' @return the document term matrix
 #' @importFrom textmineR CreateDtm 
 #' @importFrom stats complete.cases
@@ -28,8 +29,8 @@
 #' # Create Dtm and remove the 5 least and 5 most frequent terms.
 #' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
 #'                  removal_mode = "term",
-#'                  removal_rate_least = 5,
-#'                  removal_rate_most = 5)
+#'                  removal_rate_least = 1,
+#'                  removal_rate_most = 1)
 #' 
 #' # Create Dtm and remove the 5% least frequent and 1% most frequent terms.
 #' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
@@ -210,6 +211,7 @@ topicsDtm <- function(data, #
 #' 
 #' @examples
 #' # Create LDA Topic Model 
+#' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
 #' model <- topicsModel(dtm = dtm, # output of topicsDtm()
 #'                      num_topics = 20,
 #'                      num_top_words = 10,
@@ -339,6 +341,13 @@ topicsGrams <- function(data, n=2, sep = " ", top_n = NULL){
 #' 
 #' @examples
 #' # Predict topics for new data with the trained model
+#' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+#' model <- topicsModel(dtm = dtm, # output of topicsDtm()
+#'                      num_topics = 20,
+#'                      num_top_words = 10,
+#'                      num_iterations = 1000,
+#'                      seed = 42,
+#'                      save_dir = "./results")
 #' preds <- topicsPreds(model = model, # output of topicsModel()
 #'                      data = Language_based_assessment_data_8$harmonytexts)
 
@@ -564,11 +573,20 @@ topicsTest1 <- function(model,
 #' 
 #' @examples
 #' # Test the topic document distribution in respect to a variable
+#' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+#' model <- topicsModel(dtm = dtm, # output of topicsDtm()
+#'                      num_topics = 20,
+#'                      num_top_words = 10,
+#'                      num_iterations = 1000,
+#'                      seed = 42,
+#'                      save_dir = "./results")
+#' preds <- topicsPreds(model = model, # output of topicsModel()
+#'                      data = Language_based_assessment_data_8$harmonytexts)
 #' test <- topicsTest(model = model, # output of topicsModel()
 #'                    data=Language_based_assessment_data_8,
 #'                    preds = preds, # output of topicsPreds()
 #'                    test_method = "linear_regression",
-#'                    pred_var = "age")
+#'                    pred_var_x = "age")
 #'                   
 topicsTest <- function(data,
                        model=NULL,
