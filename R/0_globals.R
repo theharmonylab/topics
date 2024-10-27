@@ -4,5 +4,8 @@ utils::globalVariables(c(
   "Word", "phi", "scale_color_gradient", "p.value", "adjust.p_value", "adjusted_p.value", 
   "top_terms", "prevalence", "coherence", "topic_name", "label_1", 
   "mean_group_1", "mean_group_2", "seed", "cohen_d", "value",
-  "phi_max_size", "test_path"
+  "phi_max_size", "test_path", 
+  ".", ".data", "color_categories", "contains_only_five", "fill", "group", "left_join",
+  "map_num", "mean_value", "prop", "rename", "topic", "topic_number", "x", "y"
+  
 ))
