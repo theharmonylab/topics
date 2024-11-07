@@ -4,14 +4,7 @@
 \alias{topicsGrams}
 \title{The function computes ngrams from a text}
 \usage{
-topicsGrams(
-  data,
-  n = 2,
-  sep = " ",
-  top_n = NULL,
-  pmi_threshold = NULL,
-  freq_per_user = NULL
-)
+topicsGrams(data, n = 2, sep = " ", top_n = NULL, pmi_threshold = NULL)
 }
 \arguments{
 \item{data}{(tibble) The data}
@@ -22,7 +15,7 @@ topicsGrams(
 
 \item{top_n}{(integer) The number of top ngrams to be displayed}
 
-\item{pmi}{(list) The pmi threshold, if it shall not be used set to NULL}
+\item{pmi_threshold}{(integer) The pmi threshold, if it shall not be used set to NULL}
 }
 \value{
 A list containing tibble of the ngrams with the frequency and probability and a tibble containing the relative frequency of the ngrams for each user

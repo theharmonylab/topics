@@ -288,7 +288,7 @@ topicsModel <- function(dtm,
 #' @param n (integer) The length of ngram
 #' @param sep (string) The separator
 #' @param top_n (integer) The number of top ngrams to be displayed
-#' @param pmi (list) The pmi threshold, if it shall not be used set to NULL
+#' @param pmi_threshold (integer) The pmi threshold, if it shall not be used set to NULL
 #' @importFrom ngram ngram get.ngrams get.phrasetable
 #' @importFrom tibble as_tibble tibble
 #' @importFrom stringr str_count
@@ -296,7 +296,7 @@ topicsModel <- function(dtm,
 #' @return A list containing tibble of the ngrams with the frequency and probability and a tibble containing the relative frequency of the ngrams for each user
 #' @export
 #' 
-topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=NULL, freq_per_user=NULL){
+topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=NULL){
   data <- tolower(data)#
   data <- gsub("[()].$", "", data)
   
