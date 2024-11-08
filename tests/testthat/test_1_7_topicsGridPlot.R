@@ -6,7 +6,6 @@ library(tibble)
 library(dplyr)
 library(topics) # Replace with your package name
 
-library(here)
 
 
 #test_that('Case 1: Save all topics without the topic grid plot by using the topicsPlot function.',{

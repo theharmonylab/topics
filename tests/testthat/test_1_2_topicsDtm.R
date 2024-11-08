@@ -3,7 +3,6 @@ library(topics)  # Replace with your package name
 library(tibble)
 library(dplyr)
 library(text)
-library(here)
 options(mc.cores = 1)
 
 
@@ -12,7 +11,7 @@ options(mc.cores = 1)
 test_that("topicsDtm creates a DTM correctly with default parameters", {
 
   data <- dep_wor_data$Deptext
-  result <- topicsDtm(data = data)
+  result <- topics::topicsDtm(data = data)
   
   testthat::expect_true(is.list(result))
   testthat::expect_true("train_dtm" %in% names(result))
@@ -24,7 +23,7 @@ test_that("topicsDtm creates a DTM correctly with default parameters", {
 
 test_that("topicsDtm handles different ngram_window values", {
   data <- dep_wor_data$Deptext
-  result <- topicsDtm(data, ngram_window = c(1, 2), threads=1)
+  result <- topics::topicsDtm(data, ngram_window = c(1, 2), threads=1)
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
@@ -32,7 +31,7 @@ test_that("topicsDtm handles different ngram_window values", {
 
 test_that("topicsDtm removes a specified word", {
   data <- dep_wor_data$Deptext
-  result <- topicsDtm(data, removalword = "test")
+  result <- topics::topicsDtm(data, removalword = "test")
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
@@ -41,7 +40,7 @@ test_that("topicsDtm removes a specified word", {
 
 test_that("topicsDtm handles different occurrence rates", {
   data <- dep_wor_data$Deptext
-  result <- topicsDtm(data, occ_rate = 1)
+  result <-topics:: topicsDtm(data, occ_rate = 1)
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
@@ -49,7 +48,7 @@ test_that("topicsDtm handles different occurrence rates", {
 
 test_that("topicsDtm handles different removal modes", {
   data <- dep_wor_data$Deptext
-  result <- topicsDtm(data, removal_mode = "absolute")
+  result <- topics::topicsDtm(data, removal_mode = "absolute")
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
@@ -57,7 +56,7 @@ test_that("topicsDtm handles different removal modes", {
 
 test_that("topicsDtm handles different split proportions", {
   data <- dep_wor_data$Deptext
-  result <- topicsDtm(data, split = 0.5)
+  result <- topics::topicsDtm(data, split = 0.5)
   
   testthat::expect_true(is.list(result))
 #  testthat::expect_true(nrow(result$train_data) <= nrow(data)*0.5)
@@ -67,8 +66,8 @@ test_that("topicsDtm handles different split proportions", {
 
 test_that("topicsDtm handles different seeds for reproducibility", {
   data <- dep_wor_data$Deptext
-  result1 <- topicsDtm(data, seed = 123)
-  result2 <- topicsDtm(data, seed = 123)
+  result1 <- topics::topicsDtm(data, seed = 123)
+  result2 <- topics::topicsDtm(data, seed = 123)
   
   testthat::expect_equal(result1$train_dtm, result2$train_dtm)
 })
@@ -76,22 +75,22 @@ test_that("topicsDtm handles different seeds for reproducibility", {
 test_that("topicsDtm saves results to the specified directory", {
   data <- dep_wor_data$Deptext
   save_dir <- tempfile()
-  result <- topicsDtm(data, save_dir = save_dir)
+  result <- topics::topicsDtm(data, save_dir = save_dir)
   
   testthat::expect_true(file.exists(file.path(save_dir, "seed_42", "dtms.rds")))
 })
 
 test_that("topicsDtm loads results from the specified directory", {
   data <- dep_wor_data$Deptext
-  result1 <- topicsDtm(data)
-  result2 <- topicsDtm(load_dir = "./results")
+  result1 <- topics::topicsDtm(data)
+  result2 <- topics::topicsDtm(load_dir = "./results")
   
   testthat::expect_equal(result1$train_dtm, result2$train_dtm)
 })
 
 test_that("topicsDtm removes least frequent words based on a threshold", {
   data <- dep_wor_data$Deptext
-  result <- topicsDtm(data, removal_mode = "frequency", removal_rate_least = 2)
+  result <- topics::topicsDtm(data, removal_mode = "frequency", removal_rate_least = 2)
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
@@ -99,7 +98,7 @@ test_that("topicsDtm removes least frequent words based on a threshold", {
 
 test_that("topicsDtm removes most frequent words based on a threshold", {
   data <- dep_wor_data$Deptext
-  result <- topicsDtm(data, removal_mode = "frequency", removal_rate_most = 50)
+  result <- topics::topicsDtm(data, removal_mode = "frequency", removal_rate_most = 50)
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
@@ -115,7 +114,7 @@ test_that("topicsDtm removes most frequent words based on a threshold", {
 
 test_that("topicsDtm removes most frequent words in percent mode", {
   data <- dep_wor_data$Deptext
-  result <- topicsDtm(data, removal_mode = "percentage", removal_rate_most = 5)
+  result <- topics::topicsDtm(data, removal_mode = "percentage", removal_rate_most = 5)
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")

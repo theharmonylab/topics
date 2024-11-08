@@ -2,14 +2,13 @@
 library(testthat)
 library(topics)  # Replace with your packAge name
 #library(text)
-library(here)
 library(dplyr)
 
 test_that("topicsTest performs linear regression correctly", {
-  dtm <- topicsDtm(data = dep_wor_data$Deptext)
-  model <- topicsModel(dtm = dtm)
-  preds <- topicsPreds(model = model, data = dep_wor_data$Deptext)
-  result <- topicsTest(model = model, 
+  dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
+  model <- topics::topicsModel(dtm = dtm)
+  preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
+  result <- topics::topicsTest(model = model, 
                        preds = preds, 
                        data = dep_wor_data, 
                        pred_var_x = "Age", 
@@ -55,20 +54,20 @@ test_that("topicsTest performs linear regression correctly", {
 #})
 
 test_that("topicsTest handles missing pred_var for non t-test methods", {
-  dtm <- topicsDtm(data = dep_wor_data$Deptext)
-  model <- topicsModel(dtm = dtm)
-  preds <- topicsPreds(model = model, data = dep_wor_data$Deptext)
+  dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
+  model <- topics::topicsModel(dtm = dtm)
+  preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
   
-  result <- topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = NULL)
+  result <- topics::topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = NULL)
   testthat::expect_null(result)
 })
 
 test_that("topicsTest adjusts p-values for multiple comparisons", {
-  dtm <- topicsDtm(data = dep_wor_data$Deptext)
-  model <- topicsModel(dtm = dtm)
-  preds <- topicsPreds(model = model, data = dep_wor_data$Deptext)
+  dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
+  model <- topics::topicsModel(dtm = dtm)
+  preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
   
-  result <- topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age", p_adjust_method = "bonferroni")
+  result <- topics::topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age", p_adjust_method = "bonferroni")
   
   expect_true(is.list(result))
   expect_equal(result[[1]]$test_method, "linear_regression")
@@ -79,11 +78,11 @@ test_that("topicsTest adjusts p-values for multiple comparisons", {
 
 
 test_that("topicsTest saves test results to the specified directory", {
-  dtm <- topicsDtm(data = dep_wor_data$Deptext)
-  model <- topicsModel(dtm = dtm)
-  preds <- topicsPreds(model = model, data = dep_wor_data$Deptext)
+  dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
+  model <- topics::topicsModel(dtm = dtm)
+  preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
   
-  result <- topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age")
+  result <- topics::topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age")
   
   testthat::expect_true(file.exists(file.path("results", "seed_42", paste0("test_", result[[1]]$test_method, "_Age.rds"))))
 })
@@ -114,11 +113,11 @@ test_that("topicsTest saves test results to the specified directory", {
 test_that("topicsTest performs logistic regression correctly", {
   data <- dep_wor_data %>% dplyr::mutate(Gender = ifelse(Gender == "male", 1, 0))
   data
-  dtm <- topicsDtm(data = dep_wor_data$Deptext)
-  model <- topicsModel(dtm = dtm)
-  preds <- topicsPreds(model = model, data = dep_wor_data$Deptext)
+  dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
+  model <- topics::topicsModel(dtm = dtm)
+  preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
   
-  result <- topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age", test_method = "logistic_regression")
+  result <- topics::topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age", test_method = "logistic_regression")
   
   expect_true(is.list(result[[1]]))
   expect_equal(result[[1]]$test_method, "logistic_regression")

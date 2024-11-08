@@ -3,12 +3,11 @@ library(testthat)
 library(topics)  # Replace with your package name
 #library(text)
 library(tibble)
-library(here)
 
 test_that("topicsGrams with default parameters", {
 
   data <- dep_wor_data$Worphrase
-  ngrams <- topicsGrams(data = data, top_n = 10, n=3)
+  ngrams <- topics::topicsGrams(data = data, top_n = 10, n=3)
   testthat::expect_true(is.list(ngrams))
   testthat::expect_true(is_tibble(ngrams$ngrams))
   testthat::expect_true(is_tibble(ngrams$freq_per_user))
@@ -17,7 +16,7 @@ test_that("topicsGrams with default parameters", {
 test_that("topicsGrams with default parameters", {
   
   data <- dep_wor_data$Worphrase
-  ngrams <- topicsGrams(data = data, top_n = 10, n=3, pmi_threshold = 3)
+  ngrams <- topics::topicsGrams(data = data, top_n = 10, n=3, pmi_threshold = 3)
   testthat::expect_true(is.list(ngrams))
   testthat::expect_true(is_tibble(ngrams$ngrams))
   testthat::expect_true(is_tibble(ngrams$freq_per_user))
