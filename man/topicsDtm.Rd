@@ -17,7 +17,7 @@ topicsDtm(
   seed = 42L,
   save_dir = "./results",
   load_dir = NULL,
-  cpus = 1
+  threads = 1
 )
 }
 \arguments{
@@ -28,6 +28,8 @@ topicsDtm(
 \item{stopwords}{(stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")}
 
 \item{removalword}{(string) the word to remove}
+
+\item{occ_rate}{(integer) the rate of occurence of a word to be removed}
 
 \item{removal_mode}{(string) the mode of removal -> "none", "frequency", "term" or "percentage", frequency removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, term removes an absolute amount of terms that are most frequent and least frequent, percentage the amount of terms indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix}
 
@@ -42,6 +44,8 @@ topicsDtm(
 \item{save_dir}{(string) the directory to save the results, default is "./results", if NULL, no results are saved}
 
 \item{load_dir}{(string) the directory to load from.}
+
+\item{threads}{(integer) the number of threads to use}
 }
 \value{
 the document term matrix
@@ -51,19 +55,19 @@ the function for creating a document term matrix
 }
 \examples{
 # Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
-dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
+dtm <- topicsDtm(data = dep_wor_data$Depphrase,
                  removal_mode = "frequency",
                  removal_rate_least = 4,
                  removal_rate_most = 500)
 
 # Create Dtm and remove the 5 least and 5 most frequent terms.
-dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
+dtm <- topicsDtm(data = dep_wor_data$Depphrase,
                  removal_mode = "term",
                  removal_rate_least = 1,
                  removal_rate_most = 1)
 
 # Create Dtm and remove the 5\% least frequent and 1\% most frequent terms.
-dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
+dtm <- topicsDtm(data = dep_wor_data$Depphrase,
                  removal_mode = "percentage",
                  removal_rate_least = 1,
                  removal_rate_most = 1)

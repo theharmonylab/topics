@@ -16,17 +16,17 @@ library(here)
 #  }
 #  
 #  dtmtest <- topicsDtm(
-#    data = topics::Language_based_assessment_data_8$harmonytexts
+#    data = topics::response_format_500_data_anonymized$Wortext
 #  )
 #  
 #  model <- topicsModel(dtmtest)
 #  
 #  preds <- topicsPreds(
 #    model = model, 
-#    data = topics::Language_based_assessment_data_8$harmonywords
+#    data = topics::response_format_500_data_anonymized$harmonywords
 #  )
 #
-#  dat1 <- dplyr::mutate(topics::Language_based_assessment_data_8,gender = ifelse(gender == "male", 0, 1))
+#  dat1 <- dplyr::mutate(topics::response_format_500_data_anonymized,gender = ifelse(gender == "male", 0, 1))
 #  
 #  tests2D <- topicsTest(
 #    model = model,
@@ -56,7 +56,7 @@ library(here)
 #  }
 #  
 #  dtmtest <- topicsDtm(
-#    data = topics::data$harmonytexts
+#    data = topics::data$Wortext
 #  )
 #  
 #  model <- topicsModel(dtmtest)
@@ -93,7 +93,7 @@ library(here)
 #  }
 #  
 #  dtmtest <- topicsDtm(
-#    data = topics::data$harmonytexts
+#    data = topics::data$Wortext
 #  )
 #  
 #  model <- topicsModel(dtmtest)
@@ -142,7 +142,7 @@ library(here)
 #  }
 #  
 #  dtmtest <- topicsDtm(
-#    data = topics::data$harmonytexts
+#    data = topics::data$Wortext
 #  )
 #  
 #  model <- topicsModel(dtmtest)
@@ -186,7 +186,7 @@ library(here)
 #  }
 #  
 #  dtmtest <- topicsDtm(
-#    data = topics::data$harmonytexts
+#    data = topics::data$Wortext
 #  )
 #  
 #  model <- topicsModel(dtmtest)
@@ -248,7 +248,7 @@ library(here)
 #  }
 #  
 #  dtmtest <- topicsDtm(
-#    data = topics::data$harmonytexts
+#    data = topics::data$Wortext
 #  )
 #  
 #  model <- topicsModel(dtmtest)
@@ -302,7 +302,7 @@ library(here)
 #  }
 #  
 #  dtmtest <- topicsDtm(
-#    data = topics::data$harmonytexts
+#    data = topics::data$Wortext
 #  )
 #  
 #  model <- topicsModel(dtmtest)

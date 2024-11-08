@@ -60,6 +60,8 @@ topicsPlot(
 
 \item{scale_size}{(logical) Whether to scale the size of the words}
 
+\item{plot_topics_idx}{(vector) The index of the topics to plot}
+
 \item{save_dir}{(string) The directory to save the wordclouds}
 
 \item{figure_format}{(string) Set the figure format, e.g., .svg, or .png.}
@@ -89,8 +91,6 @@ topicsPlot(
 \item{grid_legend_number_color}{The color in the text in the legend if grid_plot = TRUE}
 
 \item{grid_legend_number_size}{The color in the text in the legend if grid_plot = TRUE}
-
-\item{color_negative_cor}{(vector) The color scheme for negative correlation}
 }
 \value{
 nothing is returned, the wordclouds are saved in the save_dir

@@ -34,7 +34,7 @@ The function to predict the topics of a new document with the trained model
 }
 \examples{
 # Predict topics for new data with the trained model
-dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+dtm <- topicsDtm(data = dep_wor_data$Depphrase)
 model <- topicsModel(dtm = dtm, # output of topicsDtm()
                      num_topics = 20,
                      num_top_words = 10,
@@ -42,5 +42,5 @@ model <- topicsModel(dtm = dtm, # output of topicsDtm()
                      seed = 42,
                      save_dir = "./results")
 preds <- topicsPreds(model = model, # output of topicsModel()
-                     data = Language_based_assessment_data_8$harmonytexts)
+                     data = dep_wor_data$Depphrase)
 }
