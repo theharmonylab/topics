@@ -77,6 +77,7 @@ create_topic_words_dfs <- function(summary){
 #' @param seed (int) seed is needed for saving the plots in the correct directory
 #' @importFrom ggwordcloud geom_text_wordcloud
 #' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient
+#' @importFrom dplyr rename
 #' @noRd
 create_plots <- function(df_list = NULL, 
                          summary = NULL,
@@ -344,19 +345,19 @@ create_plots <- function(df_list = NULL,
                       units = "in") 
     } else if (is.null(df_list) & !is.null(test) & !is.null(ngrams)){
         
-        ngrams <- ngrams %>% rename(top_terms = ngrams)
-        test <- test %>% rename(estimate = contains("estimate"))
-        test <- test %>% rename(p_adjusted = contains("p_adjusted"))
-        test <- test %>% left_join(ngrams, by = "top_terms")
+        ngrams <- ngrams %>% dplyr::rename(top_terms = ngrams)
+        test <- test %>% dplyr::rename(estimate = contains("estimate"))
+        test <- test %>% dplyr::rename(p_adjusted = contains("p_adjusted"))
+        test <- test %>% dplyr::left_join(ngrams, by = "top_terms")
         if (!is.null(p_threshold)){
-          test <- test %>% filter(p_adjusted < p_threshold)
+          test <- test %>% dplyr::filter(p_adjusted < p_threshold)
         }
         # test for the fact that all words could be insignificant
         if (nrow(test) == 0){
           cat("No significant terms found, please increase the p_threshold.\n No wordclouds generated.")
         } else {
-          test_positive <- test%>% filter(estimate > 0)
-          test_negative <- test%>% filter(estimate < 0)
+          test_positive <- test%>% dplyr::filter(estimate > 0)
+          test_negative <- test%>% dplyr::filter(estimate < 0)
           if (!dir.exists(save_dir)) {
             # Create the directory
             dir.create(save_dir)
