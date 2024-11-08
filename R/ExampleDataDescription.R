@@ -17,16 +17,20 @@
 # #' @source \url{https://osf.io/preprints/psyarxiv/er6t7/}
 # "Language_based_assessment_data_8"
 
-#' @format A data frame with 40 participants and 8 variables:
+#' @format A data frame with 500 participants and 13 variables:
 #' \describe{
+#'   \item{Depselect}{Words that respondents have selected from a pre-defined list}
+#'   \item{Worselect}{Words that respondents have selected from a pre-defined list}
+#'   \item{Depword}{Wrods where respondents describe their experience with depression in life}
+#'   \item{Worword}{Words where respondents describe their experience with depression in life}
 #'   \item{Depphrase}{phrases where respondents describe their experience with depression in life}
-#'   \item{Worphrase}{phrases where respondents describe their experience with anxiety in life}
-#'   \item{Deptext}{text where respondents describe their experience with depression in life}
-#'   \item{Wortext}{text where respondents describe their experience with anxiety in life}
-#'   \item{Gender}{respondents gender 0=male, 1=female}
+#'   \item{Worphrase}{Phrases where respondents describe their experience with anxiety in life}
+#'   \item{Deptext}{Text where respondents describe their experience with depression in life}
+#'   \item{Wortext}{Text where respondents describe their experience with anxiety in life}
+#'   \item{Gender}{Respondents gender 0=male, 1=female}
 #'   \item{Age}{respondents age in years}
 #'   \item{PHQ9tot}{total score of the respondents PHQ-9}
 #'   \item{GAD7tot}{total score of the respondents GAD-7}
 #' }
-"response_format_500_data_anonymized"
+"dep_wor_data"
 
