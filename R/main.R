@@ -287,6 +287,8 @@ topicsModel <- function(dtm,
 #' @param data (tibble) The data
 #' @param n (integer) The length of ngram
 #' @param sep (string) The separator
+#' @param top_n (integer) The number of top ngrams to be displayed
+#' @param pmi_threshold (integer) The pmi threshold, if it shall not be used set to NULL
 #' @importFrom ngram ngram get.ngrams get.phrasetable
 #' @importFrom tibble as_tibble tibble
 #' @importFrom stringr str_count
@@ -294,19 +296,74 @@ topicsModel <- function(dtm,
 #' @return A list containing tibble of the ngrams with the frequency and probability and a tibble containing the relative frequency of the ngrams for each user
 #' @export
 #' 
-topicsGrams <- function(data, n=2, sep = " ", top_n = NULL){
-  data <- tolower(data)
-  ngrams <- ngram::ngram(data, n = n, sep = sep)
-  ngrams <- ngram::get.phrasetable(ngrams)
-  if (!is.null(top_n)){
-    ngrams <- ngrams[1:top_n,]
+topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=NULL){
+  data <- tolower(data)#
+  data <- gsub("[()].$", "", data)
+  
+  ngrams <- list()
+  counts <- c()
+  for (i in 1:n){
+    ngrams[[i]] <- ngram::ngram(data, n = i, sep = " ")
+    ngrams[[i]] <- ngram::get.phrasetable(ngrams[[i]])
+    counts <- c(counts,nrow(ngrams[[i]]))
   }
+  
+  total <- 0
+  for (i in 1:n){
+    total <- total + sum(ngrams[[i]]$freq)
+  }
+  for (i in 1:n){
+    ngrams[[i]]$prop <- ngrams[[i]]$freq/total
+  }
+
+  # calculate the pmi score pmi $($ phrase $)=\log \frac{p(\text { phrase })}{\Pi_{w \in p h r a s e} p(w)}$
+ 
+  for (k in 2:n){
+    pmi <- list()
+    for (i in 1:nrow(ngrams[[k]])) {
+      words <- strsplit(ngrams[[k]]$ngrams[i], " ")[[1]]
+      denum <- 1
+      for (j in 1:length(words)) {
+        denum <- denum * ngrams[[1]][ngrams[[1]]$ngrams == paste0(words[j], " "), "prop"]
+      }
+      pmi[[i]] <- log(ngrams[[k]]$prop[i]/denum)
+    }
+    ngrams[[k]]$pmi <- unlist(pmi)
+  }
+  ngrams[[1]]$pmi <- pmi_threshold
+  
+  
+  # filter ngrams based on pmi
+  if (!is.null(pmi_threshold)){
+    removed <- c()
+    for (i in 2:n){
+      ngrams[[i]] <- ngrams[[i]] %>% filter(pmi > pmi_threshold)
+      removed <- c(removed, counts[[i]] - nrow(ngrams[[i]]))
+    }
+    removed <- c(0, removed)
+  }
+  
+  stats <- tibble(
+    ngram_type = paste0(1:n, "-grams"),           # Create n-gram labels dynamically
+    initial_count = counts,  #  initial counts for illustration
+    removed_count = removed,    #  removed counts for illustration
+    final_count = counts - removed
+  )
+  
+  # take top n ngrams
+  if (!is.null(top_n)){
+    for (i in 1:n){
+      ngrams[[i]] <- ngrams[[i]][1:top_n,]
+    }
+  }
+  ngrams <- do.call(rbind, ngrams) # concatenate
   freq_per_user <- list()
   # create unique integer for each row
   data <- as_tibble(data)
   data <- data %>% mutate(row_id = row_number())
   freq_per_user$usertexts <- data$row_id
   
+  # calculate the relative frequency per user
   for (i in 1:nrow(ngrams)) {
     temp <- c()
     
@@ -320,10 +377,14 @@ topicsGrams <- function(data, n=2, sep = " ", top_n = NULL){
     }
     freq_per_user[[paste(unlist(strsplit(as.character(ngrams$ngrams[i]), " ")), collapse = "_")]] <- temp
   }
+  
+  # change the ngrams to a single string with "_" as connector
   ngrams$ngrams <- sapply(ngrams$ngrams, function(x) paste(unlist(strsplit(x, " ")), collapse = "_"))
   
+  print(stats)
   return(list(ngrams=as_tibble(ngrams),
-              freq_per_user = as_tibble(freq_per_user)))
+              freq_per_user = as_tibble(freq_per_user),
+              stats=stats))
 }
 
 
