@@ -11,8 +11,8 @@ options(mc.cores = 1)
 
 test_that("topicsDtm creates a DTM correctly with default parameters", {
 
-  data <- Language_based_assessment_data_8$harmonytexts
-  result <- topicsDtm(data = data, cpus=1)
+  data <- dep_wor_data$Deptext
+  result <- topicsDtm(data = data)
   
   testthat::expect_true(is.list(result))
   testthat::expect_true("train_dtm" %in% names(result))
@@ -23,15 +23,15 @@ test_that("topicsDtm creates a DTM correctly with default parameters", {
 })
 
 test_that("topicsDtm handles different ngram_window values", {
-  data <- Language_based_assessment_data_8$harmonytexts
-  result <- topicsDtm(data, ngram_window = c(1, 2), cpus=1)
+  data <- dep_wor_data$Deptext
+  result <- topicsDtm(data, ngram_window = c(1, 2), threads=1)
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
 })
 
 test_that("topicsDtm removes a specified word", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- dep_wor_data$Deptext
   result <- topicsDtm(data, removalword = "test")
   
   testthat::expect_true(is.list(result))
@@ -40,7 +40,7 @@ test_that("topicsDtm removes a specified word", {
 })
 
 test_that("topicsDtm handles different occurrence rates", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- dep_wor_data$Deptext
   result <- topicsDtm(data, occ_rate = 1)
   
   testthat::expect_true(is.list(result))
@@ -48,7 +48,7 @@ test_that("topicsDtm handles different occurrence rates", {
 })
 
 test_that("topicsDtm handles different removal modes", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- dep_wor_data$Deptext
   result <- topicsDtm(data, removal_mode = "absolute")
   
   testthat::expect_true(is.list(result))
@@ -56,7 +56,7 @@ test_that("topicsDtm handles different removal modes", {
 })
 
 test_that("topicsDtm handles different split proportions", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- dep_wor_data$Deptext
   result <- topicsDtm(data, split = 0.5)
   
   testthat::expect_true(is.list(result))
@@ -66,7 +66,7 @@ test_that("topicsDtm handles different split proportions", {
 })
 
 test_that("topicsDtm handles different seeds for reproducibility", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- dep_wor_data$Deptext
   result1 <- topicsDtm(data, seed = 123)
   result2 <- topicsDtm(data, seed = 123)
   
@@ -74,7 +74,7 @@ test_that("topicsDtm handles different seeds for reproducibility", {
 })
 
 test_that("topicsDtm saves results to the specified directory", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- dep_wor_data$Deptext
   save_dir <- tempfile()
   result <- topicsDtm(data, save_dir = save_dir)
   
@@ -82,7 +82,7 @@ test_that("topicsDtm saves results to the specified directory", {
 })
 
 test_that("topicsDtm loads results from the specified directory", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- dep_wor_data$Deptext
   result1 <- topicsDtm(data)
   result2 <- topicsDtm(load_dir = "./results")
   
@@ -90,7 +90,7 @@ test_that("topicsDtm loads results from the specified directory", {
 })
 
 test_that("topicsDtm removes least frequent words based on a threshold", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- dep_wor_data$Deptext
   result <- topicsDtm(data, removal_mode = "frequency", removal_rate_least = 2)
   
   testthat::expect_true(is.list(result))
@@ -98,7 +98,7 @@ test_that("topicsDtm removes least frequent words based on a threshold", {
 })
 
 test_that("topicsDtm removes most frequent words based on a threshold", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- dep_wor_data$Deptext
   result <- topicsDtm(data, removal_mode = "frequency", removal_rate_most = 50)
   
   testthat::expect_true(is.list(result))
@@ -106,7 +106,7 @@ test_that("topicsDtm removes most frequent words based on a threshold", {
 })
 
 #test_that("topicsDtm removes least frequent words in percent mode", {
-#  data <- Language_based_assessment_data_8$harmonytexts
+#  data <- dep_wor_data$Wortext
 #  result <- topicsDtm(data, removal_mode = "percent", removal_rate_least = 50)
   
 #  testthat::expect_true(is.list(result))
@@ -114,7 +114,7 @@ test_that("topicsDtm removes most frequent words based on a threshold", {
 #})
 
 test_that("topicsDtm removes most frequent words in percent mode", {
-  data <- Language_based_assessment_data_8$harmonytexts
+  data <- dep_wor_data$Deptext
   result <- topicsDtm(data, removal_mode = "percentage", removal_rate_most = 5)
   
   testthat::expect_true(is.list(result))

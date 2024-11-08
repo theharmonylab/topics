@@ -10,7 +10,8 @@
 #' @param seed (integer) the random seed for reproducibility
 #' @param save_dir (string) the directory to save the results, default is "./results", if NULL, no results are saved
 #' @param load_dir (string) the directory to load from.
-#' 
+#' @param occ_rate (integer) the rate of occurence of a word to be removed
+#' @param threads (integer) the number of threads to use
 #' @return the document term matrix
 #' @importFrom textmineR CreateDtm 
 #' @importFrom stats complete.cases
@@ -21,19 +22,19 @@
 #' @export
 #' @examples
 #' # Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
-#' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
+#' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 #'                  removal_mode = "frequency",
 #'                  removal_rate_least = 4,
 #'                  removal_rate_most = 500)
 #' 
 #' # Create Dtm and remove the 5 least and 5 most frequent terms.
-#' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
+#' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 #'                  removal_mode = "term",
 #'                  removal_rate_least = 1,
 #'                  removal_rate_most = 1)
 #' 
 #' # Create Dtm and remove the 5% least frequent and 1% most frequent terms.
-#' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts,
+#' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 #'                  removal_mode = "percentage",
 #'                  removal_rate_least = 1,
 #'                  removal_rate_most = 1)
@@ -54,7 +55,7 @@ topicsDtm <- function(data, #
                    seed=42L,
                    save_dir="./results",
                    load_dir=NULL,
-                   cpus=1){
+                   threads=1){
   
 
 
@@ -105,7 +106,7 @@ topicsDtm <- function(data, #
       remove_punctuation = TRUE, # punctuation - this is the default
       remove_numbers = TRUE, # numbers - this is the default
       verbose = FALSE, # Turn off status bar for this demo
-      cpus = cpus) # default is all available cpus on the system
+      cpus = threads) # default is all available cpus on the system
   
     
     if (occ_rate>0){
@@ -144,7 +145,7 @@ topicsDtm <- function(data, #
       remove_punctuation = TRUE, # punctuation - this is the default
       remove_numbers = TRUE, # numbers - this is the default
       verbose = FALSE, # Turn off status bar for this demo
-      cpus = cpus) # default is all available cpus on the system
+      cpus = threads) # default is all available cpus on the system
     
     if (occ_rate>0){
       
@@ -211,7 +212,7 @@ topicsDtm <- function(data, #
 #' 
 #' @examples
 #' # Create LDA Topic Model 
-#' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+#' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
 #' model <- topicsModel(dtm = dtm, # output of topicsDtm()
 #'                      num_topics = 20,
 #'                      num_top_words = 10,
@@ -288,15 +289,15 @@ topicsModel <- function(dtm,
 #' @param n (integer) The length of ngram
 #' @param sep (string) The separator
 #' @param top_n (integer) The number of top ngrams to be displayed
-#' @param pmi_threshold (integer) The pmi threshold, if it shall not be used set to NULL
+#' @param pmi_threshold (integer) The pmi threshold, if it shall not be used set to 0
 #' @importFrom ngram ngram get.ngrams get.phrasetable
 #' @importFrom tibble as_tibble tibble
 #' @importFrom stringr str_count
-#' @importFrom dplyr mutate row_number
+#' @importFrom dplyr mutate row_number filter 
 #' @return A list containing tibble of the ngrams with the frequency and probability and a tibble containing the relative frequency of the ngrams for each user
 #' @export
 #' 
-topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=NULL){
+topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=0){
   data <- tolower(data)#
   data <- gsub("[()].$", "", data)
   
@@ -337,10 +338,12 @@ topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=NULL){
   if (!is.null(pmi_threshold)){
     removed <- c()
     for (i in 2:n){
-      ngrams[[i]] <- ngrams[[i]] %>% filter(pmi > pmi_threshold)
+      ngrams[[i]] <- ngrams[[i]] %>% dplyr::filter(pmi > pmi_threshold)
       removed <- c(removed, counts[[i]] - nrow(ngrams[[i]]))
     }
     removed <- c(0, removed)
+  } else {
+    removed <- rep(0, n)
   }
   
   stats <- tibble(
@@ -360,7 +363,7 @@ topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=NULL){
   freq_per_user <- list()
   # create unique integer for each row
   data <- as_tibble(data)
-  data <- data %>% mutate(row_id = row_number())
+  data <- data %>% dplyr::mutate(row_id = row_number())
   freq_per_user$usertexts <- data$row_id
   
   # calculate the relative frequency per user
@@ -402,7 +405,7 @@ topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=NULL){
 #' 
 #' @examples
 #' # Predict topics for new data with the trained model
-#' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+#' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
 #' model <- topicsModel(dtm = dtm, # output of topicsDtm()
 #'                      num_topics = 20,
 #'                      num_top_words = 10,
@@ -410,7 +413,7 @@ topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=NULL){
 #'                      seed = 42,
 #'                      save_dir = "./results")
 #' preds <- topicsPreds(model = model, # output of topicsModel()
-#'                      data = Language_based_assessment_data_8$harmonytexts)
+#'                      data = dep_wor_data$Depphrase)
 
 topicsPreds <- function(model, # only needed if load_dir==NULL 
                      data, # data vector to infer distribution for
@@ -498,7 +501,8 @@ topicsPreds <- function(model, # only needed if load_dir==NULL
 #' @return A list of the test results, test method, and prediction variable
 #' @importFrom dplyr bind_cols
 #' @importFrom readr write_csv
-#' @export
+#' @noRd
+
 topicsTest1 <- function(model,
                         preds, 
                         data,
@@ -634,7 +638,7 @@ topicsTest1 <- function(model,
 #' 
 #' @examples
 #' # Test the topic document distribution in respect to a variable
-#' dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+#' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
 #' model <- topicsModel(dtm = dtm, # output of topicsDtm()
 #'                      num_topics = 20,
 #'                      num_top_words = 10,
@@ -642,12 +646,12 @@ topicsTest1 <- function(model,
 #'                      seed = 42,
 #'                      save_dir = "./results")
 #' preds <- topicsPreds(model = model, # output of topicsModel()
-#'                      data = Language_based_assessment_data_8$harmonytexts)
+#'                      data = dep_wor_data$Depphrase)
 #' test <- topicsTest(model = model, # output of topicsModel()
-#'                    data=Language_based_assessment_data_8,
+#'                    data=dep_wor_data,
 #'                    preds = preds, # output of topicsPreds()
 #'                    test_method = "linear_regression",
-#'                    pred_var_x = "age")
+#'                    pred_var_x = "Age")
 #'                   
 topicsTest <- function(data,
                        model=NULL,
@@ -774,7 +778,7 @@ topicsTest <- function(data,
 
 #' The function to create lda wordclouds
 #' @return nothing is returned, the dot cloud legend is saved in the save_dir
-# @importFrom ggplot2 ggplot geom_point scale_color_manual labs theme_minimal themes element_blank
+#' @importFrom ggplot2 ggplot geom_point scale_color_manual labs theme_minimal theme element_blank
 #' @importFrom rlang sym !!
 #' @importFrom dplyr select filter mutate anti_join summarise pull group_by group_modify ungroup
 #' @noRd
@@ -1128,6 +1132,9 @@ topicsScatterLegend <- function(
 
 #' Creates the legend for the plot.
 #' @return A legend plot saved that can be combined with the plot object.
+#' @importFrom tidyr gather separate
+#' @importFrom dplyr mutate
+#' @importFrom ggplot2 geom_tile ggtitle scale_fill_identity labs theme_void annotate theme element_text coord_fixed ggsave
 #' @noRd
 topicsGridLegend <- function(
     bivariate_color_codes = c(
@@ -1317,7 +1324,7 @@ topicsGridLegend <- function(
 #' @param max_size (integer) The max size of the words.
 #' @param seed (integer) The seed to set for reproducibility
 #' @return nothing is returned, the wordclouds are saved in the save_dir
-#' @export
+#' @noRd
 topicsPlot1 <- function(model = NULL,
                         ngrams = NULL,
                         test = NULL,
@@ -1428,12 +1435,12 @@ topicsPlot1 <- function(model = NULL,
 #' @param grid_plot (boolean) Set TRUE if plotting the topics grid
 #' @param dim (numeric) Generate 1 dimensional color plots or 2 dimensional color plots if grid = TRUE 
 #' @param color_scheme (string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE or for ngrams. The vector should contain 9 color codes for grid or 4 colors for ngrams with c(positive_low, positive_high, negative_low, negative_high)
-#' @param color_negative_cor (vector) The color scheme for negative correlation
 #' @param scatter_legend_popout_num (numeric or vector) The vector of num of pop outs of each grid in the scatter legend.
 #' @param scatter_legend_way_popout_topics (string) The way to filter topics to pop out in the scatter legend. Can be either "mean", "max_x", or "max_y"
 #' @param scatter_legend_user_spec_topics (vector) User can specify which topic to be poped out in the scatter legend. Should be like c("t_1", "t_2", ...). If set, way_popout_topics will have no effect.
 #' @param scatter_legend_topic_num (boolean) Allow showing the topic number or not in the scatter legend
 #' @param scale_size (logical) Whether to scale the size of the words
+#' @param plot_topics_idx (vector) The index of the topics to plot
 #' @param save_dir (string) The directory to save the wordclouds
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
 #' @param width (integer) The width of the topic (units = "in"). 

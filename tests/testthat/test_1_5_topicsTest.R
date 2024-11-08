@@ -1,18 +1,18 @@
 # tests/test-topicsTest.R
 library(testthat)
-library(topics)  # Replace with your package name
+library(topics)  # Replace with your packAge name
 #library(text)
 library(here)
 library(dplyr)
 
 test_that("topicsTest performs linear regression correctly", {
-  dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+  dtm <- topicsDtm(data = dep_wor_data$Deptext)
   model <- topicsModel(dtm = dtm)
-  preds <- topicsPreds(model = model, data = Language_based_assessment_data_8$harmonytexts)
+  preds <- topicsPreds(model = model, data = dep_wor_data$Deptext)
   result <- topicsTest(model = model, 
                        preds = preds, 
-                       data = Language_based_assessment_data_8, 
-                       pred_var_x = "hilstotal", 
+                       data = dep_wor_data, 
+                       pred_var_x = "Age", 
                        test_method = "linear_regression")
   
   testthat::expect_true(is.list(result[[1]]))
@@ -24,10 +24,10 @@ test_that("topicsTest performs linear regression correctly", {
   
 })
 
-#data <- Language_based_assessment_data_8
-#dtm <- topicsDtm(data = data$harmonytexts)
+#data <- dep_wor_data
+#dtm <- topicsDtm(data = data$Deptext)
 #model <- topicsModel(dtm = dtm)
-#preds <- topicsPreds(model = model, data = data$harmonytexts)
+#preds <- topicsPreds(model = model, data = data$Deptext)
 #result <- topicsTest(model = model, 
 #                     preds = preds, 
 #                     data = data, 
@@ -37,10 +37,10 @@ test_that("topicsTest performs linear regression correctly", {
 #result
 
 #test_that("topicsTest performs t-test correctly", {
-#  data <- Language_based_assessment_data_8
-#  dtm <- topicsDtm(data = data$harmonytexts)
+#  data <- dep_wor_data
+#  dtm <- topicsDtm(data = data$Deptext)
 #  model <- topicsModel(dtm = dtm)
-#  preds <- topicsPreds(model = model, data = data$harmonytexts)
+#  preds <- topicsPreds(model = model, data = data$Deptext)
 #  result <- topicsTest(model = model, 
 #                       preds = preds, 
 #                       data = data, 
@@ -55,45 +55,45 @@ test_that("topicsTest performs linear regression correctly", {
 #})
 
 test_that("topicsTest handles missing pred_var for non t-test methods", {
-  dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+  dtm <- topicsDtm(data = dep_wor_data$Deptext)
   model <- topicsModel(dtm = dtm)
-  preds <- topicsPreds(model = model, data = Language_based_assessment_data_8$harmonytexts)
+  preds <- topicsPreds(model = model, data = dep_wor_data$Deptext)
   
-  result <- topicsTest(model = model, preds = preds, data = Language_based_assessment_data_8, pred_var_x = NULL)
+  result <- topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = NULL)
   testthat::expect_null(result)
 })
 
 test_that("topicsTest adjusts p-values for multiple comparisons", {
-  dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+  dtm <- topicsDtm(data = dep_wor_data$Deptext)
   model <- topicsModel(dtm = dtm)
-  preds <- topicsPreds(model = model, data = Language_based_assessment_data_8$harmonytexts)
+  preds <- topicsPreds(model = model, data = dep_wor_data$Deptext)
   
-  result <- topicsTest(model = model, preds = preds, data = Language_based_assessment_data_8, pred_var_x = "hilstotal", p_adjust_method = "bonferroni")
+  result <- topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age", p_adjust_method = "bonferroni")
   
   expect_true(is.list(result))
   expect_equal(result[[1]]$test_method, "linear_regression")
-  expect_true(any(grepl("hilstotal.estimate", names(result[[1]]$test))))
-  expect_true(any(grepl("hilstotal.t", names(result[[1]]$test))))
-  expect_true(any(grepl("hilstotal.p", names(result[[1]]$test))))
+  expect_true(any(grepl("Age.estimate", names(result[[1]]$test))))
+  expect_true(any(grepl("Age.t", names(result[[1]]$test))))
+  expect_true(any(grepl("Age.p", names(result[[1]]$test))))
 })
 
 
 test_that("topicsTest saves test results to the specified directory", {
-  dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+  dtm <- topicsDtm(data = dep_wor_data$Deptext)
   model <- topicsModel(dtm = dtm)
-  preds <- topicsPreds(model = model, data = Language_based_assessment_data_8$harmonytexts)
+  preds <- topicsPreds(model = model, data = dep_wor_data$Deptext)
   
-  result <- topicsTest(model = model, preds = preds, data = Language_based_assessment_data_8, pred_var_x = "hilstotal")
+  result <- topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age")
   
-  testthat::expect_true(file.exists(file.path("results", "seed_42", paste0("test_", result[[1]]$test_method, "_hilstotal.rds"))))
+  testthat::expect_true(file.exists(file.path("results", "seed_42", paste0("test_", result[[1]]$test_method, "_Age.rds"))))
 })
 
 # this feature is currently not working
 #test_that("topicsTest loads test results from the specified directory", {
-#  data <- Language_based_assessment_data_8
-#  dtm <- topicsDtm(data = data$harmonytexts)
+#  data <- dep_wor_data
+#  dtm <- topicsDtm(data = data$Deptext)
 #  model <- topicsModel(dtm = dtm)
-#  preds <- topicsPreds(model = model, data = data$harmonytexts)
+#  preds <- topicsPreds(model = model, data = data$Deptext)
 #  
 #
 #  # Generate and save test results
@@ -112,13 +112,13 @@ test_that("topicsTest saves test results to the specified directory", {
 
 
 test_that("topicsTest performs logistic regression correctly", {
-  data <- Language_based_assessment_data_8 %>% dplyr::mutate(gender = ifelse(gender == "male", 1, 0))
+  data <- dep_wor_data %>% dplyr::mutate(Gender = ifelse(Gender == "male", 1, 0))
   data
-  dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+  dtm <- topicsDtm(data = dep_wor_data$Deptext)
   model <- topicsModel(dtm = dtm)
-  preds <- topicsPreds(model = model, data = Language_based_assessment_data_8$harmonytexts)
+  preds <- topicsPreds(model = model, data = dep_wor_data$Deptext)
   
-  result <- topicsTest(model = model, preds = preds, data = Language_based_assessment_data_8, pred_var_x = "age", test_method = "logistic_regression")
+  result <- topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age", test_method = "logistic_regression")
   
   expect_true(is.list(result[[1]]))
   expect_equal(result[[1]]$test_method, "logistic_regression")
@@ -128,11 +128,11 @@ test_that("topicsTest performs logistic regression correctly", {
 })
 
 #test_that("topicsTest performs ridge regression correctly", {
-#  dtm <- topicsDtm(data = data$harmonytexts)
+#  dtm <- topicsDtm(data = data$Deptext)
 #  model <- topicsModel(dtm = dtm)
-#  preds <- topicsPreds(model = model, data = data$harmonytexts)
+#  preds <- topicsPreds(model = model, data = data$Deptext)
 #  
-#  result <- topicsTest(model = model, preds = preds, data = data, pred_var_x = "age", test_method = "ridge_regression")
+#  result <- topicsTest(model = model, preds = preds, data = data, pred_var_x = "Age", test_method = "ridge_regression")
 #  result[[1]]
 #  expect_true(is.list(result[[1]]))
 #  expect_equal(result[[1]]$test_method, "ridge_regression")

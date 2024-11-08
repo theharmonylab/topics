@@ -7,10 +7,10 @@ library(here)
 
 
 test_that("topicsPlot with test", {
-  dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+  dtm <- topicsDtm(data = dep_wor_data$Deptext)
   model <- topicsModel(dtm = dtm)
-  preds <- topicsPreds(model = model, data = Language_based_assessment_data_8$harmonytexts)
-  result <- topicsTest(model=model, preds=preds, data=Language_based_assessment_data_8, pred_var_x = "hilstotal")
+  preds <- topicsPreds(model = model, data = dep_wor_data$Deptext)
+  result <- topicsTest(model=model, preds=preds, data=dep_wor_data, pred_var_x = "Age")
   topicsPlot(model, result, p_threshold=1, figure_format = "png")
   
   # Check if the wordcloud directory exists
@@ -18,7 +18,7 @@ test_that("topicsPlot with test", {
 })
 
 test_that("topicsPlot without test and preds", {
-  dtm <- topicsDtm(data = Language_based_assessment_data_8$harmonytexts)
+  dtm <- topicsDtm(data = dep_wor_data$Deptext)
   model <- topicsModel(dtm = dtm)
   
   topicsPlot(model, figure_format = "png")
@@ -28,8 +28,8 @@ test_that("topicsPlot without test and preds", {
 })
 
 test_that("topicsPlot with topicsGrams",{
-  data <- Language_based_assessment_data_8$harmonytexts
-  ngrams <- topicsGrams(data = data, top_n = 20)
+  data <- dep_wor_data$Worphrase
+  ngrams <- topicsGrams(data = data, top_n = 10, n=3, pmi_threshold = 3)
   topics::topicsPlot(ngrams = ngrams, figure_format = "png" )
   testthat::expect_true(file.exists("./results/seed_42/wordclouds/ngrams.png"))
 })

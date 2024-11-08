@@ -63,7 +63,7 @@
 <span>  seed <span class="op">=</span> <span class="fl">42L</span>,</span>
 <span>  save_dir <span class="op">=</span> <span class="st">"./results"</span>,</span>
 <span>  load_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  cpus <span class="op">=</span> <span class="fl">1</span></span>
+<span>  threads <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -83,6 +83,10 @@
 
 <dt>removalword</dt>
 <dd><p>(string) the word to remove</p></dd>
+
+
+<dt>occ_rate</dt>
+<dd><p>(integer) the rate of occurence of a word to be removed</p></dd>
 
 
 <dt>removal_mode</dt>
@@ -112,6 +116,10 @@
 <dt>load_dir</dt>
 <dd><p>(string) the directory to load from.</p></dd>
 
+
+<dt>threads</dt>
+<dd><p>(integer) the number of threads to use</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -123,34 +131,30 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.</span></span></span>
-<span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">text</span>,</span></span>
+<span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span>,</span></span>
 <span class="r-in"><span>                 removal_mode <span class="op">=</span> <span class="st">"frequency"</span>,</span></span>
 <span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">4</span>,</span></span>
 <span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Unknown or uninitialised column: `text`.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The data provided is empty. Please provide a list of text data."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The Dtm, data, and summary are saved in./results/seed_42/dtms.rds"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create Dtm and remove the 5 least and 5 most frequent terms.</span></span></span>
-<span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">text</span>,</span></span>
+<span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span>,</span></span>
 <span class="r-in"><span>                 removal_mode <span class="op">=</span> <span class="st">"term"</span>,</span></span>
-<span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Unknown or uninitialised column: `text`.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The data provided is empty. Please provide a list of text data."</span>
+<span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The Dtm, data, and summary are saved in./results/seed_42/dtms.rds"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create Dtm and remove the 5% least frequent and 1% most frequent terms.</span></span></span>
-<span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">text</span>,</span></span>
+<span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span>,</span></span>
 <span class="r-in"><span>                 removal_mode <span class="op">=</span> <span class="st">"percentage"</span>,</span></span>
-<span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Unknown or uninitialised column: `text`.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The data provided is empty. Please provide a list of text data."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The Dtm, data, and summary are saved in./results/seed_42/dtms.rds"</span>
 <span class="r-in"><span>                 </span></span>
 <span class="r-in"><span><span class="co"># Load precomputed Dtm from directory</span></span></span>
 <span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>load_dir <span class="op">=</span> <span class="st">"./results"</span>,</span></span>
 <span class="r-in"><span>                 seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open compressed file './results/seed_42/dtms.rds', probable reason 'No such file or directory'</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in gzfile(file, "rb"):</span> cannot open the connection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The Dtm, data, and summary are saved in./results/seed_42/dtms.rds"</span>
 </code></pre></div>
     </div>
   </div>
@@ -161,7 +165,7 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Leon Ackermann, <a href="https://portal.research.lu.se/sv/persons/zhuojun-gu" class="external-link">Zhuojun Gu</a>, <a href="https://oscarkjell.se/" class="external-link">Oscar Kjell</a>.</p>
+  <p></p><p>Developed by <a href="https://leonackermann.github.io/" class="external-link">Leon Ackermann</a>, <a href="https://portal.research.lu.se/sv/persons/zhuojun-gu" class="external-link">Zhuojun Gu</a>, <a href="https://oscarkjell.se/" class="external-link">Oscar Kjell</a>.</p>
 </div>
 
 <div class="pkgdown">
