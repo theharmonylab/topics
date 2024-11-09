@@ -60,12 +60,12 @@ reference:
     - dep_wor_data
 
 
-#articles:
-#- title: Set-up
-#  navbar: ~
-#  contents:
+articles:
+- title: Set-up
+  navbar: ~
+  contents:
 #  - pre_trained_models
-#  - huggingface_in_r_extended_installation_guide
+  - extended_installation_guide
 #  - singularity_transformers_container
 #  - huggingface_in_r_and_computer_capacity
 #  - removing_huggingface_transformers_cache_files

@@ -1,0 +1,20 @@
+---
+title: "Extended Installation Guide"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extended Installation Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+*topics* enables users access to mallet in R through mallet in Java. So it's important to install the R-package rJava, which requires that you download JAVA manually.
+
+## rJava installation
+Please visit http://www.java.com for information on installing JAVA.
