@@ -9,11 +9,3 @@ bibentry(
    year = 2024,
    url = "https://github.com/theharmonylab/topics")
 
-bibentry(
-   bibtype = "Article",
-   title = "On text visualisation techniques for psychological assessments",
-   author = as.person("Leon Ackermann [aut], Zhuojun Gu [aut], Oscar Kjell [aut]"),
-   journal = "In progress",
-   doi = "10.XXXX/XXXXX",
-   year = 2024,
-   url = "https://osf.io/preprints/psyarxiv/XXXX/")
