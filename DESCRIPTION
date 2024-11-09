@@ -15,7 +15,7 @@ Authors@R: c(
 Description: The topics package implements Differential Language Analysis with statistical tests and offers various language visualization techniques for n-grams and topics. It also supports the text package. For more information, visit https://r-topics.org/ and https://www.r-text.org/.
 License: GPL-3
 URL: https://r-topics.org/
-BugReports: https://github.com/theharmonylab/lda-pipeline/issues
+BugReports: https://github.com/theharmonylab/topics/issues
 Encoding: UTF-8
 Archs: x64
 SystemRequirements: Python (>= 3.6.0)
