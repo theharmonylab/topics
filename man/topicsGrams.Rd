@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{topicsGrams}
 \alias{topicsGrams}
-\title{The function computes ngrams from a text}
+\title{N-grams}
 \usage{
 topicsGrams(data, n = 2, sep = " ", top_n = NULL, pmi_threshold = 0)
 }

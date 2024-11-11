@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{topicsModel}
 \alias{topicsModel}
-\title{The function to create and train and lda Model}
+\title{Topic modelling}
 \usage{
 topicsModel(
   dtm,
@@ -33,7 +33,7 @@ topicsModel(
 A list of the model, the top terms, the labels, the coherence, and the prevalence
 }
 \description{
-The function to create and train and lda Model
+The function to create and train and an LDA model.
 }
 \examples{
 # Create LDA Topic Model 
@@ -48,4 +48,5 @@ model <- topicsModel(dtm = dtm, # output of topicsDtm()
 # Load precomputed LDA Topic Model
 model <- topicsModel(load_dir = "./results",
                      seed = 42)
+
 }

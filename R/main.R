@@ -1,4 +1,6 @@
-#' the function for creating a document term matrix
+#' Document Term Matrix
+#' 
+#' The function for creating a document term matrix
 #' @param data (list) the list containing the text data with each entry belonging to a unique id
 #' @param ngram_window (list) the minimum and maximum n-gram length, e.g. c(1,3)
 #' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
@@ -13,13 +15,6 @@
 #' @param occ_rate (integer) the rate of occurence of a word to be removed
 #' @param threads (integer) the number of threads to use
 #' @return the document term matrix
-#' @importFrom textmineR CreateDtm 
-#' @importFrom stats complete.cases
-#' @importFrom stopwords stopwords
-#' @importFrom Matrix colSums
-#' @importFrom tibble as_tibble
-#' 
-#' @export
 #' @examples
 #' # Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
@@ -42,20 +37,27 @@
 #' # Load precomputed Dtm from directory
 #' dtm <- topicsDtm(load_dir = "./results",
 #'                  seed = 42)
-
-topicsDtm <- function(data, #
-                   ngram_window=c(1,3),
-                   stopwords=stopwords::stopwords("en", source = "snowball"),
-                   removalword="",
-                   occ_rate=0,
-                   removal_mode="none",
-                   removal_rate_most=0,
-                   removal_rate_least=0,
-                   split=1,
-                   seed=42L,
-                   save_dir="./results",
-                   load_dir=NULL,
-                   threads=1){
+#'
+#' @importFrom textmineR CreateDtm 
+#' @importFrom stats complete.cases
+#' @importFrom stopwords stopwords
+#' @importFrom Matrix colSums
+#' @importFrom tibble as_tibble
+#' @export
+topicsDtm <- function(
+    data, #
+    ngram_window=c(1,3),
+    stopwords=stopwords::stopwords("en", source = "snowball"),
+    removalword="",
+    occ_rate=0,
+    removal_mode="none",
+    removal_rate_most=0,
+    removal_rate_least=0,
+    split=1,
+    seed=42L,
+    save_dir="./results",
+    load_dir=NULL,
+    threads=1){
   
 
 
@@ -199,7 +201,9 @@ topicsDtm <- function(data, #
   return(dtms)
 }
 
-#' The function to create and train and lda Model
+#' Topic modelling
+#' 
+#' The function to create and train and an LDA model.
 #' @param dtm (R_obj) The document term matrix
 #' @param num_topics (integer) The number of topics to be created
 #' @param num_top_words (integer) The number of top words to be displayed
@@ -208,8 +212,6 @@ topicsDtm <- function(data, #
 #' @param save_dir (string) The directory to save the model, if NULL, the model will not be saved
 #' @param load_dir (string) The directory to load the model from, if NULL, the model will not be loaded
 #' @return A list of the model, the top terms, the labels, the coherence, and the prevalence
-#' @export
-#' 
 #' @examples
 #' # Create LDA Topic Model 
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
@@ -223,13 +225,16 @@ topicsDtm <- function(data, #
 #' # Load precomputed LDA Topic Model
 #' model <- topicsModel(load_dir = "./results",
 #'                      seed = 42)
-topicsModel <- function(dtm,
-                    num_topics = 20,
-                    num_top_words = 10,
-                    num_iterations = 1000,
-                    seed = 42,
-                    save_dir = "./results",
-                    load_dir = NULL){
+#'
+#' @export
+topicsModel <- function(
+    dtm,
+    num_topics = 20,
+    num_top_words = 10,
+    num_iterations = 1000,
+    seed = 42,
+    save_dir = "./results",
+    load_dir = NULL){
 
   
   if (!is.null(load_dir)){
@@ -284,6 +289,8 @@ topicsModel <- function(dtm,
   return(model)
 }
 
+#' N-grams
+#' 
 #' The function computes ngrams from a text
 #' @param data (tibble) The data
 #' @param n (integer) The length of ngram
@@ -296,9 +303,14 @@ topicsModel <- function(dtm,
 #' @importFrom dplyr mutate row_number filter 
 #' @return A list containing tibble of the ngrams with the frequency and probability and a tibble containing the relative frequency of the ngrams for each user
 #' @export
-#' 
-topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=0){
-  data <- tolower(data)#
+topicsGrams <- function(
+    data, 
+    n=2, 
+    sep = " ", 
+    top_n = NULL, 
+    pmi_threshold=0){
+  
+  data <- tolower(data)
   data <- gsub("[()].$", "", data)
   
   ngrams <- list()
@@ -391,7 +403,9 @@ topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=0){
 }
 
 
-#' The function to predict the topics of a new document with the trained model
+#' Predict topic distributions
+#' 
+#' The function to predict the topics of a new document with the trained model.
 #' @param model (list) The trained model
 #' @param data (tibble) The new data
 #' @param num_iterations (integer) The number of iterations to run the model
@@ -399,10 +413,6 @@ topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=0){
 #' @param save_dir (string) The directory to save the model, if NULL, the predictions will not be saved
 #' @param load_dir (string) The directory to load the model from, if NULL, the predictions will not be loaded
 #' @return A tibble of the predictions
-#' @importFrom tibble as_tibble tibble
-#' @importFrom dplyr %>%
-#' @export
-#' 
 #' @examples
 #' # Predict topics for new data with the trained model
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
@@ -414,13 +424,17 @@ topicsGrams <- function(data, n=2, sep = " ", top_n = NULL, pmi_threshold=0){
 #'                      save_dir = "./results")
 #' preds <- topicsPreds(model = model, # output of topicsModel()
 #'                      data = dep_wor_data$Depphrase)
-
-topicsPreds <- function(model, # only needed if load_dir==NULL 
-                     data, # data vector to infer distribution for
-                     num_iterations=100, # only needed if load_dir==NULL,
-                     seed=42,
-                     save_dir="./results",
-                     load_dir=NULL){
+#'
+#' @importFrom tibble as_tibble tibble
+#' @importFrom dplyr %>%
+#' @export
+topicsPreds <- function(
+    model, # only needed if load_dir==NULL 
+    data, # data vector to infer distribution for
+    num_iterations=100, # only needed if load_dir==NULL,
+    seed=42,
+    save_dir="./results",
+    load_dir=NULL){
   set.seed(seed)
   
 
@@ -485,7 +499,7 @@ topicsPreds <- function(model, # only needed if load_dir==NULL
   return(preds)
 }
 
-#' The function to test the lda model
+#' The function to test the LDA model
 #' @param model (list) The trained model
 #' @param data (tibble) The data to test on
 #' @param preds (tibble) The predictions
@@ -502,20 +516,18 @@ topicsPreds <- function(model, # only needed if load_dir==NULL
 #' @importFrom dplyr bind_cols
 #' @importFrom readr write_csv
 #' @noRd
-
-topicsTest1 <- function(model,
-                        preds, 
-                        data,
-                        pred_var=NULL, # for all test types except t-test
-                        group_var=NULL, # only one in the case of t-test
-                        control_vars=c(),
-                        test_method="linear_regression",
-                        p_adjust_method = "fdr",
-                        seed=42,
-                        load_dir=NULL,
-                        save_dir="./results"){
-  
-  
+topicsTest1 <- function(
+    model,
+    preds,
+    data,
+    pred_var=NULL, # for all test types except t-test
+    group_var=NULL, # only one in the case of t-test
+    control_vars=c(),
+    test_method="linear_regression",
+    p_adjust_method = "fdr",
+    seed=42,
+    load_dir=NULL,
+    save_dir="./results"){
   
   if (!is.null(load_dir)){
     test_path <- paste0(load_dir, "/seed_", seed, "/test.rds")
@@ -615,6 +627,8 @@ topicsTest1 <- function(model,
 }
 
 
+#' Statistically test topics
+#' 
 #' The function to test the lda model for multiple dimensions, e.g., 2.
 #' @param model (list) The trained model
 #' @param data (tibble) The data to test on
@@ -632,10 +646,6 @@ topicsTest1 <- function(model,
 #' @param load_dir (string) The directory to load the test from, if NULL, the test will not be loaded
 #' @param save_dir (string) The directory to save the test, if NULL, the test will not be saved
 #' @return A list of the test results, test method, and prediction variable
-#' @importFrom dplyr bind_cols
-#' @importFrom readr write_csv
-#' @export
-#' 
 #' @examples
 #' # Test the topic document distribution in respect to a variable
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
@@ -652,21 +662,25 @@ topicsTest1 <- function(model,
 #'                    preds = preds, # output of topicsPreds()
 #'                    test_method = "linear_regression",
 #'                    pred_var_x = "Age")
-#'                   
-topicsTest <- function(data,
-                       model=NULL,
-                       preds=NULL,
-                       ngrams=NULL,
-                       pred_var_x=NULL, # for all test types except t-test
-                       pred_var_y=NULL,
-                       group_var=NULL, # only one in the case of t-test
-                       control_vars=c(),
-                       test_method="linear_regression",
-                       p_alpha = 0.05,
-                       p_adjust_method = "fdr",
-                       seed=42,
-                       load_dir=NULL,
-                       save_dir="./results"){
+#' @importFrom dplyr bind_cols
+#' @importFrom readr write_csv
+#' @export
+topicsTest <- function(
+    data,
+    model=NULL,
+    preds=NULL,
+    ngrams=NULL,
+    pred_var_x=NULL, # for all test types except t-test
+    pred_var_y=NULL,
+    group_var=NULL, # only one in the case of t-test
+    control_vars=c(),
+    test_method="linear_regression",
+    p_alpha = 0.05,
+    p_adjust_method = "fdr",
+    seed=42,
+    load_dir=NULL,
+    save_dir="./results"){
+  
   if (!is.null(load_dir)){
     test <- topicsTest1(load_dir = load_dir)
   }
@@ -684,7 +698,6 @@ topicsTest <- function(data,
   }
   
   if (!is.null(ngrams)){
-    #rename each column to t_1, t_2, t_3, ...
     
     freq_per_user <- tibble(ngrams$freq_per_user[,2:ncol(ngrams$freq_per_user)])
     ngrams <- ngrams$ngrams
@@ -1325,21 +1338,22 @@ topicsGridLegend <- function(
 #' @param seed (integer) The seed to set for reproducibility
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @noRd
-topicsPlot1 <- function(model = NULL,
-                        ngrams = NULL,
-                        test = NULL,
-                        color_negative_cor = ggplot2::scale_color_gradient(low = "darkgreen", high = "green"),
-                        color_positive_cor = ggplot2::scale_color_gradient(low = "darkred", high = "red"),
-                        grid_pos = "",
-                        scale_size = FALSE,
-                        plot_topics_idx = NULL,
-                        p_threshold = 0.05,
-                        save_dir = "./results",
-                        figure_format = "svg",
-                        width = 10, 
-                        height = 8,
-                        max_size = 10, 
-                        seed = 42){
+topicsPlot1 <- function(
+    model = NULL,
+    ngrams = NULL,
+    test = NULL,
+    color_negative_cor = ggplot2::scale_color_gradient(low = "darkgreen", high = "green"),
+    color_positive_cor = ggplot2::scale_color_gradient(low = "darkred", high = "red"),
+    grid_pos = "",
+    scale_size = FALSE,
+    plot_topics_idx = NULL,
+    p_threshold = 0.05,
+    save_dir = "./results",
+    figure_format = "svg",
+    width = 10, 
+    height = 8,
+    max_size = 10, 
+    seed = 42){
   if (!is.null(model)){
     model <- name_cols_with_vocab(model, "phi", model$vocabulary)
     df_list <- create_topic_words_dfs(model$summary)
@@ -1427,7 +1441,9 @@ topicsPlot1 <- function(model = NULL,
   
 }
 
-#' The function to create lda wordclouds
+#' Plot word clouds
+#' 
+#' The function to create lda wordclouds.
 #' @param model (list) The trained model
 #' @param ngrams (list) output from the ngram function
 #' @param test (list) The test results
@@ -1459,35 +1475,35 @@ topicsPlot1 <- function(model = NULL,
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @importFrom dplyr filter
 #' @export
-topicsPlot <- function(model = NULL,
-                       ngrams= NULL,
-                       test = NULL,
-                       p_threshold = 0.05,
-                       grid_plot = TRUE,
-                       dim = 2,
-                       color_scheme = 'default',
-                       scatter_legend_popout_num = c(1,1,1,1,0,1,1,1,1), 
-                       scatter_legend_way_popout_topics = c("mean", "max_x", "max_y"),
-                       scatter_legend_user_spec_topics = NULL,
-                       scatter_legend_topic_num = FALSE,
-                       scale_size = FALSE,
-                       plot_topics_idx = NULL,
-                       save_dir = "./results",
-                       figure_format = "svg",
-                       width = 10, 
-                       height = 8,
-                       max_size = 10, 
-                       seed = 42,
-                       scatter_legend_popout_dot_size = 15,
-                       scatter_legend_bg_dot_size = 9,
-                       grid_legend_title = "legend_title",
-                       grid_legend_title_size = 5,
-                       grid_legend_title_color = 'black',
-                       grid_legend_x_axes_label = "legend_x_axes_label",
-                       grid_legend_y_axes_label = "legend_y_axes_label",
-                       grid_legend_number_color = 'black',
-                       grid_legend_number_size = 5
-){
+topicsPlot <- function(
+    model = NULL,
+    ngrams= NULL,
+    test = NULL,
+    p_threshold = 0.05,
+    grid_plot = TRUE,
+    dim = 2,
+    color_scheme = 'default',
+    scatter_legend_popout_num = c(1,1,1,1,0,1,1,1,1), 
+    scatter_legend_way_popout_topics = c("mean", "max_x", "max_y"),
+    scatter_legend_user_spec_topics = NULL,
+    scatter_legend_topic_num = FALSE,
+    scale_size = FALSE,
+    plot_topics_idx = NULL,
+    save_dir = "./results",
+    figure_format = "svg",
+    width = 10, 
+    height = 8,
+    max_size = 10, 
+    seed = 42,
+    scatter_legend_popout_dot_size = 15,
+    scatter_legend_bg_dot_size = 9,
+    grid_legend_title = "legend_title",
+    grid_legend_title_size = 5,
+    grid_legend_title_color = 'black',
+    grid_legend_x_axes_label = "legend_x_axes_label",
+    grid_legend_y_axes_label = "legend_y_axes_label",
+    grid_legend_number_color = 'black',
+    grid_legend_number_size = 5){
   
   if (!is.null(test) && !is.null(model)){
   

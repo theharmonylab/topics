@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{topicsPlot}
 \alias{topicsPlot}
-\title{The function to create lda wordclouds}
+\title{Plot word clouds}
 \usage{
 topicsPlot(
   model = NULL,
@@ -96,5 +96,5 @@ topicsPlot(
 nothing is returned, the wordclouds are saved in the save_dir
 }
 \description{
-The function to create lda wordclouds
+The function to create lda wordclouds.
 }

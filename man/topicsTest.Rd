@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{topicsTest}
 \alias{topicsTest}
-\title{The function to test the lda model for multiple dimensions, e.g., 2.}
+\title{Statistically test topics}
 \usage{
 topicsTest(
   data,
@@ -73,5 +73,4 @@ test <- topicsTest(model = model, # output of topicsModel()
                    preds = preds, # output of topicsPreds()
                    test_method = "linear_regression",
                    pred_var_x = "Age")
-                  
 }

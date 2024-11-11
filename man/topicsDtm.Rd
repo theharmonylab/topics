@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{topicsDtm}
 \alias{topicsDtm}
-\title{the function for creating a document term matrix}
+\title{Document Term Matrix}
 \usage{
 topicsDtm(
   data,
@@ -51,7 +51,7 @@ topicsDtm(
 the document term matrix
 }
 \description{
-the function for creating a document term matrix
+The function for creating a document term matrix
 }
 \examples{
 # Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
@@ -75,4 +75,5 @@ dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 # Load precomputed Dtm from directory
 dtm <- topicsDtm(load_dir = "./results",
                  seed = 42)
+
 }
