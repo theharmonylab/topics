@@ -667,19 +667,24 @@ topicsTest1 <- function(
 #' @export
 topicsTest <- function(
     data,
-    model=NULL,
-    preds=NULL,
-    ngrams=NULL,
-    pred_var_x=NULL, # for all test types except t-test
-    pred_var_y=NULL,
-    group_var=NULL, # only one in the case of t-test
-    control_vars=c(),
-    test_method="linear_regression",
+    model = NULL,
+    preds = NULL,
+    ngrams = NULL,
+    pred_var_x = NULL, # for all test types except t-test
+    pred_var_y = NULL,
+    group_var = NULL, # only one in the case of t-test
+    control_vars = c(),
+    test_method = "linear_regression",
     p_alpha = 0.05,
     p_adjust_method = "fdr",
-    seed=42,
-    load_dir=NULL,
-    save_dir="./results"){
+    seed = 42,
+    load_dir = NULL,
+    save_dir = "./results"){
+  
+  if(grepl("_", pred_var_x) | grepl("_", pred_var_x)){
+    stop("Please note that at the moment pred_var_x or pred_var_y 
+    cannot have an an underscore '_' in the name. Please rename the variable in the dataset.")
+  }
   
   if (!is.null(load_dir)){
     test <- topicsTest1(load_dir = load_dir)
@@ -1410,32 +1415,6 @@ topicsPlot1 <- function(
   
 }
 
-model = NULL
-ngrams = NULL
-test = NULL
-p_threshold = 0.05 # Why is this set here since the test[[3]]$test$color_categories is determnied in in testTopics test?
-color_scheme = "default"
-scale_size = FALSE
-plot_topics_idx = NULL
-save_dir = "./results"
-figure_format = "svg"
-width = 10
-height = 8
-max_size = 10
-seed = 42
-scatter_legend_dot_size = 15
-scatter_legend_bg_dot_size = 9
-scatter_legend_n = c(1,1,1,1,0,1,1,1,1)
-scatter_legend_method = c("mean")
-scatter_legend_specified_topics = NULL
-scatter_legend_topic_n = FALSE
-grid_legend_title = "legend_title"
-grid_legend_title_size = 5
-grid_legend_title_color = 'black'
-grid_legend_x_axes_label = "legend_x_axes_label"
-grid_legend_y_axes_label = "legend_y_axes_label"
-grid_legend_number_color = 'black'
-grid_legend_number_size = 5
 
 #' Plot word clouds
 #' 
