@@ -38,7 +38,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   testthat::expect_true(file.exists("./results/seed_42/wordclouds/ngrams_negative.png"))
   testthat::expect_true(file.exists("./results/seed_42/wordclouds/ngrams_positive.png"))
   
-  unlink("./results/", recursive = TRUE)
+  #unlink("./results/", recursive = TRUE)
   
   
 })

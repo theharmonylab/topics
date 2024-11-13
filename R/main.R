@@ -681,10 +681,13 @@ topicsTest <- function(
     load_dir = NULL,
     save_dir = "./results"){
   
-  if(grepl("_", pred_var_x) | grepl("_", pred_var_x)){
-    stop("Please note that at the moment pred_var_x or pred_var_y 
+  if(!is.null(pred_var_x) | !is.null(pred_var_x)){
+    if(grepl("_", pred_var_x) | grepl("_", pred_var_x)){
+      stop("Please note that at the moment pred_var_x or pred_var_y 
     cannot have an an underscore '_' in the name. Please rename the variable in the dataset.")
+    }
   }
+ 
   
   if (!is.null(load_dir)){
     test <- topicsTest1(load_dir = load_dir)
