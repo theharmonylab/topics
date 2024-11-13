@@ -823,10 +823,11 @@ topicsScatterLegend <- function(
     return (NULL)
   }
   
-  only_five <- filtered_test %>%
+  only_two <- filtered_test %>%
     dplyr::summarise(contains_only_five = all(color_categories %in% 2)) %>%
     dplyr::pull(contains_only_five)
-  if (only_five && y_axes_1 == 1){
+  
+  if (only_two && y_axes_1 == 1){
     cat('There are only non-significant topics. Only generate the scatter legend of these.\n')
     x_column <- names(filtered_test)[3]
     color_column <- names(filtered_test)[ncol(filtered_test)]
@@ -852,9 +853,12 @@ topicsScatterLegend <- function(
         legend.position = "none"
       )
   }
+
+  
   only_five <- filtered_test %>%
     dplyr::summarise(contains_only_five = all(color_categories %in% 5)) %>%
     dplyr::pull(contains_only_five)
+  
   if (only_five && y_axes_1 == 2){
     bivariate_color_codes <- bivariate_color_codes
     x_column <- names(filtered_test)[3]
@@ -1402,10 +1406,32 @@ topicsPlot1 <- function(
   
 }
 
-
-
-
-
+model = NULL
+ngrams = NULL
+test = NULL
+p_threshold = 0.05 # Why is this set here since the test[[3]]$test$color_categories is determnied in in testTopics test?
+color_scheme = "default"
+scale_size = FALSE
+plot_topics_idx = NULL
+save_dir = "./results"
+figure_format = "svg"
+width = 10
+height = 8
+max_size = 10
+seed = 42
+scatter_legend_dot_size = 15
+scatter_legend_bg_dot_size = 9
+scatter_legend_n = c(1,1,1,1,0,1,1,1,1)
+scatter_legend_method = c("mean")
+scatter_legend_specified_topics = NULL
+scatter_legend_topic_n = FALSE
+grid_legend_title = "legend_title"
+grid_legend_title_size = 5
+grid_legend_title_color = 'black'
+grid_legend_x_axes_label = "legend_x_axes_label"
+grid_legend_y_axes_label = "legend_y_axes_label"
+grid_legend_number_color = 'black'
+grid_legend_number_size = 5
 
 #' Plot word clouds
 #' 
@@ -1636,7 +1662,7 @@ topicsPlot <- function(
   if (!is.null(model) & !is.null(test)){
     
     if (dim == 1){
-      
+      #i=1
       for (i in 1:3){
         if (! (i %in% test[[3]]$test$color_categories)){next}
         
@@ -1739,7 +1765,7 @@ topicsPlot <- function(
             legend_number_color = grid_legend_number_color,
             legend_number_size = grid_legend_number_size
           )
-          print('The grid plot legends are saved in the same folder as the topics.')
+          print('The grid plot legends are saved in the save_dir.')
   }
   
 }

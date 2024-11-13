@@ -130,9 +130,6 @@ extract_topic_stats_corr <- function(
     topics_stats, 
     cal_cohen_d = FALSE) {
   
-#  require(tibble)
-#  require(effsize)
-  
   # Define a function to extract the required information from a single topic
   extract_single_topic <- function(name, topic) {
     
@@ -183,11 +180,9 @@ topics_t_test_grouping <- function(topics_loadings,
                                    method1,
                                    calc_cohen_d = TRUE) {
   # Get unique combinations of 'value' column
-  #view(topics_loadings)
   combinations <- utils::combn(unique(topics_loadings$value), 
                                2, 
                                simplify = FALSE)
-  #view(combinations)
   
   # Function to perform t-test and calculate Cohen's d
   t_test_func <- function(combination) {
@@ -195,15 +190,12 @@ topics_t_test_grouping <- function(topics_loadings,
     df2 <- topics_loadings %>% dplyr::filter(value == combination[2])
     #df1 <- df1[, 2:ncol(df1)]
     #df2 <- df2[, 2:ncol(df2)]
-    #view(df1)
-    #view(t)
     
     results <- purrr::map(3:ncol(topics_loadings), ~ list(
       #view(df1[[.]]),
       t_test = stats::t.test(df1[[.]], df2[[.]]),
       cohen_d = if (calc_cohen_d) effsize::cohen.d(df1[[.]], df2[[.]]) else "NA"
     ))
-    #View(results)
     
     # Adjust p-value if more than two categories
     groupings <- unique(topics_loadings$value)
@@ -245,8 +237,6 @@ topics_t_test_grouping <- function(topics_loadings,
 #' @noRd
 extract_topic_stats_cate <- function(topics_stats, 
                                      cal_cohen_d = TRUE) {
-#  require(tibble)
-#  require(effsize)
   
   # Define a function to extract the required information from a single topic
   extract_single_topic <- function(
@@ -455,11 +445,7 @@ topic_test <- function(topic_terms,
       output <- extract_topic_stats_cate(result[[name]])
       #view(output)
       names(output)[1] <- c("topic_name")
-      #names(output)[1] <- "topic_name"
-      #view(output)
-      #view(topic_terms)
-      #print(class(output$topic_name))
-      #print(class(topic_terms$topic))
+
       #output <- dplyr::left_join(output, topic_terms, by = join_by(topic_name == topic))
       output <- dplyr::left_join(output, 
                                  topic_terms, 
@@ -500,7 +486,6 @@ topic_test <- function(topic_terms,
       lda_topics[i] <- paste("t_", i, sep = "")
     }
    
-    #view(preds)
     preds <- topics_loadings
    
     #preds <- topics_loadings # load topics_loading into different variable to reduce naming errors
@@ -510,7 +495,6 @@ topic_test <- function(topic_terms,
       std_dev <- stats::sd(preds[[topic]])
       preds[[paste0("z_",topic)]] <- (preds[[topic]] - mean_value) / std_dev#preds[[topic]] # scale(preds[[topic]])
     }
-    #view(preds)
     
     control_variables <- control_vars
     for (variable in control_variables){
@@ -527,8 +511,6 @@ topic_test <- function(topic_terms,
     
     preds[is.na(preds)] <- 0
     
-    #view(preds)
-    
     if (test_method == "linear_regression"){
       
       formula_tail <- "~"
@@ -543,8 +525,6 @@ topic_test <- function(topic_terms,
       }
     } 
     
-    #print(preds)
-    #print(test_method)
     if (test_method == "logistic_regression"){
       #print(control_variables[1])
       #print(z_lda_topics[1])
@@ -554,9 +534,6 @@ topic_test <- function(topic_terms,
       }
     }
     
-    
-    #print(multi_models)
-    #print(length(multi_models))
     
     control_variable_summary <- list()
     topics <- c()
@@ -622,7 +599,6 @@ topic_test <- function(topic_terms,
     
     #return (control_variable_summary)
     control_variable_summary$topic <- lda_topics
-    #print(topic_terms)
     output <- dplyr::right_join(topic_terms[c("topic", "top_terms")], 
                          data.frame(control_variable_summary), 
                          by = join_by(topic))
@@ -633,9 +609,7 @@ topic_test <- function(topic_terms,
   }
   
   if (test_method == "ridge_regression"){
-    #view(topic_terms)
     num_topics <- nrow(topic_terms)
-    #print(num_topics)
     preds <- topics_loadings
     
     # rename topic columns
@@ -650,7 +624,7 @@ topic_test <- function(topic_terms,
     
     dims <- as.data.frame(preds) %>% dplyr::select(
       dplyr::contains("Dim"))
-    #view(dims)
+
     #dims <- step_zv(dims)
     dims <- tibble::as_tibble(dims)
     preds <- tibble::as_tibble(preds)
@@ -917,7 +891,7 @@ get_removal_columns <- function(dtm, n, type, mode="absolute"){
 #' @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
 #' @param dimNo (numeric) 1 dimension or 2 dimensions
 #' @return A new tibble with the assigned numbers
-#' importFrom dplyr mutate
+#' @importFrom dplyr mutate
 #' @noRd
 topicsNumAssign_dim2 <- function(topic_loadings_all,
                                  p_alpha = 0.05, dimNo = 2){

@@ -68,7 +68,11 @@ test_that("topicsPlot with test", {
   dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
   model <- topics::topicsModel(dtm = dtm)
   preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
-  test1 <- topics::topicsTest(model= model, preds = preds, data = dep_wor_data, pred_var_x = "Age")
+  
+  test1 <- topics::topicsTest(model= model, 
+                              preds = preds, 
+                              data = dep_wor_data, 
+                              pred_var_x = "Age")
 
   topics::topicsPlot(
     model = model, 
