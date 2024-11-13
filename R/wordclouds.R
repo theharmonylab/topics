@@ -1,4 +1,4 @@
-#' A private function used by ldaWordclouds to rename the columns of a model with the vocabulary
+#' A private function renames the columns of a model with the vocabulary
 #' @param model (list) the model to be modified
 #' @param col (string) the column to be modified
 #' @param vocabulary (list) the vocabulary to be used
@@ -11,7 +11,7 @@ name_cols_with_vocab <- function(model,
   return(model)
 }
 
-#' This is a private function and used internally by ldaWordclouds
+#' This is a private function
 #' @param df_list (list) a list of data frames with each topic
 #' @param phi (data.frame) data frame with topic word scores
 #' @param model_type (string) "mallet"
@@ -39,7 +39,7 @@ assign_phi_to_words <- function(df_list,
   return(df_list)
 }
 
-#' This is a private function and used internally by ldaWordclouds
+#' This is a private function 
 #' @param summary (data.frame) the models summary
 #' @return a list of dataframes for each topic filled with top terms
 #' @importFrom stats complete.cases
@@ -60,7 +60,7 @@ create_topic_words_dfs <- function(summary){
   return(df_list)
 }
 
-#' This is a private function and used internally by ldaWordclouds
+#' This is a private function
 #' @param df_list (list) list of data.frames with topics most frequent words and assigned topic term scores
 #' @param test (data.frame) the test returned from textTopicTest()
 #' @param test_type (string) "linear_regression", or "binary_regression"
@@ -79,26 +79,28 @@ create_topic_words_dfs <- function(summary){
 #' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient
 #' @importFrom dplyr rename
 #' @noRd
-create_plots <- function(df_list = NULL, 
-                         summary = NULL,
-                         ngrams = NULL,
-                         test=NULL, 
-                         test_type=NULL,
-                         cor_var=NULL,
-                         color_negative_cor=NULL,
-                         color_positive_cor=NULL,
-                         grid_pos = "",
-                         scale_size = FALSE,
-                         plot_topics_idx = NULL,
-                         p_threshold = NULL,
-                         save_dir = "./results",
-                         figure_format = "svg",
-                         width = 10, 
-                         height = 8,
-                         max_size = 10,
-                         seed = 42){
+create_plots <- function(
+    df_list = NULL,
+    summary = NULL,
+    ngrams = NULL,
+    test = NULL,
+    test_type = NULL,
+    cor_var = NULL,
+    color_negative_cor = NULL,
+    color_positive_cor = NULL,
+    grid_pos = "",
+    scale_size = FALSE,
+    plot_topics_idx = NULL,
+    p_threshold = NULL,
+    save_dir = "./results",
+    figure_format = "svg",
+    width = 10,
+    height = 8,
+    max_size = 10,
+    seed = 42){
   
-  # this code plots the wordclouds in respect to the statistical test
+  # this code plots the wordclouds in respect to the statistical test topic
+  # For test, topics list and summary
   if(!is.null(test) & !is.null(df_list) & !is.null(summary)){
   
     if (is.null(plot_topics_idx)){
@@ -279,7 +281,11 @@ create_plots <- function(df_list = NULL,
         }
       }
     }
-  } else if (!is.null(df_list) & !is.null(summary) & is.null(test)){
+  }
+  
+  
+  # For topic df_list, summary but no test
+  if (!is.null(df_list) & !is.null(summary) & is.null(test)){
     if (is.null(plot_topics_idx)){
       plot_topics_idx <- seq(1, length(df_list))
     }
@@ -298,13 +304,17 @@ create_plots <- function(df_list = NULL,
       dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
     }
     for (i in paste0('t_', plot_topics_idx)){
-      plot <- ggplot2::ggplot(df_list[[as.numeric(sub(".*_", "", i))]], 
-                              ggplot2::aes(label = Word, 
-                                           size = phi)) +
-              ggwordcloud::geom_text_wordcloud() +
-              ggplot2::scale_size_area(max_size = max_size) +
-              ggplot2::theme_minimal() +
-              ggplot2::scale_color_gradient(low = "grey", high = "black")
+      
+      plot <- ggplot2::ggplot(
+        df_list[[as.numeric(sub(".*_", "", i))]],
+        ggplot2::aes(label = Word,
+                     size = phi,
+                     color = phi)) +
+        ggwordcloud::geom_text_wordcloud() +
+        ggplot2::scale_size_area(max_size = max_size) +
+        ggplot2::theme_minimal() +
+        color_negative_cor
+              #ggplot2::scale_color_gradient(low = "purple", high = "blue") # These colour does not work
     
       ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
                              "/wordclouds/",
@@ -315,11 +325,11 @@ create_plots <- function(df_list = NULL,
                       width = width, 
                       height = height, 
                       units = "in")
-
-    
     }
-    
-  } else if (is.null(df_list) & is.null(test) & !is.null(ngrams)){
+  }
+  
+  # For N-grams with NO test
+  if (is.null(df_list) & is.null(test) & !is.null(ngrams)){
       if (!dir.exists(save_dir)) {
         # Create the directory
         dir.create(save_dir)
@@ -330,10 +340,11 @@ create_plots <- function(df_list = NULL,
       }
       plot <- ggplot2::ggplot(ngrams, 
                               ggplot2::aes(label = ngrams, 
-                                           size = prop)) +
+                                           size = prop, 
+                                           color = prop)) +
         ggwordcloud::geom_text_wordcloud() +
         ggplot2::theme_minimal() +
-        ggplot2::scale_color_gradient(low = "grey", high = "black")
+        color_positive_cor # ggplot2::scale_color_gradient(low = "yellow", high = "red")
       
       ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
                              "/wordclouds/ngrams", 
@@ -343,7 +354,10 @@ create_plots <- function(df_list = NULL,
                       width = width, 
                       height = height, 
                       units = "in") 
-    } else if (is.null(df_list) & !is.null(test) & !is.null(ngrams)){
+    } 
+  
+  # For N-gram with test  
+  if (is.null(df_list) & !is.null(test) & !is.null(ngrams)){
         
         ngrams <- ngrams %>% dplyr::rename(top_terms = ngrams)
         test <- test %>% dplyr::rename(estimate = contains("estimate"))
@@ -368,7 +382,7 @@ create_plots <- function(df_list = NULL,
           }
           # Word cloud with correlation strength mapped to color gradient
           plot <- ggplot2::ggplot(test_positive, aes(label = top_terms, size = estimate, color = prop)) +
-            geom_text_wordcloud() +
+            ggwordcloud::geom_text_wordcloud() +
             scale_size_area(max_size = max_size) +  # Adjust max size
             #scale_color_gradient(low = "grey", high = "red") +  # Blue for low, red for high correlation strength
             theme_minimal() +
@@ -384,7 +398,7 @@ create_plots <- function(df_list = NULL,
                           units = "in") 
           # Word cloud with correlation strength mapped to color gradient
           plot <- ggplot2::ggplot(test_negative, aes(label = top_terms, size = estimate, color = prop)) +
-            geom_text_wordcloud() +
+            ggwordcloud::geom_text_wordcloud() +
             scale_size_area(max_size = max_size) +  # Adjust max size
             #scale_color_gradient(low = "grey", high = "red") +  # Blue for low, red for high correlation strength
             theme_minimal() +

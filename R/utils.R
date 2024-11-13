@@ -1,6 +1,6 @@
 
 
-#mallet, the javascript for textmining
+# mallet, the javascript for textmining
 # @param topic_model (list object) LDA topic from textmineR with model$summary (see: https://cran.r-project.org/web/packages/textmineR/vignettes/c_topic_modeling.html)
 
 # rearragne order of column starting with
@@ -8,8 +8,6 @@
 
 #### func topic testing ####
 # p.adjust https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/p.adjust
-
-set.seed(42)
 
 #' The function to determine a continuous variable from a threshold
 #' @param df (tibble) The initial tibble

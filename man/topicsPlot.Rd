@@ -9,13 +9,7 @@ topicsPlot(
   ngrams = NULL,
   test = NULL,
   p_threshold = 0.05,
-  grid_plot = TRUE,
-  dim = 2,
   color_scheme = "default",
-  scatter_legend_popout_num = c(1, 1, 1, 1, 0, 1, 1, 1, 1),
-  scatter_legend_way_popout_topics = c("mean", "max_x", "max_y"),
-  scatter_legend_user_spec_topics = NULL,
-  scatter_legend_topic_num = FALSE,
   scale_size = FALSE,
   plot_topics_idx = NULL,
   save_dir = "./results",
@@ -24,8 +18,12 @@ topicsPlot(
   height = 8,
   max_size = 10,
   seed = 42,
-  scatter_legend_popout_dot_size = 15,
+  scatter_legend_dot_size = 15,
   scatter_legend_bg_dot_size = 9,
+  scatter_legend_n = c(1, 1, 1, 1, 0, 1, 1, 1, 1),
+  scatter_legend_method = c("mean"),
+  scatter_legend_specified_topics = NULL,
+  scatter_legend_topic_n = FALSE,
   grid_legend_title = "legend_title",
   grid_legend_title_size = 5,
   grid_legend_title_color = "black",
@@ -36,35 +34,25 @@ topicsPlot(
 )
 }
 \arguments{
-\item{model}{(list) The trained model}
+\item{model}{(list) A trained topics model. For examples from topicsModel(). Should be NULL if plotting ngrams.}
 
-\item{ngrams}{(list) output from the ngram function}
+\item{ngrams}{(list) The output from the the topicsGram() function . Should be NULL if plotting topics.}
 
-\item{test}{(list) The test results}
+\item{test}{(list) The test results; if plotting according to dimension(s) include the object from topicsTest() function.}
 
-\item{p_threshold}{(integer) The p-value threshold to use for significance}
+\item{p_threshold}{(integer) The p-value threshold to use for significance testing.}
 
-\item{grid_plot}{(boolean) Set TRUE if plotting the topics grid}
+\item{color_scheme}{(string 'default' or vector) The color scheme. 
+The vector should contain 9 color codes for grid or 4 colors for ngrams with c(positive_low, positive_high, negative_low, negative_high)}
 
-\item{dim}{(numeric) Generate 1 dimensional color plots or 2 dimensional color plots if grid = TRUE}
+\item{scale_size}{(logical) Whether to scale the size of the words.}
 
-\item{color_scheme}{(string 'default' or vector) The color scheme for plotted topic categories if grid = TRUE or for ngrams. The vector should contain 9 color codes for grid or 4 colors for ngrams with c(positive_low, positive_high, negative_low, negative_high)}
+\item{plot_topics_idx}{(vector)  The index or indeces of the topics to plot 
+(e.g., look in the model-object for the indices; can for example, be c(1, 3:5) to plot topic t_1, t_3, t_4 and t_5) (optional).}
 
-\item{scatter_legend_popout_num}{(numeric or vector) The vector of num of pop outs of each grid in the scatter legend.}
+\item{save_dir}{(string) The directory to save the plots.}
 
-\item{scatter_legend_way_popout_topics}{(string) The way to filter topics to pop out in the scatter legend. Can be either "mean", "max_x", or "max_y"}
-
-\item{scatter_legend_user_spec_topics}{(vector) User can specify which topic to be poped out in the scatter legend. Should be like c("t_1", "t_2", ...). If set, way_popout_topics will have no effect.}
-
-\item{scatter_legend_topic_num}{(boolean) Allow showing the topic number or not in the scatter legend}
-
-\item{scale_size}{(logical) Whether to scale the size of the words}
-
-\item{plot_topics_idx}{(vector) The index of the topics to plot}
-
-\item{save_dir}{(string) The directory to save the wordclouds}
-
-\item{figure_format}{(string) Set the figure format, e.g., .svg, or .png.}
+\item{figure_format}{(string) Set the figure format, e.g., ".svg", or ".png".}
 
 \item{width}{(integer) The width of the topic (units = "in").}
 
@@ -74,27 +62,38 @@ topicsPlot(
 
 \item{seed}{(integer) The seed to set for reproducibility}
 
-\item{scatter_legend_popout_dot_size}{(integer) The dot size of scatter legend to popout}
+\item{scatter_legend_dot_size}{(integer) The size of dots in the scatter legend.}
 
-\item{scatter_legend_bg_dot_size}{(integer) The dot size of scatter legend in the background}
+\item{scatter_legend_bg_dot_size}{(integer) The size of background dots in the scatter legend.}
 
-\item{grid_legend_title}{The title of grid topic plot if grid_plot = TRUE}
+\item{scatter_legend_n}{(numeric or vector) A vector determining the number of dots to emphasis in each quadrant of the scatter legend.
+For example: c(1,1,1,1,0,1,1,1,1) result in one dot in each quadrant except for the middle quadrant.}
 
-\item{grid_legend_title_size}{The size of the title of the plot if grid_plot = TRUE}
+\item{scatter_legend_method}{(string) The method to filter topics to be emphasised in the scatter legend. 
+Can be either "mean", "max_x", or "max_y"}
 
-\item{grid_legend_title_color}{The color of the legend title if grid_plot = TRUE}
+\item{scatter_legend_specified_topics}{(vector) Specify which topic(s) to be emphasised in the scatter legend. 
+For example c("t_1", "t_2"). If set, scatter_legend_method will have no effect.}
 
-\item{grid_legend_x_axes_label}{The label of the x axes if grid_plot = TRUE}
+\item{scatter_legend_topic_n}{(boolean) Allow showing the topic number or not in the scatter legend}
 
-\item{grid_legend_y_axes_label}{The label of the y axes if grid_plot = TRUE}
+\item{grid_legend_title}{The title of grid topic plot.}
 
-\item{grid_legend_number_color}{The color in the text in the legend if grid_plot = TRUE}
+\item{grid_legend_title_size}{The size of the title of the plot.}
 
-\item{grid_legend_number_size}{The color in the text in the legend if grid_plot = TRUE}
+\item{grid_legend_title_color}{The color of the legend title.}
+
+\item{grid_legend_x_axes_label}{The label of the x axes.}
+
+\item{grid_legend_y_axes_label}{The label of the y axes.}
+
+\item{grid_legend_number_color}{The color in the text in the legend.}
+
+\item{grid_legend_number_size}{The color in the text in the legend.}
 }
 \value{
-nothing is returned, the wordclouds are saved in the save_dir
+The function saves figures in the save_dir.
 }
 \description{
-The function to create lda wordclouds.
+This function create word clouds and topic fugures
 }
