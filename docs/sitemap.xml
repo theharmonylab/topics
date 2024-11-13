@@ -1,25 +1,69 @@
-<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
-<url><loc>https://r-topics.org/404.html</loc></url>
-<url><loc>https://r-topics.org/articles/extended_installation_guide.html</loc></url>
-<url><loc>https://r-topics.org/articles/index.html</loc></url>
-<url><loc>https://r-topics.org/authors.html</loc></url>
-<url><loc>https://r-topics.org/index.html</loc></url>
-<url><loc>https://r-topics.org/reference/dep_wor_data.html</loc></url>
-<url><loc>https://r-topics.org/reference/fake_topicsTest.html</loc></url>
-<url><loc>https://r-topics.org/reference/index.html</loc></url>
-<url><loc>https://r-topics.org/reference/ldaDtm.html</loc></url>
-<url><loc>https://r-topics.org/reference/ldaModel.html</loc></url>
-<url><loc>https://r-topics.org/reference/ldaPreds.html</loc></url>
-<url><loc>https://r-topics.org/reference/ldaTest.html</loc></url>
-<url><loc>https://r-topics.org/reference/ldaWordclouds.html</loc></url>
-<url><loc>https://r-topics.org/reference/topicsDtm.html</loc></url>
-<url><loc>https://r-topics.org/reference/topicsGrams.html</loc></url>
-<url><loc>https://r-topics.org/reference/topicsModel.html</loc></url>
-<url><loc>https://r-topics.org/reference/topicsPlot.html</loc></url>
-<url><loc>https://r-topics.org/reference/topicsPlot1.html</loc></url>
-<url><loc>https://r-topics.org/reference/topicsPreds.html</loc></url>
-<url><loc>https://r-topics.org/reference/topicsTest.html</loc></url>
-<url><loc>https://r-topics.org/reference/topicsTest1.html</loc></url>
-<url><loc>https://r-topics.org/reference/topicsWordclouds.html</loc></url>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://r-topics.org/404.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/articles/extended_installation_guide.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/authors.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/index.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/dep_wor_data.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/fake_topicsTest.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/ldaDtm.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/ldaModel.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/ldaPreds.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/ldaTest.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/ldaWordclouds.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/topicsDtm.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/topicsGrams.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/topicsModel.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/topicsPlot.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/topicsPlot1.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/topicsPreds.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/topicsTest.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/topicsTest1.html</loc>
+  </url>
+  <url>
+    <loc>https://r-topics.org/reference/topicsWordclouds.html</loc>
+  </url>
 </urlset>
-

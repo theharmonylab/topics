@@ -1,6 +1,6 @@
 Package: topics
 Type: Package
-Title: Creating and Aignificance Testing LDA Topics
+Title: Creating and Significance Testing LDA Topics
 Version: 0.10.0
 Authors@R: c(
     person("Leon", "Ackermann", , "leonmax.ackermann@gmail.com", role = c("aut", "cre"), 
