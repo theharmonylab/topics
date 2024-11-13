@@ -949,7 +949,7 @@ topicsScatterLegend <- function(
         dplyr::filter(color_categories != 5) %>%
         dplyr::mutate(map_num = dplyr::recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
         dplyr::group_by(color_categories) %>%
-        dplyr::group_modify(~ slice_max(.x, order_by = abs(!!sym(estimate_col_y)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
+        dplyr::group_modify(~ dplyr::slice_max(.x, order_by = abs(!!sym(estimate_col_y)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
         dplyr::ungroup() # Will change the order of columns
       # Re-arrange the columns to keep the same.
       colname_bak <- names(filtered_test)
@@ -972,7 +972,7 @@ topicsScatterLegend <- function(
         dplyr::filter(color_categories != 5) %>%
         dplyr::mutate(map_num = dplyr::recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
         dplyr::group_by(color_categories) %>%
-        dplyr::group_modify(~ slice_max(.x, order_by = rowMeans(cbind(
+        dplyr::group_modify(~ dplyr::slice_max(.x, order_by = rowMeans(cbind(
           abs(!!rlang::sym(estimate_col_x)), 
           abs(!!rlang::sym(estimate_col_y)))),
           n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
@@ -1007,7 +1007,7 @@ topicsScatterLegend <- function(
         dplyr::filter(color_categories != 5) %>%
         dplyr::mutate(map_num = dplyr::recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
         dplyr::group_by(color_categories) %>%
-        dplyr::group_modify(~ slice_max(.x, order_by = abs(!!sym(estimate_col_x)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
+        dplyr::group_modify(~ dplyr::slice_max(.x, order_by = abs(!!sym(estimate_col_x)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
         dplyr::ungroup() # Will change the order of columns
       # Re-arrange the columns to keep the same.
       colname_bak <- names(filtered_test)
@@ -1029,7 +1029,7 @@ topicsScatterLegend <- function(
         dplyr::filter(color_categories != 2) %>%
         dplyr::mutate(map_num = dplyr::recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
         dplyr::group_by(color_categories) %>%
-        dplyr::group_modify(~ slice_max(.x, order_by = abs(!!sym(estimate_col_x)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
+        dplyr::group_modify(~ dplyr::slice_max(.x, order_by = abs(!!sym(estimate_col_x)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
         dplyr::ungroup() # Will change the order of columns
       # Re-arrange the columns to keep the same.
       colname_bak <- names(filtered_test)

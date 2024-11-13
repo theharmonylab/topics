@@ -58,7 +58,10 @@ test_that("topicsTest handles missing pred_var for non t-test methods", {
   model <- topics::topicsModel(dtm = dtm)
   preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
   
-  result <- topics::topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = NULL)
+  result <- topics::topicsTest(model = model, 
+                               preds = preds, 
+                               data = dep_wor_data, 
+                               pred_var_x = NULL)
   testthat::expect_null(result)
   unlink("./results/", recursive = TRUE)
 })

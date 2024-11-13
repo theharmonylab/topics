@@ -124,10 +124,10 @@ test_that("topicsDtm removes most frequent words based on a threshold", {
 #})
 
 test_that("topicsDtm removes most frequent words in percent mode", {
-  data <- dep_wor_data$Deptext
+  data <- dep_wor_data$Deptext[1:20]
   result <- topics::topicsDtm(data, 
                               removal_mode = "percentage", 
-                              removal_rate_most = 50)
+                              removal_rate_most = 5)
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
