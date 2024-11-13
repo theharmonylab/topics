@@ -107,7 +107,7 @@ create_plots <- function(
       grid <- ""
       plot_topics_idx <- seq(1, length(df_list))
     }else{
-      grid <- paste0("grid_pos_",grid_pos, "_")
+      grid <- paste0("grid_pos_", grid_pos, "_")
       pred_var_x <- strsplit(cor_var, "_")[[1]][1]
       if (length(strsplit(cor_var, "_")[[1]]) > 1){
         pred_var_y <- strsplit(cor_var, "_")[[1]][2]

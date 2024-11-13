@@ -20,7 +20,7 @@ test_that("topicsTest performs linear regression correctly", {
   testthat::expect_true(any(grepl("t", names(result[[1]]$test))))
   testthat::expect_true(any(grepl("p", names(result[[1]]$test))))
   testthat::expect_true(any(grepl("p_adjusted", names(result[[1]]$test))))
-  
+  unlink("./results/", recursive = TRUE)  
 })
 
 #data <- dep_wor_data
@@ -60,6 +60,7 @@ test_that("topicsTest handles missing pred_var for non t-test methods", {
   
   result <- topics::topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = NULL)
   testthat::expect_null(result)
+  unlink("./results/", recursive = TRUE)
 })
 
 test_that("topicsTest adjusts p-values for multiple comparisons", {
@@ -74,6 +75,7 @@ test_that("topicsTest adjusts p-values for multiple comparisons", {
   expect_true(any(grepl("Age.estimate", names(result[[1]]$test))))
   expect_true(any(grepl("Age.t", names(result[[1]]$test))))
   expect_true(any(grepl("Age.p", names(result[[1]]$test))))
+  unlink("./results/", recursive = TRUE)
 })
 
 
@@ -85,7 +87,9 @@ test_that("topicsTest saves test results to the specified directory", {
   result <- topics::topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age")
   
   testthat::expect_true(file.exists(file.path("results", "seed_42", paste0("test_", result[[1]]$test_method, "_Age.rds"))))
-})
+  unlink("./results/", recursive = TRUE)
+  })
+
 
 # this feature is currently not working
 #test_that("topicsTest loads test results from the specified directory", {
@@ -124,6 +128,7 @@ test_that("topicsTest performs logistic regression correctly", {
   expect_true(any(grepl("estimate", names(result[[1]]$test))))
   expect_true(any(grepl(".t", names(result[[1]]$test))))
   expect_true(any(grepl(".p", names(result[[1]]$test))))
+  unlink("./results/", recursive = TRUE)
 })
 
 #test_that("topicsTest performs ridge regression correctly", {

@@ -859,8 +859,9 @@ topicsScatterLegend <- function(
     dplyr::summarise(contains_only_five = all(color_categories %in% 5)) %>%
     dplyr::pull(contains_only_five)
   
+  # Making scatter plot with no significant topics. 
   if (only_five && y_axes_1 == 2){
-    bivariate_color_codes <- bivariate_color_codes
+    
     x_column <- names(filtered_test)[3]
     y_column <- names(filtered_test)[7]
     color_column <- names(filtered_test)[ncol(filtered_test)]
@@ -1035,8 +1036,10 @@ topicsScatterLegend <- function(
         dplyr::ungroup()
     }
   }
-  # Background dots in the scatter legend.
-  if (!only_five){
+  
+  
+  # Background dots in the scatter legend; added condition !only_two for version 0.10.1
+  if (!only_five & !only_two){
     backgr_dots <- filtered_test %>%
       dplyr::anti_join(popout, by = colnames(filtered_test))
   }
@@ -1092,7 +1095,8 @@ topicsScatterLegend <- function(
                            size = scatter_popout_dot_size - 3, hjust = 0.5,vjust = 0.5, color = "black") 
     }
   }  
-  if(!only_five && y_axes_1 == 1){
+  # Added !only_two for version 0.10.1
+  if(!only_two && y_axes_1 == 1){
     #bivariate_color_codes <- bivariate_color_codes[4:6]
     x_column <- names(filtered_test)[3]
     color_column <- names(filtered_test)[ncol(filtered_test)]

@@ -15,6 +15,8 @@ test_that("topicsPreds generates predictions with default parameters", {
   testthat::expect_true(is_tibble(result))
   testthat::expect_equal(nrow(result), length(data))
   testthat::expect_equal(ncol(result), 20)  # Assuming 5 topics
+  unlink("./results/", recursive = TRUE)
+  
 })
 
 test_that("topicsPreds handles different numbers of iterations", {
@@ -25,6 +27,7 @@ test_that("topicsPreds handles different numbers of iterations", {
   
   testthat::expect_true(is_tibble(result))
   testthat::expect_equal(nrow(result), length(data))
+  unlink("./results/", recursive = TRUE)
 })
 
 test_that("topicsPreds sets seed for reproducibility", {
@@ -36,6 +39,7 @@ test_that("topicsPreds sets seed for reproducibility", {
   result2 <- topics::topicsPreds(model, data, seed = 123)
   
   testthat::expect_equal(result1, result2)
+  unlink("./results/", recursive = TRUE)
 })
 
 test_that("topicsPreds saves predictions to the specified directory", {
@@ -47,6 +51,7 @@ test_that("topicsPreds saves predictions to the specified directory", {
   result <- topics::topicsPreds(model, data)
   
   testthat::expect_true(file.exists(file.path("results", "seed_42", "preds.rds")))
+  unlink("./results/", recursive = TRUE)
 })
 
 
@@ -61,5 +66,6 @@ test_that("topicsPreds loads predictions from the specified directory", {
   testthat::expect_true(is_tibble(result))
   testthat::expect_equal(nrow(result), length(data))
   testthat::expect_equal(ncol(result), 20)  # Assuming 5 topics
+  unlink("./results/", recursive = TRUE)
 })
 
