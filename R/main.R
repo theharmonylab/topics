@@ -1156,7 +1156,8 @@ topicsScatterLegend <- function(
                   plot = plot, 
                   width = width, 
                   height = height, 
-                  units = "in")   
+                  units = "in", 
+                  create.dir = TRUE)   
 }
 
 #' Creates the legend for the plot.

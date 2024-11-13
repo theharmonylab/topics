@@ -39,7 +39,8 @@ Imports:
     ngram,
     stringr,
     rlang,
-    tidyr
+    tidyr, 
+    svglite
 RoxygenNote: 7.3.2
 Suggests: 
     knitr,

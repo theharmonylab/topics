@@ -239,7 +239,7 @@ test_that('Case 6: Manually set the topic numbers to save topics',{
 #  }
 #  
   dtmtest <- topicsDtm(
-    data = topics::data$Wortext
+    data = dep_wor_data$Wortext
   )
   
   model <- topicsModel(dtmtest)
@@ -268,7 +268,7 @@ test_that('Case 6: Manually set the topic numbers to save topics',{
     control_vars = c('Age','Gender')
   )
   
-  
+  help(topicsPlot)
   topicsPlot(model = model,
              test = tests2D,
              p_threshold = 0.99,
@@ -311,10 +311,11 @@ test_that('Case 7: Set dimension = 1 for successfully saving the legends',{
     pred_var_x = 'PHQ9tot'
   )
   
-  topicsPlot(model = model,
-             test = tests1D,
-             p_threshold = 0.99,
-             scatter_legend_specified_topics = c('t_1', 't_2'))
+  topicsPlot(
+    model = model,
+    test = tests1D,
+    p_threshold = 0.99,
+    scatter_legend_specified_topics = c('t_1', 't_2'))
   
 #  testthat::expect_true(
 #    file.exists(
