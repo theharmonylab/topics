@@ -1425,7 +1425,12 @@ topicsPlot1 <- function(
 #' @param color_scheme (string or vector of strings) 
 #' @return default colors or specified user colours in the right order and structure.
 #' @noRd
-colour_settings <- function(color_scheme){
+colour_settings <- function(
+    color_scheme, 
+    test, 
+    ngrams, 
+    model, 
+    dim){
 
   bivariate_color_codes <- NULL
   bivariate_color_codes_b <- NULL
@@ -1541,7 +1546,32 @@ colour_settings <- function(color_scheme){
   return(codes)
 }
 
-
+#model = NULL
+#ngrams = NULL
+#test = NULL
+#p_threshold = 0.05 # Why is this set here since the test[[3]]$test$color_categories is determnied in in testTopics test?
+#color_scheme = "default"
+#scale_size = FALSE
+#plot_topics_idx = NULL
+#save_dir = "./results"
+#figure_format = "svg"
+#width = 10
+#height = 8
+#max_size = 10
+#seed = 42
+#scatter_legend_dot_size = 15
+#scatter_legend_bg_dot_size = 9
+#scatter_legend_n = c(1,1,1,1,0,1,1,1,1)
+#scatter_legend_method = c("mean")
+#scatter_legend_specified_topics = NULL
+#scatter_legend_topic_n = FALSE
+#grid_legend_title = "legend_title"
+#grid_legend_title_size = 5
+#grid_legend_title_color = 'black'
+#grid_legend_x_axes_label = "legend_x_axes_label"
+#grid_legend_y_axes_label = "legend_y_axes_label"
+#grid_legend_number_color = 'black'
+#grid_legend_number_size = 5
 #' Plot word clouds
 #' 
 #' This function create word clouds and topic fugures
@@ -1676,7 +1706,11 @@ topicsPlot <- function(
   
   #### Setting colors ####
   codes <- colour_settings(
-    color_scheme = color_scheme)
+    color_scheme = color_scheme, 
+    model = model,
+    test = test, 
+    ngrams = ngrams, 
+    dim = dim)
  
   bivariate_color_codes   <- codes[[1]]
   bivariate_color_codes_b <- codes[[2]]
