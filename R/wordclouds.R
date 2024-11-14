@@ -249,7 +249,8 @@ create_plots <- function(
                           plot = plot, 
                           width = width, 
                           height = height, 
-                          units = "in")
+                          units = "in", 
+                          create.dir = TRUE)
         }else{
           if (length(strsplit(cor_var, "_")[[1]]) > 1){
             p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
@@ -277,7 +278,8 @@ create_plots <- function(
                           plot = plot, 
                           width = width, 
                           height = height, 
-                          units = "in")
+                          units = "in", 
+                          create.dir = TRUE)
         }
       }
     }
@@ -324,7 +326,8 @@ create_plots <- function(
                       plot = plot, 
                       width = width, 
                       height = height, 
-                      units = "in")
+                      units = "in", 
+                      create.dir = TRUE)
     }
   }
   
@@ -353,7 +356,8 @@ create_plots <- function(
                       plot = plot, 
                       width = width, 
                       height = height, 
-                      units = "in") 
+                      units = "in", 
+                      create.dir = TRUE) 
     } 
   
   # For N-gram with test  
@@ -395,7 +399,8 @@ create_plots <- function(
                           plot = plot, 
                           width = width, 
                           height = height, 
-                          units = "in") 
+                          units = "in", 
+                          create.dir = TRUE) 
           # Word cloud with correlation strength mapped to color gradient
           plot <- ggplot2::ggplot(test_negative, aes(label = top_terms, size = estimate, color = prop)) +
             ggwordcloud::geom_text_wordcloud() +
@@ -411,7 +416,8 @@ create_plots <- function(
                           plot = plot, 
                           width = width, 
                           height = height, 
-                          units = "in") 
+                          units = "in", 
+                          create.dir = TRUE) 
         }
     }
 }

@@ -13,6 +13,7 @@ test_that("topicsPreds generates predictions with default parameters", {
   result <- topics::topicsPreds(model = model, data = data)
   
   testthat::expect_true(is_tibble(result))
+  testthat::expect_equal(result$t_1[[1]], 0.006824058, tolerance = 0.00001)
   testthat::expect_equal(nrow(result), length(data))
   testthat::expect_equal(ncol(result), 20)  # Assuming 5 topics
   unlink("./results/", recursive = TRUE)

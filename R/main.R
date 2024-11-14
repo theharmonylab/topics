@@ -1335,7 +1335,8 @@ topicsGridLegend <- function(
                   plot = legend, 
                   width = width, 
                   height = height, 
-                  units = "in")
+                  units = "in", 
+                  create.dir = TRUE)
 }
 
 #' The function to create lda wordclouds
