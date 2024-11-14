@@ -30,10 +30,15 @@ visualizing text in topics. <https://github.com/theharmonylab/topics>.
 
 ## Installation
 
+The topics package uses <b>JAVA</b>, which is another programming
+language. Please start by downloading and installing it from
+<https://www.java.com/en/download/manual.jsp>. Then open R and run:
+
 ``` r
-# install.packages("devtools")
+install.packages("devtools")
 devtools::install_github("theharmonylab/topics")
 
+# if you run in to any installation problem, try installing rJava first.
 
 # Before open the library, consider setting this option (can increase 5000);  without it the code may ran out of memory
 options(java.parameters = "-Xmx5000m")

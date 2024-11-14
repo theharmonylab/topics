@@ -114,8 +114,33 @@
 
 
 <dt id="arg-color-scheme">color_scheme<a class="anchor" aria-label="anchor" href="#arg-color-scheme"></a></dt>
-<dd><p>(string 'default' or vector) The color scheme.
-The vector should contain 9 color codes for grid or 4 colors for ngrams with c(positive_low, positive_high, negative_low, negative_high)</p></dd>
+<dd><p>(string 'default' or vector) The color scheme.</p>
+<p>For plots not including a test, the color_scheme should in clude 2 colours (1 gradient pair), such as:</p>
+<p>c("lightgray", "darkblue)</p>
+<p>For 1 dimensional plots of n-grams it should contain 4 colours (2 gradient pairs), such as:</p>
+<p>c(
+"#EAEAEA", "darkred", # negative ngrams colors</p>
+<p>"#EAEAEA", "darkgreen" # positve ngrams colors)</p>
+
+
+<p>For 1-dimension plots of topics, it should contain 6 colours (3 gradient pairs), such as</p>
+<p>c(
+"#EAEAEA", "darkred",     # negative topics colors</p>
+<p>"#EAEAEA", "darkgray",     # colours of topics not significantly associated</p>
+<p>"#EAEAEA", "darkgreen"     # positve topics colors)</p>
+
+
+<p>For 2-dimensional plots of topics, the color scheme should contain 18 colours (9 gradient pairs), such as:</p>
+<p>c(
+  "lightgray", "#398CF9",     # quadrant 1 (upper left corner)</p>
+<p>"lightgray", "#60A1F7",     # quadrant 2</p>
+<p>"lightgray", "#5dc688",     # quadrant 3 (upper right corner)</p>
+<p>"lightgray", "#e07f6a",     # quadrant 4</p>
+<p>"lightgray", "darkgray",     # quadrant 5 (middle square)</p>
+<p>"lightgray", "#40DD52",     # quadrant 6</p>
+<p>"lightgray", "#FF0000",     # quadrant 7 (bottom left corner)</p>
+<p>"lightgray", "#EA7467",     # quadrant 8</p>
+<p>"lightgray", "#85DB8E")     # quadrant 9 (bottom right corner)</p></dd>
 
 
 <dt id="arg-scale-size">scale_size<a class="anchor" aria-label="anchor" href="#arg-scale-size"></a></dt>

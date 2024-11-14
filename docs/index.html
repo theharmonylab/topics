@@ -90,10 +90,12 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
+<p>The topics package uses <b>JAVA</b>, which is another programming language. Please start by downloading and installing it from <a href="https://www.java.com/en/download/manual.jsp" class="external-link uri">https://www.java.com/en/download/manual.jsp</a>. Then open R and run:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"theharmonylab/topics"</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># if you run in to any installation problem, try installing rJava first.</span></span>
 <span></span>
 <span><span class="co"># Before open the library, consider setting this option (can increase 5000);  without it the code may ran out of memory</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>java.parameters <span class="op">=</span> <span class="st">"-Xmx5000m"</span><span class="op">)</span></span></code></pre></div>
