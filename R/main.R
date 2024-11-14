@@ -1597,15 +1597,15 @@ topicsPlot <- function(
       
       # Colors for the "front" words 
       bivariate_color_codes_f <-  c(
-       "lightgray", "#398CF9",  # quadrant 1 (upper left corner)
-       "lightgray", "#60A1F7",  # quadrant 2 
-       "lightgray", "#5dc688",  # quadrant 3 (upper right corner)
-       "lightgray", "#e07f6a",  # quadrant 4
-       "lightgray", "darkgray", # quadrant 5 (middle square)
-       "lightgray", "#40DD52",  # quadrant 6 
-       "lightgray", "#FF0000",  # quadrant 7 (bottom left corner)
-       "lightgray", "#EA7467",  # quadrant 8 
-       "lightgray", "#85DB8E")  # quadrant 9 (bottom right corner)
+        "#398CF9",  # quadrant 1 (upper left corner)
+        "#60A1F7",  # quadrant 2 
+        "#5dc688",  # quadrant 3 (upper right corner)
+        "#e07f6a",  # quadrant 4
+        "darkgray", # quadrant 5 (middle square)
+        "#40DD52",  # quadrant 6 
+        "#FF0000",  # quadrant 7 (bottom left corner)
+        "#EA7467",  # quadrant 8 
+        "#85DB8E")  # quadrant 9 (bottom right corner)
     }
   }
   
