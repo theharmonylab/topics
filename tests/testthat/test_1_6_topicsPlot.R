@@ -69,33 +69,34 @@ test_that("topicsPlot WITHOUT test and preds", {
 })
 
 
-test_that("topicsPlot with test", {
+test_that("topicsPlot WITH test", {
   
   ## 1-Dimension
   dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
   model <- topics::topicsModel(dtm = dtm)
   preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
   
-  test1 <- topics::topicsTest(model= model, 
-                              preds = preds, 
-                              data = dep_wor_data, 
-                              pred_var_x = "Age")
+  test1 <- topics::topicsTest(
+    model= model,
+    preds = preds,
+    data = dep_wor_data,
+    pred_var_x = "Age")
 
   topics::topicsPlot(
     model = model, 
     test = test1, 
     p_threshold = 1,
-#    dim = 1,
-    figure_format = "png")
+    figure_format = "png",
+    seed = 11)
   
   # Check if the wordcloud directory exists
-  testthat::expect_true(file.exists("./results/seed_42/wordclouds/dot_legend_corvar_Age.png"))
-  testthat::expect_true(file.exists("./results/seed_42/wordclouds/grid_legend_corvar_Age.png"))
-  testthat::expect_true(file.exists("./results/seed_42/wordclouds/grid_pos_2_corvar_Age_t_1_rx_-0.0296849259338033_px_7.46e-01.png"))
+  testthat::expect_true(file.exists("./results/seed_11/wordclouds/dot_legend_corvar_Age.png"))
+  testthat::expect_true(file.exists("./results/seed_11/wordclouds/grid_legend_corvar_Age.png"))
+  testthat::expect_true(file.exists("./results/seed_11/wordclouds/grid_pos_2_corvar_Age_t_1_rx_-0.0296849259338033_px_7.46e-01.png"))
   
-  file.remove("./results/seed_42/wordclouds/dot_legend_corvar_Age.png")
-  file.remove("./results/seed_42/wordclouds/grid_legend_corvar_Age.png")
-  file.remove("./results/seed_42/wordclouds/grid_pos_2_corvar_Age_t_1_rx_-0.0296849259338033_px_7.46e-01.png")
+#  file.remove("./results/seed_01/wordclouds/dot_legend_corvar_Age.png")
+#  file.remove("./results/seed_01/wordclouds/grid_legend_corvar_Age.png")
+#  file.remove("./results/seed_01/wordclouds/grid_pos_2_corvar_Age_t_1_rx_-0.0296849259338033_px_7.46e-01.png")
 
   ## 2-Dimension  
   
@@ -121,17 +122,17 @@ test_that("topicsPlot with test", {
       "yellow", "#FF0000",  # quadrant 7 (bottom left corner)
       "yellow", "#EA7467",  # quadrant 8 
       "yellow", "#85DB8E"),
-    figure_format = "png", 
-#    dim = 2
+    figure_format = "png",
+    seed = 12
     )
   
   
   # Check if the wordcloud directory exists
-  testthat::expect_true(file.exists("./results/seed_42/wordclouds/dot_legend_corvar_PHQ9tot_Age.png"))
-  testthat::expect_true(file.exists("./results/seed_42/wordclouds/grid_legend_corvar_PHQ9tot_Age.png"))
-  testthat::expect_true(file.exists("./results/seed_42/wordclouds/grid_pos_5_corvar_PHQ9tot_Age_t_1_rx_-0.0289137075554485_ry_-0.0296849259338033_px_8.18e-01_py_7.46e-01.png"))
+  testthat::expect_true(file.exists("./results/seed_12/wordclouds/dot_legend_corvar_PHQ9tot_Age.png"))
+  testthat::expect_true(file.exists("./results/seed_12/wordclouds/grid_legend_corvar_PHQ9tot_Age.png"))
+  testthat::expect_true(file.exists("./results/seed_12/wordclouds/grid_pos_5_corvar_PHQ9tot_Age_t_1_rx_-0.0289137075554485_ry_-0.0296849259338033_px_8.18e-01_py_7.46e-01.png"))
   
-  unlink("./results/", recursive = TRUE)
+ # unlink("./results/", recursive = TRUE)
 })
 
 

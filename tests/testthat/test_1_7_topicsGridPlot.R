@@ -14,20 +14,20 @@ test_that('Case 1: Save all topics without the topic grid plot by using the topi
 #    unlink("./results", recursive = TRUE)
 #  }
   
-  dtmtest <- topicsDtm(
+  dtmtest <- topics::topicsDtm(
     data = topics::dep_wor_data$Wortext
   )
   
-  model <- topicsModel(dtmtest)
+  model <- topics::topicsModel(dtmtest)
   
-  preds <- topicsPreds(
+  preds <- topics::topicsPreds(
     model = model, 
     data = topics::dep_wor_data$Wortext
   )
 
 #  dat1 <- dplyr::mutate(dep_wor_data, gender = ifelse(gender == "male", 0, 1))
   
-  tests2D <- topicsTest(
+  tests2D <- topics::topicsTest(
     model = model,
     preds = preds,
     data =  dep_wor_data,
@@ -39,10 +39,12 @@ test_that('Case 1: Save all topics without the topic grid plot by using the topi
   #random_sequence <- sample(1:9, size = nrow(tests2D[[3]]$test), replace = TRUE)
   #tests2D[[3]]$test$color_categories <- random_sequence
   
-  topics::topicsPlot(model = model,
-             test = tests2D,
-             p_threshold = 0.99, 
-             seed = 42)
+  topics::topicsPlot(
+    model = model,
+    test = tests2D,
+    p_threshold = 0.99,
+    seed = 1
+    )
   
 #  testthat::expect_true(dir.exists("./results/seed42/wordclouds"))
 
@@ -54,20 +56,20 @@ test_that('Case 2: Save the scatter legend and grid legend for topic grids using
 #    unlink("./results", recursive = TRUE)
 #  }
   
-  dtmtest <- topicsDtm(
+  dtmtest <- topics::topicsDtm(
     data = dep_wor_data$Wortext
   )
   
-  model <- topicsModel(dtmtest)
+  model <- topics::topicsModel(dtmtest)
   
-  preds <- topicsPreds(
+  preds <- topics::topicsPreds(
     model = model, 
     data = dep_wor_data$Wortext
   )
   
 #  dat1 <- dplyr::mutate(topics::data,gender = ifelse(gender == "male", 0, 1))
   
-  tests2D <- topicsTest(
+  tests2D <- topics::topicsTest(
     model = model,
     preds = preds,
     data =  dep_wor_data,
@@ -76,12 +78,13 @@ test_that('Case 2: Save the scatter legend and grid legend for topic grids using
     control_vars = c('Age','Gender')
   )
   
-  topicsPlot(model = model,
-             test = tests2D,
-             p_threshold = 0.99,
-             seed = 42)
+  topics::topicsPlot(
+    model = model,
+    test = tests2D,
+    p_threshold = 0.99,
+    seed = 2)
   
-  testthat::expect_true(dir.exists("./results/seed_42/wordclouds"))
+  testthat::expect_true(dir.exists("./results/seed_2/wordclouds"))
   
 })
 
@@ -91,20 +94,20 @@ test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall retu
 #    unlink("./results", recursive = TRUE)
 #  }
   
-  dtmtest <- topicsDtm(
+  dtmtest <- topics::topicsDtm(
     data = dep_wor_data$Wortext
   )
   
-  model <- topicsModel(dtmtest)
+  model <- topics::topicsModel(dtmtest)
   
-  preds <- topicsPreds(
+  preds <- topics::topicsPreds(
     model = model, 
     data = dep_wor_data$Wortext
   )
   
 #  dat1 <- dplyr::mutate(topics::data, gender = ifelse(gender == "male", 0, 1))
   
-  tests2D <- topicsTest(
+  tests2D <- topics::topicsTest(
     model = model,
     preds = preds,
     data =  dep_wor_data,
@@ -115,17 +118,19 @@ test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall retu
 #  random_sequence <- sample(1:9, size = nrow(tests2D[[3]]$test), replace = TRUE)
 #  tests2D[[3]]$test$color_categories <- random_sequence
   
-  out1 <- topicsPlot(model = model,
-                     test = tests2D,
-                     p_threshold = 0.99,
-                     ,seed = 42)
+  out1 <- topics::topicsPlot(
+    model = model,
+    test = tests2D,
+    p_threshold = 0.99,
+    seed = 3)
   
   testthat::expect_true(!is.null(out1))
   
-  out1 <- topicsPlot(model = model,
-                     test = tests2D,
-                     p_threshold = 0.99,
-                     seed = 42)
+  out1 <- topicsPlot(
+    model = model,
+    test = tests2D,
+    p_threshold = 0.99,
+    seed = 4)
   
   testthat::expect_true(!is.null(out1))
   
@@ -137,20 +142,20 @@ test_that('Case 4: Set dimension = 2 for successfully saving the legends.',{
 #    unlink("./results", recursive = TRUE)
 #  }
 #  
-  dtmtest <- topicsDtm(
+  dtmtest <- topics::topicsDtm(
     data = dep_wor_data$Wortext
   )
   
-  model <- topicsModel(dtmtest)
+  model <- topics::topicsModel(dtmtest)
   
-  preds <- topicsPreds(
+  preds <- topics::topicsPreds(
     model = model, 
     data = dep_wor_data$Deptext
   )
   
   # dat1 <- dplyr::mutate(topics::data,gender = ifelse(gender == "male", 0, 1))
   
-  tests2D <- topicsTest(
+  tests2D <- topics::topicsTest(
     model = model,
     preds = preds,
     data = dep_wor_data,
@@ -159,9 +164,11 @@ test_that('Case 4: Set dimension = 2 for successfully saving the legends.',{
     control_vars = c('Age','Gender')
   )
   
-  topicsPlot(model = model,
-             test = tests2D,
-             p_threshold = 0.99)
+  topics::topicsPlot(
+    model = model,
+    test = tests2D,
+    p_threshold = 0.99,
+    seed = 5)
   
 #  testthat::expect_true(
 #    file.exists(
@@ -179,19 +186,19 @@ test_that('Case 5: Change the popout method to "max_x", and "max_y".',{
 #    unlink("./results", recursive = TRUE)
 #  }
 #  
-  dtmtest <- topicsDtm(
+  dtmtest <- topics::topicsDtm(
     data = dep_wor_data$Wortext
   )
   
-  model <- topicsModel(dtmtest)
+  model <- topics::topicsModel(dtmtest)
   
-  preds <- topicsPreds(
+  preds <- topics::topicsPreds(
     model = model, 
     data = dep_wor_data$Deptext
   )
   
 #  dat1 <- dplyr::mutate(topics::data,gender = ifelse(gender == "male", 0, 1))
-  tests2D <- topicsTest(
+  tests2D <- topics::topicsTest(
     model = model,
     preds = preds,
     data = dep_wor_data,
@@ -202,12 +209,12 @@ test_that('Case 5: Change the popout method to "max_x", and "max_y".',{
   #random_sequence <- sample(1:9, size = nrow(tests2D[[3]]$test), replace = TRUE)
   #tests2D[[3]]$test$color_categories <- random_sequence
   
-  topicsPlot(model = model,
-             test = tests2D,
-             p_threshold = 0.99,
-             scatter_legend_method = 'max_x',
-             seed = 42
-             )
+  topics::topicsPlot(
+    model = model,
+    test = tests2D,
+    p_threshold = 0.99,
+    scatter_legend_method = 'max_x',
+    seed = 6)
   
 #  testthat::escatter_legend_method = testthat::expect_true(
 #    file.exists(
@@ -216,11 +223,12 @@ test_that('Case 5: Change the popout method to "max_x", and "max_y".',{
 #    file.exists(
 #      './results/seed_42/wordclouds/grid_legend_corvar_hilstotal_swlstotal.svg'))
   
-  topicsPlot(model = model,
-             test = tests2D,
-             p_threshold = 0.99,
-             scatter_legend_method = 'max_y',
-             seed = 42)
+  topics::topicsPlot(
+    model = model,
+    test = tests2D,
+    p_threshold = 0.99,
+    scatter_legend_method = 'max_y',
+    seed = 7)
   
 #  testthat::expect_true(
 #    file.exists(
@@ -238,18 +246,18 @@ test_that('Case 6: Manually set the topic numbers to save topics',{
 #    unlink("./results", recursive = TRUE)
 #  }
 #  
-  dtmtest <- topicsDtm(
+  dtmtest <- topics::topicsDtm(
     data = dep_wor_data$Wortext
   )
   
-  model <- topicsModel(dtmtest)
+  model <- topics::topicsModel(dtmtest)
   
-  preds <- topicsPreds(
+  preds <- topics::topicsPreds(
     model = model, 
     data = dep_wor_data$Wortext
   )
   
-  tests <- topicsTest(
+  tests <- topics::topicsTest(
     model = model,
     preds = preds,
     data = dep_wor_data,
@@ -259,7 +267,7 @@ test_that('Case 6: Manually set the topic numbers to save topics',{
   
 #  dat1 <- dplyr::mutate(topics::data,gender = ifelse(gender == "male", 0, 1))
 
-  tests2D <- topicsTest(
+  tests2D <- topics::topicsTest(
     model = model,
     preds = preds,
     data = dep_wor_data,
@@ -268,12 +276,13 @@ test_that('Case 6: Manually set the topic numbers to save topics',{
     control_vars = c('Age','Gender')
   )
   
-  help(topicsPlot)
-  topicsPlot(model = model,
-             test = tests2D,
-             p_threshold = 0.99,
-             scatter_legend_specified_topics = c('t_1', 't_2')
-             )
+  
+  topics::topicsPlot(
+    model = model,
+    test = tests2D,
+    p_threshold = 0.99,
+    scatter_legend_specified_topics = c('t_1', 't_2'),
+    seed = 8)
   
   #random_sequence <- sample(1:9, size = nrow(tests2D[[3]]$test), replace = TRUE)
   #tests2D[[3]]$test$color_categories <- random_sequence
@@ -293,29 +302,30 @@ test_that('Case 7: Set dimension = 1 for successfully saving the legends',{
 #    unlink("./results", recursive = TRUE)
 #  }
 #  
-  dtmtest <- topicsDtm(
+  dtmtest <- topics::topicsDtm(
     data = dep_wor_data$Wortext
   )
   
-  model <- topicsModel(dtmtest)
+  model <- topics::topicsModel(dtmtest)
   
-  preds <- topicsPreds(
+  preds <- topics::topicsPreds(
     model = model, 
     data = dep_wor_data$Deptext
   )
   
-  tests1D <- topicsTest(
+  tests1D <- topics::topicsTest(
     model = model,
     preds = preds,
     data =  dep_wor_data,
     pred_var_x = 'PHQ9tot'
   )
   
-  topicsPlot(
+  topics::topicsPlot(
     model = model,
     test = tests1D,
     p_threshold = 0.99,
-    scatter_legend_specified_topics = c('t_1', 't_2'))
+    scatter_legend_specified_topics = c('t_1', 't_2'),
+    seed = 9)
   
 #  testthat::expect_true(
 #    file.exists(

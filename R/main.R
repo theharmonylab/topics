@@ -803,7 +803,7 @@ topicsTest <- function(
 #' @importFrom rlang sym !!
 #' @importFrom dplyr select filter mutate anti_join summarise pull group_by group_modify ungroup
 #' @noRd
-topicsScatterLegend <- function(
+topicsScatterLegendOld <- function(
     bivariate_color_codes = c(
       "#398CF9", "#60A1F7", "#5dc688",
       "#e07f6a", "#EAEAEA", "#40DD52",
@@ -1159,6 +1159,193 @@ topicsScatterLegend <- function(
                   units = "in", 
                   create.dir = TRUE)   
 }
+
+
+
+#library(ggplot2)
+#library(dplyr)
+#library(rlang)
+#library(tibble)
+#
+
+#bivariate_color_codes = bivariate_color_codes_f
+#filtered_test = test[[3]]$test
+#num_popout = scatter_legend_n
+#y_axes_1 = dim
+#cor_var = test[[3]]$pred_var
+#label_x_name = grid_legend_x_axes_label
+#label_y_name = grid_legend_y_axes_label
+#way_popout_topics = scatter_legend_method
+#user_spec_topics = scatter_legend_specified_topics
+#allow_topic_num_legend = scatter_legend_topic_n
+#scatter_popout_dot_size = scatter_legend_dot_size
+#scatter_bg_dot_size = scatter_legend_bg_dot_size
+#save_dir = save_dir
+#figure_format = figure_format
+#seed = seed
+
+
+#' The function to create lda wordclouds
+#' @return nothing is returned, the dot cloud legend is saved in the save_dir
+#' @importFrom ggplot2 ggplot geom_point scale_color_manual labs theme_minimal theme element_blank
+#' @importFrom rlang sym !!
+#' @importFrom dplyr select filter mutate anti_join summarise pull group_by group_modify ungroup
+#' @noRd
+topicsScatterLegend <- function(
+    bivariate_color_codes,
+    filtered_test, 
+    num_popout = 1, 
+    way_popout_topics = "mean", 
+    user_spec_topics = NULL, 
+    allow_topic_num_legend = FALSE,
+    y_axes_1 = 2, 
+    cor_var = "", 
+    label_x_name = "x", 
+    label_y_name = "y", 
+    save_dir = "./results", 
+    figure_format = "svg",
+    scatter_popout_dot_size = 15, 
+    scatter_bg_dot_size = 9, 
+    width = 10, 
+    height = 8, 
+    seed = 42
+) {
+  if (!y_axes_1 %in% c(1, 2)) {
+    cat('Error in dim param. It should be either 1 or 2.')
+    return(NULL)
+  }
+  
+  # Check conditions for specific categories
+  contains_category <- function(cat) {
+    filtered_test %>%
+      summarise(contains_only = all(color_categories %in% cat)) %>%
+      pull(contains_only)
+  }
+  
+  x_column <- names(filtered_test)[3]
+  y_column <- if (y_axes_1 == 2) names(filtered_test)[7] else NULL
+  color_column <- names(filtered_test)[ncol(filtered_test)]
+  
+  if (contains_category(2) && y_axes_1 == 1) {
+    cat('Only non-significant topics. Generating scatter legend.\n')
+    plot_data <- filtered_test %>% filter(color_categories %in% 1:3)
+    plot <- generate_scatter_plot(
+      data = plot_data, 
+      bivariate_color_codes = bivariate_color_codes, 
+      x_col = x_column, 
+      label_x_name = label_x_name, 
+      label_y_name = label_y_name,
+      color_col = color_column, 
+      size = scatter_popout_dot_size, 
+      alpha = 0.8)
+    
+  } else if (contains_category(5) && y_axes_1 == 2) {
+    cat('Only significant topics. Generating scatter plot.\n')
+    plot <- generate_scatter_plot(
+      data = filtered_test, 
+      bivariate_color_codes = bivariate_color_codes, 
+      x_col = x_column, 
+      y_col = y_column,
+      label_x_name = label_x_name, 
+      label_y_name = label_y_name, 
+      color_col = color_column, 
+      size = scatter_popout_dot_size, 
+      alpha = 0.8)
+    
+  } else if (!is.null(user_spec_topics)) {
+    cat('User-specified topics for popout.\n')
+    popout <- filtered_test %>% filter(topic %in% user_spec_topics)
+    plot <- generate_scatter_plot(
+      data = popout,
+      bivariate_color_codes = bivariate_color_codes,
+      x_col = x_column, 
+      y_col = y_column, 
+      label_x_name = label_x_name, 
+      label_y_name = label_y_name, 
+      color_col = color_column, 
+      size = scatter_popout_dot_size, 
+      alpha = 0.8)
+    
+  } else {
+    cat('Generating scatter plot based on specified popout criteria.\n')
+    # Logic to handle num_popout and way_popout_topics can be expanded as needed.
+    # Placeholder: assuming we filter `filtered_test` as per num_popout or way_popout_topics
+    plot <- generate_scatter_plot(
+      data = filtered_test, 
+      bivariate_color_codes = bivariate_color_codes,
+      x_col = x_column, 
+      y_col = y_column, 
+      label_x_name = label_x_name, 
+      label_y_name = label_y_name, 
+      color_col = color_column, 
+      size = scatter_popout_dot_size, 
+      alpha = 0.8)
+  }
+  
+  if (allow_topic_num_legend) {
+    plot <- plot + geom_text(data = filtered_test, 
+                             aes(x = !!sym(x_column), 
+                                 y = !!sym(y_column %||% 1), 
+                                 label = topic_number),
+                             size = scatter_popout_dot_size - 3, 
+                             color = "black", 
+                             hjust = 0.5, vjust = 0.5)
+  }
+  
+  # Save the plot
+  ggsave(paste0(save_dir,"/seed_", seed, 
+                "/wordclouds/",
+                "Experimental_dot_legend_",
+                "corvar_", cor_var,
+                ".",
+                figure_format),
+         plot = plot, 
+         width = width, height = height, units = "in", device = figure_format)
+}
+
+
+
+# Helper function to generate a scatter plot
+generate_scatter_plot <- function(
+    data,
+    bivariate_color_codes,
+    x_col, 
+    y_col = NULL,
+    label_x_name, 
+    label_y_name,
+    color_col, 
+    size, 
+    alpha, 
+    labels = NULL) {
+  
+  # Define aesthetics based on whether y_col is NULL
+  if (is.null(y_col)) {
+    aes_mappings <- aes(x = !!sym(x_col), y = 1, color = as.factor(.data[[color_col]]))
+  } else {
+    aes_mappings <- aes(x = !!sym(x_col), y = !!sym(y_col), color = as.factor(.data[[color_col]]))
+  }
+  
+  # Build the plot with the conditional aes mappings
+  plot <- ggplot(data) +
+    geom_point(aes_mappings, size = size, alpha = alpha) +
+    scale_color_manual(values = bivariate_color_codes) +
+    labs(x = label_x_name, y = if (!is.null(label_y_name)) label_y_name else "", color = '') +
+    theme_minimal() +
+    theme(
+      axis.text = element_blank(),
+      axis.ticks = element_blank(),
+      legend.position = "none"
+    )
+  
+  if (!is.null(labels)) {
+    plot <- plot + geom_text(aes(x = !!sym(x_col), y = !!sym(y_col %||% 1), label = labels),
+                             size = size - 3, color = "black", hjust = 0.5, vjust = 0.5)
+  }
+  return(plot)
+}
+
+
+
 
 #' Creates the legend for the plot.
 #' @return A legend plot saved that can be combined with the plot object.
@@ -1546,32 +1733,33 @@ colour_settings <- function(
   return(codes)
 }
 
-#model = NULL
-#ngrams = NULL
-#test = NULL
-#p_threshold = 0.05 # Why is this set here since the test[[3]]$test$color_categories is determnied in in testTopics test?
-#color_scheme = "default"
-#scale_size = FALSE
-#plot_topics_idx = NULL
-#save_dir = "./results"
-#figure_format = "svg"
-#width = 10
-#height = 8
-#max_size = 10
-#seed = 42
-#scatter_legend_dot_size = 15
-#scatter_legend_bg_dot_size = 9
-#scatter_legend_n = c(1,1,1,1,0,1,1,1,1)
-#scatter_legend_method = c("mean")
-#scatter_legend_specified_topics = NULL
-#scatter_legend_topic_n = FALSE
-#grid_legend_title = "legend_title"
-#grid_legend_title_size = 5
-#grid_legend_title_color = 'black'
-#grid_legend_x_axes_label = "legend_x_axes_label"
-#grid_legend_y_axes_label = "legend_y_axes_label"
-#grid_legend_number_color = 'black'
-#grid_legend_number_size = 5
+model = NULL
+ngrams = NULL
+test = NULL
+p_threshold = 0.05 # Why is this set here since the test[[3]]$test$color_categories is determnied in in testTopics test?
+color_scheme = "default"
+scale_size = FALSE
+plot_topics_idx = NULL
+save_dir = "./results"
+figure_format = "svg"
+width = 10
+height = 8
+max_size = 10
+seed = 42
+scatter_legend_dot_size = 15
+scatter_legend_bg_dot_size = 9
+scatter_legend_n = c(1,1,1,1,0,1,1,1,1)
+scatter_legend_method = c("mean")
+scatter_legend_specified_topics = NULL
+scatter_legend_topic_n = FALSE
+grid_legend_title = "legend_title"
+grid_legend_title_size = 5
+grid_legend_title_color = 'black'
+grid_legend_x_axes_label = "legend_x_axes_label"
+grid_legend_y_axes_label = "legend_y_axes_label"
+grid_legend_number_color = 'black'
+grid_legend_number_size = 5
+
 #' Plot word clouds
 #' 
 #' This function create word clouds and topic fugures
@@ -1819,7 +2007,7 @@ topicsPlot <- function(
       }
     }
   
-      topicsScatterLegend(
+      topicsScatterLegendOld(
         bivariate_color_codes = bivariate_color_codes_f,
         filtered_test = test[[3]]$test,
         num_popout = scatter_legend_n,
@@ -1838,6 +2026,27 @@ topicsPlot <- function(
         # height = 8,
         seed = seed
         )
+      
+      topicsScatterLegend(
+        bivariate_color_codes = bivariate_color_codes_f,
+        filtered_test = test[[3]]$test,
+        num_popout = scatter_legend_n,
+        y_axes_1 = dim,
+        cor_var = test[[3]]$pred_var,
+        label_x_name = grid_legend_x_axes_label,
+        label_y_name = grid_legend_y_axes_label,
+        way_popout_topics = scatter_legend_method,
+        user_spec_topics = scatter_legend_specified_topics,
+        allow_topic_num_legend = scatter_legend_topic_n,
+        scatter_popout_dot_size = scatter_legend_dot_size,
+        scatter_bg_dot_size = scatter_legend_bg_dot_size,
+        save_dir = save_dir,
+        figure_format = figure_format,
+        # width = 10, 
+        # height = 8,
+        seed = seed
+      )
+      
       
       topicsGridLegend(
             bivariate_color_codes = bivariate_color_codes_f,
