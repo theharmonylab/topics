@@ -1421,6 +1421,127 @@ topicsPlot1 <- function(
 }
 
 
+#' The function sets default colors or arranges user specified colors
+#' @param color_scheme (string or vector of strings) 
+#' @return default colors or specified user colours in the right order and structure.
+#' @noRd
+colour_settings <- function(color_scheme){
+
+  bivariate_color_codes <- NULL
+  bivariate_color_codes_b <- NULL
+  bivariate_color_codes_f <- NULL  
+  #### Checking and arranging colors ####
+  if(!color_scheme[[1]] == "default"){
+    
+    # Dim 0 (i.e., no test)
+    if(is.null(test)){
+      
+      if(length(color_scheme) == 2) {
+        bivariate_color_codes <- rep(color_scheme, 2)
+      } else {
+        stop("Please provide 2 colours in the color_scheme parameter or set it to 'default'.")
+      }
+    }
+    
+    # Dim 1: N-gram
+    if (dim == 1 && !is.null(ngrams)){
+      
+      if(length(color_scheme) == 4) {
+        bivariate_color_codes <- color_scheme
+      } else {
+        stop("Please provide 4 colours  in the color_scheme parameter or set it to 'default'.")
+      }
+    }
+    
+    # Dim 1: topics
+    if (dim == 1 && !is.null(model)){
+      
+      if(length(color_scheme) == 6) {
+        # Select every second color for "back" colour in the gradient 
+        bivariate_color_codes_b <- color_scheme[seq(1, length(color_scheme), by = 2)]
+        # Select every second color for "front" colour in the gradient 
+        bivariate_color_codes_f <- color_scheme[seq(2, length(color_scheme), by = 2)]
+        
+      } else {
+        stop("Please provide 6 colours for the gradient.")
+      }
+    }
+    
+    # Dim 2: topics
+    if (dim == 2 && !is.null(model)){
+      
+      if(length(color_scheme) == 18) {
+        # Select every second color for "back" colour in the gradient 
+        bivariate_color_codes_b <- color_scheme[seq(1, length(color_scheme), by = 2)]
+        # Select every second color for "front" colour in the gradient 
+        bivariate_color_codes_f <- color_scheme[seq(2, length(color_scheme), by = 2)]
+        
+      } else {
+        stop("Please provide 18 colours or use color_scheme = 'default'.")
+      }
+    }
+  }
+  
+  #### Setting the (default) colours ####
+  if (color_scheme[[1]] == "default"){
+    
+    if (is.null(test)){ # && is.null(ngrams)
+      bivariate_color_codes <- c(
+        # gradient colours 1 and 2
+        "#EAEAEA", "darkblue", 
+        "#EAEAEA", "darkblue")
+    }
+    
+    if (dim == 1 && !is.null(ngrams)){
+      # gradient pairs
+      bivariate_color_codes <- c(
+        "#EAEAEA", "darkred", # negative ngrams colours
+        "#EAEAEA", "darkgreen" # positve ngrams colours
+      )
+    }
+    
+    # Below colours are used in for loop iterations; so easiest to have back and front colors separate
+    
+    if (dim == 1 && is.null(ngrams)){
+      # gradient pairs
+      
+      # Colors for the "background" words
+      bivariate_color_codes_b <- c(
+        "#e07f6a",  "lightgray","#5dc688"
+      )
+      # Colors for the "front" words
+      bivariate_color_codes_f <- c(
+        "darkred", "darkgray", "darkgreen"
+      ) 
+    }
+    
+    if (dim == 2){
+      # Colors for the "background" words
+      bivariate_color_codes_b <- rep("lightgray", 9)
+      
+      # Colors for the "front" words 
+      bivariate_color_codes_f <-  c(
+        "#398CF9",  # quadrant 1 (upper left corner)
+        "#60A1F7",  # quadrant 2 
+        "#5dc688",  # quadrant 3 (upper right corner)
+        "#e07f6a",  # quadrant 4
+        "darkgray", # quadrant 5 (middle square)
+        "#40DD52",  # quadrant 6 
+        "#FF0000",  # quadrant 7 (bottom left corner)
+        "#EA7467",  # quadrant 8 
+        "#85DB8E")  # quadrant 9 (bottom right corner)
+    }
+  }
+  
+  codes <- list(
+    bivariate_color_codes,
+    bivariate_color_codes_b,
+    bivariate_color_codes_f)
+  
+  return(codes)
+}
+
+
 #' Plot word clouds
 #' 
 #' This function create word clouds and topic fugures
@@ -1428,8 +1549,54 @@ topicsPlot1 <- function(
 #' @param ngrams (list) The output from the the topicsGram() function . Should be NULL if plotting topics.
 #' @param test (list) The test results; if plotting according to dimension(s) include the object from topicsTest() function. 
 #' @param p_threshold (integer) The p-value threshold to use for significance testing.
-#' @param color_scheme (string 'default' or vector) The color scheme. 
-#' The vector should contain 9 color codes for grid or 4 colors for ngrams with c(positive_low, positive_high, negative_low, negative_high)
+#' @param color_scheme (string 'default' or vector) The color scheme.
+#'  
+#' For plots not including a test, the color_scheme should in clude 2 colours (1 gradient pair), such as:
+#'
+#' c("lightgray", "darkblue)
+#' 
+#' For 1 dimensional plots of n-grams it should contain 4 colours (2 gradient pairs), such as: 
+#'
+#' c(
+#' "#EAEAEA", "darkred", # negative ngrams colors
+#' 
+#' "#EAEAEA", "darkgreen" # positve ngrams colors)
+#' 
+#' 
+#' 
+#' For 1-dimension plots of topics, it should contain 6 colours (3 gradient pairs), such as 
+#'
+#'  c(
+#' "#EAEAEA", "darkred",     # negative topics colors
+#' 
+#' "#EAEAEA", "darkgray",     # colours of topics not significantly associated
+#' 
+#' "#EAEAEA", "darkgreen"     # positve topics colors)
+#' 
+#' 
+#'
+#'  For 2-dimensional plots of topics, the color scheme should contain 18 colours (9 gradient pairs), such as:
+#'  
+#'  c(
+#'   "lightgray", "#398CF9",     # quadrant 1 (upper left corner)
+#'   
+#'   "lightgray", "#60A1F7",     # quadrant 2 
+#'   
+#'   "lightgray", "#5dc688",     # quadrant 3 (upper right corner)
+#'   
+#'   "lightgray", "#e07f6a",     # quadrant 4
+#'   
+#'   "lightgray", "darkgray",     # quadrant 5 (middle square)
+#'   
+#'   "lightgray", "#40DD52",     # quadrant 6 
+#'   
+#'   "lightgray", "#FF0000",     # quadrant 7 (bottom left corner)
+#'   
+#'   "lightgray", "#EA7467",     # quadrant 8 
+#'   
+#'   "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner)
+#'
+#' 
 #' @param scale_size (logical) Whether to scale the size of the words.
 #' @param plot_topics_idx (vector)  The index or indeces of the topics to plot 
 #' (e.g., look in the model-object for the indices; can for example, be c(1, 3:5) to plot topic t_1, t_3, t_4 and t_5) (optional). 
@@ -1507,110 +1674,14 @@ topicsPlot <- function(
     }
   }
   
-  #### Checking and arranging colors ####
-  if(!color_scheme[[1]] == "default"){
-    
-    # Dim 0 (i.e., no test)
-    if(is.null(test)){
-      
-      if(length(color_scheme) == 2) {
-         bivariate_color_codes <- rep(color_scheme, 2)
-      } else {
-         stop("Please provide 2 colours in the color_scheme parameter or set it to 'default'.")
-      }
-    }
-    
-    # Dim 1: N-gram
-    if (dim == 1 && !is.null(ngrams)){
-      
-      if(length(color_scheme) == 4) {
-        bivariate_color_codes <- color_scheme
-      } else {
-        stop("Please provide 4 colours  in the color_scheme parameter or set it to 'default'.")
-      }
-    }
-    
-    # Dim 1: topics
-    if (dim == 1 && !is.null(model)){
-      
-      if(length(color_scheme) == 6) {
-        # Select every second color for "back" colour in the gradient 
-        bivariate_color_codes_b <- color_scheme[seq(1, length(color_scheme), by = 2)]
-        # Select every second color for "front" colour in the gradient 
-        bivariate_color_codes_f <- color_scheme[seq(2, length(color_scheme), by = 2)]
-        
-      } else {
-        stop("Please provide 6 colours for the gradient.")
-      }
-    }
-    
-    # Dim 2: topics
-    if (dim == 2 && !is.null(model)){
-      
-      if(length(color_scheme) == 18) {
-        # Select every second color for "back" colour in the gradient 
-        bivariate_color_codes_b <- color_scheme[seq(1, length(color_scheme), by = 2)]
-        # Select every second color for "front" colour in the gradient 
-        bivariate_color_codes_f <- color_scheme[seq(2, length(color_scheme), by = 2)]
-        
-      } else {
-        stop("Please provide 18 colours or use color_scheme = 'default'.")
-      }
-    }
-  }
+  #### Setting colors ####
+  codes <- colour_settings(
+    color_scheme = color_scheme)
+ 
+  bivariate_color_codes   <- codes[[1]]
+  bivariate_color_codes_b <- codes[[2]]
+  bivariate_color_codes_f <- codes[[3]]
   
-  #### Setting the (default) colours ####
-  if (color_scheme[[1]] == "default"){
-    
-    if (is.null(test)){ # && is.null(ngrams)
-      bivariate_color_codes <- c(
-        # gradient colours 1 and 2
-        "#EAEAEA", "darkblue", 
-        "#EAEAEA", "darkblue")
-    }
-    
-    if (dim == 1 && !is.null(ngrams)){
-      # gradient pairs
-      bivariate_color_codes <- c(
-        "#EAEAEA", "darkred", # negative ngrams colours
-        "#EAEAEA", "darkgreen" # positve ngrams colours
-        )
-    }
-    
-    # Below colours are used in for loop iterations; so easiest to have back and front colors separate
-    
-    if (dim == 1 && is.null(ngrams)){
-      # gradient pairs
-      
-      # Colors for the "background" words
-      bivariate_color_codes_b <- c(
-        "#e07f6a",  "lightgray","#5dc688"
-        )
-      # Colors for the "front" words
-      bivariate_color_codes_f <- c(
-        "darkred", "darkgray", "darkgreen"
-      ) 
-    }
-    
-    if (dim == 2){
-      # Colors for the "background" words
-      bivariate_color_codes_b <- rep("lightgray", 9)
-      
-      # Colors for the "front" words 
-      bivariate_color_codes_f <-  c(
-        "#398CF9",  # quadrant 1 (upper left corner)
-        "#60A1F7",  # quadrant 2 
-        "#5dc688",  # quadrant 3 (upper right corner)
-        "#e07f6a",  # quadrant 4
-        "darkgray", # quadrant 5 (middle square)
-        "#40DD52",  # quadrant 6 
-        "#FF0000",  # quadrant 7 (bottom left corner)
-        "#EA7467",  # quadrant 8 
-        "#85DB8E")  # quadrant 9 (bottom right corner)
-    }
-  }
-  
-    
   #### Controlling parameter settings and giving instructions #####
   if (!is.vector(scatter_legend_n) || !is.numeric(scatter_legend_n)){
       cat('The parameter "scatter_legend_n" should be either a numeric vector or a number.\n')

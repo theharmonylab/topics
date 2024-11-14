@@ -113,7 +113,7 @@ jobs:
         env:
           OMP_MAX_ACTIVE_LEVELS: 2
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: covr::codecov(token = Sys.getenv("CODECOV_TOKEN"), path = "coverage/lcov.info")
+        run: covr::codecov(token = Sys.getenv("CODECOV_TOKEN"))
         shell: Rscript {0}
 
 

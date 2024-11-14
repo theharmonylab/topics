@@ -42,8 +42,52 @@ topicsPlot(
 
 \item{p_threshold}{(integer) The p-value threshold to use for significance testing.}
 
-\item{color_scheme}{(string 'default' or vector) The color scheme. 
-The vector should contain 9 color codes for grid or 4 colors for ngrams with c(positive_low, positive_high, negative_low, negative_high)}
+\item{color_scheme}{(string 'default' or vector) The color scheme.
+ 
+For plots not including a test, the color_scheme should in clude 2 colours (1 gradient pair), such as:
+
+c("lightgray", "darkblue)
+
+For 1 dimensional plots of n-grams it should contain 4 colours (2 gradient pairs), such as: 
+
+c(
+"#EAEAEA", "darkred", # negative ngrams colors
+
+"#EAEAEA", "darkgreen" # positve ngrams colors)
+
+
+
+For 1-dimension plots of topics, it should contain 6 colours (3 gradient pairs), such as 
+
+ c(
+"#EAEAEA", "darkred",     # negative topics colors
+
+"#EAEAEA", "darkgray",     # colours of topics not significantly associated
+
+"#EAEAEA", "darkgreen"     # positve topics colors)
+
+
+
+ For 2-dimensional plots of topics, the color scheme should contain 18 colours (9 gradient pairs), such as:
+ 
+ c(
+  "lightgray", "#398CF9",     # quadrant 1 (upper left corner)
+  
+  "lightgray", "#60A1F7",     # quadrant 2 
+  
+  "lightgray", "#5dc688",     # quadrant 3 (upper right corner)
+  
+  "lightgray", "#e07f6a",     # quadrant 4
+  
+  "lightgray", "darkgray",     # quadrant 5 (middle square)
+  
+  "lightgray", "#40DD52",     # quadrant 6 
+  
+  "lightgray", "#FF0000",     # quadrant 7 (bottom left corner)
+  
+  "lightgray", "#EA7467",     # quadrant 8 
+  
+  "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner)}
 
 \item{scale_size}{(logical) Whether to scale the size of the words.}
 

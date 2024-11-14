@@ -8,8 +8,15 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   
   # No test (i.e., no dimension) 
   data <- dep_wor_data$Worphrase
-  ngrams <- topics::topicsGrams(data = data, top_n = 10, n=3, pmi_threshold = 3)
-  topics::topicsPlot(ngrams = ngrams, figure_format = "png" )
+  ngrams <- topics::topicsGrams(
+    data = data, 
+    top_n = 10, 
+    n = 3, 
+    pmi_threshold = 3)
+  
+  topics::topicsPlot(
+    ngrams = ngrams, 
+    figure_format = "png" )
   
   testthat::expect_true(file.exists("./results/seed_42/wordclouds/ngrams.png"))
   file.remove("./results/seed_42/wordclouds/ngrams.png")
