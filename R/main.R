@@ -1261,6 +1261,9 @@ topicsScatterLegendNew <- function(
          width = width, height = height, units = "in", device = figure_format)
 }
 
+
+
+
 determine_popout_topics <- function(
     filtered_test, 
     num_popout, 
