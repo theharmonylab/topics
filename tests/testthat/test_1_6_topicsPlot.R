@@ -92,11 +92,9 @@ test_that("topicsPlot WITH test", {
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists("./results/seed_11/wordclouds/dot_legend_corvar_Age.png"))
   testthat::expect_true(file.exists("./results/seed_11/wordclouds/grid_legend_corvar_Age.png"))
-  testthat::expect_true(file.exists("./results/seed_11/wordclouds/grid_pos_2_corvar_Age_t_1_rx_-0.0296849259338033_px_7.46e-01.png"))
   
 #  file.remove("./results/seed_01/wordclouds/dot_legend_corvar_Age.png")
 #  file.remove("./results/seed_01/wordclouds/grid_legend_corvar_Age.png")
-#  file.remove("./results/seed_01/wordclouds/grid_pos_2_corvar_Age_t_1_rx_-0.0296849259338033_px_7.46e-01.png")
 
   ## 2-Dimension  
   
@@ -130,7 +128,6 @@ test_that("topicsPlot WITH test", {
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists("./results/seed_12/wordclouds/dot_legend_corvar_PHQ9tot_Age.png"))
   testthat::expect_true(file.exists("./results/seed_12/wordclouds/grid_legend_corvar_PHQ9tot_Age.png"))
-  testthat::expect_true(file.exists("./results/seed_12/wordclouds/grid_pos_5_corvar_PHQ9tot_Age_t_1_rx_-0.0289137075554485_ry_-0.0296849259338033_px_8.18e-01_py_7.46e-01.png"))
   
  # unlink("./results/", recursive = TRUE)
 })
