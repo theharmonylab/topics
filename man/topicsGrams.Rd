@@ -18,7 +18,8 @@ topicsGrams(data, n = 2, sep = " ", top_n = NULL, pmi_threshold = 0)
 \item{pmi_threshold}{(integer) The pmi threshold, if it shall not be used set to 0}
 }
 \value{
-A list containing tibble of the ngrams with the frequency and probability and a tibble containing the relative frequency of the ngrams for each user
+A list containing tibble of the ngrams with the frequency and probability and 
+a tibble containing the relative frequency of the ngrams for each user
 }
 \description{
 The function computes ngrams from a text

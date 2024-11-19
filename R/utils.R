@@ -1,11 +1,5 @@
 
 
-# mallet, the javascript for textmining
-# @param topic_model (list object) LDA topic from textmineR with model$summary (see: https://cran.r-project.org/web/packages/textmineR/vignettes/c_topic_modeling.html)
-
-# rearragne order of column starting with
-# topic_name, p-value, adjusted-p-values, cohen's d or r;  terms ; label1; label2; prevalence; coherence; [the include the rest in any order]
-
 #### func topic testing ####
 # p.adjust https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/p.adjust
 
@@ -15,7 +9,9 @@
 #' @param threshold (integer) The threshold for determine the continous variable
 #' @return boolean value
 #' @noRd
-is_continuous_variable <- function(df, threshold) {
+is_continuous_variable <- function(
+    df, 
+    threshold) {
   
   numbers_unique_values <- length(unique(df[[1]]))
   
@@ -31,9 +27,10 @@ is_continuous_variable <- function(df, threshold) {
 #' @importFrom stats median
 #' @return RObj of the testing result of a single topic
 #' @noRd
-median_split_test_topic_wise <- function(topic_loadings,
-                                         grouping1,
-                                         colname) {
+median_split_test_topic_wise <- function(
+    topic_loadings,
+    grouping1,
+    colname) {
   
   median_grouping <- stats::median(topic_loadings[[grouping1]])
   
@@ -53,9 +50,10 @@ median_split_test_topic_wise <- function(topic_loadings,
 #' @importFrom purrr pmap
 #' @return a named list of testing results
 #' @noRd
-median_split_test_topics <- function(topic_loadings,
-                                     grouping1,
-                                     colnames) {
+median_split_test_topics <- function(
+    topic_loadings,
+    grouping1,
+    colnames) {
   
   results <- purrr::pmap(list(
     list(topic_loadings),
@@ -76,9 +74,10 @@ median_split_test_topics <- function(topic_loadings,
 #' @importFrom dplyr mutate sym
 #' @importFrom stats cor.test
 #' @noRd
-corr_topic_wise <- function(topics_loadings,
-                            grouping1,
-                            colname) {
+corr_topic_wise <- function(
+    topics_loadings,
+    grouping1,
+    colname) {
   
   corr_results <- stats::cor.test(topics_loadings[[grouping1]],
                            topics_loadings[[colname]])
@@ -96,10 +95,11 @@ corr_topic_wise <- function(topics_loadings,
 #' @importFrom stats p.adjust
 #' @return a named list of testing results
 #' @noRd
-topics_corr_grouping <- function(topics_loadings,
-                                 grouping1,
-                                 colnames1,
-                                 method1="bonferroni") {
+topics_corr_grouping <- function(
+    topics_loadings,
+    grouping1,
+    colnames1,
+    method1="bonferroni") {
   
   topics_stats <- purrr::pmap(list(
     list(topics_loadings),
@@ -176,9 +176,11 @@ extract_topic_stats_corr <- function(
 #' @importFrom stats t.test p.adjust
 #' @importFrom effsize cohen.d
 #' @noRd
-topics_t_test_grouping <- function(topics_loadings,
-                                   method1,
-                                   calc_cohen_d = TRUE) {
+topics_t_test_grouping <- function(
+    topics_loadings,
+    method1,
+    calc_cohen_d = TRUE) {
+  
   # Get unique combinations of 'value' column
   combinations <- utils::combn(unique(topics_loadings$value), 
                                2, 
@@ -235,8 +237,9 @@ topics_t_test_grouping <- function(topics_loadings,
 #' @importFrom effsize cohen.d
 #' @return a named list of testing results
 #' @noRd
-extract_topic_stats_cate <- function(topics_stats, 
-                                     cal_cohen_d = TRUE) {
+extract_topic_stats_cate <- function(
+    topics_stats,
+    cal_cohen_d = TRUE) {
   
   # Define a function to extract the required information from a single topic
   extract_single_topic <- function(
@@ -295,11 +298,13 @@ extract_topic_stats_cate <- function(topics_stats,
 
 
 #' The function to sort the output
-#' @param output (tibble) The output from the function extract stats
+#' @param df (tibble) The output from the function extract stats
 #' @importFrom dplyr arrange
 #' @return a sorted tibble
 #' @noRd
-sort_stats_tibble <- function(df) {
+sort_stats_tibble <- function(
+    df) {
+  
   # Check if 'adjusted_p.value' column exists
   if ("adjusted_p.value" %in% colnames(df)) {
     # If it exists, check if it's numeric
@@ -330,14 +335,15 @@ sort_stats_tibble <- function(df) {
 #' @importFrom text textTrainRegression
 #' @importFrom stats  complete.cases sd lm glm as.formula
 #' @noRd
-topic_test <- function(topic_terms,
-                       topics_loadings,
-                       grouping_variable,
-                       control_vars,
-                       test_method = "correlation",
-                       split = "median",
-                       n_min_max = 20,
-                       multiple_comparison = "bonferroni"){
+topic_test <- function(
+    topic_terms,
+    topics_loadings,
+    grouping_variable,
+    control_vars,
+    test_method = "correlation",
+    split = "median",
+    n_min_max = 20,
+    multiple_comparison = "bonferroni"){
 
   colnames(grouping_variable) <- "value"
   topics_groupings <- dplyr::bind_cols(topics_loadings,
@@ -392,10 +398,7 @@ topic_test <- function(topic_terms,
                                  stringsAsFactors = FALSE)
   }
   
-  
 
-  
-  
   if (test_method == "correlation"){
     
       if (TRUE){
@@ -637,8 +640,6 @@ topic_test <- function(topic_terms,
       multi_cores = FALSE # This is FALSE due to CRAN testing and Windows machines.
     )
     
-    # Examine results (t-value, degree of freedom (df), p-value, alternative-hypothesis,
-    # confidence interval, correlation coefficient).
     
     return (trained_model$results)
     
@@ -659,12 +660,13 @@ topic_test <- function(topic_terms,
 #' @importFrom stats setNames
 #' @importFrom mallet mallet.top.words mallet.doc.topics mallet.word.freqs mallet.topic.labels MalletLDA  mallet.import  mallet.topic.words
 #' @noRd
-get_mallet_model <- function(dtm,
-                             num_topics = 20,
-                             num_top_words = 10, 
-                             num_iterations = 1000, 
-                             seed){
-  # still to complete help(Dtm2Docs)
+get_mallet_model <- function(
+    dtm,
+    num_topics = 20,
+    num_top_words = 10, 
+    num_iterations = 1000, 
+    seed){
+  
   docs <- textmineR::Dtm2Docs(dtm)
   
   model <- mallet::MalletLDA(
@@ -823,10 +825,11 @@ get_mallet_model <- function(dtm,
 #' @param mode (string) absolute or relative amount of terms to be removed
 #' @return A list of terms to be removed
 #' @noRd
-get_removal_terms <- function(dtm, 
-                              n, 
-                              type, 
-                              mode="absolute"){
+get_removal_terms <- function(
+    dtm, 
+    n, 
+    type, 
+    mode="absolute"){
   
   term_frequencies <- colSums(as.matrix(dtm))
   df <- data.frame(as.matrix(dtm))
@@ -866,7 +869,11 @@ get_removal_terms <- function(dtm,
 #' @param mode (string) absolute or relative amount of terms to be removed
 #' @return A list of column indices to be removed
 #' @noRd
-get_removal_columns <- function(dtm, n, type, mode="absolute"){
+get_removal_columns <- function(
+    dtm, 
+    n, 
+    type, 
+    mode="absolute"){
   
   terms <- get_removal_terms(dtm, 
                              n, 
@@ -893,8 +900,10 @@ get_removal_columns <- function(dtm, n, type, mode="absolute"){
 #' @return A new tibble with the assigned numbers
 #' @importFrom dplyr mutate
 #' @noRd
-topicsNumAssign_dim2 <- function(topic_loadings_all,
-                                 p_alpha = 0.05, dimNo = 2){
+topicsNumAssign_dim2 <- function(
+    topic_loadings_all,
+    p_alpha = 0.05, 
+    dimNo = 2){
   
   if (dimNo == 1){
     num1 <- 1:3

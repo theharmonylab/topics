@@ -59,8 +59,6 @@ topicsDtm <- function(
     load_dir=NULL,
     threads=1){
   
-
-
   if (!is.null(load_dir)){
     dtms <- readRDS(paste0(load_dir, 
                             "/seed_",
@@ -301,7 +299,8 @@ topicsModel <- function(
 #' @importFrom tibble as_tibble tibble
 #' @importFrom stringr str_count
 #' @importFrom dplyr mutate row_number filter 
-#' @return A list containing tibble of the ngrams with the frequency and probability and a tibble containing the relative frequency of the ngrams for each user
+#' @return A list containing tibble of the ngrams with the frequency and probability and 
+#' a tibble containing the relative frequency of the ngrams for each user
 #' @export
 topicsGrams <- function(
     data, 
@@ -435,10 +434,9 @@ topicsPreds <- function(
     seed=42,
     save_dir="./results",
     load_dir=NULL){
-  set.seed(seed)
-  
 
-  
+  set.seed(seed)
+
   if (!is.null(load_dir)){
     preds <- readRDS(paste0(load_dir, "/seed_", seed, "/preds.rds"))
   } else {
@@ -456,7 +454,6 @@ topicsPreds <- function(
     }
     
     pred_ids <- as.character(1:length(data))
-    #pred_ids <- as.character(data[[id_col]])
     
     new_instances <- compatible_instances(ids=pred_ids,
                                           texts=pred_text,
@@ -476,10 +473,6 @@ topicsPreds <- function(
   
     preds <- tibble::as_tibble(preds)
     colnames(preds) <- paste("t_", 1:ncol(preds), sep="")
-    #if (!is.null(group_var)){
-    #  categories <- data[group_var]
-    #  preds <- bind_cols(categories, preds)
-    #}
     preds <- preds %>% tibble::tibble()
     
   }
@@ -506,7 +499,8 @@ topicsPreds <- function(
 #' @param pred_var (string) The variable to be predicted (only needed for regression or correlation)
 #' @param group_var (string) The variable to group by (only needed for t-test)
 #' @param control_vars (vector) The control variables
-#' @param test_method (string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"
+#' @param test_method (string) The test method to use, either "correlation","t-test", 
+#' "linear_regression","logistic_regression", or "ridge_regression"
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
 #' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
 #' @param seed (integer) The seed to set for reproducibility
@@ -615,10 +609,25 @@ topicsTest1 <- function(
                  estimate = test$estimate,
                  t_value = test$statistic,
                  p_value = test$p.value)
-      readr::write_csv(data.frame(df), paste0(save_dir, "/seed_", seed, "/textTrain_regression.csv"))
+      readr::write_csv(data.frame(df), paste0(save_dir, 
+                                              "/seed_", 
+                                              seed, 
+                                              "/textTrain_regression.csv"))
     }
-    saveRDS(test, paste0(save_dir, "/seed_", seed, "/test_",test_method, "_", pred_var,".rds"))
-    print(paste0("The test object of ", pred_var, " was saved in: ", save_dir,"/seed_", seed, "/test_",test_method, "_", pred_var,".rds"))
+    saveRDS(test, paste0(save_dir, 
+                         "/seed_", 
+                         seed, 
+                         "/test_",
+                         test_method, 
+                         "_", pred_var,".rds"))
+    
+    print(paste0("The test object of ", 
+                 pred_var, 
+                 " was saved in: ", 
+                 save_dir,"/seed_", 
+                 seed, "/test_",
+                 test_method, "_", 
+                 pred_var,".rds"))
   }
   
   return(list(test = test, 
@@ -800,8 +809,27 @@ topicsTest <- function(
 
 #### topicsScatterLegendOriginal ####
 
-#' The function to create lda wordclouds
-#' @return nothing is returned, the dot cloud legend is saved in the save_dir
+#' @param bivariate_color_codes A vector of color codes specifying colors for 
+#' different categories in the scatter plot. 
+#' Default: c("#398CF9", "#60A1F7", "#5dc688", "#e07f6a", "#EAEAEA", "#40DD52", "#FF0000", "#EA7467", "#85DB8E").
+#' @param filtered_test A data frame containing the input data for the scatter plot. 
+#' Must include columns like `color_categories` and other variables used in the function.
+#' @param num_popout The number of topics to "pop out" in each category. Default: 1.
+#'  Can be a single integer (applies to all categories) or a vector for specific categories.
+#' @param way_popout_topics The method for selecting pop-out topics. Options: "mean", "max_y", or "max_x". Default: "mean".
+#' @param user_spec_topics A vector of user-specified topics to highlight in the scatter plot. Default: NULL.
+#' @param allow_topic_num_legend Logical; if TRUE, displays topic numbers in the legend. Default: FALSE.
+#' @param y_axes_1 Specifies axis alignment for the scatter legend. Options: 1 (x-axis) or 2 (y-axis). Default: 2.
+#' @param cor_var A string used for naming the correlation variable in labels or file names. Default: "".
+#' @param label_x_name Label for the x-axis in the scatter plot. Default: "x".
+#' @param label_y_name Label for the y-axis in the scatter plot. Default: "y".
+#' @param save_dir Directory where the scatter legend plot will be saved. Default: "./results".
+#' @param figure_format File format for the saved scatter plot. Examples: "svg", "png", "pdf". Default: "svg".
+#' @param scatter_popout_dot_size Size of the dots for pop-out topics in the scatter legend. Default: 15.
+#' @param scatter_bg_dot_size Size of the dots for background topics in the scatter legend. Default: 9.
+#' @param width Width of the saved scatter plot in inches. Default: 10.
+#' @param height Height of the saved scatter plot in inches. Default: 8.
+#' @param seed Seed for reproducibility, ensuring consistent plot generation. Default: 42.
 #' @importFrom ggplot2 ggplot geom_point scale_color_manual labs theme_minimal theme element_blank
 #' @importFrom rlang sym !!
 #' @importFrom dplyr select filter mutate anti_join summarise pull group_by group_modify ungroup
@@ -849,10 +877,6 @@ topicsScatterLegendOriginal <- function(
                           aes(x = !!rlang::sym(x_column), y = 1,
                               color = as.factor(.data[[color_column]])),
                           size = scatter_popout_dot_size, alpha = 0.8) +
-      # ggplot2::geom_text(data = plot_only3,
-      #                    aes(x = !!sym(x_column),
-      #                        label = topic_number),
-      #                    size = 8, hjust = 0.5,vjust = 0.5, color = "black") + 
       ggplot2::scale_color_manual(values = bivariate_color_codes) +
       ggplot2::labs(x = label_x_name, y = "", color = '') +
       ggplot2::theme_minimal() + 
@@ -1165,9 +1189,27 @@ topicsScatterLegendOriginal <- function(
 
 
 #### topicsScatterLegendNew ####
-
-#' The function to create lda wordclouds
-#' @return nothing is returned, the dot cloud legend is saved in the save_dir
+#' @param bivariate_color_codes A vector of color codes specifying colors for 
+#' different categories in the scatter plot. 
+#' Default: c("#398CF9", "#60A1F7", "#5dc688", "#e07f6a", "#EAEAEA", "#40DD52", "#FF0000", "#EA7467", "#85DB8E").
+#' @param filtered_test A data frame containing the input data for the scatter plot. 
+#' Must include columns like `color_categories` and other variables used in the function.
+#' @param num_popout The number of topics to "pop out" in each category. Default: 1.
+#'  Can be a single integer (applies to all categories) or a vector for specific categories.
+#' @param way_popout_topics The method for selecting pop-out topics. Options: "mean", "max_y", or "max_x". Default: "mean".
+#' @param user_spec_topics A vector of user-specified topics to highlight in the scatter plot. Default: NULL.
+#' @param allow_topic_num_legend Logical; if TRUE, displays topic numbers in the legend. Default: FALSE.
+#' @param y_axes_1 Specifies axis alignment for the scatter legend. Options: 1 (x-axis) or 2 (y-axis). Default: 2.
+#' @param cor_var A string used for naming the correlation variable in labels or file names. Default: "".
+#' @param label_x_name Label for the x-axis in the scatter plot. Default: "x".
+#' @param label_y_name Label for the y-axis in the scatter plot. Default: "y".
+#' @param save_dir Directory where the scatter legend plot will be saved. Default: "./results".
+#' @param figure_format File format for the saved scatter plot. Examples: "svg", "png", "pdf". Default: "svg".
+#' @param scatter_popout_dot_size Size of the dots for pop-out topics in the scatter legend. Default: 15.
+#' @param scatter_bg_dot_size Size of the dots for background topics in the scatter legend. Default: 9.
+#' @param width Width of the saved scatter plot in inches. Default: 10.
+#' @param height Height of the saved scatter plot in inches. Default: 8.
+#' @param seed Seed for reproducibility, ensuring consistent plot generation. Default: 42.
 #' @importFrom ggplot2 ggplot geom_point scale_color_manual labs theme_minimal theme element_blank
 #' @importFrom rlang sym !!
 #' @importFrom dplyr select filter mutate anti_join summarise pull group_by group_modify ungroup
@@ -1262,8 +1304,19 @@ topicsScatterLegendNew <- function(
 }
 
 
-
-
+#' @param filtered_test A data frame containing the input data, which must include a `color_categories` column. 
+#' This column specifies the categories used for determining pop-out topics.
+#' @param num_popout A vector of exactly 9 integers, specifying the number of topics to "pop out" for each 
+#' category in a 3x3 grid. Each value corresponds to a category in `color_categories`.
+#' @param way_popout_topics A string specifying the criterion for selecting pop-out topics. Options:
+#'.  - "max_y": Selects topics with the maximum absolute values in the `y_col` column.
+#'.  - "max_x": Selects topics with the maximum absolute values in the `x_col` column.
+#'.  - "mean": Selects topics based on the highest mean of the absolute values of `x_col` and `y_col`.
+#' @param y_col A string specifying the name of the column to be used for `y` values in the selection process.
+#' This column must exist in `filtered_test`.
+#' @param x_col A string specifying the name of the column to be used for `x` values in the selection process.
+#' This column must exist in `filtered_test`.
+#' @noRd
 determine_popout_topics <- function(
     filtered_test, 
     num_popout, 
@@ -1343,6 +1396,21 @@ determine_popout_topics <- function(
 }
 
 
+#' @param popout A data frame containing the data points to be highlighted ("pop-out") in the scatter plot.
+#' @param background A data frame containing the background data points for the scatter plot.
+#'                   Can be empty if no background points are needed.
+#' @param bivariate_color_codes A vector of color codes used to map `color_col` categories to colors in the scatter plot.
+#' @param x_col A string specifying the name of the column to be used for the x-axis in the scatter plot.
+#'              Must exist in both `popout` and `background` data frames.
+#' @param y_col A string specifying the name of the column to be used for the y-axis in the scatter plot. Default: NULL.
+#'              If NULL, a constant value of 1 is used for all points.
+#' @param label_x_name Label for the x-axis in the scatter plot.
+#' @param label_y_name Label for the y-axis in the scatter plot.
+#' @param color_col A string specifying the name of the column in `popout` and `background` used to map categories to colors.
+#' @param popout_size The size of the dots for pop-out points in the scatter plot.
+#' @param bg_size The size of the dots for background points in the scatter plot.
+#' @param allow_topic_num_legend Logical; if TRUE, adds topic numbers as text labels to the pop-out points. Default: FALSE.
+#' @noRd
 generate_scatter_plot <- function(
     popout,
     background,
@@ -1438,10 +1506,24 @@ generate_scatter_plot <- function(
 }
 
 #### topicsGridLegend ####
-
-
-#' Creates the legend for the plot.
-#' @return A legend plot saved that can be combined with the plot object.
+#' @param bivariate_color_codes A vector of color codes specifying the colors for the 3x3 grid legend.
+#'                              Default: c("#398CF9", "#60A1F7", "#5dc688", "#e07f6a", "#EAEAEA", "#40DD52", "#FF0000", "#EA7467", "#85DB8E").
+#' @param filtered_test A data frame containing the filtered topic data. Must include a `color_categories` column.
+#' @param cor_var A string used to name the correlation variable, included in the file name of the saved plot. Default: "".
+#' @param save_dir Directory where the grid legend plot will be saved. Default: "./results".
+#' @param figure_format File format for the saved grid legend plot. Examples: "svg", "png", "pdf". Default: "svg".
+#' @param seed Seed for reproducibility, ensuring consistent plot generation. Default: 42.
+#' @param width Width of the saved grid legend in inches. Default: 10.
+#' @param height Height of the saved grid legend in inches. Default: 8.
+#' @param y_axes_1 Specifies axis alignment for the grid legend. Options: 2 (2D grid with x and y axes) or 1 (1D legend for x-axis only). Default: 2.
+#' @param legend_title Title text for the grid legend. Must be provided by the user.
+#' @param legend_title_size Font size of the legend title text. Must be provided by the user.
+#' @param titles_color Color of the title and axis labels in the legend. Must be provided by the user.
+#' @param legend_x_axes_label Label for the x-axis of the grid legend. Must be provided by the user.
+#' @param legend_y_axes_label Label for the y-axis of the grid legend. Must be provided by the user.
+#' @param topic_data_all A data frame containing all topic data, including the `color_categories` column used for counting topics.
+#' @param legend_number_color Color of the numeric annotations in the grid legend. Must be provided by the user.
+#' @param legend_number_size Font size of the numeric annotations in the grid legend. Must be provided by the user.' @return A legend plot saved that can be combined with the plot object.
 #' @importFrom tidyr gather separate
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 geom_tile ggtitle scale_fill_identity labs theme_void annotate theme element_text coord_fixed ggsave
@@ -1654,8 +1736,7 @@ topicsPlot1 <- function(
     seed = 42){
   
    df_list = NULL
-  # summary = NULL
-  # test_type = NULL
+
   if (!is.null(model)){
     model <- name_cols_with_vocab(model, "phi", model$vocabulary)
     df_list <- create_topic_words_dfs(model$summary)
@@ -1825,33 +1906,6 @@ colour_settings <- function(
   
   return(codes)
 }
-
-model = NULL
-ngrams = NULL
-test = NULL
-p_threshold = 0.05 # Why is this set here since the test[[3]]$test$color_categories is determnied in in testTopics test?
-color_scheme = "default"
-scale_size = FALSE
-plot_topics_idx = NULL
-save_dir = "./results"
-figure_format = "svg"
-width = 10
-height = 8
-max_size = 10
-seed = 42
-scatter_legend_dot_size = 15
-scatter_legend_bg_dot_size = 9
-scatter_legend_n = c(1,1,1,1,0,1,1,1,1)
-scatter_legend_method = c("mean")
-scatter_legend_specified_topics = NULL
-scatter_legend_topic_n = FALSE
-grid_legend_title = "legend_title"
-grid_legend_title_size = 5
-grid_legend_title_color = 'black'
-grid_legend_x_axes_label = "legend_x_axes_label"
-grid_legend_y_axes_label = "legend_y_axes_label"
-grid_legend_number_color = 'black'
-grid_legend_number_size = 5
 
 #' Plot word clouds
 #' 

@@ -4,9 +4,11 @@
 #' @param vocabulary (list) the vocabulary to be used
 #' @return (list) the modified model
 #' @noRd
-name_cols_with_vocab <- function(model, 
-                                 col, 
-                                 vocabulary){
+name_cols_with_vocab <- function(
+    model, 
+    col, 
+    vocabulary){
+  
   colnames(model[[col]]) <- as.character(unlist(vocabulary))
   return(model)
 }
@@ -17,10 +19,12 @@ name_cols_with_vocab <- function(model,
 #' @param model_type (string) "mallet"
 #' @return list of data.frames with assigned phi
 #' @noRd
-assign_phi_to_words <- function(df_list, 
-                                phi, 
-                                model_type){
-  #view(phi)
+assign_phi_to_words <- function(
+    df_list, 
+    phi, 
+    model_type){
+  
+  
   for (i in 1:length(df_list)){
     df <- data.frame(df_list[[i]]) 
     colnames(df)[1] <- "Word"
@@ -44,9 +48,12 @@ assign_phi_to_words <- function(df_list,
 #' @return a list of dataframes for each topic filled with top terms
 #' @importFrom stats complete.cases
 #' @noRd
-create_topic_words_dfs <- function(summary){
+create_topic_words_dfs <- function(
+    summary){
+  
   n <- nrow(summary)
   df_list <- vector("list", n)
+  
   # Create and name the dataframes in a loop
   for (i in 1:n) {
     word_vector <- unlist(strsplit(summary[paste0("t_",i),]$top_terms, ", "))

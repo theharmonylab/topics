@@ -8,11 +8,13 @@ test_that("topicsTest performs linear regression correctly", {
   dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
   model <- topics::topicsModel(dtm = dtm)
   preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
-  result <- topics::topicsTest(model = model, 
-                       preds = preds, 
-                       data = dep_wor_data, 
-                       pred_var_x = "Age", 
-                       test_method = "linear_regression")
+  result <- topics::topicsTest(
+    model = model,
+    preds = preds,
+    data = dep_wor_data,
+    pred_var_x = "Age",
+    test_method = "linear_regression"
+    )
   
   testthat::expect_true(is.list(result[[1]]))
   testthat::expect_equal(result[[1]]$test_method, "linear_regression")
@@ -23,7 +25,7 @@ test_that("topicsTest performs linear regression correctly", {
   unlink("./results/", recursive = TRUE)  
 })
 
-#data <- dep_wor_data
+#data <- dep_wor_data 
 #dtm <- topicsDtm(data = data$Deptext)
 #model <- topicsModel(dtm = dtm)
 #preds <- topicsPreds(model = model, data = data$Deptext)
