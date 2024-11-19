@@ -36,6 +36,7 @@ A list of the model, the top terms, the labels, the coherence, and the prevalenc
 The function to create and train and an LDA model.
 }
 \examples{
+\donttest{
 # Create LDA Topic Model 
 dtm <- topicsDtm(data = dep_wor_data$Depphrase)
 model <- topicsModel(dtm = dtm, # output of topicsDtm()
@@ -48,5 +49,5 @@ model <- topicsModel(dtm = dtm, # output of topicsDtm()
 # Load precomputed LDA Topic Model
 model <- topicsModel(load_dir = "./results",
                      seed = 42)
-
+}
 }

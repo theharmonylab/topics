@@ -54,6 +54,7 @@ the document term matrix
 The function for creating a document term matrix
 }
 \examples{
+\donttest{
 # Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
 dtm <- topicsDtm(data = dep_wor_data$Depphrase,
                  removal_mode = "frequency",
@@ -75,5 +76,5 @@ dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 # Load precomputed Dtm from directory
 dtm <- topicsDtm(load_dir = "./results",
                  seed = 42)
-
+}
 }

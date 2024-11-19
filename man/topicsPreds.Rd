@@ -33,6 +33,7 @@ A tibble of the predictions
 The function to predict the topics of a new document with the trained model.
 }
 \examples{
+\donttest{
 # Predict topics for new data with the trained model
 dtm <- topicsDtm(data = dep_wor_data$Depphrase)
 model <- topicsModel(dtm = dtm, # output of topicsDtm()
@@ -43,5 +44,5 @@ model <- topicsModel(dtm = dtm, # output of topicsDtm()
                      save_dir = "./results")
 preds <- topicsPreds(model = model, # output of topicsModel()
                      data = dep_wor_data$Depphrase)
-
+}
 }

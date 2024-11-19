@@ -1,6 +1,6 @@
 Package: topics
 Type: Package
-Title: Creating and Significance Testing LDA Topics
+Title: Creating and Significance Testing Language Features for Visualisation
 Version: 0.10.2
 Authors@R: c(
     person("Leon", "Ackermann", 

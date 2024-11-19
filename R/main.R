@@ -16,6 +16,7 @@
 #' @param threads (integer) the number of threads to use
 #' @return the document term matrix
 #' @examples
+#' \donttest{
 #' # Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 #'                  removal_mode = "frequency",
@@ -37,7 +38,7 @@
 #' # Load precomputed Dtm from directory
 #' dtm <- topicsDtm(load_dir = "./results",
 #'                  seed = 42)
-#'
+#' }
 #' @importFrom textmineR CreateDtm 
 #' @importFrom stats complete.cases
 #' @importFrom stopwords stopwords
@@ -211,6 +212,7 @@ topicsDtm <- function(
 #' @param load_dir (string) The directory to load the model from, if NULL, the model will not be loaded
 #' @return A list of the model, the top terms, the labels, the coherence, and the prevalence
 #' @examples
+#' \donttest{
 #' # Create LDA Topic Model 
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
 #' model <- topicsModel(dtm = dtm, # output of topicsDtm()
@@ -223,7 +225,7 @@ topicsDtm <- function(
 #' # Load precomputed LDA Topic Model
 #' model <- topicsModel(load_dir = "./results",
 #'                      seed = 42)
-#'
+#' }
 #' @export
 topicsModel <- function(
     dtm,
@@ -413,6 +415,7 @@ topicsGrams <- function(
 #' @param load_dir (string) The directory to load the model from, if NULL, the predictions will not be loaded
 #' @return A tibble of the predictions
 #' @examples
+#' \donttest{
 #' # Predict topics for new data with the trained model
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
 #' model <- topicsModel(dtm = dtm, # output of topicsDtm()
@@ -423,7 +426,7 @@ topicsGrams <- function(
 #'                      save_dir = "./results")
 #' preds <- topicsPreds(model = model, # output of topicsModel()
 #'                      data = dep_wor_data$Depphrase)
-#'
+#' }
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>%
 #' @export
@@ -656,21 +659,26 @@ topicsTest1 <- function(
 #' @param save_dir (string) The directory to save the test, if NULL, the test will not be saved
 #' @return A list of the test results, test method, and prediction variable
 #' @examples
+#' \donttest{
 #' # Test the topic document distribution in respect to a variable
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
+#' 
 #' model <- topicsModel(dtm = dtm, # output of topicsDtm()
 #'                      num_topics = 20,
 #'                      num_top_words = 10,
 #'                      num_iterations = 1000,
 #'                      seed = 42,
 #'                      save_dir = "./results")
+#'                      
 #' preds <- topicsPreds(model = model, # output of topicsModel()
 #'                      data = dep_wor_data$Depphrase)
+#'                      
 #' test <- topicsTest(model = model, # output of topicsModel()
 #'                    data=dep_wor_data,
 #'                    preds = preds, # output of topicsPreds()
 #'                    test_method = "linear_regression",
 #'                    pred_var_x = "Age")
+#' }                 
 #' @importFrom dplyr bind_cols
 #' @importFrom readr write_csv
 #' @export

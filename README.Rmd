@@ -26,7 +26,7 @@ state and is being actively
 developed](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing-1)
-[![codecov](https://codecov.io/gh/theharmonylab/topics/graph/badge.svg?token=7ZTWBNIVCX)](https://codecov.io/gh/theharmonylab/topics)
+[![codecov](https://codecov.io/gh/theharmonylab/topics/graph/badge.svg?token=7ZTWBNIVCX)](https://app.codecov.io/gh/theharmonylab/topics/)
 <!-- [![CRAN  Downloads](https://cranlogs.r-pkg.org/badges/grand-total/text)](https://CRAN.R-project.org/package=text)
 
 [![codecov](https://codecov.io/gh/oscarkjell/text/branch/master/graph/badge.svg?)](https://app.codecov.io/gh/oscarkjell/text)
@@ -39,10 +39,10 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-blue.svg)](htt
 
 When using this package, please cite:
 
-Ackermann L., Zhuojun G. & Kjell O.N.E. (2024). An R-package for visualizing text in topics. https://github.com/theharmonylab/topics. DOI:https://zenodo.org/doi/10.5281/zenodo.11165377. 
+Ackermann L., Zhuojun G. & Kjell O.N.E. (2024). An R-package for visualizing text in topics. https://github.com/theharmonylab/topics. DOI:https://zenodo.org/records/11165378. 
 
 ## Installation
-The topics package uses <b>JAVA</b>, which is another programming language. Please start by downloading and installing it from https://www.java.com/en/download/manual.jsp. Then open R and run:
+The topics package uses <b>JAVA</b>, which is another programming language. Please start by downloading and installing it from https://www.java.com/en/download/. Then open R and run:
 
 ``` r
 install.packages("devtools")
