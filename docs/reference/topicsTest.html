@@ -149,9 +149,11 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Test the topic document distribution in respect to a variable</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Test the topic document distribution in respect to a variable</span></span></span>
 <span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu"><a href="topicsDtm.html">topicsDtm</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The Dtm, data, and summary are saved in./results/seed_42/dtms.rds"</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="topicsModel.html">topicsModel</a></span><span class="op">(</span>dtm <span class="op">=</span> <span class="va">dtm</span>, <span class="co"># output of topicsDtm()</span></span></span>
 <span class="r-in"><span>                     num_topics <span class="op">=</span> <span class="fl">20</span>,</span></span>
 <span class="r-in"><span>                     num_top_words <span class="op">=</span> <span class="fl">10</span>,</span></span>
@@ -159,9 +161,11 @@
 <span class="r-in"><span>                     seed <span class="op">=</span> <span class="fl">42</span>,</span></span>
 <span class="r-in"><span>                     save_dir <span class="op">=</span> <span class="st">"./results"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The Model is saved in./results/seed_42/model.rds"</span>
+<span class="r-in"><span>                     </span></span>
 <span class="r-in"><span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="topicsPreds.html">topicsPreds</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>, <span class="co"># output of topicsModel()</span></span></span>
 <span class="r-in"><span>                     data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Predictions are saved in./results/seed_42/preds.rds"</span>
+<span class="r-in"><span>                     </span></span>
 <span class="r-in"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu">topicsTest</span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>, <span class="co"># output of topicsModel()</span></span></span>
 <span class="r-in"><span>                   data<span class="op">=</span><span class="va">dep_wor_data</span>,</span></span>
 <span class="r-in"><span>                   preds <span class="op">=</span> <span class="va">preds</span>, <span class="co"># output of topicsPreds()</span></span></span>
@@ -170,6 +174,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Directory already exists.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The test object of Age was saved in: ./results/seed_42/test_linear_regression_Age.rds"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The parameter pred_var_y is not set! Output 1 dimensional results."</span>
+<span class="r-in"><span><span class="co"># }                 </span></span></span>
 </code></pre></div>
     </div>
   </div>

@@ -2,5 +2,6 @@
 ^\.Rproj\.user$
 ^\.github$
 ^\_pkgdown\.yml$
-^\docs$
-^\codecov\.yml$
+^docs(/|$)
+^codecov\.yml$
+^README\.Rmd$
