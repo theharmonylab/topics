@@ -3,7 +3,7 @@ pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
   extended_installation_guide: extended_installation_guide.html
-last_built: 2024-11-14T12:36Z
+last_built: 2024-11-19T09:16Z
 urls:
   reference: https://r-topics.org/reference
   article: https://r-topics.org/articles

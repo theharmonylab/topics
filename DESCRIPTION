@@ -1,15 +1,18 @@
 Package: topics
 Type: Package
 Title: Creating and Significance Testing LDA Topics
-Version: 0.10.1
+Version: 0.10.2
 Authors@R: c(
-    person("Leon", "Ackermann", , "leonmax.ackermann@gmail.com", role = c("aut", "cre"), 
+    person("Leon", "Ackermann", 
+    role = c("aut"), 
       comment = c(ORCID = "0009-0008-8583-8748"),
     ),
-        person("Zhuojun", "Gu", role = c("aut"), 
+        person("Zhuojun", "Gu", 
+        role = c("aut"), 
       comment = c(ORCID = "0009-0000-1610-4830"),
     ),
-    person("Oscar", "Kjell", role = c("aut"), 
+    person("Oscar", "Kjell", , "oscar.kjell@psy.lu.se", 
+    role = c("aut", "cre"), 
       comment = c(ORCID = "0000-0002-2728-6278"))
     )
 Description: The topics package implements Differential Language Analysis with statistical tests and offers various language visualization techniques for n-grams and topics. It also supports the text package. For more information, visit https://r-topics.org/ and https://www.r-text.org/.
