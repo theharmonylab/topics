@@ -10,6 +10,8 @@ library(topics) # Replace with your package name
 
 test_that('Case 1: Save all topics without the topic grid plot by using the topicsPlot function.',{
   
+  testthat::skip_on_cran()
+  
 #  if (dir.exists("./results")){
 #    unlink("./results", recursive = TRUE)
 #  }
@@ -52,6 +54,8 @@ test_that('Case 1: Save all topics without the topic grid plot by using the topi
 
 test_that('Case 2: Save the scatter legend and grid legend for topic grids using default parameters.',{
   
+  testthat::skip_on_cran()
+  
 #  if (dir.exists("./results")){
 #    unlink("./results", recursive = TRUE)
 #  }
@@ -89,6 +93,8 @@ test_that('Case 2: Save the scatter legend and grid legend for topic grids using
 })
 
 test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall return nothing.',{
+  
+  testthat::skip_on_cran()
   
 #  if (dir.exists("./results")){
 #    unlink("./results", recursive = TRUE)
@@ -138,6 +144,8 @@ test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall retu
 
 test_that('Case 4: Set dimension = 2 for successfully saving the legends.',{
   
+  testthat::skip_on_cran()
+  
 #  if (dir.exists("./results")){
 #    unlink("./results", recursive = TRUE)
 #  }
@@ -181,6 +189,8 @@ test_that('Case 4: Set dimension = 2 for successfully saving the legends.',{
 })
 
 test_that('Case 5: Change the popout method to "max_x", and "max_y".',{
+  
+  testthat::skip_on_cran()
   
 #  if (dir.exists("./results")){
 #    unlink("./results", recursive = TRUE)
@@ -242,6 +252,8 @@ test_that('Case 5: Change the popout method to "max_x", and "max_y".',{
 
 test_that('Case 6: Manually set the topic numbers to save topics',{
   
+  testthat::skip_on_cran()
+  
 #  if (dir.exists("./results")){
 #    unlink("./results", recursive = TRUE)
 #  }
@@ -298,6 +310,8 @@ test_that('Case 6: Manually set the topic numbers to save topics',{
 
 test_that('Case 7: Set dimension = 1 for successfully saving the legends',{
 
+  testthat::skip_on_cran()
+  
 #  if (dir.exists("./results")){
 #    unlink("./results", recursive = TRUE)
 #  }

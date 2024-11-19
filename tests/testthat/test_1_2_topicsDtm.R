@@ -10,6 +10,8 @@ options(mc.cores = 1)
 
 test_that("topicsDtm creates a DTM correctly with default parameters", {
 
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Deptext
   result <- topics::topicsDtm(data = data)
   
@@ -23,6 +25,9 @@ test_that("topicsDtm creates a DTM correctly with default parameters", {
 })
 
 test_that("topicsDtm handles different ngram_window values", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Deptext
   result <- topics::topicsDtm(data, ngram_window = c(1, 2), threads=1)
   
@@ -32,6 +37,9 @@ test_that("topicsDtm handles different ngram_window values", {
 })
 
 test_that("topicsDtm removes a specified word", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Deptext
   result <- topics::topicsDtm(data, removalword = "test")
   
@@ -42,6 +50,9 @@ test_that("topicsDtm removes a specified word", {
 })
 
 test_that("topicsDtm handles different occurrence rates", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Deptext
   result <-topics:: topicsDtm(data, occ_rate = 1)
   
@@ -51,6 +62,9 @@ test_that("topicsDtm handles different occurrence rates", {
 })
 
 test_that("topicsDtm handles different removal modes", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Deptext
   result <- topics::topicsDtm(data, removal_mode = "absolute")
   
@@ -60,6 +74,9 @@ test_that("topicsDtm handles different removal modes", {
 })
 
 test_that("topicsDtm handles different split proportions", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Deptext
   result <- topics::topicsDtm(data, split = 0.5)
   
@@ -71,6 +88,9 @@ test_that("topicsDtm handles different split proportions", {
 })
 
 test_that("topicsDtm handles different seeds for reproducibility", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Deptext
   result1 <- topics::topicsDtm(data, seed = 123)
   result2 <- topics::topicsDtm(data, seed = 123)
@@ -80,6 +100,9 @@ test_that("topicsDtm handles different seeds for reproducibility", {
 })
 
 test_that("topicsDtm saves results to the specified directory", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Deptext
   save_dir <- tempfile()
   result <- topics::topicsDtm(data, save_dir = save_dir)
@@ -89,6 +112,9 @@ test_that("topicsDtm saves results to the specified directory", {
 })
 
 test_that("topicsDtm loads results from the specified directory", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Deptext
   result1 <- topics::topicsDtm(data)
   result2 <- topics::topicsDtm(load_dir = "./results")
@@ -98,6 +124,9 @@ test_that("topicsDtm loads results from the specified directory", {
 })
 
 test_that("topicsDtm removes least frequent words based on a threshold", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Deptext
   result <- topics::topicsDtm(data, removal_mode = "frequency", removal_rate_least = 2)
   
@@ -107,6 +136,9 @@ test_that("topicsDtm removes least frequent words based on a threshold", {
 })
 
 test_that("topicsDtm removes most frequent words based on a threshold", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Deptext
   result <- topics::topicsDtm(data, removal_mode = "frequency", removal_rate_most = 50)
   
@@ -116,7 +148,8 @@ test_that("topicsDtm removes most frequent words based on a threshold", {
 })
 
 #test_that("topicsDtm removes least frequent words in percent mode", {
-#  data <- dep_wor_data$Wortext
+#  testthat::skip_on_cran()
+# data <- dep_wor_data$Wortext
 #  result <- topicsDtm(data, removal_mode = "percent", removal_rate_least = 50)
   
 #  testthat::expect_true(is.list(result))
@@ -124,6 +157,9 @@ test_that("topicsDtm removes most frequent words based on a threshold", {
 #})
 
 test_that("topicsDtm removes most frequent words in percent mode", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Deptext[1:20]
   result <- topics::topicsDtm(data, 
                               removal_mode = "percentage", 

@@ -6,6 +6,9 @@ library(tibble)
 
 
 test_that("topicsPreds generates predictions with default parameters", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Depphrase
   dtm <- topics::topicsDtm(data = data)
   model <- topics::topicsModel(dtm = dtm)
@@ -21,6 +24,9 @@ test_that("topicsPreds generates predictions with default parameters", {
 })
 
 test_that("topicsPreds handles different numbers of iterations", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Depphrase
   dtm <- topics::topicsDtm(data = data)
   model <- topics::topicsModel(dtm = dtm)
@@ -32,6 +38,9 @@ test_that("topicsPreds handles different numbers of iterations", {
 })
 
 test_that("topicsPreds sets seed for reproducibility", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Depphrase
   dtm <- topics::topicsDtm(data = data)
   model <- topics::topicsModel(dtm = dtm)
@@ -44,6 +53,9 @@ test_that("topicsPreds sets seed for reproducibility", {
 })
 
 test_that("topicsPreds saves predictions to the specified directory", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Depphrase
   dtm <- topics::topicsDtm(data = data)
   model <- topics::topicsModel(dtm = dtm)
@@ -57,6 +69,9 @@ test_that("topicsPreds saves predictions to the specified directory", {
 
 
 test_that("topicsPreds loads predictions from the specified directory", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Depphrase
   dtm <- topics::topicsDtm(data = data)
   model <- topics::topicsModel(dtm = dtm)

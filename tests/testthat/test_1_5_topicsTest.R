@@ -5,6 +5,9 @@ library(topics)  # Replace with your packAge name
 library(dplyr)
 
 test_that("topicsTest performs linear regression correctly", {
+  
+  testthat::skip_on_cran()
+  
   dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
   model <- topics::topicsModel(dtm = dtm)
   preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
@@ -25,37 +28,11 @@ test_that("topicsTest performs linear regression correctly", {
   unlink("./results/", recursive = TRUE)  
 })
 
-#data <- dep_wor_data 
-#dtm <- topicsDtm(data = data$Deptext)
-#model <- topicsModel(dtm = dtm)
-#preds <- topicsPreds(model = model, data = data$Deptext)
-#result <- topicsTest(model = model, 
-#                     preds = preds, 
-#                     data = data, 
-#                     group_var = "gender", 
-#                     test_method = "t-test")
-#
-#result
-
-#test_that("topicsTest performs t-test correctly", {
-#  data <- dep_wor_data
-#  dtm <- topicsDtm(data = data$Deptext)
-#  model <- topicsModel(dtm = dtm)
-#  preds <- topicsPreds(model = model, data = data$Deptext)
-#  result <- topicsTest(model = model, 
-#                       preds = preds, 
-#                       data = data, 
-#                       group_var_x = "gender", 
-#                       test_method = "t-test")
-#  
-#  testthat::expect_true(is.list(result))
-#  testthat::expect_equal(result[[1]]$test_method, "t-test")
-#  testthat::expect_true(any(grepl("topic_name", names(result[[1]]$test$male_female))))
-#  testthat::expect_true(any(grepl("cohen_d", names(result[[1]]$test$male_female))))
-#  testthat::expect_true(any(grepl("p.value", names(result[[1]]$test$male_female))))
-#})
 
 test_that("topicsTest handles missing pred_var for non t-test methods", {
+  
+  testthat::skip_on_cran()
+  
   dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
   model <- topics::topicsModel(dtm = dtm)
   preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
@@ -69,6 +46,9 @@ test_that("topicsTest handles missing pred_var for non t-test methods", {
 })
 
 test_that("topicsTest adjusts p-values for multiple comparisons", {
+  
+  testthat::skip_on_cran()
+  
   dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
   model <- topics::topicsModel(dtm = dtm)
   preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
@@ -85,6 +65,9 @@ test_that("topicsTest adjusts p-values for multiple comparisons", {
 
 
 test_that("topicsTest saves test results to the specified directory", {
+  
+  testthat::skip_on_cran()
+  
   dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
   model <- topics::topicsModel(dtm = dtm)
   preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
@@ -98,7 +81,8 @@ test_that("topicsTest saves test results to the specified directory", {
 
 # this feature is currently not working
 #test_that("topicsTest loads test results from the specified directory", {
-#  data <- dep_wor_data
+#  testthat::skip_on_cran()
+# data <- dep_wor_data
 #  dtm <- topicsDtm(data = data$Deptext)
 #  model <- topicsModel(dtm = dtm)
 #  preds <- topicsPreds(model = model, data = data$Deptext)
@@ -120,6 +104,9 @@ test_that("topicsTest saves test results to the specified directory", {
 
 
 test_that("topicsTest performs logistic regression correctly", {
+  
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data %>% dplyr::mutate(Gender = ifelse(Gender == "male", 1, 0))
   data
   dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
@@ -137,7 +124,8 @@ test_that("topicsTest performs logistic regression correctly", {
 })
 
 #test_that("topicsTest performs ridge regression correctly", {
-#  dtm <- topicsDtm(data = data$Deptext)
+#  testthat::skip_on_cran()
+# dtm <- topicsDtm(data = data$Deptext)
 #  model <- topicsModel(dtm = dtm)
 #  preds <- topicsPreds(model = model, data = data$Deptext)
 #  

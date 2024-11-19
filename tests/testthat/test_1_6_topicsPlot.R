@@ -6,6 +6,9 @@ library(topics)  # Replace with your package name
 
 test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   
+  testthat::skip_on_cran()
+  
+  
   # No test (i.e., no dimension) 
   data <- dep_wor_data$Worphrase
   ngrams <- topics::topicsGrams(
@@ -52,6 +55,9 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
 
 
 test_that("topicsPlot WITHOUT test and preds", {
+  
+  testthat::skip_on_cran()
+  
   dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
   model <- topics::topicsModel(dtm = dtm)
   
@@ -70,6 +76,8 @@ test_that("topicsPlot WITHOUT test and preds", {
 
 
 test_that("topicsPlot WITH test", {
+  
+  testthat::skip_on_cran()
   
   ## 1-Dimension
   dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)

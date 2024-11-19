@@ -6,6 +6,8 @@ library(tibble)
 
 test_that("topicsGrams with default parameters", {
 
+  testthat::skip_on_cran()
+  
   data <- dep_wor_data$Worphrase
   
   ngrams <- topics::topicsGrams(
@@ -20,6 +22,7 @@ test_that("topicsGrams with default parameters", {
 
 test_that("topicsGrams with default parameters", {
   
+  testthat::skip_on_cran()
   data <- dep_wor_data$Worphrase
   
   ngrams <- topics::topicsGrams(
