@@ -2,7 +2,7 @@
 #' @noRd
 .onAttach <- function(libname, pkgname) {
   if (!grepl(x = R.Version()$arch, pattern = "64")) {
-    warning("The topic package requires running R on a 64-bit systems.")
+    warning("\n\nThe topic package requires running R on a 64-bit systems.")
   }
 
   topics_version_nr <- tryCatch(
@@ -18,17 +18,17 @@
 
   packageStartupMessage(
     colourise(
-      paste("This is topics: your text’s new best friend. ",
+      paste("This is topics: your text’s new best friend",
             topics_version_nr,
         ".\n",
         sep = ""
       ),
       fg = "blue", bg = NULL
     ),
-    colourise("Please note that the topics pacakge requires you to download and install java from www.java.com. \n",
+    colourise("Please note that the topics package requires you to download and install java from www.java.com. \n",
       fg = "brown", bg = NULL
     ),
-    colourise("\n\nFor more information about the topics package see www.r-topics.org and www.r-text.org.",
+    colourise("\nFor more information about the topics package see www.r-topics.org and www.r-text.org.",
       fg = "green", bg = NULL
     )
   )
