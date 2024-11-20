@@ -18,18 +18,18 @@
 
   packageStartupMessage(
     colourise(
-      paste("This is topics",
+      paste("This is topics: your text’s new best friend. ",
             topics_version_nr,
         ".\n",
         sep = ""
       ),
       fg = "blue", bg = NULL
     ),
-    colourise("Please send us feedback based on your experience.",
-      fg = "green", bg = NULL
+    colourise("Please note that the topics pacakge requires you to download and install java from www.java.com. \n",
+      fg = "brown", bg = NULL
     ),
-    colourise("\n\nFor more information about the topics package see www.r-text.org.",
-      fg = "purple", bg = NULL
+    colourise("\n\nFor more information about the topics package see www.r-topics.org and www.r-text.org.",
+      fg = "green", bg = NULL
     )
   )
 }

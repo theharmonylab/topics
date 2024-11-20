@@ -5,7 +5,7 @@ bibentry(
    title = "An R-package for visualizing text in topics.",
    author = as.person("Leon Ackermann [aut], Zhuojun Gu [aut], Oscar Kjell [aut]"),
    journal = " ",
-   doi = "/10.5281/zenodo.11165378",
+   doi = "10.5281/zenodo.11165378",
    year = 2024,
    url = "https://github.com/theharmonylab/topics")
 

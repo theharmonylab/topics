@@ -698,30 +698,34 @@ topicsTest <- function(
     load_dir = NULL,
     save_dir = "./results"){
   
+  
+  #### Warnings and instructions ####
   if(!is.null(pred_var_x) | !is.null(pred_var_x)){
     if(grepl("_", pred_var_x) | grepl("_", pred_var_x)){
       stop("Please note that at the moment pred_var_x or pred_var_y 
     cannot have an an underscore '_' in the name. Please rename the variable in the dataset.")
     }
   }
- 
-  
-  if (!is.null(load_dir)){
-    test <- topicsTest1(load_dir = load_dir)
-  }
   
   if (length(control_vars) > 0){
     for (control_var in control_vars){
       if (!is.numeric(data[[control_var]])){
-        cat(paste0("The control variable '",control_var, "' should be numeric!\n"))
+        cat(paste0("The control variable '", control_var, "' should be numeric!\n"))
         return (NULL)
     }}
   }
+  
   if (is.null(pred_var_x) & is.null(group_var)){
     print('Please input the pred_var_x or group_var!')
     return (NULL)
   }
   
+  #### Load test ####
+  if (!is.null(load_dir)){
+    test <- topicsTest1(load_dir = load_dir)
+  }
+  
+  #### N-grams testing (rearranging the data so that it fits the topics pipeline) ####
   if (!is.null(ngrams)){
     
     freq_per_user <- tibble(ngrams$freq_per_user[,2:ncol(ngrams$freq_per_user)])
@@ -732,6 +736,9 @@ topicsTest <- function(
                           top_terms = ngrams$ngrams)
     model$summary <- data.frame(model$summary)
   }
+  
+  
+  #### Testing the elements (i.e., ngrams or topics) ####
   pred_vars_all <- c(pred_var_x, pred_var_y)
   
   # TBD: Change the column of pred_var into the numeric variable.
@@ -764,6 +771,8 @@ topicsTest <- function(
       load_dir = load_dir,
       save_dir = save_dir
     )
+    
+    # Sorting output when not using ridge regression
     if (test_method != "ridge_regression") {
       
     
@@ -789,11 +798,14 @@ topicsTest <- function(
     bak1 <- colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)]
     colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)] <- c('x_plotted', 'adjusted_p_values.x',
                                                              'y_plotted', 'adjusted_p_values.y')
+    
+    #### This should be moved to topicsPlot <-  we do not want to set colour categories in the test
     topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 2)
     colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)] <- bak1
+    
   }else{
+    
     if (test_method == "linear_regression" | test_method == "logistic_regression"){
-      
     
       print('The parameter pred_var_y is not set! Output 1 dimensional results.')
       topic_loadings_all[[2]] <- list()
@@ -804,8 +816,11 @@ topicsTest <- function(
       
       bak1 <- colnames(topic_loadings_all[[3]]$test)[c(3,6)]
       colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- c('x_plotted', 'adjusted_p_values.x')
+      
+      #### This should be moved to topicsPlot <-  we do not want to set colour categories in the test
       topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 1)
       colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- bak1
+      
     } else if (test_method == "ridge_regression"){
       topic_loadings_all[[1]] <- topic_loading
     }
@@ -2065,8 +2080,10 @@ topicsPlot <- function(
       return (NULL)
   }
  
-  #### Making the plots ####
   
+  ### Setting colour categories: Selecting elements to plot according to the p_threshold
+  
+  #### Making the plots ####
   #### Plotting topics from model without at test | ####
   #### Plotting n-grams WIHT test | ### 
   #### Plotting n-grams WIHTOUT test | ####

@@ -106,7 +106,7 @@ create_plots <- function(
     max_size = 10,
     seed = 42){
   
-  # this code plots the wordclouds in respect to the statistical test topic
+  # this code plots the wordclouds in respect to the statistical test
   # For test, topics list and summary
   if(!is.null(test) & !is.null(df_list) & !is.null(summary)){
   
@@ -171,7 +171,6 @@ create_plots <- function(
       if (scale_size==TRUE){
         prevalence <- summary[paste0("t_",i),]$prevalence
       }
-      #  print(paste0("prevalence: ", prevalence))
       
       
       # this will ensure that all topics are plotted
@@ -181,7 +180,7 @@ create_plots <- function(
         }
       }
       
-      #print(is.null(p_threshold))
+      #
       if (!is.nan(p_adjusted) & p_adjusted < p_threshold){
         
         
@@ -199,8 +198,7 @@ create_plots <- function(
           max_size <- max_size
           y <- ""
         }
-        #view(df_list[[i]]) help(ggplot) library(ggplot2)
-        #help(geom_text_wordcloud)
+
         if (grid == ""){ .
           plot <- ggplot2::ggplot(df_list[[as.numeric(sub(".*_", "", i))]], 
                                   ggplot2::aes(label = Word, 

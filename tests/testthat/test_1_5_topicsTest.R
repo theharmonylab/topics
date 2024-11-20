@@ -11,6 +11,7 @@ test_that("topicsTest performs linear regression correctly", {
   dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
   model <- topics::topicsModel(dtm = dtm)
   preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
+  
   result <- topics::topicsTest(
     model = model,
     preds = preds,
