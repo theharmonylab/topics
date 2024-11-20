@@ -18,7 +18,7 @@
 
   packageStartupMessage(
     colourise(
-      paste("This is topics: your text’s new best friend",
+      paste("\nThis is topics: your text's new best friend",
             topics_version_nr,
         ".\n",
         sep = ""
