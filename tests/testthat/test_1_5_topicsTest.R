@@ -7,17 +7,28 @@ library(dplyr)
 test_that("topicsTest performs linear regression correctly", {
   
   testthat::skip_on_cran()
+  save_dir_temp <- tempfile()
   
-  dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
-  model <- topics::topicsModel(dtm = dtm)
-  preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
+  dtm <- topics::topicsDtm(
+    data = dep_wor_data$Deptext, 
+    save_dir = save_dir_temp)
+  
+  model <- topics::topicsModel(
+    dtm = dtm, 
+    save_dir = save_dir_temp)
+  
+  preds <- topics::topicsPreds(
+    model = model, 
+    data = dep_wor_data$Deptext, 
+    save_dir = save_dir_temp)
   
   result <- topics::topicsTest(
     model = model,
     preds = preds,
     data = dep_wor_data,
     pred_var_x = "Age",
-    test_method = "linear_regression"
+    test_method = "linear_regression", 
+    save_dir = save_dir_temp
     )
   
   testthat::expect_true(is.list(result[[1]]))
@@ -26,57 +37,100 @@ test_that("topicsTest performs linear regression correctly", {
   testthat::expect_true(any(grepl("t", names(result[[1]]$test))))
   testthat::expect_true(any(grepl("p", names(result[[1]]$test))))
   testthat::expect_true(any(grepl("p_adjusted", names(result[[1]]$test))))
-  unlink("./results/", recursive = TRUE)  
+    
 })
 
 
 test_that("topicsTest handles missing pred_var for non t-test methods", {
   
   testthat::skip_on_cran()
+  save_dir_temp <- tempfile()
   
-  dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
-  model <- topics::topicsModel(dtm = dtm)
-  preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
+  dtm <- topics::topicsDtm(
+    data = dep_wor_data$Deptext, 
+    save_dir = save_dir_temp)
   
-  result <- topics::topicsTest(model = model, 
-                               preds = preds, 
-                               data = dep_wor_data, 
-                               pred_var_x = NULL)
+  model <- topics::topicsModel(
+    dtm = dtm, 
+    save_dir = save_dir_temp)
+  
+  preds <- topics::topicsPreds(
+    model = model, 
+    data = dep_wor_data$Deptext, 
+    save_dir = save_dir_temp)
+  
+  result <- topics::topicsTest(
+    model = model, 
+    preds = preds, 
+    data = dep_wor_data, 
+    pred_var_x = NULL, 
+    save_dir = save_dir_temp)
+  
   testthat::expect_null(result)
-  unlink("./results/", recursive = TRUE)
+  
 })
 
 test_that("topicsTest adjusts p-values for multiple comparisons", {
   
   testthat::skip_on_cran()
+  save_dir_temp <- tempfile()
   
-  dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
-  model <- topics::topicsModel(dtm = dtm)
-  preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
+  dtm <- topics::topicsDtm(
+    data = dep_wor_data$Deptext, 
+    save_dir = save_dir_temp)
   
-  result <- topics::topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age", p_adjust_method = "bonferroni")
+  model <- topics::topicsModel(
+    dtm = dtm, 
+    save_dir = save_dir_temp)
   
-  expect_true(is.list(result))
-  expect_equal(result[[1]]$test_method, "linear_regression")
-  expect_true(any(grepl("Age.estimate", names(result[[1]]$test))))
-  expect_true(any(grepl("Age.t", names(result[[1]]$test))))
-  expect_true(any(grepl("Age.p", names(result[[1]]$test))))
-  unlink("./results/", recursive = TRUE)
+  preds <- topics::topicsPreds(
+    model = model, 
+    data = dep_wor_data$Deptext, 
+    save_dir = save_dir_temp)
+  
+  result <- topics::topicsTest(
+    model = model, 
+    preds = preds, 
+    data = dep_wor_data, 
+    pred_var_x = "Age", 
+    p_adjust_method = "bonferroni", 
+    save_dir = save_dir_temp)
+  
+  testthat::expect_true(is.list(result))
+  testthat::expect_equal(result[[1]]$test_method, "linear_regression")
+  testthat::expect_true(any(grepl("Age.estimate", names(result[[1]]$test))))
+  testthat::expect_true(any(grepl("Age.t", names(result[[1]]$test))))
+  testthat::expect_true(any(grepl("Age.p", names(result[[1]]$test))))
+  
 })
 
 
 test_that("topicsTest saves test results to the specified directory", {
   
   testthat::skip_on_cran()
+  save_dir_temp <- tempfile()
+  dtm <- topics::topicsDtm(
+    data = dep_wor_data$Deptext, 
+    save_dir = save_dir_temp)
   
-  dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
-  model <- topics::topicsModel(dtm = dtm)
-  preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
+  model <- topics::topicsModel(
+    dtm = dtm, 
+    save_dir = save_dir_temp)
   
-  result <- topics::topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age")
+  preds <- topics::topicsPreds(
+    model = model, 
+    data = dep_wor_data$Deptext, 
+    save_dir = save_dir_temp)
   
-  testthat::expect_true(file.exists(file.path("results", "seed_42", paste0("test_", result[[1]]$test_method, "_Age.rds"))))
-  unlink("./results/", recursive = TRUE)
+  result <- topics::topicsTest(
+    model = model, 
+    preds = preds, 
+    data = dep_wor_data, 
+    pred_var_x = "Age", 
+    save_dir = save_dir_temp)
+  
+  testthat::expect_true(file.exists(file.path(save_dir_temp, "seed_42", paste0("test_", result[[1]]$test_method, "_Age.rds"))))
+  
   })
 
 
@@ -107,21 +161,37 @@ test_that("topicsTest saves test results to the specified directory", {
 test_that("topicsTest performs logistic regression correctly", {
   
   testthat::skip_on_cran()
+  save_dir_temp <- tempfile()
   
-  data <- dep_wor_data %>% dplyr::mutate(Gender = ifelse(Gender == "male", 1, 0))
-  data
-  dtm <- topics::topicsDtm(data = dep_wor_data$Deptext)
-  model <- topics::topicsModel(dtm = dtm)
-  preds <- topics::topicsPreds(model = model, data = dep_wor_data$Deptext)
+#  data <- dep_wor_data %>% dplyr::mutate(Gender = ifelse(Gender == "male", 1, 0))
   
-  result <- topics::topicsTest(model = model, preds = preds, data = dep_wor_data, pred_var_x = "Age", test_method = "logistic_regression")
+  dtm <- topics::topicsDtm(
+    data = dep_wor_data$Deptext, 
+    save_dir = save_dir_temp) 
   
-  expect_true(is.list(result[[1]]))
-  expect_equal(result[[1]]$test_method, "logistic_regression")
-  expect_true(any(grepl("estimate", names(result[[1]]$test))))
-  expect_true(any(grepl(".t", names(result[[1]]$test))))
-  expect_true(any(grepl(".p", names(result[[1]]$test))))
-  unlink("./results/", recursive = TRUE)
+  model <- topics::topicsModel(
+    dtm = dtm, 
+    save_dir = save_dir_temp)
+  
+  preds <- topics::topicsPreds(
+    model = model, 
+    data = dep_wor_data$Deptext, 
+    save_dir = save_dir_temp)
+  
+  result <- topics::topicsTest(
+    model = model, 
+    preds = preds, 
+    data = dep_wor_data, 
+    pred_var_x = "Age", 
+    test_method = "logistic_regression", 
+    save_dir = save_dir_temp)
+  
+  testthat::expect_true(is.list(result[[1]]))
+  testthat::expect_equal(result[[1]]$test_method, "logistic_regression")
+  testthat::expect_true(any(grepl("estimate", names(result[[1]]$test))))
+  testthat::expect_true(any(grepl(".t", names(result[[1]]$test))))
+  testthat::expect_true(any(grepl(".p", names(result[[1]]$test))))
+ 
 })
 
 #test_that("topicsTest performs ridge regression correctly", {

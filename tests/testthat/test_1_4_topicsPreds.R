@@ -8,80 +8,76 @@ library(tibble)
 test_that("topicsPreds generates predictions with default parameters", {
   
   testthat::skip_on_cran()
+  save_dir_temp <- tempfile()
   
-  data <- dep_wor_data$Depphrase
-  dtm <- topics::topicsDtm(data = data)
-  model <- topics::topicsModel(dtm = dtm)
+  dtm <- topics::topicsDtm(
+    data = dep_wor_data$Depphrase, 
+    save_dir = save_dir_temp)
   
-  result <- topics::topicsPreds(model = model, data = data)
+  model <- topics::topicsModel(
+    dtm = dtm, 
+    save_dir = save_dir_temp)
+  
+  result <- topics::topicsPreds(
+    model = model, 
+    data = dep_wor_data$Depphrase, 
+    save_dir = save_dir_temp)
   
   testthat::expect_true(is_tibble(result))
   testthat::expect_equal(result$t_1[[1]], 0.006824058, tolerance = 0.00001)
-  testthat::expect_equal(nrow(result), length(data))
+  testthat::expect_equal(nrow(result), length(dep_wor_data$Depphrase))
   testthat::expect_equal(ncol(result), 20)  # Assuming 5 topics
-  unlink("./results/", recursive = TRUE)
   
-})
-
-test_that("topicsPreds handles different numbers of iterations", {
   
-  testthat::skip_on_cran()
-  
-  data <- dep_wor_data$Depphrase
-  dtm <- topics::topicsDtm(data = data)
-  model <- topics::topicsModel(dtm = dtm)
-  result <- topics::topicsPreds(model, data, num_iterations = 200)
+  # topicsPreds handles different numbers of iterations
+  result <- topics::topicsPreds(
+    model, 
+    data = dep_wor_data$Depphrase, 
+    num_iterations = 200, 
+    save_dir = save_dir_temp)
   
   testthat::expect_true(is_tibble(result))
-  testthat::expect_equal(nrow(result), length(data))
-  unlink("./results/", recursive = TRUE)
-})
-
-test_that("topicsPreds sets seed for reproducibility", {
+  testthat::expect_equal(nrow(result), length(dep_wor_data$Depphrase))
   
-  testthat::skip_on_cran()
+  # topicsPreds sets seed for reproducibility
+  result1 <- topics::topicsPreds(
+    model, 
+    data = dep_wor_data$Depphrase, 
+    seed = 123, 
+    save_dir = save_dir_temp)
   
-  data <- dep_wor_data$Depphrase
-  dtm <- topics::topicsDtm(data = data)
-  model <- topics::topicsModel(dtm = dtm)
-  
-  result1 <- topics::topicsPreds(model, data, seed = 123)
-  result2 <- topics::topicsPreds(model, data, seed = 123)
+  result2 <- topics::topicsPreds(
+    model, 
+    data = dep_wor_data$Depphrase, 
+    seed = 123, 
+    save_dir = save_dir_temp)
   
   testthat::expect_equal(result1, result2)
-  unlink("./results/", recursive = TRUE)
-})
-
-test_that("topicsPreds saves predictions to the specified directory", {
   
-  testthat::skip_on_cran()
   
-  data <- dep_wor_data$Depphrase
-  dtm <- topics::topicsDtm(data = data)
-  model <- topics::topicsModel(dtm = dtm)
-  save_dir <- tempfile()
+  # topicsPreds saves predictions to the specified directory
   
-  result <- topics::topicsPreds(model, data)
+  result <- topics::topicsPreds(
+    model, 
+    data = dep_wor_data$Depphrase, 
+    save_dir = save_dir_temp)
   
-  testthat::expect_true(file.exists(file.path("results", "seed_42", "preds.rds")))
-  unlink("./results/", recursive = TRUE)
-})
-
-
-test_that("topicsPreds loads predictions from the specified directory", {
+  testthat::expect_true(file.exists(file.path(save_dir_temp, "seed_42", "preds.rds")))
   
-  testthat::skip_on_cran()
+  # "topicsPreds loads predictions from the specified directory"
+  topics::topicsPreds(
+    model, 
+    data = dep_wor_data$Depphrase, 
+    save_dir = save_dir_temp)
   
-  data <- dep_wor_data$Depphrase
-  dtm <- topics::topicsDtm(data = data)
-  model <- topics::topicsModel(dtm = dtm)
-  # Load predictions
-  topics::topicsPreds(model, data)
-  result <- topics::topicsPreds(load_dir = "./results")
+  result <- topics::topicsPreds(
+    save_dir = NULL, 
+    load_dir = save_dir_temp)
   
   testthat::expect_true(is_tibble(result))
-  testthat::expect_equal(nrow(result), length(data))
+  testthat::expect_equal(nrow(result), length(dep_wor_data$Depphrase))
   testthat::expect_equal(ncol(result), 20)  # Assuming 5 topics
-  unlink("./results/", recursive = TRUE)
+  
 })
+
 

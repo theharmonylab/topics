@@ -529,8 +529,6 @@ topic_test <- function(
     } 
     
     if (test_method == "logistic_regression"){
-      #print(control_variables[1])
-      #print(z_lda_topics[1])
       for (topic in z_lda_topics){
         
         multi_models[[paste0("t_", topic)]] <- stats::glm(paste0("z_",control_variables[1], " ~ ", topic), data = preds)

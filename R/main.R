@@ -10,7 +10,7 @@
 #' @param removal_rate_least (integer) the rate of least frequent words to be removed, functionality depends on removal_mode
 #' @param split (float) the proportion of the data to be used for training
 #' @param seed (integer) the random seed for reproducibility
-#' @param save_dir (string) the directory to save the results, default is "./results", if NULL, no results are saved
+#' @param save_dir (string) the directory to save the results, if NULL, no results are saved.
 #' @param load_dir (string) the directory to load from.
 #' @param occ_rate (integer) the rate of occurence of a word to be removed
 #' @param threads (integer) the number of threads to use
@@ -56,8 +56,8 @@ topicsDtm <- function(
     removal_rate_least=0,
     split=1,
     seed=42L,
-    save_dir="./results",
-    load_dir=NULL,
+    save_dir,
+    load_dir = NULL,
     threads=1){
   
   if (!is.null(load_dir)){
@@ -240,7 +240,7 @@ topicsModel <- function(
     num_top_words = 10,
     num_iterations = 1000,
     seed = 42,
-    save_dir = "./results",
+    save_dir,
     load_dir = NULL){
 
   
@@ -447,7 +447,7 @@ topicsPreds <- function(
     data, # data vector to infer distribution for
     num_iterations=100, # only needed if load_dir==NULL,
     seed=42,
-    save_dir="./results",
+    save_dir,
     load_dir=NULL){
 
   set.seed(seed)
@@ -542,7 +542,7 @@ topicsTest1 <- function(
     p_adjust_method = "fdr",
     seed=42,
     load_dir=NULL,
-    save_dir="./results"){
+    save_dir){
   
   if (!is.null(load_dir)){
     test_path <- paste0(load_dir, "/seed_", seed, "/test.rds")
@@ -733,7 +733,7 @@ topicsTest <- function(
     p_adjust_method = "fdr",
     seed = 42,
     load_dir = NULL,
-    save_dir = "./results"){
+    save_dir){
   
   
   #### Warnings and instructions ####
@@ -920,7 +920,7 @@ topicsScatterLegendOriginal <- function(
     cor_var = "",
     label_x_name = "x",
     label_y_name = "y",
-    save_dir = "./results",
+    save_dir,
     figure_format = "svg",
     scatter_popout_dot_size = 15,
     scatter_bg_dot_size = 9,
@@ -1321,7 +1321,7 @@ topicsScatterLegendNew <- function(
     cor_var = "", 
     label_x_name = "x", 
     label_y_name = "y", 
-    save_dir = "./results", 
+    save_dir, 
     figure_format = "svg",
     scatter_popout_dot_size = 15, 
     scatter_bg_dot_size = 9, 
@@ -1466,16 +1466,16 @@ determine_popout_topics <- function(
       # Handle each `way_popout_topics` criterion
       if (n_pop > 0) {
         if (way_popout_topics == "max_y") {
-          slice_max(.x, order_by = abs(!!sym(y_col)), n = n_pop, with_ties = FALSE)
+          dplyr::slice_max(.x, order_by = abs(!!sym(y_col)), n = n_pop, with_ties = FALSE)
         } else if (way_popout_topics == "max_x") {
-          slice_max(.x, order_by = abs(!!sym(x_col)), n = n_pop, with_ties = FALSE)
+          dplyr::slice_max(.x, order_by = abs(!!sym(x_col)), n = n_pop, with_ties = FALSE)
         } else if (way_popout_topics == "mean") {
           .x %>%
-            mutate(mean_value = rowMeans(cbind(
+            dplyr::mutate(mean_value = rowMeans(cbind(
               abs(!!sym(x_col)), 
               abs(!!sym(y_col))
             ))) %>%
-            slice_max(order_by = mean_value, n = n_pop, with_ties = FALSE)
+            dplyr::slice_max(order_by = mean_value, n = n_pop, with_ties = FALSE)
         } else {
           stop("Invalid `way_popout_topics`. Supported values are 'max_y', 'max_x', or 'mean'.")
         }
@@ -1483,7 +1483,7 @@ determine_popout_topics <- function(
         .x[0, ]  # Return empty tibble for categories with 0 `n_pop`
       }
     }) %>%
-    ungroup()
+    dplyr::ungroup()
 }
 
 
@@ -1626,7 +1626,7 @@ topicsGridLegend <- function(
       "#FF0000", "#EA7467", "#85DB8E"),
     filtered_test,
     cor_var = "",
-    save_dir = "./results",
+    save_dir,
     figure_format = 'svg',
     seed = 42,
     width = 10, 
@@ -1819,7 +1819,7 @@ topicsPlot1 <- function(
     scale_size = FALSE,
     plot_topics_idx = NULL,
     p_threshold = 0.05,
-    save_dir = "./results",
+    save_dir,
     figure_format = "svg",
     width = 10, 
     height = 8,
@@ -2091,7 +2091,7 @@ topicsPlot <- function(
     color_scheme = "default",
     scale_size = FALSE,
     plot_topics_idx = NULL,
-    save_dir = "./results",
+    save_dir,
     figure_format = "svg",
     width = 10, 
     height = 8,

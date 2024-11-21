@@ -18,7 +18,7 @@ topicsTest(
   p_adjust_method = "fdr",
   seed = 42,
   load_dir = NULL,
-  save_dir = "./results"
+  save_dir
 )
 }
 \arguments{

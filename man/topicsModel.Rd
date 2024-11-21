@@ -10,7 +10,7 @@ topicsModel(
   num_top_words = 10,
   num_iterations = 1000,
   seed = 42,
-  save_dir = "./results",
+  save_dir,
   load_dir = NULL
 )
 }

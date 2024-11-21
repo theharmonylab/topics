@@ -79,7 +79,7 @@ create_topic_words_dfs <- function(
 #' @param plot_topics_idx (list) if specified, then only the specified topics are plotted
 #' @param p_threshold (float) set threshold which determines which topics are plotted
 #' @param save_dir (string) save plots in specified directory, if left blank, plots is not saved,
-#' thus save_dir is necessary
+#' thus save_dir is necessary.
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
 #' @param seed (int) seed is needed for saving the plots in the correct directory
 #' @importFrom ggwordcloud geom_text_wordcloud
@@ -99,7 +99,7 @@ create_plots <- function(
     scale_size = FALSE,
     plot_topics_idx = NULL,
     p_threshold = NULL,
-    save_dir = "./results",
+    save_dir,
     figure_format = "svg",
     width = 10,
     height = 8,

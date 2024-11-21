@@ -15,7 +15,7 @@ topicsDtm(
   removal_rate_least = 0,
   split = 1,
   seed = 42L,
-  save_dir = "./results",
+  save_dir,
   load_dir = NULL,
   threads = 1
 )
@@ -41,7 +41,7 @@ topicsDtm(
 
 \item{seed}{(integer) the random seed for reproducibility}
 
-\item{save_dir}{(string) the directory to save the results, default is "./results", if NULL, no results are saved}
+\item{save_dir}{(string) the directory to save the results, if NULL, no results are saved.}
 
 \item{load_dir}{(string) the directory to load from.}
 

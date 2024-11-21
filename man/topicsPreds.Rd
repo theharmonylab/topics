@@ -9,7 +9,7 @@ topicsPreds(
   data,
   num_iterations = 100,
   seed = 42,
-  save_dir = "./results",
+  save_dir,
   load_dir = NULL
 )
 }

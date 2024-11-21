@@ -12,7 +12,7 @@ topicsPlot(
   color_scheme = "default",
   scale_size = FALSE,
   plot_topics_idx = NULL,
-  save_dir = "./results",
+  save_dir,
   figure_format = "svg",
   width = 10,
   height = 8,
