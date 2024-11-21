@@ -1,12 +1,7 @@
-rm(list=ls())
-gc()
-
 library(testthat)
 library(tibble)
 library(dplyr)
-library(topics) # Replace with your package name
-
-
+library(topics)
 
 test_that('Case 1: Save all topics without the topic grid plot by using the topicsPlot function.',{
   

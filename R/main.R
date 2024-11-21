@@ -69,7 +69,9 @@ topicsDtm <- function(
   } else {
     
     if (length(data) == 0){
-      print("The data provided is empty. Please provide a list of text data.")
+      msg <- "The data provided is empty. Please provide a list of text data."
+      message(colourise(msg, "brown"))
+      
       return(NULL)
     }
     
@@ -188,12 +190,17 @@ topicsDtm <- function(
     if (!dir.exists(save_dir)) {
       # Create the directory
       dir.create(save_dir)
-      cat("Directory created successfully.\n")
+      
+      msg <- "Directory created successfully.\n"
+      message(
+        colourise(msg, "green"))
     } 
     if(!dir.exists(paste0(save_dir, "/seed_", seed))){
       dir.create(paste0(save_dir, "/seed_", seed))
     }
-    print(paste0("The Dtm, data, and summary are saved in", save_dir,"/seed_", seed,"/dtms.rds"))
+    msg <- paste0("The Dtm, data, and summary are saved in", save_dir,"/seed_", seed,"/dtms.rds")
+    message(colourise(msg, "green"))
+    
     saveRDS(dtms, paste0(save_dir, "/seed_", seed, "/dtms.rds"))
   }
   
@@ -247,7 +254,8 @@ topicsModel <- function(
     dtm <- dtm$train_dtm
     
     if (length(Matrix::colSums(dtm)) == 0) {
-      print("The document term matrix is empty. Please provide a valid document term matrix.")
+      msg <- "The document term matrix is empty. Please provide a valid document term matrix."
+      message(colourise(msg, "brown"))
       return(NULL)
     }
     
@@ -277,12 +285,17 @@ topicsModel <- function(
     if (!dir.exists(save_dir)) {
       # Create the directory
       dir.create(save_dir)
-      cat("Directory created successfully.\n")
+
+      msg <- "Directory created successfully.\n"
+      message(
+        colourise(msg, "green"))
+      
     } 
     if(!dir.exists(paste0(save_dir, "/seed_", seed))){
       dir.create(paste0(save_dir, "/seed_", seed))
     }
-    print(paste0("The Model is saved in", save_dir,"/seed_", seed,"/model.rds"))
+    msg <- paste0("The Model is saved in", save_dir,"/seed_", seed,"/model.rds")
+    message(colourise(msg, "green"))
     saveRDS(model, paste0(save_dir, "/seed_", seed, "/model.rds"))
   }
   
@@ -397,7 +410,6 @@ topicsGrams <- function(
   # change the ngrams to a single string with "_" as connector
   ngrams$ngrams <- sapply(ngrams$ngrams, function(x) paste(unlist(strsplit(x, " ")), collapse = "_"))
   
-  print(stats)
   return(list(ngrams=as_tibble(ngrams),
               freq_per_user = as_tibble(freq_per_user),
               stats=stats))
@@ -445,7 +457,9 @@ topicsPreds <- function(
   } else {
     
     if (length(data) == 0){
-      print("The data provided is empty. Please provide a list of text data.")
+      msg <- "The data provided is empty. Please provide a list of text data."
+      message(colourise(msg, "brown"))
+      
       return(NULL)
     }
     # create an id column for the data
@@ -463,7 +477,6 @@ topicsPreds <- function(
                                           instances=model$instances)
     
     inf_model <- model$inferencer
-    #print(inf_model)
     preds <- infer_topics(
       inferencer = inf_model,
       #instances = model$instances,
@@ -483,12 +496,17 @@ topicsPreds <- function(
   if (!is.null(save_dir)){
     if (!dir.exists(save_dir)) {
       dir.create(save_dir)
-      cat("Directory created successfully.\n")
+      
+      msg <- "Directory created successfully.\n"
+      message(
+        colourise(msg, "green"))
+      
     } 
     if(!dir.exists(paste0(save_dir, "/seed_", seed))){
       dir.create(paste0(save_dir, "/seed_", seed))
     }
-    print(paste0("Predictions are saved in", save_dir,"/seed_", seed,"/preds.rds"))
+    msg <- paste0("Predictions are saved in", save_dir,"/seed_", seed,"/preds.rds")
+    message(colourise(msg, "green"))
     saveRDS(preds, paste0(save_dir, "/seed_", seed, "/preds.rds"))
   }
   
@@ -529,39 +547,49 @@ topicsTest1 <- function(
   if (!is.null(load_dir)){
     test_path <- paste0(load_dir, "/seed_", seed, "/test.rds")
     if (!file.exists(test_path)) {
-      print(paste0("Test file not found at: ", test_path, ". Exiting function."))
+      msg <- paste0("Test file not found at: ", test_path, ". Exiting function.")
+      message(colourise(msg, "brown"))
       return(NULL)
     }
     test <- readRDS(test_path)
   } else {
     
     if (is.null(pred_var) && test_method != "t-test") {
-      print("Prediction variable is missing. Please input a prediction variable for all test types except t-test.")
+      msg <- "Prediction variable is missing. Please input a prediction variable."
+      message(colourise(msg, "brown"))
       return(NULL)
     }
     
     if (test_method == "t-test" && is.null(group_var)){
-      print("Group variable is missing. Please input a group variable for t-test.")
+      msg <- "Group variable is missing. Please input a group variable"
+      message(colourise(msg, "brown"))
       return(NULL)
     }
     
     if (!is.list(model)){
-      print("Input a model created with topicsModel")
+      msg <- "Input a model created with topicsModel"
+      
+      message(colourise(msg, "brown"))
+      
       return(NULL)
     }
     
     if (length(data) == 0){
-      print("The data provided is empty. Please provide a list of text data.")
+      msg <- "The data provided is empty. Please provide a list of text data."
+      message(colourise(msg, "brown"))
+      
       return(NULL)
     }
     
     if (nrow(preds) == 0){
-      print("The predictions provided are empty. Please provide a list of predictions.")
+      msg <- "The predictions provided are empty. Please provide a list of predictions."
+      message(colourise(msg, "brown"))
       return(NULL)
     }
     
     if (nrow(data) != nrow(preds)){
-      print("The number of data points and predictions do not match. Please provide predictions that were created from the same data.")
+      msg <- "The number of data points and predictions do not match. Please provide predictions that were created from the same data."
+      message(colourise(msg, "brown"))
       return(NULL)
     }
     
@@ -598,9 +626,16 @@ topicsTest1 <- function(
     if (!dir.exists(save_dir)) {
       # Create the directory
       dir.create(save_dir)
-      cat("Directory created successfully.\n")
+      
+      msg <- "Directory created successfully.\n"
+      message(
+        colourise(msg, "green"))
+      
     } else {
-      cat("Directory already exists.\n")
+      
+      msg <- "Directory already exists.\n"
+      message(
+        colourise(msg, "green"))
     }
     
     if(!dir.exists(paste0(save_dir, "/seed_", seed))){
@@ -624,13 +659,15 @@ topicsTest1 <- function(
                          test_method, 
                          "_", pred_var,".rds"))
     
-    print(paste0("The test object of ", 
+    msg <- paste0("The test object of ", 
                  pred_var, 
                  " was saved in: ", 
                  save_dir,"/seed_", 
                  seed, "/test_",
                  test_method, "_", 
-                 pred_var,".rds"))
+                 pred_var,".rds")
+    
+    message(colourise(msg, "green"))
   }
   
   return(list(test = test, 
@@ -710,13 +747,21 @@ topicsTest <- function(
   if (length(control_vars) > 0){
     for (control_var in control_vars){
       if (!is.numeric(data[[control_var]])){
-        cat(paste0("The control variable '", control_var, "' should be numeric!\n"))
+        
+        msg <- paste0("The control variable '", 
+                   control_var, 
+                   "' should be numeric!\n")
+        
+        message(
+          colourise(msg, "brown"))
+        
         return (NULL)
     }}
   }
   
   if (is.null(pred_var_x) & is.null(group_var)){
-    print('Please input the pred_var_x or group_var!')
+    msg <- 'Please input the pred_var_x or group_var!'
+    message(colourise(msg, "brown"))
     return (NULL)
   }
   
@@ -745,12 +790,14 @@ topicsTest <- function(
   # for (pred_var in pred_vars_all){
   #   if (any(grepl(pred_var, colnames(preds)))){
   #     if (!is.numeric(preds[[pred_var]])){
-  #       print(paste0("Change the variable ", pred_var, ' into a numeric variable in the `pred` object.'))
+  #       msg <- paste0("Change the variable ", pred_var, ' into a numeric variable in the `pred` object.')
+  #        message(colourise(msg, "brown"))
   #       return (NULL)
   #     }}
   #   if (any(grepl(pred_var, colnames(data)))){
   #     if (!is.numeric(data[[pred_var]])){
-  #       print(paste0("Change the variable ", pred_var, ' into a numeric variable in the `data` object.'))
+  #       msg <- paste0("Change the variable ", pred_var, ' into a numeric variable in the `data` object.')
+  #        message(colourise(msg, "brown"))
   #       return (NULL)
   #     }}
   # }
@@ -803,11 +850,13 @@ topicsTest <- function(
     topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 2)
     colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)] <- bak1
     
-  }else{
+  } else {
     
     if (test_method == "linear_regression" | test_method == "logistic_regression"){
     
-      print('The parameter pred_var_y is not set! Output 1 dimensional results.')
+      msg <- "The parameter pred_var_y is not set! Output 1 dimensional results."
+      message(colourise(msg, "brown"))
+      
       topic_loadings_all[[2]] <- list()
       topic_loadings_all[[3]] <- list()
       topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]][,1:6]
@@ -879,18 +928,18 @@ topicsScatterLegendOriginal <- function(
     height = 8,
     seed = 42
 ){
-
-  if (y_axes_1 != 2 && y_axes_1 != 1){
-    cat('Error in dim param. It should be either 1 or 2.')
-    return (NULL)
-  }
   
   only_two <- filtered_test %>%
     dplyr::summarise(contains_only_five = all(color_categories %in% 2)) %>%
     dplyr::pull(contains_only_five)
   
   if (only_two && y_axes_1 == 1){
-    cat('There are only non-significant topics. Only generate the scatter legend of these.\n')
+    msg <- "There are only non-significant topics; so only a scatter legend is produced for these topics.\n"
+    
+    message(
+      colourise(msg, "blue"))
+    
+    
     x_column <- names(filtered_test)[3]
     color_column <- names(filtered_test)[ncol(filtered_test)]
     plot_only3 <- dplyr::filter(tibble::as_tibble(filtered_test,.name_repair="minimal"),
@@ -944,7 +993,7 @@ topicsScatterLegendOriginal <- function(
   estimate_col_x <- colnames(filtered_test)[3]
   # User specifies the topics to popout
   if (!only_five && !is.null(user_spec_topics)){
-    cat('User specifies the topis as popout in the scatter legend.\n')
+    
     popout <- filtered_test %>%
       dplyr::filter(topic %in% user_spec_topics)
   }
@@ -962,11 +1011,17 @@ topicsScatterLegendOriginal <- function(
       if (is.na(names(table1)[i])){next} # longer than the list table1 for lacking categories
       if (as.numeric(names(table1)[i]) != i){next} # skip the categories that not existing in the table1
       if (legend_map_num_pop[[i]] > table1[[i]]){
-        cat(paste0('Grid ', as.character(i), ' has only ',
+        msg1 <- paste0('Grid ', as.character(i), ' has only ',
                    table1[[i]], ' popped out topics. Cannot specify ',
                    as.character(legend_map_num_pop[[i]]), 
-                   ' topics in it!\n'))
-        cat('Cannot save the scatter legend!\n')
+                   ' topics in it!\n')
+        msg1 <- "Cannot save the scatter legend!\n"
+        
+        message(
+          colourise(msg1, "brown"))
+        message(
+          colourise(msg2, "brown"))
+        
         return (NULL)
       }
     }
@@ -982,17 +1037,25 @@ topicsScatterLegendOriginal <- function(
       if (is.na(names(table1)[i])){next} # longer than the list table1 for lacking categories
       if (as.numeric(names(table1)[i]) != i){next} # skip the categories that not existing in the table1
       if (legend_map_num_pop[[i]] > table1[[i]]){
-        cat(paste0('Grid ', as.character(i), ' has only ',
-                   table1[[i]], ' popped out topics. Cannot specify ',
-                   as.character(legend_map_num_pop[[i]]), 
-                   ' topics in it!\n'))
-        cat('Cannot save the scatter legend!\n')
+        msg1 <- paste0('Grid ', as.character(i), ' has only ',
+                       table1[[i]], ' popped out topics. Cannot specify ',
+                       as.character(legend_map_num_pop[[i]]), 
+                       ' topics in it!\n')
+        msg1 <- "Cannot save the scatter legend!\n"
+        
+        message(
+          colourise(msg1, "brown"))
+        message(
+          colourise(msg2, "brown"))
         return (NULL)
       }
     }
   }
   if (!only_five && is.null(user_spec_topics) && way_popout_topics == "max_y" && y_axes_1 == 2){
-    cat('Generate popout topics based on "max_y" as the scatter legend.\n')
+    msg <- "Generating emphasised topics based on 'max_y' in the scatter legend.\n"
+    message(
+      colourise(msg, "blue"))
+    
     estimate_col_y <- colnames(filtered_test)[7]
     if (length(num_popout) > 1){
       popout <- filtered_test %>%
@@ -1015,7 +1078,11 @@ topicsScatterLegendOriginal <- function(
     }
   }
   if (!only_five && is.null(user_spec_topics) && way_popout_topics == "mean" && y_axes_1 == 2){
-    cat('Generate popout topics based on max absolute "mean" as the scatter legend.\n')
+    msg <- "Generating the  scatter legend with topics emphasised using max absolute 'mean'. \n"
+    
+    message(
+      colourise(msg, "blue"))
+    
     estimate_col_y <- colnames(filtered_test)[7]
     if (length(num_popout) > 1){
       popout <- filtered_test %>%
@@ -1051,7 +1118,11 @@ topicsScatterLegendOriginal <- function(
     #     dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = num_popout, with_ties = FALSE) %>%
     #     dplyr::ungroup()
     # }else{ # 1dim plot 1 dim
-    cat('Generate popout topics based on "max_x" as the scatter legend in 2 dims legend.\n')
+    msg <- "Generating the  scatter legend with topics emphasised using 'max_x'. \n"
+    
+    message(
+      colourise(msg, "blue"))
+    
     if (length(num_popout) > 1){
       popout <- filtered_test %>%
         dplyr::filter(color_categories != 5) %>%
@@ -1073,7 +1144,12 @@ topicsScatterLegendOriginal <- function(
     }
   }
   if (!only_five && is.null(user_spec_topics) && way_popout_topics == "max_x" && y_axes_1 == 1){
-    cat('Generate popout topics based on "max_x" as the scatter legend in 1 dim legend.\n')
+    
+    msg <- "Generating the scatter legend with topics emphasised using 'max_x' in 1 dimension. \n"
+    
+    message(
+      colourise(msg, "blue"))
+    
     if (length(num_popout) > 1){
       popout <- filtered_test %>%
         dplyr::filter(color_categories != 2) %>%
@@ -1162,9 +1238,6 @@ topicsScatterLegendOriginal <- function(
                                 color_categories == 1 | color_categories == 2 | color_categories == 3 | color_categories == 4 | color_categories == 5 | color_categories == 6)
     plot_only3_bg <- dplyr::filter(tibble::as_tibble(backgr_dots,.name_repair="minimal"),
                                    color_categories == 1 | color_categories == 2 | color_categories == 3 | color_categories == 4 | color_categories == 5 | color_categories == 6)
-    
-    # cat("\n\n\nHere is the 'bivariate_color_codes': \n")
-    # print(bivariate_color_codes)
     
     plot_only3 <- plot_only3 %>%
       dplyr::mutate(topic_number = as.numeric(sub("t_", "", topic)))
@@ -1257,11 +1330,6 @@ topicsScatterLegendNew <- function(
     seed = 42
 ) {
   
-  if (!y_axes_1 %in% c(1, 2)) {
-    cat('Error in dim param. It should be either 1 or 2.')
-    return(NULL)
-  }
-  
   # Determine x, y, and color columns
   x_column <- names(filtered_test)[3]
   y_column <- if (y_axes_1 == 2) names(filtered_test)[7] else NULL
@@ -1277,28 +1345,32 @@ topicsScatterLegendNew <- function(
   only_two <- contains_category(2)  # Non-significant topics
   only_five <- contains_category(5) # Significant topics
   
-  # Logic for handling popout topics
+  # Logic for handling topics to be emphasised in scatter plot
+  # User-specified topics for popout.
   if (!is.null(user_spec_topics)) {
-    cat('User-specified topics for popout.\n')
     popout <- filtered_test %>% filter(topic %in% user_spec_topics)
     backgr_dots <- filtered_test %>% anti_join(popout, by = colnames(filtered_test))
+    
+    # Only non-significant topics. Generating scatter legend.
   } else if (only_two && y_axes_1 == 1) {
-    cat('Only non-significant topics. Generating scatter legend.\n')
     popout <- filtered_test %>% filter(color_categories %in% 1:3)
     backgr_dots <- tibble() # No background dots
+    
+    # Only significant topics. Generating scatter plot.\n
   } else if (only_five && y_axes_1 == 2) {
-    cat('Only significant topics. Generating scatter plot.\n')
     popout <- filtered_test
     backgr_dots <- tibble() # No background dots
+    
+    # Generating scatter plot based on specified popout criteria.\n
   } else {
-    cat('Generating scatter plot based on specified popout criteria.\n')
     popout <- determine_popout_topics(filtered_test, num_popout, way_popout_topics, y_column, x_column)
+    
     # Convert `color_categories` in `popout` back to integer
     popout <- popout %>%
       mutate(color_categories = as.integer(color_categories))
     
     # Perform anti_join
-    backgr_dots <- filtered_test %>% anti_join(popout, by = colnames(filtered_test))
+    backgr_dots <- filtered_test %>% dplyr::anti_join(popout, by = colnames(filtered_test))
   }
   
   # Generate scatter plot
@@ -1376,9 +1448,6 @@ determine_popout_topics <- function(
     stop("No valid `color_categories` in `filtered_test` match `num_popout` mapping.")
   }
   
-  # Debugging: Print valid categories
-  cat("Valid categories:", names(valid_map), "\n")
-  
   # Process each category based on the popout criteria
   filtered_test %>%
     filter(color_categories %in% names(valid_map)) %>%
@@ -1386,10 +1455,9 @@ determine_popout_topics <- function(
     group_modify(~ {
       # Access the category directly from `.y`
       category <- .y$color_categories
-      cat("Processing category:", category, "\n")  # Debugging
       
       if (is.na(category) || category == "") {
-        stop("Unexpected category format or missing value.")
+        warning("Unexpected category format or missing value.")
       }
       
       # Get the number of items to pop out for this category
@@ -2076,7 +2144,8 @@ topicsPlot <- function(
   
   #### Controlling parameter settings and giving instructions #####
   if (!is.vector(scatter_legend_n) || !is.numeric(scatter_legend_n)){
-      cat('The parameter "scatter_legend_n" should be either a numeric vector or a number.\n')
+      msg <- "The parameter 'scatter_legend_n' should be either a numeric vector or a number.\n"
+      message(colourise(msg, "brown"))
       return (NULL)
   }
  
@@ -2238,7 +2307,8 @@ topicsPlot <- function(
             legend_number_color = grid_legend_number_color,
             legend_number_size = grid_legend_number_size
           )
-          print('The grid plot legends are saved in the save_dir.')
+          msg <- "The grid plot legends are saved in the save_dir."
+          message(colourise(msg, "green"))
   }
   
 }

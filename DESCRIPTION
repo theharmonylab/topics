@@ -15,7 +15,7 @@ Authors@R: c(
     role = c("aut", "cre"), 
       comment = c(ORCID = "0000-0002-2728-6278"))
     )
-Description: Implements Differential Language Analysis with statistical tests and offers various language visualization techniques for n-grams and topics. It also supports the text package. For more information, visit <https://r-topics.org/> and <https://www.r-text.org/>.
+Description: Implements differential language analysis with statistical tests and offers various language visualization techniques for n-grams and topics. It also supports the `text` package. For more information, visit <https://r-topics.org/> and <https://www.r-text.org/>.
 License: GPL-3
 URL: https://r-topics.org/
 BugReports: https://github.com/theharmonylab/topics/issues
