@@ -235,7 +235,8 @@ create_plots <- function(
         if (!dir.exists(save_dir)) {
           # Create the directory
           dir.create(save_dir)
-          cat("Directory created successfully.\n")
+          msg <- "Directory created successfully.\n"
+          message(colourise(msg, "green"))
         } 
         if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
           dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
@@ -305,7 +306,8 @@ create_plots <- function(
     if (!dir.exists(save_dir)) {
       # Create the directory
       dir.create(save_dir)
-      cat("Directory created successfully.\n")
+      msg <- "Directory created successfully.\n"
+      message(colourise(msg, "green"))
     } 
     if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
       dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
@@ -341,7 +343,8 @@ create_plots <- function(
       if (!dir.exists(save_dir)) {
         # Create the directory
         dir.create(save_dir)
-        cat("Directory created successfully.\n")
+        msg <- "Directory created successfully.\n"
+        message(colourise(msg, "green"))
       } 
       if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
         dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
@@ -377,14 +380,16 @@ create_plots <- function(
         }
         # test for the fact that all words could be insignificant
         if (nrow(test) == 0){
-          cat("No significant terms found, please increase the p_threshold.\n No wordclouds generated.")
+          msg <- "No significant terms.\n No wordclouds generated."
+          message(colourise(msg, "blue"))
         } else {
           test_positive <- test%>% dplyr::filter(estimate > 0)
           test_negative <- test%>% dplyr::filter(estimate < 0)
           if (!dir.exists(save_dir)) {
             # Create the directory
             dir.create(save_dir)
-            cat("Directory created successfully.\n")
+            msg <- "Directory created successfully.\n"
+            message(colourise(msg, "green"))
           } 
           if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
             dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
