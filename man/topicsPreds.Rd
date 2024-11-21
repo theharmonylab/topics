@@ -35,14 +35,22 @@ The function to predict the topics of a new document with the trained model.
 \examples{
 \donttest{
 # Predict topics for new data with the trained model
-dtm <- topicsDtm(data = dep_wor_data$Depphrase)
+save_dir_temp <- tempfile()
+
+dtm <- topicsDtm(
+data = dep_wor_data$Depphrase, 
+save_dir = save_dir_temp)
+
 model <- topicsModel(dtm = dtm, # output of topicsDtm()
                      num_topics = 20,
                      num_top_words = 10,
                      num_iterations = 1000,
                      seed = 42,
-                     save_dir = "./results")
-preds <- topicsPreds(model = model, # output of topicsModel()
-                     data = dep_wor_data$Depphrase)
+                     save_dir = save_dir_temp)
+                     
+preds <- topicsPreds(
+model = model, # output of topicsModel()
+data = dep_wor_data$Depphrase, 
+save_dir = save_dir_temp)
 }
 }

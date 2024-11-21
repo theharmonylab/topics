@@ -60,22 +60,31 @@ The function to test the lda model for multiple dimensions, e.g., 2.
 \examples{
 \donttest{
 # Test the topic document distribution in respect to a variable
-dtm <- topicsDtm(data = dep_wor_data$Depphrase)
+save_dir_temp <- tempfile()
 
-model <- topicsModel(dtm = dtm, # output of topicsDtm()
-                     num_topics = 20,
-                     num_top_words = 10,
-                     num_iterations = 1000,
-                     seed = 42,
-                     save_dir = "./results")
+dtm <- topicsDtm(
+  data = dep_wor_data$Depphrase, 
+  save_dir =  save_dir_temp)
+
+model <- topicsModel(
+  dtm = dtm, # output of topicsDtm()
+  num_topics = 20,
+  num_top_words = 10,
+  num_iterations = 1000,
+  seed = 42,
+  save_dir = save_dir_temp)
                      
-preds <- topicsPreds(model = model, # output of topicsModel()
-                     data = dep_wor_data$Depphrase)
+preds <- topicsPreds(
+ model = model, # output of topicsModel()
+ data = dep_wor_data$Depphrase,
+ save_dir = save_dir_temp)
                      
-test <- topicsTest(model = model, # output of topicsModel()
-                   data=dep_wor_data,
-                   preds = preds, # output of topicsPreds()
-                   test_method = "linear_regression",
-                   pred_var_x = "Age")
+test <- topicsTest(
+  model = model, # output of topicsModel()
+  data=dep_wor_data,
+  preds = preds, # output of topicsPreds()
+  test_method = "linear_regression",
+  pred_var_x = "Age",
+  save_dir = save_dir_temp)
 }                 
 }

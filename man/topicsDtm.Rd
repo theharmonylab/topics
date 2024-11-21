@@ -55,26 +55,33 @@ The function for creating a document term matrix
 }
 \examples{
 \donttest{
+
 # Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
+save_dir_temp <- tempfile()
+
 dtm <- topicsDtm(data = dep_wor_data$Depphrase,
                  removal_mode = "frequency",
                  removal_rate_least = 4,
-                 removal_rate_most = 500)
+                 removal_rate_most = 500,
+                 save_dir_temp = save_dir_temp)
 
 # Create Dtm and remove the 5 least and 5 most frequent terms.
 dtm <- topicsDtm(data = dep_wor_data$Depphrase,
                  removal_mode = "term",
                  removal_rate_least = 1,
-                 removal_rate_most = 1)
+                 removal_rate_most = 1,
+                 save_dir_temp = save_dir_temp)
 
 # Create Dtm and remove the 5\% least frequent and 1\% most frequent terms.
 dtm <- topicsDtm(data = dep_wor_data$Depphrase,
                  removal_mode = "percentage",
                  removal_rate_least = 1,
-                 removal_rate_most = 1)
+                 removal_rate_most = 1,
+                 save_dir_temp = save_dir_temp)
                  
 # Load precomputed Dtm from directory
-dtm <- topicsDtm(load_dir = "./results",
-                 seed = 42)
+dtm <- topicsDtm(load_dir = save_dir_temp,
+                 seed = 42,
+                 save_dir_temp = save_dir_temp)
 }
 }

@@ -17,27 +17,34 @@
 #' @return the document term matrix
 #' @examples
 #' \donttest{
+#' 
 #' # Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
+#' save_dir_temp <- tempfile()
+#' 
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 #'                  removal_mode = "frequency",
 #'                  removal_rate_least = 4,
-#'                  removal_rate_most = 500)
+#'                  removal_rate_most = 500,
+#'                  save_dir_temp = save_dir_temp)
 #' 
 #' # Create Dtm and remove the 5 least and 5 most frequent terms.
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 #'                  removal_mode = "term",
 #'                  removal_rate_least = 1,
-#'                  removal_rate_most = 1)
+#'                  removal_rate_most = 1,
+#'                  save_dir_temp = save_dir_temp)
 #' 
 #' # Create Dtm and remove the 5% least frequent and 1% most frequent terms.
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 #'                  removal_mode = "percentage",
 #'                  removal_rate_least = 1,
-#'                  removal_rate_most = 1)
+#'                  removal_rate_most = 1,
+#'                  save_dir_temp = save_dir_temp)
 #'                  
 #' # Load precomputed Dtm from directory
-#' dtm <- topicsDtm(load_dir = "./results",
-#'                  seed = 42)
+#' dtm <- topicsDtm(load_dir = save_dir_temp,
+#'                  seed = 42,
+#'                  save_dir_temp = save_dir_temp)
 #' }
 #' @importFrom textmineR CreateDtm 
 #' @importFrom stats complete.cases
@@ -221,17 +228,24 @@ topicsDtm <- function(
 #' @examples
 #' \donttest{
 #' # Create LDA Topic Model 
-#' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
-#' model <- topicsModel(dtm = dtm, # output of topicsDtm()
-#'                      num_topics = 20,
-#'                      num_top_words = 10,
-#'                      num_iterations = 1000,
-#'                      seed = 42,
-#'                      save_dir = "./results")
+#' save_dir_temp <- tempfile()
+#' dtm <- topicsDtm(
+#' data = dep_wor_data$Depphrase, 
+#' save_dir = save_dir_temp)
+#' 
+#' model <- topicsModel(
+#' dtm = dtm, # output of topicsDtm()
+#' num_topics = 20,
+#' num_top_words = 10,
+#' num_iterations = 1000,
+#' seed = 42,
+#' save_dir = save_dir_temp)
 #'                    
 #' # Load precomputed LDA Topic Model
-#' model <- topicsModel(load_dir = "./results",
-#'                      seed = 42)
+#' model <- topicsModel(
+#' load_dir = save_dir_temp,
+#' seed = 42,
+#' save_dir = save_dir_temp)
 #' }
 #' @export
 topicsModel <- function(
@@ -429,15 +443,23 @@ topicsGrams <- function(
 #' @examples
 #' \donttest{
 #' # Predict topics for new data with the trained model
-#' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
+#' save_dir_temp <- tempfile()
+#' 
+#' dtm <- topicsDtm(
+#' data = dep_wor_data$Depphrase, 
+#' save_dir = save_dir_temp)
+#' 
 #' model <- topicsModel(dtm = dtm, # output of topicsDtm()
 #'                      num_topics = 20,
 #'                      num_top_words = 10,
 #'                      num_iterations = 1000,
 #'                      seed = 42,
-#'                      save_dir = "./results")
-#' preds <- topicsPreds(model = model, # output of topicsModel()
-#'                      data = dep_wor_data$Depphrase)
+#'                      save_dir = save_dir_temp)
+#'                      
+#' preds <- topicsPreds(
+#' model = model, # output of topicsModel()
+#' data = dep_wor_data$Depphrase, 
+#' save_dir = save_dir_temp)
 #' }
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>%
@@ -698,23 +720,32 @@ topicsTest1 <- function(
 #' @examples
 #' \donttest{
 #' # Test the topic document distribution in respect to a variable
-#' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
+#' save_dir_temp <- tempfile()
 #' 
-#' model <- topicsModel(dtm = dtm, # output of topicsDtm()
-#'                      num_topics = 20,
-#'                      num_top_words = 10,
-#'                      num_iterations = 1000,
-#'                      seed = 42,
-#'                      save_dir = "./results")
+#' dtm <- topicsDtm(
+#'   data = dep_wor_data$Depphrase, 
+#'   save_dir =  save_dir_temp)
+#' 
+#' model <- topicsModel(
+#'   dtm = dtm, # output of topicsDtm()
+#'   num_topics = 20,
+#'   num_top_words = 10,
+#'   num_iterations = 1000,
+#'   seed = 42,
+#'   save_dir = save_dir_temp)
 #'                      
-#' preds <- topicsPreds(model = model, # output of topicsModel()
-#'                      data = dep_wor_data$Depphrase)
+#' preds <- topicsPreds(
+#'  model = model, # output of topicsModel()
+#'  data = dep_wor_data$Depphrase,
+#'  save_dir = save_dir_temp)
 #'                      
-#' test <- topicsTest(model = model, # output of topicsModel()
-#'                    data=dep_wor_data,
-#'                    preds = preds, # output of topicsPreds()
-#'                    test_method = "linear_regression",
-#'                    pred_var_x = "Age")
+#' test <- topicsTest(
+#'   model = model, # output of topicsModel()
+#'   data=dep_wor_data,
+#'   preds = preds, # output of topicsPreds()
+#'   test_method = "linear_regression",
+#'   pred_var_x = "Age",
+#'   save_dir = save_dir_temp)
 #' }                 
 #' @importFrom dplyr bind_cols
 #' @importFrom readr write_csv

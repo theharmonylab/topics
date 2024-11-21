@@ -38,16 +38,23 @@ The function to create and train and an LDA model.
 \examples{
 \donttest{
 # Create LDA Topic Model 
-dtm <- topicsDtm(data = dep_wor_data$Depphrase)
-model <- topicsModel(dtm = dtm, # output of topicsDtm()
-                     num_topics = 20,
-                     num_top_words = 10,
-                     num_iterations = 1000,
-                     seed = 42,
-                     save_dir = "./results")
+save_dir_temp <- tempfile()
+dtm <- topicsDtm(
+data = dep_wor_data$Depphrase, 
+save_dir = save_dir_temp)
+
+model <- topicsModel(
+dtm = dtm, # output of topicsDtm()
+num_topics = 20,
+num_top_words = 10,
+num_iterations = 1000,
+seed = 42,
+save_dir = save_dir_temp)
                    
 # Load precomputed LDA Topic Model
-model <- topicsModel(load_dir = "./results",
-                     seed = 42)
+model <- topicsModel(
+load_dir = save_dir_temp,
+seed = 42,
+save_dir = save_dir_temp)
 }
 }
