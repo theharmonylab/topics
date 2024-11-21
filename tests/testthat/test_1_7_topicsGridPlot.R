@@ -44,7 +44,8 @@ test_that('Case 1: Save all topics without the topic grid plot by using the topi
     test = tests2D,
     p_threshold = 0.99,
     seed = 1, 
-    save_dir = save_dir_temp
+    save_dir = save_dir_temp, 
+    figure_format = "png"
     )
   
 #  testthat::expect_true(dir.exists("./results/seed42/wordclouds"))
@@ -88,7 +89,8 @@ test_that('Case 2: Save the scatter legend and grid legend for topic grids using
     test = tests2D,
     p_threshold = 0.99,
     seed = 2, 
-    save_dir = save_dir_temp)
+    save_dir = save_dir_temp, 
+    figure_format = "png")
   
   testthat::expect_true(dir.exists(paste0(
     save_dir_temp, "/seed_2/wordclouds")))
@@ -133,7 +135,8 @@ test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall retu
     test = tests2D,
     p_threshold = 0.99,
     seed = 3, 
-    save_dir = save_dir_temp)
+    save_dir = save_dir_temp, 
+    figure_format = "png")
  
   # After save_dir update this is now NULL 
   # testthat::expect_true(!is.null(out1))
@@ -143,7 +146,8 @@ test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall retu
     test = tests2D,
     p_threshold = 0.99,
     seed = 4, 
-    save_dir = save_dir_temp)
+    save_dir = save_dir_temp, 
+    figure_format = "png")
   
   # After save_dir update this is now NULL
 #  testthat::expect_true(!is.null(out1))
@@ -187,7 +191,8 @@ test_that('Case 4: Set dimension = 2 for successfully saving the legends.',{
     test = tests2D,
     p_threshold = 0.99,
     seed = 5, 
-    save_dir = save_dir_temp)
+    save_dir = save_dir_temp, 
+    figure_format = "png")
   
 #  testthat::expect_true(
 #    file.exists(
@@ -238,7 +243,8 @@ test_that('Case 5: Change the popout method to "max_x", and "max_y".',{
     p_threshold = 0.99,
     scatter_legend_method = 'max_x',
     seed = 6, 
-    save_dir = save_dir_temp)
+    save_dir = save_dir_temp, 
+    figure_format = "png")
   
 #  testthat::escatter_legend_method = testthat::expect_true(
 #    file.exists(
@@ -253,7 +259,8 @@ test_that('Case 5: Change the popout method to "max_x", and "max_y".',{
     p_threshold = 0.99,
     scatter_legend_method = 'max_y',
     seed = 7, 
-    save_dir = save_dir_temp)
+    save_dir = save_dir_temp, 
+    figure_format = "png")
   
 #  testthat::expect_true(
 #    file.exists(
@@ -313,7 +320,8 @@ test_that('Case 6: Manually set the topic numbers to save topics',{
     p_threshold = 0.99,
     scatter_legend_specified_topics = c('t_1', 't_2'),
     seed = 8, 
-    save_dir = save_dir_temp)
+    save_dir = save_dir_temp, 
+    figure_format = "png")
   
   #random_sequence <- sample(1:9, size = nrow(tests2D[[3]]$test), replace = TRUE)
   #tests2D[[3]]$test$color_categories <- random_sequence
@@ -361,7 +369,8 @@ test_that('Case 7: Set dimension = 1 for successfully saving the legends',{
     p_threshold = 0.99,
     scatter_legend_specified_topics = c('t_1', 't_2'),
     seed = 9, 
-    save_dir = save_dir_temp)
+    save_dir = save_dir_temp, 
+    figure_format = "png")
   
 #  testthat::expect_true(
 #    file.exists(
