@@ -17,5 +17,8 @@ utils::globalVariables(c(
   "geom_text", 
   
   # topicsScatterLegendNew
-  "contains_only"
+  "contains_only", 
+  
+  # General
+  "msg2"
 ))
