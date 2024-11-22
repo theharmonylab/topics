@@ -20,5 +20,8 @@ utils::globalVariables(c(
   "contains_only", 
   
   # General
-  "msg2"
+  "msg2",
+  
+  # topicsDtmEval
+  "nr", "term", "freq"
 ))

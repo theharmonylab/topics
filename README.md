@@ -13,11 +13,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-blue.svg)](htt
 [![codecov](https://codecov.io/gh/theharmonylab/topics/graph/badge.svg?token=7ZTWBNIVCX)](https://app.codecov.io/gh/theharmonylab/topics/)
 <!-- 
 
-
-
 [![CRAN  Downloads](https://cranlogs.r-pkg.org/badges/grand-total/text)](https://CRAN.R-project.org/package=text)
 
-[![codecov](https://codecov.io/gh/oscarkjell/text/branch/master/graph/badge.svg?)](https://app.codecov.io/gh/oscarkjell/text)
 <!-- badges: end -->
 
 # Topics
@@ -90,10 +87,8 @@ command:
 data <- read.csv("data.csv")
 dtm <- topicsDtm(data = data$text)
 
-# Checking the results from the dtm
-length(Matrix::colSums(dtm$train_dtm))
-Matrix::colSums(dtm$train_dtm)[1:20]
-Matrix::colSums(dtm$train_dtm)[(length(Matrix::colSums(dtm$train_dtm)) - 100):length(Matrix::colSums(dtm$train_dtm))]
+# Check the results from the dtm and refine stopwords and removal rates if necessary
+topicsDtmEval(dtm)
 ```
 
 **2. Model Training**<br> To train the LDA model, run the following

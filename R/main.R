@@ -214,6 +214,145 @@ topicsDtm <- function(
   return(dtms)
 }
 
+
+#' Summarize and Visualize your Document Term Matrix
+#' 
+#' This function creates a frequency table of your DTM and generates up to four plots for visualization
+#' @param dtm (R_obj) The document term matrix - output from topicsDtm
+#' @importFrom Matrix colSums
+#' @importFrom dplyr %>% select 
+#' @importFrom ggplot2 ggplot margin
+#' @importFrom stats reorder
+#' @return A named list containing:
+#' \describe{
+#'   \item{dtm_summary}{A dataframe of terms and their frequencies.}
+#'   \item{frequency_plot}{A bar plot of all term frequencies with example terms.}
+#'   \item{frequency_plot_30_least}{A bar plot of the 30 least frequent terms (if numer of terms > 30).}
+#'   \item{frequency_plot_30_most}{A bar plot of the 30 most frequent terms (if numer of terms > 30).}
+#'   \item{historgam_of_frequencies}{A histogram of term frequencies (this is the same information as
+#'   in the frequency_plot but presented differently).}
+#' }
+#' @export
+topicsDtmEval <- function(dtm) {
+  
+  # create a summary dataframe of the dtm
+  dtm_summary <- as.data.frame(Matrix::colSums(dtm$train_dtm))
+  names(dtm_summary) <- c("freq") # rename column
+  dtm_summary$term <- rownames(dtm_summary)
+  rownames(dtm_summary) <- NULL
+  dtm_summary$nr <- c(1:nrow(dtm_summary))
+  dtm_summary <- dtm_summary %>% dplyr::select(nr, term, freq) # reorder columns
+  
+  # If the summary df has <= 30 words, we can use just 2 plots 
+  if(nrow(dtm_summary) <= 30){
+    
+    
+    plot_all <- ggplot2::ggplot(data = dtm_summary, aes(x = reorder(term, freq), y = freq, fill = nr))+
+      ggplot2::geom_bar(stat = "identity", show.legend = F)+
+      ggplot2::labs(title = paste0("Frequencies of all terms in the DTM (N = ", nrow(dtm_summary), ")"),
+           x = "Terms", 
+           y = "Frequency",
+           subtitle = paste0("Min = ", min(dtm_summary$freq), ", Max = ", max(dtm_summary$freq), ", Med = ",
+                             med = median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
+      ggplot2::scale_y_continuous(expand = c(0,0))+
+      ggplot2::scale_fill_gradient(low = "#9BD7E9", high ="#15637F")+
+      ggplot2::theme_minimal()+
+      ggplot2::theme(
+        axis.text.x = element_text(angle = 35, hjust = 1, size = 11),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.x = element_blank())
+    
+    # histogram of term frequencies
+    plot_hist <- ggplot2::ggplot(data = dtm_summary, aes(x = freq)) +
+      ggplot2::geom_histogram(fill = "#15637F", color = "white") +
+      ggplot2::labs(x = "Term frequency",
+           y = "Number of terms with this frequency",
+           title = paste0("Histogram of term frequencies (N = ", nrow(dtm_summary), ")"),
+           subtitle = paste0("Min = ", min(dtm_summary$freq), ", Max = ", max(dtm_summary$freq), ", Med = ",
+                             med = median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
+      ggplot2::theme_minimal()
+    
+    # return output with only 2 plots
+    return(list(dtm_summary = dtm_summary[,2:3],
+                frequency_plot = plot_all,
+                historgam_of_frequencies = plot_hist))
+  }
+  
+  # Otherwise, split into 3 plots (first 30, last 30, overview):
+  
+  # subset first 30 terms (lowest frequencies) and last 30 terms (highest frequencies)
+  dtm_summary_30_min <- dtm_summary[1:30,]
+  dtm_summary_30_max <- dtm_summary[(nrow(dtm_summary)-30):nrow(dtm_summary),]
+  
+  
+  # plot 30 least frequent
+  plot_30_least <- ggplot2::ggplot(data = dtm_summary_30_min, aes(x = reorder(term, freq), y = freq))+
+    ggplot2::geom_bar(stat = "identity", color = "white", fill = "#9BD7E9")+
+    ggplot2::labs(title = "30 least frequent terms in the DTM",
+         x = "Term", y = "Frequency")+
+    ggplot2::scale_y_continuous(limits = c(0,max(dtm_summary$freq)))+
+    ggplot2::theme_minimal()+
+    ggplot2::theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 12),
+          axis.title.y = element_text(size = 12, face = "bold"),
+          plot.title = element_text(size = 15),
+          axis.title.x = element_text(margin = margin(t = 5), size = 12, face = "bold"))
+  
+  # plot 30 msot frequent
+  plot_30_most <- ggplot2::ggplot(data = dtm_summary_30_max, aes(x = reorder(term, freq), y = freq))+
+    ggplot2::geom_bar(stat = "identity", color = "white", fill = "#15637F")+
+    ggplot2::labs(title = "30 most frequent terms in the DTM",
+         x = "Term", y = "Frequency")+
+    ggplot2::theme_minimal()+
+    ggplot2::theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 12),
+          axis.title.y = element_text(size = 12, face = "bold"),
+          plot.title = element_text(size = 15),
+          axis.title.x = element_text(margin = margin(t = 5), size = 12, face = "bold"))
+  
+  
+  # plot all terms and only show some example terms
+  keep <- seq(nrow(dtm_summary), 1, -(ceiling(nrow(dtm_summary)/20))) 
+  
+  dtm_summary <- dtm_summary %>%
+    mutate(example_terms =  ifelse(1:nrow(dtm_summary) %in% keep, term, ""))
+  
+  plot_all <- ggplot2::ggplot(data = dtm_summary, aes(x = reorder(term, freq), y = freq, fill = nr))+
+    ggplot2::geom_bar(stat = "identity", show.legend = F)+
+    ggplot2::labs(title = paste0("Frequencies of all terms in the DTM (N = ", nrow(dtm_summary), ")"),
+         x = "Terms (only a few terms shown for illustration)", 
+         y = "Frequency",
+         subtitle = paste0("Min = ", min(dtm_summary$freq), ", Max = ", max(dtm_summary$freq), ", Med = ",
+                           med = median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
+    ggplot2::scale_x_discrete(labels = dtm_summary$example_terms) +
+    ggplot2::scale_y_continuous(expand = c(0,0))+
+    ggplot2::scale_fill_gradient(low = "#9BD7E9", high ="#15637F")+
+    ggplot2::theme_minimal()+
+    ggplot2::theme(
+      axis.text.x = element_text(angle = 35, hjust = 1, size = 11),
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.x = element_blank())
+  
+  
+  # histogram of term frequencies
+  plot_hist <- ggplot(data = dtm_summary, aes(x = freq)) +
+    ggplot2::geom_histogram(fill = "#15637F", color = "white") +
+    ggplot2::labs(x = "Term frequency",
+         y = "Number of terms with this frequency",
+         title = paste0("Histogram of term frequencies (N = ", nrow(dtm_summary), ")"),
+         subtitle = paste0("Min = ", min(dtm_summary$freq), ", Max = ", max(dtm_summary$freq), ", Med = ",
+                           med = median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
+    ggplot2::theme_minimal()
+  
+  df_final <- dtm_summary %>% dplyr::select(term, freq)
+  
+  # output
+  return(list(dtm_summary = df_final,
+              frequency_plot = plot_all,
+              frequency_plot_30_least = plot_30_least,
+              frequency_plot_30_most = plot_30_most,
+              historgam_of_frequencies = plot_hist))
+}
+
+
 #' Topic modelling
 #' 
 #' The function to create and train and an LDA model.

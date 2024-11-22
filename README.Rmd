@@ -91,10 +91,8 @@ To preprocess the data, run the following command:
 data <- read.csv("data.csv")
 dtm <- topicsDtm(data = data$text)
 
-# Checking the results from the dtm
-length(Matrix::colSums(dtm$train_dtm))
-Matrix::colSums(dtm$train_dtm)[1:20]
-Matrix::colSums(dtm$train_dtm)[(length(Matrix::colSums(dtm$train_dtm)) - 100):length(Matrix::colSums(dtm$train_dtm))]
+# Check the results from the dtm and refine stopwords and removal rates if necessary
+topicsDtmEval(dtm)
 
 ```
 

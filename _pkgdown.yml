@@ -43,6 +43,7 @@ reference:
 - title: Transform text to topics
   contents:
   - topicsDtm
+  - topicsDtmEval
   - topicsModel
 - title: Predict topic distribution from text
   contents:

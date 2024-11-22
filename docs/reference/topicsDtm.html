@@ -74,7 +74,7 @@
 <span>  removal_rate_least <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  split <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">42L</span>,</span>
-<span>  save_dir <span class="op">=</span> <span class="st">"./results"</span>,</span>
+<span>  <span class="va">save_dir</span>,</span>
 <span>  load_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  threads <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -125,7 +125,7 @@
 
 
 <dt id="arg-save-dir">save_dir<a class="anchor" aria-label="anchor" href="#arg-save-dir"></a></dt>
-<dd><p>(string) the directory to save the results, default is "./results", if NULL, no results are saved</p></dd>
+<dd><p>(string) the directory to save the results, if NULL, no results are saved.</p></dd>
 
 
 <dt id="arg-load-dir">load_dir<a class="anchor" aria-label="anchor" href="#arg-load-dir"></a></dt>
@@ -144,31 +144,40 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.</span></span></span>
+<span class="r-in"><span><span class="va">save_dir_temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span>,</span></span>
 <span class="r-in"><span>                 removal_mode <span class="op">=</span> <span class="st">"frequency"</span>,</span></span>
 <span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">4</span>,</span></span>
-<span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The Dtm, data, and summary are saved in./results/seed_42/dtms.rds"</span>
+<span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">500</span>,</span></span>
+<span class="r-in"><span>                 save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Directory created successfully.</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/25/q9tv110d4dv6ftghmfcrhtvh0000gn/T//RtmpUI0xE8/file5c776aee2ec2/seed_42/dtms.rds</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create Dtm and remove the 5 least and 5 most frequent terms.</span></span></span>
 <span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span>,</span></span>
 <span class="r-in"><span>                 removal_mode <span class="op">=</span> <span class="st">"term"</span>,</span></span>
 <span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The Dtm, data, and summary are saved in./results/seed_42/dtms.rds"</span>
+<span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                 save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/25/q9tv110d4dv6ftghmfcrhtvh0000gn/T//RtmpUI0xE8/file5c776aee2ec2/seed_42/dtms.rds</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create Dtm and remove the 5% least frequent and 1% most frequent terms.</span></span></span>
 <span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span>,</span></span>
 <span class="r-in"><span>                 removal_mode <span class="op">=</span> <span class="st">"percentage"</span>,</span></span>
 <span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The Dtm, data, and summary are saved in./results/seed_42/dtms.rds"</span>
+<span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                 save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/25/q9tv110d4dv6ftghmfcrhtvh0000gn/T//RtmpUI0xE8/file5c776aee2ec2/seed_42/dtms.rds</span></span>
 <span class="r-in"><span>                 </span></span>
 <span class="r-in"><span><span class="co"># Load precomputed Dtm from directory</span></span></span>
-<span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>load_dir <span class="op">=</span> <span class="st">"./results"</span>,</span></span>
-<span class="r-in"><span>                 seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The Dtm, data, and summary are saved in./results/seed_42/dtms.rds"</span>
+<span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>load_dir <span class="op">=</span> <span class="va">save_dir_temp</span>,</span></span>
+<span class="r-in"><span>                 seed <span class="op">=</span> <span class="fl">42</span>,</span></span>
+<span class="r-in"><span>                 save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/25/q9tv110d4dv6ftghmfcrhtvh0000gn/T//RtmpUI0xE8/file5c776aee2ec2/seed_42/dtms.rds</span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
@@ -184,7 +193,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>
