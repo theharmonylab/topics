@@ -30,10 +30,10 @@ jobs:
       - uses: actions/checkout@v2
 
       # macOS-specific steps
-      - name: Fix and Debug Homebrew (macOS only)
+      - name: Fix and Debug Homebrew Issues
         if: runner.os == 'macOS'
         run: |
-          # Reset uncommitted changes in Homebrew
+          # Reset Homebrew changes
           cd /opt/homebrew/Library/Taps/homebrew/homebrew-core || exit 1
           git stash -u || echo "No changes to stash"
           git clean -d -f || echo "No files to clean"
@@ -41,16 +41,16 @@ jobs:
           # Fix Homebrew permissions
           sudo chown -R $(whoami) $(brew --prefix)/*
 
-          # Debug Homebrew issues
-          brew doctor || echo "Ignoring brew doctor warnings"
-          brew config
+          # Debug Homebrew
+          brew doctor || echo "brew doctor failed"
+          brew config || echo "brew config failed"
 
-          # Update Homebrew and install required packages
+      - name: Install macOS Utilities
+        if: runner.os == 'macOS'
+        run: |
           brew update || echo "Homebrew update failed"
           brew install libomp || echo "libomp installation failed"
-          brew install qpdf || echo "qpdf installation failed; continuing without it"
-
-          # Set dynamic library path for macOS
+          brew install qpdf || echo "qpdf installation failed but continuing"
           export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
           echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
 
@@ -58,7 +58,6 @@ jobs:
       - uses: r-lib/actions/setup-r@v2-branch
         with:
           r-version: ${{ matrix.config.r }}
-          http-user-agent: ${{ matrix.config.http-user-agent }}
 
       - uses: r-lib/actions/setup-pandoc@v2-branch
 
@@ -69,17 +68,13 @@ jobs:
           python-version: 3.9
           miniconda-version: "latest"
 
-      # Configure Conda
-      - name: Configure Conda
+      - name: Install Conda Dependencies
         run: |
           conda config --add channels defaults
           conda config --set solver classic
+          conda install -c conda-forge numpy
 
-      - name: Install numpy via Conda
-        run: conda install -c conda-forge numpy
-
-      # Query dependencies
-      - name: Query dependencies
+      - name: Query R Dependencies
         run: |
           install.packages('remotes')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
@@ -87,7 +82,7 @@ jobs:
         shell: Rscript {0}
 
       # Cache R packages
-      - name: Cache R packages
+      - name: Cache R Packages
         if: runner.os != 'Windows'
         uses: actions/cache@v1
         with:
@@ -96,30 +91,28 @@ jobs:
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
       # Install system dependencies (Linux only)
-      - name: Install system dependencies (Linux only)
+      - name: Install System Dependencies
         if: runner.os == 'Linux'
         run: |
-          while read -r cmd
-          do
+          while read -r cmd; do
             eval sudo $cmd
           done < <(Rscript -e 'cat(remotes::system_requirements("ubuntu", "20.04"), sep = "\n")')
-          sudo apt install libharfbuzz-dev
-          sudo apt install libfribidi-dev
+          sudo apt install libharfbuzz-dev libfribidi-dev
 
-      # Install dependencies
-      - name: Install dependencies
+      # Install R dependencies
+      - name: Install R Dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
       # Fix Conda permissions (macOS only)
-      - name: Fix Conda permissions (macOS only)
+      - name: Fix Conda Permissions
         if: runner.os == 'macOS'
         run: sudo chown -R $UID $CONDA
 
       # Install and test "text" package
-      - name: Installing text and testing it
+      - name: Install and Test "text" Package
         run: |
           install.packages("devtools")
           library(devtools)
@@ -128,24 +121,24 @@ jobs:
           text::textrpp_initialize(textEmbed_test = TRUE)
         shell: Rscript {0}
 
-      # Session info
-      - name: Session info
+      # Session Info
+      - name: Session Info
         run: |
           options(width = 100)
           pkgs <- installed.packages()[, "Package"]
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
 
-      # Check R CMD
-      - name: Check
+      # Run R CMD check
+      - name: R CMD Check
         env:
           _R_CHECK_CRAN_INCOMING_: false
           OMP_MAX_ACTIVE_LEVELS: 0
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
-      # Show testthat output
-      - name: Show testthat output
+      # Display testthat output
+      - name: Display Testthat Output
         if: always()
         run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
         shell: bash
