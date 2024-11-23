@@ -42,7 +42,7 @@ jobs:
           sudo chown -R $(whoami) $(brew --prefix)/*
 
           # Debug Homebrew issues
-          brew doctor
+          brew doctor || echo "Ignoring brew doctor warnings"
           brew config
 
           # Install necessary utilities
