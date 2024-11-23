@@ -34,7 +34,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           # Reset uncommitted changes in Homebrew
-          cd /opt/homebrew/Library/Taps/homebrew/homebrew-core
+          cd /opt/homebrew/Library/Taps/homebrew/homebrew-core || exit 1
           git stash -u || echo "No changes to stash"
           git clean -d -f || echo "No files to clean"
 
@@ -45,9 +45,10 @@ jobs:
           brew doctor || echo "Ignoring brew doctor warnings"
           brew config
 
-          # Install necessary utilities
+          # Update Homebrew and install required packages
           brew update || echo "Homebrew update failed"
-          brew install libomp qpdf || echo "qpdf or libomp installation failed; continuing without it"
+          brew install libomp || echo "libomp installation failed"
+          brew install qpdf || echo "qpdf installation failed; continuing without it"
 
           # Set dynamic library path for macOS
           export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
