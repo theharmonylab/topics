@@ -43,6 +43,30 @@ assign_phi_to_words <- function(
   return(df_list)
 }
 
+#
+#' Create list of data.frames with topics most frequent words and topic term scores
+#' @param save_dir (string) directory where to get data from
+#' @param num_topics (int) the number of topics
+#' @return list of data.frames
+#' @noRd
+create_df_list_bert_topics <- function(
+    save_dir,
+    seed,
+    num_topics) {
+  
+  df_list <- list()
+  
+  for (i in 1:num_topics) {
+    
+    df_list[[i]] <- read.csv(paste0(save_dir, "/seed_", seed, "/df_list_term_phi/", i, "_top_words.csv"))
+  }
+  return(df_list)
+}
+
+
+
+
+
 #' This is a private function 
 #' @param summary (data.frame) the models summary
 #' @return a list of dataframes for each topic filled with top terms

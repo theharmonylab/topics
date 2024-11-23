@@ -1,7 +1,7 @@
 Package: topics
 Type: Package
 Title: Creating and Significance Testing Language Features for Visualisation
-Version: 0.20.1
+Version: 0.20.2
 Authors@R: c(
     person("Leon", "Ackermann", 
     role = c("aut"), 
@@ -24,8 +24,7 @@ Archs: x64
 SystemRequirements: Python (>= 3.6.0)
 LazyData: true
 BuildVignettes: true
-Imports: 
-    text, 
+Imports:
     textmineR,
     ggplot2,
     dplyr,

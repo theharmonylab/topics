@@ -332,7 +332,7 @@ sort_stats_tibble <- function(
 #' @return Results
 #' @importFrom dplyr contains select everything bind_cols right_join join_by
 #' @importFrom tibble is_tibble as_tibble
-#' @importFrom text textTrainRegression
+# @importFrom text textTrainRegression
 #' @importFrom stats  complete.cases sd lm glm as.formula
 #' @noRd
 topic_test <- function(
@@ -632,11 +632,15 @@ topic_test <- function(
     for (col in colnames(dims)) {
       dims[[col]] <- as.numeric(dims[[col]])
     }
-    trained_model <- text::textTrainRegression(
-      x = dims,
-      y = grouping_variable,
-      multi_cores = FALSE # This is FALSE due to CRAN testing and Windows machines.
-    )
+    
+    if (requireNamespace("text", quietly = TRUE)) {
+      trained_model <- text::textTrainRegression(
+        x = dims,
+        y = grouping_variable,
+        multi_cores = FALSE # This is FALSE due to CRAN testing and Windows machines.
+      )
+    }
+
     
     
     return (trained_model$results)

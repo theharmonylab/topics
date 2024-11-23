@@ -1,7 +1,5 @@
-# tests/test-topicsTest.R
 library(testthat)
-library(topics)  # Replace with your packAge name
-#library(text)
+library(topics)
 library(dplyr)
 
 test_that("topicsTest performs linear regression correctly", {

@@ -1,8 +1,6 @@
-# tests/test-topicsWordclouds.R
-library(testthat)
-library(topics)  # Replace with your package name
-#library(text)
 
+library(testthat)
+library(topics)
 
 test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   

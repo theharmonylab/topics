@@ -1999,9 +1999,32 @@ topicsPlot1 <- function(
    df_list = NULL
 
   if (!is.null(model)){
-    model <- name_cols_with_vocab(model, "phi", model$vocabulary)
-    df_list <- create_topic_words_dfs(model$summary)
-    df_list <- assign_phi_to_words(df_list, model$phi, "mallet")
+    
+    # if model$model_type == "bert_topic" (i.e., a maller model return null on model$model_type)
+    if (!is.null(model$model_type)) {
+      
+      if(!is.null(test)){
+        num_topics <- nrow(test$test)
+      } else {
+        num_topics <- length(model$model$summary$topic)
+        model$summary <- model$model$summary
+      }
+      
+      if(num_topics == 0){
+        stop("There are no significant topics to plot.")
+      }
+      
+      df_list <- create_df_list_bert_topics(
+        save_dir, 
+        seed, 
+        num_topics)
+      
+    } else {
+    # if from mallet: 
+      model <- name_cols_with_vocab(model, "phi", model$vocabulary)
+      df_list <- create_topic_words_dfs(model$summary)
+      df_list <- assign_phi_to_words(df_list, model$phi, "mallet")
+    }
   }
   
   if (!is.null(test) && !is.null(model)){
@@ -2167,6 +2190,7 @@ colour_settings <- function(
   
   return(codes)
 }
+
 
 #' Plot word clouds
 #' 

@@ -2,7 +2,6 @@ library(testthat)
 library(topics)  # Replace with your package name
 library(tibble)
 library(dplyr)
-library(text)
 options(mc.cores = 1)
 
 
