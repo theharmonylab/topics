@@ -41,6 +41,7 @@ jobs:
       - name: Set DYLD_LIBRARY_PATH for libomp on macOS
         if: runner.os == 'macOS'
         run: |
+          brew install qpdf
           echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
         shell: bash
 
