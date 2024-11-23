@@ -29,19 +29,19 @@ jobs:
       CODECOV_DEBUG: true
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # Install libomp via Homebrew for macOS
       - name: Install libomp on macOS
         if: runner.os == 'macOS'
         run: |
+          brew install qpdf
           brew install libomp
 
       # Set DYLD_LIBRARY_PATH on macOS
       - name: Set DYLD_LIBRARY_PATH for libomp on macOS
         if: runner.os == 'macOS'
         run: |
-          brew install qpdf
           echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
         shell: bash
 
