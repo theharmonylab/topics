@@ -29,13 +29,21 @@ jobs:
       CODECOV_DEBUG: true
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
+      # macOS-specific steps
+      - name: Update and Install macOS Utilities
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install libomp qpdf || echo "qpdf installation skipped if already installed"
+          export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
+          echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
+          
       # Install libomp via Homebrew for macOS
       - name: Install libomp on macOS
         if: runner.os == 'macOS'
         run: |
-          brew install qpdf
           brew install libomp
 
       # Set DYLD_LIBRARY_PATH on macOS
