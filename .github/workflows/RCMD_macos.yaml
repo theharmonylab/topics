@@ -33,17 +33,17 @@ jobs:
       - name: Fix and Debug Homebrew (macOS only)
         if: runner.os == 'macOS'
         run: |
+          # Reset uncommitted changes in Homebrew
+          cd /opt/homebrew/Library/Taps/homebrew/homebrew-core
+          git stash -u || echo "No changes to stash"
+          git clean -d -f || echo "No files to clean"
+
           # Fix Homebrew permissions
           sudo chown -R $(whoami) $(brew --prefix)/*
 
           # Debug Homebrew issues
           brew doctor
           brew config
-
-          # Reset Homebrew if necessary
-          cd /opt/homebrew/Library/Taps/homebrew/homebrew-core
-          git stash -u || echo "No changes to stash"
-          git clean -d -f || echo "No files to clean"
 
           # Install necessary utilities
           brew update
