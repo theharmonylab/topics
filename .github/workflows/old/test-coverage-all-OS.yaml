@@ -1,9 +1,10 @@
-
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - '*'
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 name: CODECOV
 
@@ -17,17 +18,43 @@ jobs:
       matrix:
         config:
           - {os: macOS-latest,   r: 'release'}
-#          - {os: windows-latest, r: 'release'}
-#          - {os: ubuntu-20.04,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-20.04,   r: 'release'}
 
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CODECOV_DEBUG: true
 
     steps:
       - uses: actions/checkout@v2
+
+      # macOS-specific steps
+      - name: Fix Homebrew Permissions (macOS only)
+        if: runner.os == 'macOS'
+        run: |
+          sudo chown -R $(whoami) $(brew --prefix)/*
+
+
+      # Debug Homebrew Installation (macOS only)
+      - name: Debug Homebrew Installation (macOS only)
+        if: runner.os == 'macOS'
+        run: |
+          cd /opt/homebrew/Library/Taps/homebrew/homebrew-core
+          git stash -u
+          git clean -d -f
+          brew doctor
+          brew config
+
+      - name: Update and Install macOS Utilities
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install libomp qpdf || echo "qpdf installation skipped if already installed"
+          export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
+          echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
 
       - uses: r-lib/actions/setup-r@v2-branch
         with:
@@ -36,7 +63,7 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2-branch
 
-      - uses: conda-incubator/setup-miniconda@v3 # goanpeca/setup-miniconda@v1
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           python-version: 3.9
@@ -49,10 +76,9 @@ jobs:
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
 
-
       - name: Cache R packages
         if: runner.os != 'Windows'
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
@@ -72,10 +98,9 @@ jobs:
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
-          remotes::install_cran("covr")
         shell: Rscript {0}
 
-      - name: Fix Conda permissions on macOS (SUDO)
+      - name: Fix Conda permissions on macOS
         if: runner.os == 'macOS'
         run: sudo chown -R $UID $CONDA
 
@@ -95,22 +120,27 @@ jobs:
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
 
+      # Test coverage
       - name: Test coverage
         env:
-          OMP_MAX_ACTIVE_LEVELS: 0
-        run: covr::codecov()
+          OMP_MAX_ACTIVE_LEVELS: 2
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: covr::codecov(token = Sys.getenv("CODECOV_TOKEN"))
         shell: Rscript {0}
 
-#      - name: Upload coverage reports to Codecov
-#        uses: codecov/codecov-action@v4.0.1
-#        with:
-#          token: ${{ secrets.CODECOV_TOKEN }}
+      # Debugging step to confirm coverage files are generated
+      - name: List files for debugging
+        run: ls -R
 
+      # Wait to ensure all coverage data is saved
+      - name: Wait for coverage files to be ready
+        run: sleep 5
 
-#      - name: Upload check results
-#        if: failure()
-#        uses: actions/upload-artifact@main
-#        with:
-#          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-#          path: check
-
+      # Upload coverage to Codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: ${{ matrix.config.os }}
+          verbose: true
+          files: "path/to/coverage/file"  # Replace with actual coverage file path

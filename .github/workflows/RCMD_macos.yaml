@@ -30,22 +30,26 @@ jobs:
       - uses: actions/checkout@v2
 
       # macOS-specific steps
-      - name: Fix Homebrew Permissions (macOS only)
+      - name: Fix and Debug Homebrew (macOS only)
         if: runner.os == 'macOS'
         run: |
+          # Fix Homebrew permissions
           sudo chown -R $(whoami) $(brew --prefix)/*
 
-      - name: Debug Homebrew Installation (macOS only)
-        if: runner.os == 'macOS'
-        run: |
+          # Debug Homebrew issues
           brew doctor
           brew config
 
-      - name: Update and Install macOS Utilities
-        if: runner.os == 'macOS'
-        run: |
+          # Reset Homebrew if necessary
+          cd /opt/homebrew/Library/Taps/homebrew/homebrew-core
+          git stash -u || echo "No changes to stash"
+          git clean -d -f || echo "No files to clean"
+
+          # Install necessary utilities
           brew update
           brew install libomp qpdf || echo "qpdf installation skipped if already installed"
+
+          # Set dynamic library path for macOS
           export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
           echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
 
@@ -64,7 +68,8 @@ jobs:
           python-version: 3.9
           miniconda-version: "latest"
 
-      - name: Configure Conda (set default channel and solver)
+      # Configure Conda
+      - name: Configure Conda
         run: |
           conda config --add channels defaults
           conda config --set solver classic
@@ -108,11 +113,11 @@ jobs:
         shell: Rscript {0}
 
       # Fix Conda permissions (macOS only)
-      - name: Fix Conda permissions on macOS
+      - name: Fix Conda permissions (macOS only)
         if: runner.os == 'macOS'
         run: sudo chown -R $UID $CONDA
 
-      # Installing and testing "text" package
+      # Install and test "text" package
       - name: Installing text and testing it
         run: |
           install.packages("devtools")
