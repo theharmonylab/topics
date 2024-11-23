@@ -53,7 +53,7 @@ jobs:
           echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
         shell: bash
 
-      - uses: r-lib/actions/setup-r@v3-branch
+      - uses: r-lib/actions/setup-r@v1-branch
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
