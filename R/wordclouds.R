@@ -48,6 +48,7 @@ assign_phi_to_words <- function(
 #' @param save_dir (string) directory where to get data from
 #' @param num_topics (int) the number of topics
 #' @return list of data.frames
+#' @importFrom utils read.csv
 #' @noRd
 create_df_list_bert_topics <- function(
     save_dir,
@@ -58,7 +59,7 @@ create_df_list_bert_topics <- function(
   
   for (i in 1:num_topics) {
     
-    df_list[[i]] <- read.csv(paste0(save_dir, "/seed_", seed, "/df_list_term_phi/", i, "_top_words.csv"))
+    df_list[[i]] <- utils::read.csv(paste0(save_dir, "/seed_", seed, "/df_list_term_phi/", i, "_top_words.csv"))
   }
   return(df_list)
 }
