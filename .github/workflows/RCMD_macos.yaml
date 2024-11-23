@@ -46,8 +46,8 @@ jobs:
           brew config
 
           # Install necessary utilities
-          brew update
-          brew install libomp qpdf || echo "qpdf installation skipped if already installed"
+          brew update || echo "Homebrew update failed"
+          brew install libomp qpdf || echo "qpdf or libomp installation failed; continuing without it"
 
           # Set dynamic library path for macOS
           export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
