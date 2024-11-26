@@ -2111,6 +2111,7 @@ colour_settings <- function(
         bivariate_color_codes_b <- color_scheme[seq(1, length(color_scheme), by = 2)]
         # Select every second color for "front" colour in the gradient 
         bivariate_color_codes_f <- color_scheme[seq(2, length(color_scheme), by = 2)]
+        bivariate_color_codes_f <- setNames(bivariate_color_codes_f, seq_along(bivariate_color_codes_f))
         
       } else {
         stop("Please provide 6 colours for the gradient.")
@@ -2125,6 +2126,7 @@ colour_settings <- function(
         bivariate_color_codes_b <- color_scheme[seq(1, length(color_scheme), by = 2)]
         # Select every second color for "front" colour in the gradient 
         bivariate_color_codes_f <- color_scheme[seq(2, length(color_scheme), by = 2)]
+        bivariate_color_codes_f <- setNames(bivariate_color_codes_f, seq_along(bivariate_color_codes_f))
         
       } else {
         stop("Please provide 18 colours or use color_scheme = 'default'.")
