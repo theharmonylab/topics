@@ -1619,7 +1619,7 @@ determine_popout_topics <- function(
     filtered_test, 
     num_popout, 
     way_popout_topics, 
-    y_col, 
+    y_col = NULL, 
     x_col) {
   # Ensure `color_categories` exists
   if (!"color_categories" %in% colnames(filtered_test)) {
@@ -1643,7 +1643,7 @@ determine_popout_topics <- function(
   # Map `num_popout` to corresponding categories
   legend_map_num_pop <- if (length(num_popout) == 9) {
     setNames(as.integer(num_popout), as.character(1:9))
-  } else if (length(num_popout) == 3) {
+  } else {
     setNames(as.integer(num_popout), as.character(1:3))
   }
   
@@ -1655,42 +1655,41 @@ determine_popout_topics <- function(
     stop("No valid `color_categories` in `filtered_test` match `num_popout` mapping.")
   }
   
+  # Helper function to select rows based on `way_popout_topics`
+  select_rows <- function(data, n_pop) {
+    if (way_popout_topics == "max_y" && !is.null(y_col)) {
+      return(dplyr::slice_max(data, order_by = abs(!!sym(y_col)), n = n_pop, with_ties = FALSE))
+    }
+    if (way_popout_topics == "max_x") {
+      return(dplyr::slice_max(data, order_by = abs(!!sym(x_col)), n = n_pop, with_ties = FALSE))
+    }
+    if (way_popout_topics == "mean") {
+      if (!is.null(y_col)) {
+        data <- data %>%
+          mutate(mean_value = rowMeans(cbind(abs(!!sym(x_col)), abs(!!sym(y_col)))))
+      } else {
+        data <- data %>%
+          mutate(mean_value = abs(!!sym(x_col)))
+      }
+      return(dplyr::slice_max(data, order_by = mean_value, n = n_pop, with_ties = FALSE))
+    }
+    stop("Invalid `way_popout_topics`. Supported values are 'max_y', 'max_x', or 'mean'.")
+  }
+  
   # Process each category based on the popout criteria
   filtered_test %>%
     filter(color_categories %in% names(valid_map)) %>%
     group_by(color_categories) %>%
     group_modify(~ {
-      # Access the category directly from `.y`
       category <- .y$color_categories
-      
-      if (is.na(category) || category == "") {
-        warning("Unexpected category format or missing value.")
-      }
-      
-      # Get the number of items to pop out for this category
       n_pop <- valid_map[[category]]
-      
-      # Handle each `way_popout_topics` criterion
       if (n_pop > 0) {
-        if (way_popout_topics == "max_y") {
-          dplyr::slice_max(.x, order_by = abs(!!sym(y_col)), n = n_pop, with_ties = FALSE)
-        } else if (way_popout_topics == "max_x") {
-          dplyr::slice_max(.x, order_by = abs(!!sym(x_col)), n = n_pop, with_ties = FALSE)
-        } else if (way_popout_topics == "mean") {
-          .x %>%
-            dplyr::mutate(mean_value = rowMeans(cbind(
-              abs(!!sym(x_col)), 
-              abs(!!sym(y_col))
-            ))) %>%
-            dplyr::slice_max(order_by = mean_value, n = n_pop, with_ties = FALSE)
-        } else {
-          stop("Invalid `way_popout_topics`. Supported values are 'max_y', 'max_x', or 'mean'.")
-        }
+        select_rows(.x, n_pop)
       } else {
         .x[0, ]  # Return empty tibble for categories with 0 `n_pop`
       }
     }) %>%
-    dplyr::ungroup()
+    ungroup()
 }
 
 
