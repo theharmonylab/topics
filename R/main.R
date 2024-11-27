@@ -1635,13 +1635,17 @@ determine_popout_topics <- function(
     stop("The `color_categories` column contains missing (NA) values.")
   }
   
-  # Ensure `num_popout` has 9 values
-  if (length(num_popout) != 9) {
-    stop("`num_popout` must have exactly 9 values, one for each quadrant of a 3x3 grid.")
+  # Ensure `num_popout` has the correct number of values
+  if (!(length(num_popout) %in% c(3, 9))) {
+    stop("`num_popout` must have exactly 3 or 9 values.")
   }
   
   # Map `num_popout` to corresponding categories
-  legend_map_num_pop <- setNames(as.integer(num_popout), as.character(1:9))
+  legend_map_num_pop <- if (length(num_popout) == 9) {
+    setNames(as.integer(num_popout), as.character(1:9))
+  } else if (length(num_popout) == 3) {
+    setNames(as.integer(num_popout), as.character(1:3))
+  }
   
   # Filter for categories present in `filtered_test`
   existing_categories <- unique(filtered_test$color_categories)
