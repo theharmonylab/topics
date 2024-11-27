@@ -1313,6 +1313,33 @@ topicsScatterLegendOriginal <- function(
         dplyr::ungroup()
     }
   }
+  if (!only_five && is.null(user_spec_topics) && way_popout_topics == "mean" && y_axes_1 == 1){
+    
+    msg <- "Generating the scatter legend with topics emphasised using 'mean' in 1 dimension. \n"
+    
+    message(
+      colourise(msg, "blue"))
+    
+    if (length(num_popout) > 1){
+      popout <- filtered_test %>%
+        dplyr::filter(color_categories != 2) %>%
+        dplyr::mutate(map_num = dplyr::recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
+        dplyr::group_by(color_categories) %>%
+        dplyr::group_modify(~ dplyr::slice_max(.x, order_by = abs(!!sym(estimate_col_x)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
+        dplyr::ungroup() # Will change the order of columns
+      # Re-arrange the columns to keep the same.
+      colname_bak <- names(filtered_test)
+      popout <- popout %>%
+        dplyr::select(dplyr::all_of(colname_bak), map_num)
+    }
+    if (length(num_popout) == 1){
+      popout <- filtered_test %>%
+        dplyr::filter(color_categories != 2) %>%
+        dplyr::group_by(color_categories) %>%
+        dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = num_popout, with_ties = FALSE) %>%
+        dplyr::ungroup()
+    }
+  }    
   if (!only_five && is.null(user_spec_topics) && way_popout_topics == "max_x" && y_axes_1 == 1){
     
     msg <- "Generating the scatter legend with topics emphasised using 'max_x' in 1 dimension. \n"
