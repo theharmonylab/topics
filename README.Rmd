@@ -33,14 +33,21 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-blue.svg)](htt
 
 <!-- badges: end -->
 
+# topics <img src="man/figures/topics_logo.svg" align="right" alt="" width="330" />
 
-# Topics
 
-`topics` is an R-package enabling Differential Language Analysis using topics. It can produce LDA topics, but also support the text-package (www.r-text.org) in analyzing BERTtopics. 
+`topics` is an R-package enabling Differential Language Analysis using words, phrases and topics.
 
 When using this package, please cite:
 
 Ackermann L., Zhuojun G. & Kjell O.N.E. (2024). An R-package for visualizing text in topics. https://github.com/theharmonylab/topics. `DOI:zenodo.org/records/11165378`. 
+
+## text and topics
+The topics-package supports the [www.r-text.org](https://r-text.org/) in analysing and visualizing topics. In the text-package you can visualise BERTtopics based on techniques from the topics package. 
+
+
+![](man/figures/text_topics.svg){width=25%}
+
 
 ## Installation
 The topics package uses <b>JAVA</b>, which is another programming language. Please start by downloading and installing it from `www.java.com/en/download/`. Then open R and run:
@@ -78,9 +85,16 @@ The model inference step uses the trained LDA model to infer the topic term dist
 The analysis includes the methods like linear regression, binary regression, ridge regression or correlation to analyze the relationship between the topics and the prediction variable. It is possible to control for a number of variables and to adjust the p-value for multiple comparisons.
 
 **5. Visualization**<br>
-The visualization step creates wordclouds of the significant topics found by the statistical analysis.
+The visualization step creates wordclouds of the significant topics found by the statistical analysis. 
 
+![One-dimensional plots based on words and phrases (top) and LDA topics (bottom).](man/figures/one_dim.png){width=75%}
+<br>
+<br>
+<br>
 
+![A two-dimensional plot showing topics related to depression versus worry responses (x-axis) and low versus high depression severity (y-axis).](man/figures/two_dim.png){width=75%}
+<br>
+<br>
 ## Usage
 In an example where the topics are used to predict the PHQ-9 score, the pipeline can be run as follows:
 
