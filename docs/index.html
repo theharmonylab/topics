@@ -84,11 +84,17 @@
 <!--
 &#10;<!-- badges: end -->
 <div class="section level1">
-<div class="page-header"><h1 id="topics">Topics<a class="anchor" aria-label="anchor" href="#topics"></a>
+<div class="page-header"><h1 id="topics-">topics <img src="reference/figures/topics_logo.svg" align="right" alt="" width="330"><a class="anchor" aria-label="anchor" href="#topics-"></a>
 </h1></div>
-<p><code>topics</code> is an R-package enabling Differential Language Analysis using topics. It can produce LDA topics, but also support the text-package (www.r-text.org) in analyzing BERTtopics.</p>
+<p><code>topics</code> is an R-package enabling Differential Language Analysis using words, phrases and topics.</p>
 <p>When using this package, please cite:</p>
 <p>Ackermann L., Zhuojun G. &amp; Kjell O.N.E. (2024). An R-package for visualizing text in topics. <a href="https://github.com/theharmonylab/topics" class="external-link uri">https://github.com/theharmonylab/topics</a>. <code>DOI:zenodo.org/records/11165378</code>.</p>
+<div class="section level2">
+<h2 id="text-and-topics">text and topics<a class="anchor" aria-label="anchor" href="#text-and-topics"></a>
+</h2>
+<p>The topics-package supports the <a href="https://r-text.org/" class="external-link">www.r-text.org</a> in analysing and visualizing topics. In the text-package you can visualise BERTtopics based on techniques from the topics package.</p>
+<p><img src="reference/figures/text_topics.svg" style="width:25.0%"></p>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -120,11 +126,8 @@
 <p><strong>3. Model Inference</strong><br> The model inference step uses the trained LDA model to infer the topic term distribution of the documents.</p>
 <p><strong>4. Statistical Analysis</strong><br> The analysis includes the methods like linear regression, binary regression, ridge regression or correlation to analyze the relationship between the topics and the prediction variable. It is possible to control for a number of variables and to adjust the p-value for multiple comparisons.</p>
 <p><strong>5. Visualization</strong><br> The visualization step creates wordclouds of the significant topics found by the statistical analysis.</p>
-</div>
-<div class="section level2">
-<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
-</h2>
-<p>In an example where the topics are used to predict the PHQ-9 score, the pipeline can be run as follows:</p>
+<p><img src="reference/figures/one_dim.png" style="width:75.0%" alt="One-dimensional plots based on words and phrases (top) and LDA topics (bottom)."><br><br><br></p>
+<p><img src="reference/figures/two_dim.png" style="width:75.0%" alt="A two-dimensional plot showing topics related to depression versus worry responses (x-axis) and low versus high depression severity (y-axis)."><br><br> ## Usage In an example where the topics are used to predict the PHQ-9 score, the pipeline can be run as follows:</p>
 <p><strong>1. Data Preprocessing</strong><br> To preprocess the data, run the following command:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"data.csv"</span><span class="op">)</span></span>

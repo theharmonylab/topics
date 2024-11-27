@@ -17,17 +17,24 @@ Downloads](https://cranlogs.r-pkg.org/badges/grand-total/topics)](https://CRAN.R
 <!--
 &#10;<!-- badges: end -->
 
-# Topics
+# topics <img src="man/figures/topics_logo.svg" align="right" alt="" width="330" />
 
 `topics` is an R-package enabling Differential Language Analysis using
-topics. It can produce LDA topics, but also support the text-package
-(www.r-text.org) in analyzing BERTtopics.
+words, phrases and topics.
 
 When using this package, please cite:
 
 Ackermann L., Zhuojun G. & Kjell O.N.E. (2024). An R-package for
 visualizing text in topics. <https://github.com/theharmonylab/topics>.
 `DOI:zenodo.org/records/11165378`.
+
+## text and topics
+
+The topics-package supports the [www.r-text.org](https://r-text.org/) in
+analysing and visualizing topics. In the text-package you can visualise
+BERTtopics based on techniques from the topics package.
+
+<img src="man/figures/text_topics.svg" style="width:25.0%" />
 
 ## Installation
 
@@ -75,10 +82,14 @@ p-value for multiple comparisons.
 **5. Visualization**<br> The visualization step creates wordclouds of
 the significant topics found by the statistical analysis.
 
-## Usage
+<img src="man/figures/one_dim.png" style="width:75.0%"
+alt="One-dimensional plots based on words and phrases (top) and LDA topics (bottom)." />
+<br> <br> <br>
 
-In an example where the topics are used to predict the PHQ-9 score, the
-pipeline can be run as follows:
+<img src="man/figures/two_dim.png" style="width:75.0%"
+alt="A two-dimensional plot showing topics related to depression versus worry responses (x-axis) and low versus high depression severity (y-axis)." />
+<br> <br> \## Usage In an example where the topics are used to predict
+the PHQ-9 score, the pipeline can be run as follows:
 
 **1. Data Preprocessing**<br> To preprocess the data, run the following
 command:
