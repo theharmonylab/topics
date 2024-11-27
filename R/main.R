@@ -1211,7 +1211,7 @@ topicsScatterLegendOriginal <- function(
                        table1[[i]], ' popped out topics. Cannot specify ',
                        as.character(legend_map_num_pop[[i]]), 
                        ' topics in it!\n')
-        msg1 <- "Cannot save the scatter legend!\n"
+        msg2 <- "Cannot save the scatter legend!\n"
         
         message(
           colourise(msg1, "brown"))
