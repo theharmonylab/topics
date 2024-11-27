@@ -1197,7 +1197,7 @@ topicsScatterLegendOriginal <- function(
     }
   }
     
-  if (length(bivariate_color_codes_f) == 3){
+  if (length(bivariate_color_codes) == 3){
       max_n <- max(num_popout)
       num_popout <- c(max_n,0,max_n)
       y_axes_1 <- 1
