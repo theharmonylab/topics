@@ -1200,7 +1200,7 @@ topicsScatterLegendOriginal <- function(
   if (length(bivariate_color_codes_f) == 3){
       max_n <- max(num_popout)
       num_popout <- c(max_n,0,max_n)
-      y_axes_1 == 1
+      y_axes_1 <- 1
   } # Note: one can modify this later to extend the max_n in 1-dim topic plot.
   if (!only_five && is.null(user_spec_topics) && length(num_popout) != 1 && length(num_popout) == 3 && y_axes_1 == 1){
     legend_map_num_pop <- c(
