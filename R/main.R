@@ -1198,8 +1198,6 @@ topicsScatterLegendOriginal <- function(
   }
     
   if (length(bivariate_color_codes) == 3){
-      pop_n <- max(num_popout)
-      num_popout <- c(pop_n,0,pop_n)
       y_axes_1 <- 1
   } # Note: one can modify this later to extend the pop_n in 1-dim topic plot.
   if (!only_five && is.null(user_spec_topics) && length(num_popout) != 1 && length(num_popout) == 3 && y_axes_1 == 1){
