@@ -42,6 +42,9 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="articles/topics.html">Get started</a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -127,36 +130,7 @@
 <p><strong>4. Statistical Analysis</strong><br> The analysis includes the methods like linear regression, binary regression, ridge regression or correlation to analyze the relationship between the topics and the prediction variable. It is possible to control for a number of variables and to adjust the p-value for multiple comparisons.</p>
 <p><strong>5. Visualization</strong><br> The visualization step creates wordclouds of the significant topics found by the statistical analysis.</p>
 <p><img src="reference/figures/one_dim.png" style="width:75.0%" alt="One-dimensional plots based on words and phrases (top) and LDA topics (bottom)."><br><br><br></p>
-<p><img src="reference/figures/two_dim.png" style="width:75.0%" alt="A two-dimensional plot showing topics related to depression versus worry responses (x-axis) and low versus high depression severity (y-axis)."><br><br> ## Usage In an example where the topics are used to predict the PHQ-9 score, the pipeline can be run as follows:</p>
-<p><strong>1. Data Preprocessing</strong><br> To preprocess the data, run the following command:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"data.csv"</span><span class="op">)</span></span>
-<span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topicsDtm.html">topicsDtm</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">text</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Check the results from the dtm and refine stopwords and removal rates if necessary</span></span>
-<span><span class="fu"><a href="reference/topicsDtmEval.html">topicsDtmEval</a></span><span class="op">(</span><span class="va">dtm</span><span class="op">)</span></span></code></pre></div>
-<p><strong>2. Model Training</strong><br> To train the LDA model, run the following command:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topicsModel.html">topicsModel</a></span><span class="op">(</span>dtm <span class="op">=</span> <span class="va">dtm</span>,</span>
-<span>                  num_topics <span class="op">=</span> <span class="fl">20</span>,</span>
-<span>                  num_iterations <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
-<span>                  </span></code></pre></div>
-<p><strong>3. Model Inference</strong><br> To infer the topic term distribution of the documents, run the following command:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topicsPreds.html">topicsPreds</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>,</span>
-<span>                    data <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">text</span><span class="op">)</span></span></code></pre></div>
-<p><strong>4. Statistical Analysis</strong><br> To analyze the relationship between the topics and the prediction variable, run the following command:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/topicsTest.html">topicsTest</a></span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>,</span>
-<span>                  data <span class="op">=</span> <span class="va">data</span>,</span>
-<span>                  preds <span class="op">=</span> <span class="va">preds</span>,</span>
-<span>                  pred_var <span class="op">=</span> <span class="st">"phq9"</span>,</span>
-<span>                  control_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>,<span class="va">..</span><span class="op">)</span>,</span>
-<span>                  test_method <span class="op">=</span> <span class="st">"linear_regression"</span><span class="op">)</span></span></code></pre></div>
-<p><strong>5. Visualization</strong><br> To visualize the significant topics as wordclouds, run the following command:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">topicsPlots</span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>,</span>
-<span>            test <span class="op">=</span> <span class="va">test</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/two_dim.png" style="width:75.0%" alt="A two-dimensional plot showing topics related to depression versus worry responses (x-axis) and low versus high depression severity (y-axis)."><br><br></p>
 </div>
 </div>
 
