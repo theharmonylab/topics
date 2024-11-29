@@ -42,7 +42,7 @@ test_that('Case 1: Save all topics without the topic grid plot by using the topi
   topics::topicsPlot(
     model = model,
     test = tests2D,
-    p_threshold = 0.99,
+    p_alpha = 0.99,
     seed = 1, 
     save_dir = save_dir_temp, 
     figure_format = "png"
@@ -87,7 +87,7 @@ test_that('Case 2: Save the scatter legend and grid legend for topic grids using
   topics::topicsPlot(
     model = model,
     test = tests2D,
-    p_threshold = 0.99,
+    p_alpha = 0.99,
     seed = 2, 
     save_dir = save_dir_temp, 
     figure_format = "png")
@@ -133,7 +133,7 @@ test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall retu
   out1 <- topics::topicsPlot(
     model = model,
     test = tests2D,
-    p_threshold = 0.99,
+    p_alpha = 0.99,
     seed = 3, 
     save_dir = save_dir_temp, 
     figure_format = "png")
@@ -144,7 +144,7 @@ test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall retu
   out1 <- topics::topicsPlot(
     model = model,
     test = tests2D,
-    p_threshold = 0.99,
+    p_alpha = 0.99,
     seed = 4, 
     save_dir = save_dir_temp, 
     figure_format = "png")
@@ -189,7 +189,7 @@ test_that('Case 4: Set dimension = 2 for successfully saving the legends.',{
   topics::topicsPlot(
     model = model,
     test = tests2D,
-    p_threshold = 0.99,
+    p_alpha = 0.99,
     seed = 5, 
     save_dir = save_dir_temp, 
     figure_format = "png")
@@ -240,7 +240,7 @@ test_that('Case 5: Change the popout method to "max_x", and "max_y".',{
   topics::topicsPlot(
     model = model,
     test = tests2D,
-    p_threshold = 0.99,
+    p_alpha = 0.99,
     scatter_legend_method = 'max_x',
     seed = 6, 
     save_dir = save_dir_temp, 
@@ -256,7 +256,7 @@ test_that('Case 5: Change the popout method to "max_x", and "max_y".',{
   topics::topicsPlot(
     model = model,
     test = tests2D,
-    p_threshold = 0.99,
+    p_alpha = 0.99,
     scatter_legend_method = 'max_y',
     seed = 7, 
     save_dir = save_dir_temp, 
@@ -317,7 +317,7 @@ test_that('Case 6: Manually set the topic numbers to save topics',{
   topics::topicsPlot(
     model = model,
     test = tests2D,
-    p_threshold = 0.99,
+    p_alpha = 0.99,
     scatter_legend_specified_topics = c('t_1', 't_2'),
     seed = 8, 
     save_dir = save_dir_temp, 
@@ -366,7 +366,7 @@ test_that('Case 7: Set dimension = 1 for successfully saving the legends',{
   topics::topicsPlot(
     model = model,
     test = tests1D,
-    p_threshold = 0.99,
+    p_alpha = 0.99,
     scatter_legend_specified_topics = c('t_1', 't_2'),
     seed = 9, 
     save_dir = save_dir_temp, 

@@ -8,7 +8,8 @@ topicsPlot(
   model = NULL,
   ngrams = NULL,
   test = NULL,
-  p_threshold = 0.05,
+  p_alpha = 0.05,
+  p_adjust_method = "none",
   color_scheme = "default",
   scale_size = FALSE,
   plot_topics_idx = NULL,
@@ -40,7 +41,10 @@ topicsPlot(
 
 \item{test}{(list) The test results; if plotting according to dimension(s) include the object from topicsTest() function.}
 
-\item{p_threshold}{(integer) The p-value threshold to use for significance testing.}
+\item{p_alpha}{(integer) The p-value threshold to use for significance testing.}
+
+\item{p_adjust_method}{(character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
+see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").}
 
 \item{color_scheme}{(string 'default' or vector) The color scheme.
  

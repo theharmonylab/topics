@@ -14,7 +14,6 @@ topicsTest(
   group_var = NULL,
   control_vars = c(),
   test_method = "linear_regression",
-  p_alpha = 0.05,
   p_adjust_method = "fdr",
   seed = 42,
   load_dir = NULL,
@@ -39,8 +38,6 @@ topicsTest(
 \item{control_vars}{(vector) The control variables (not supported yet)}
 
 \item{test_method}{(string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"}
-
-\item{p_alpha}{(numeric) Threshold of p value set by the user for visualising significant topics}
 
 \item{p_adjust_method}{(character) Method to adjust/correct p-values for multiple comparisons
 (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").}

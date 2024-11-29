@@ -54,18 +54,18 @@
 #' @export
 topicsDtm <- function(
     data, #
-    ngram_window=c(1,3),
-    stopwords=stopwords::stopwords("en", source = "snowball"),
-    removalword="",
-    occ_rate=0,
-    removal_mode="none",
-    removal_rate_most=0,
-    removal_rate_least=0,
-    split=1,
-    seed=42L,
+    ngram_window = c(1,3),
+    stopwords = stopwords::stopwords("en", source = "snowball"),
+    removalword = "",
+    occ_rate = 0,
+    removal_mode = "none",
+    removal_rate_most = 0,
+    removal_rate_least = 0,
+    split = 1,
+    seed = 42L,
     save_dir,
     load_dir = NULL,
-    threads=1){
+    threads = 1){
   
   if (!is.null(load_dir)){
     dtms <- readRDS(paste0(load_dir, 
@@ -259,8 +259,8 @@ topicsDtmEval <- function(dtm) {
       ggplot2::theme_minimal()+
       ggplot2::theme(
         axis.text.x = element_text(angle = 35, hjust = 1, size = 11),
-        panel.grid.minor.x = element_blank(),
-        panel.grid.major.x = element_blank())
+        panel.grid.minor.x = ggplot2::element_blank(),
+        panel.grid.major.x = ggplot2::element_blank())
     
     # histogram of term frequencies
     plot_hist <- ggplot2::ggplot(data = dtm_summary, aes(x = freq)) +
@@ -328,8 +328,8 @@ topicsDtmEval <- function(dtm) {
     ggplot2::theme_minimal()+
     ggplot2::theme(
       axis.text.x = element_text(angle = 35, hjust = 1, size = 11),
-      panel.grid.minor.x = element_blank(),
-      panel.grid.major.x = element_blank())
+      panel.grid.minor.x = ggplot2::element_blank(),
+      panel.grid.major.x = ggplot2::element_blank())
   
   
   # histogram of term frequencies
@@ -696,13 +696,13 @@ topicsTest1 <- function(
     model,
     preds,
     data,
-    pred_var=NULL, # for all test types except t-test
-    group_var=NULL, # only one in the case of t-test
-    control_vars=c(),
-    test_method="linear_regression",
+    pred_var = NULL, # for all test types except t-test
+    group_var = NULL, # only one in the case of t-test
+    control_vars = c(),
+    test_method = "linear_regression",
     p_adjust_method = "fdr",
-    seed=42,
-    load_dir=NULL,
+    seed = 42,
+    load_dir = NULL,
     save_dir){
   
   if (!is.null(load_dir)){
@@ -767,7 +767,7 @@ topicsTest1 <- function(
         preds <- dplyr::bind_cols(data[control_var], preds)
       }
     }
-    if (test_method=="ridge_regression"){
+    if (test_method == "ridge_regression"){
       group_var <- pred_var
     }
     
@@ -836,20 +836,35 @@ topicsTest1 <- function(
               pred_var = pred_var))
 }
 
+#data
+#model = NULL
+#preds = NULL
+#ngrams = NULL
+#pred_var_x = NULL # for all test types except t-test
+#pred_var_y = NULL
+#group_var = NULL # only one in the case of t-test
+#control_vars = c()
+#test_method = "linear_regression"
+##    p_alpha = 0.05
+#p_adjust_method = "fdr"
+#seed = 42
+#load_dir = NULL
+#save_dir
 
-#' Statistically test topics
+#' Test topics or n-grams
 #' 
-#' The function to test the lda model for multiple dimensions, e.g., 2.
-#' @param model (list) The trained model
-#' @param data (tibble) The data to test on
-#' @param preds (tibble) The predictions
-#' @param ngrams (list) output of the ngram function
+#' Statistically test topics or n-grams in relation to one or two other variables using 
+#' regression or t-test.  
+#' @param model (list) A trained model LDA-model from the topicsModel() function.
+#' @param data (tibble) The data containing the variables to be tested.
+#' @param preds (tibble) The predictions from the topicsPred() function.
+#' @param ngrams (list) output of the n-gram function
 #' @param pred_var_x (string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)
 #' @param pred_var_y (string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)
 #' @param group_var (string) The variable to group by (only needed for t-test)
 #' @param control_vars (vector) The control variables (not supported yet)
 #' @param test_method (string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"
-#' @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
+# @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
 #' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
 #' @param seed (integer) The seed to set for reproducibility
@@ -899,12 +914,17 @@ topicsTest <- function(
     group_var = NULL, # only one in the case of t-test
     control_vars = c(),
     test_method = "linear_regression",
-    p_alpha = 0.05,
+#    p_alpha = 0.05,
     p_adjust_method = "fdr",
     seed = 42,
     load_dir = NULL,
     save_dir){
   
+  
+  # Need to have a variable to test against
+  if(is.null(pred_var_x) & is.null(pred_var_x)){
+      stop("Please note that you have to set pred_var_x or pred_var_y.")
+  }
   
   #### Warnings and instructions ####
   if(!is.null(pred_var_x) | !is.null(pred_var_x)){
@@ -932,7 +952,7 @@ topicsTest <- function(
   if (is.null(pred_var_x) & is.null(group_var)){
     msg <- 'Please input the pred_var_x or group_var!'
     message(colourise(msg, "brown"))
-    return (NULL)
+    # return (NULL)
   }
   
   #### Load test ####
@@ -984,7 +1004,7 @@ topicsTest <- function(
       control_vars= control_vars,
       test_method= test_method,
       p_adjust_method = p_adjust_method,
-      seed=seed,
+      seed = seed,
       load_dir = load_dir,
       save_dir = save_dir
     )
@@ -1011,14 +1031,14 @@ topicsTest <- function(
     topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
     topic_loadings_all[[3]]$pred_var <- paste0(topic_loadings_all[[1]]$pred_var, '_',
                                                topic_loadings_all[[2]]$pred_var) 
-    
-    bak1 <- colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)]
-    colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)] <- c('x_plotted', 'adjusted_p_values.x',
-                                                             'y_plotted', 'adjusted_p_values.y')
-    
-    #### This should be moved to topicsPlot <-  we do not want to set colour categories in the test
-    topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 2)
-    colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)] <- bak1
+ #   
+ #   bak1 <- colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)]
+ #   colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)] <- c('x_plotted', 'adjusted_p_values.x',
+ #                                                            'y_plotted', 'adjusted_p_values.y')
+ #   
+ #   #### This should be moved to topicsPlot <-  we do not want to set colour categories in the test
+ #   topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 2)
+ #   colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)] <- bak1
     
   } else {
     
@@ -1033,12 +1053,12 @@ topicsTest <- function(
       topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
       topic_loadings_all[[3]]$pred_var <- topic_loadings_all[[1]]$pred_var
       
-      bak1 <- colnames(topic_loadings_all[[3]]$test)[c(3,6)]
-      colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- c('x_plotted', 'adjusted_p_values.x')
-      
-      #### This should be moved to topicsPlot <-  we do not want to set colour categories in the test
-      topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 1)
-      colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- bak1
+#      #### This should be moved to topicsPlot <-  we do not want to set colour categories in the test
+#      bak1 <- colnames(topic_loadings_all[[3]]$test)[c(3,6)]
+#      colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- c('x_plotted', 'adjusted_p_values.x')
+#      
+#      topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 1)
+#      colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- bak1
       
     } else if (test_method == "ridge_regression"){
       topic_loadings_all[[1]] <- topic_loading
@@ -1116,7 +1136,7 @@ topicsScatterLegendOriginal <- function(
                                 color_categories == 1 | color_categories == 2 | color_categories == 3)
     plot <- ggplot2::ggplot() +
       ggplot2::geom_point(data = plot_only3, 
-                          aes(x = !!rlang::sym(x_column), y = 1,
+                          ggplot2::aes(x = !!rlang::sym(x_column), y = 1,
                               color = as.factor(.data[[color_column]])),
                           size = scatter_popout_dot_size, alpha = 0.8) +
       ggplot2::scale_color_manual(values = bivariate_color_codes) +
@@ -1144,7 +1164,7 @@ topicsScatterLegendOriginal <- function(
     color_column <- names(filtered_test)[ncol(filtered_test)]
     plot <- ggplot2::ggplot() +
       ggplot2::geom_point(data = filtered_test,
-                          aes(x = !!sym(x_column),
+                          ggplot2::aes(x = !!sym(x_column),
                               y = !!sym(y_column),
                               color = as.factor(.data[[color_column]])), 
                           size = scatter_popout_dot_size, alpha = 0.8) +
@@ -1509,7 +1529,7 @@ topicsScatterLegendOriginal <- function(
 #' @param seed Seed for reproducibility, ensuring consistent plot generation. Default: 42.
 #' @importFrom ggplot2 ggplot geom_point scale_color_manual labs theme_minimal theme element_blank
 #' @importFrom rlang sym !!
-#' @importFrom dplyr select filter mutate anti_join summarise pull group_by group_modify ungroup
+#' @importFrom dplyr pull select filter mutate anti_join summarise pull group_by group_modify ungroup
 #' @noRd
 topicsScatterLegendNew <- function(
     bivariate_color_codes,
@@ -1539,8 +1559,8 @@ topicsScatterLegendNew <- function(
   # Check for only significant or non-significant topics
   contains_category <- function(cat) {
     filtered_test %>%
-      summarise(contains_only = all(color_categories %in% cat)) %>%
-      pull(contains_only)
+      dplyr::summarise(contains_only = all(color_categories %in% cat)) %>%
+      dplyr::pull(contains_only)
   }
   
   only_two <- contains_category(2)  # Non-significant topics
@@ -1550,21 +1570,22 @@ topicsScatterLegendNew <- function(
   # User-specified topics for popout.
   if (!is.null(user_spec_topics)) {
     popout <- filtered_test %>% filter(topic %in% user_spec_topics)
-    backgr_dots <- filtered_test %>% anti_join(popout, by = colnames(filtered_test))
+    backgr_dots <- filtered_test %>% dplyr::anti_join(popout, by = colnames(filtered_test))
     
     # Only non-significant topics. Generating scatter legend.
   } else if (only_two && y_axes_1 == 1) {
-    popout <- filtered_test %>% filter(color_categories %in% 1:3)
-    backgr_dots <- tibble() # No background dots
+    popout <- filtered_test %>% dplyr::filter(color_categories %in% 1:3)
+    backgr_dots <- tibble::tibble() # No background dots
     
     # Only significant topics. Generating scatter plot.\n
   } else if (only_five && y_axes_1 == 2) {
     popout <- filtered_test
-    backgr_dots <- tibble() # No background dots
+    backgr_dots <- tibble::tibble() # No background dots
     
     # Generating scatter plot based on specified popout criteria.\n
   } else {
-    popout <- determine_popout_topics(filtered_test, num_popout, way_popout_topics, y_column, x_column)
+    popout <- determine_popout_topics(
+      filtered_test, num_popout, way_popout_topics, y_column, x_column)
     
     # Convert `color_categories` in `popout` back to integer
     popout <- popout %>%
@@ -1590,9 +1611,9 @@ topicsScatterLegendNew <- function(
   )
   
   # Save the plot
-  ggsave(paste0(save_dir, "/seed_", seed, 
+  ggplot2::ggsave(paste0(save_dir, "/seed_", seed, 
                 "/wordclouds/",
-                "Experimental_2_dot_legend_",
+                "dot_legend_",
                 "corvar_", cor_var, ".", 
                 figure_format),
          plot = plot, 
@@ -1656,18 +1677,18 @@ determine_popout_topics <- function(
   # Helper function to select rows based on `way_popout_topics`
   select_rows <- function(data, n_pop) {
     if (way_popout_topics == "max_y" && !is.null(y_col)) {
-      return(dplyr::slice_max(data, order_by = abs(!!sym(y_col)), n = n_pop, with_ties = FALSE))
+      return(dplyr::slice_max(data, order_by = abs(!!ggplot2::sym(y_col)), n = n_pop, with_ties = FALSE))
     }
     if (way_popout_topics == "max_x") {
-      return(dplyr::slice_max(data, order_by = abs(!!sym(x_col)), n = n_pop, with_ties = FALSE))
+      return(dplyr::slice_max(data, order_by = abs(!!ggplot2::sym(x_col)), n = n_pop, with_ties = FALSE))
     }
     if (way_popout_topics == "mean") {
       if (!is.null(y_col)) {
         data <- data %>%
-          mutate(mean_value = rowMeans(cbind(abs(!!sym(x_col)), abs(!!sym(y_col)))))
+          mutate(mean_value = rowMeans(cbind(abs(!!ggplot2::sym(x_col)), abs(!!ggplot2::sym(y_col)))))
       } else {
         data <- data %>%
-          mutate(mean_value = abs(!!sym(x_col)))
+          mutate(mean_value = abs(!!ggplot2::sym(x_col)))
       }
       return(dplyr::slice_max(data, order_by = mean_value, n = n_pop, with_ties = FALSE))
     }
@@ -1722,73 +1743,73 @@ generate_scatter_plot <- function(
 
   # Define aesthetics for popout and background points
   # Ensure y_col is valid and resolve y_aesthetic
-  y_aesthetic <- if (!is.null(y_col) && y_col != "") sym(y_col) else 1
+  y_aesthetic <- if (!is.null(y_col) && y_col != "") ggplot2::sym(y_col) else 1
   
   # Create aes with defined y aesthetic
-  popout_aes <- aes(
-    x = !!sym(x_col),
+  popout_aes <- ggplot2::aes(
+    x = !!ggplot2::sym(x_col),
     y = y_aesthetic,
     color = as.factor(.data[[color_col]])
   )
   
   # Resolve y aesthetic value
-  y_value <- if (is.null(y_col)) 1 else sym(y_col)
+  y_value <- if (is.null(y_col)) 1 else ggplot2::sym(y_col)
   
   # Aesthetics for background points
   bg_aes <- if (is.null(y_col)) {
-    aes(
-      x = !!sym(x_col),
+    ggplot2::aes(
+      x = !!ggplot2::sym(x_col),
       y = 1,
       color = as.factor(.data[[color_col]])
     )
   } else {
-    aes(
-      x = !!sym(x_col),
-      y = !!sym(y_col),
+    ggplot2::aes(
+      x = !!ggplot2::sym(x_col),
+      y = !!ggplot2::sym(y_col),
       color = as.factor(.data[[color_col]])
     )
   }
   
   popout_aes <- if (is.null(y_col)) {
-    aes(
-      x = !!sym(x_col),
+    ggplot2::aes(
+      x = !!ggplot2::sym(x_col),
       y = 1,
       color = as.factor(.data[[color_col]])
     )
   } else {
-    aes(
-      x = !!sym(x_col),
-      y = !!sym(y_col),
+    ggplot2::aes(
+      x = !!ggplot2::sym(x_col),
+      y = !!ggplot2::sym(y_col),
       color = as.factor(.data[[color_col]])
     )
   }
   
   # Build the plot
-  plot <- ggplot()
+  plot <- ggplot2::ggplot()
   
   # Add background points only if background is not empty
   if (nrow(background) > 0) {
     plot <- plot +
-      geom_point(data = background, bg_aes, size = bg_size, alpha = 0.3)
+      ggplot2::geom_point(data = background, bg_aes, size = bg_size, alpha = 0.3)
   }
   
   # Add popout points
   plot <- plot +
-    geom_point(data = popout, popout_aes, size = popout_size, alpha = 0.8) +
-    scale_color_manual(values = bivariate_color_codes) +
-    labs(x = label_x_name, y = label_y_name, color = '') +
-    theme_minimal() +
-    theme(
-      axis.text = element_blank(),
-      axis.ticks = element_blank(),
+    ggplot2::geom_point(data = popout, popout_aes, size = popout_size, alpha = 0.8) +
+    ggplot2::scale_color_manual(values = bivariate_color_codes) +
+    ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(
+      axis.text = ggplot2::element_blank(),
+      axis.ticks = ggplot2::element_blank(),
       legend.position = "none"
     )
   # Add topic numbers if enabled
   if (allow_topic_num_legend) {
     plot <- plot + geom_text(
       data = popout, 
-      aes(x = !!sym(x_col), 
-          y = if (is.null(y_col)) 1 else !!sym(y_col), 
+      ggplot2::aes(x = !!ggplot2::sym(x_col), 
+          y = if (is.null(y_col)) 1 else !!ggplot2::sym(y_col), 
           label = topic_number),
       size = popout_size - 3, 
       color = "black", 
@@ -2004,7 +2025,7 @@ topicsGridLegend <- function(
 #' @param grid_pos (numeric) The position for grid topics
 #' @param scale_size (logical) Whether to scale the size of the words
 #' @param plot_topics_idx (vector) The topics to plot determined by index
-#' @param p_threshold (integer) The p-value threshold to use for significance
+#' @param p_alpha (integer) The p-value threshold to use for significance
 #' @param save_dir (string) The directory to save the wordclouds
 #' @param figure_format (string) Set the figure format, e.g., svg, or png.
 #' @param width (integer) The width of the topic (units = "in"). 
@@ -2022,7 +2043,7 @@ topicsPlot1 <- function(
     grid_pos = "",
     scale_size = FALSE,
     plot_topics_idx = NULL,
-    p_threshold = 0.05,
+    p_alpha = 0.05,
     save_dir,
     figure_format = "svg",
     width = 10, 
@@ -2089,7 +2110,7 @@ topicsPlot1 <- function(
     grid_pos = grid_pos,
     scale_size = scale_size,
     plot_topics_idx = plot_topics_idx,
-    p_threshold = p_threshold,
+    p_alpha = p_alpha,
     save_dir = save_dir,
     figure_format = figure_format,
     width = width, 
@@ -2228,13 +2249,46 @@ colour_settings <- function(
 }
 
 
+
+
+#model = NULL
+#ngrams = NULL
+#test = NULL
+#p_alpha = 0.05 # Why is this set here since the test[[3]]$test$color_categories is determnied in in testTopics test?
+#color_scheme = "default"
+#scale_size = FALSE
+#plot_topics_idx = NULL
+#save_dir
+#figure_format = "svg"
+#width = 10
+#height = 8
+#max_size = 10
+#seed = 42
+#scatter_legend_dot_size = 15
+#scatter_legend_bg_dot_size = 9
+#scatter_legend_n = c(1,1,1,1,0,1,1,1,1) 
+#scatter_legend_method = c("mean")
+#scatter_legend_specified_topics = NULL
+#scatter_legend_topic_n = FALSE
+#grid_legend_title = "legend_title"
+#grid_legend_title_size = 5
+#grid_legend_title_color = 'black'
+#grid_legend_x_axes_label = "legend_x_axes_label"
+#grid_legend_y_axes_label = "legend_y_axes_label"
+#grid_legend_number_color = 'black'
+#grid_legend_number_size = 5
+#
+
+
 #' Plot word clouds
 #' 
 #' This function create word clouds and topic fugures
 #' @param model (list) A trained topics model. For examples from topicsModel(). Should be NULL if plotting ngrams.
 #' @param ngrams (list) The output from the the topicsGram() function . Should be NULL if plotting topics.
 #' @param test (list) The test results; if plotting according to dimension(s) include the object from topicsTest() function. 
-#' @param p_threshold (integer) The p-value threshold to use for significance testing.
+#' @param p_alpha (integer) The p-value threshold to use for significance testing.
+#' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
+#' see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").
 #' @param color_scheme (string 'default' or vector) The color scheme.
 #'  
 #' For plots not including a test, the color_scheme should in clude 2 colours (1 gradient pair), such as:
@@ -2317,7 +2371,8 @@ topicsPlot <- function(
     model = NULL,
     ngrams = NULL,
     test = NULL,
-    p_threshold = 0.05, # Why is this set here since the test[[3]]$test$color_categories is determnied in in testTopics test?
+    p_alpha = 0.05,
+    p_adjust_method = "none",
     color_scheme = "default",
     scale_size = FALSE,
     plot_topics_idx = NULL,
@@ -2355,7 +2410,7 @@ topicsPlot <- function(
     dim = 1
   
     # Only set dim to 2 if the test include enough tests
-    if(ncol(test[[3]]$test) == 11) {
+    if(ncol(test[[3]]$test) == 10) {
       dim = 2
     }
   }
@@ -2380,7 +2435,29 @@ topicsPlot <- function(
   }
  
   
-  ### Setting colour categories: Selecting elements to plot according to the p_threshold
+  ### Setting colour-categories: Selecting elements to plot according to the p_alpha ####
+  if (dim == 1) {
+    
+    # Getting column names
+    bak1 <- colnames(test[[3]]$test)[c(3,6)]
+    colnames(test[[3]]$test)[c(3,6)] <- c('x_plotted', 'adjusted_p_values.x')
+    
+    # Getting colour-categories
+    test[[3]]$test <- topicsNumAssign_dim2(test[[3]]$test, p_alpha, 1)
+    # Setting the original clumns
+    colnames(test[[3]]$test)[c(3,6)] <- bak1
+    
+  }
+  if (dim == 2){
+    
+     bak1 <- colnames(test[[3]]$test)[c(3,6,7,10)]
+     colnames(test[[3]]$test)[c(3,6,7,10)] <- c('x_plotted', 'adjusted_p_values.x',
+                                                'y_plotted', 'adjusted_p_values.y')
+     
+     test[[3]]$test <- topicsNumAssign_dim2(test[[3]]$test, p_alpha, 2)
+     colnames(test[[3]]$test)[c(3,6,7,10)] <- bak1
+  }
+  
   
   #### Making the plots ####
   #### Plotting topics from model without at test | ####
@@ -2394,11 +2471,13 @@ topicsPlot <- function(
       model = model,
       ngrams = ngrams,
       test = test[[1]],
-      p_threshold = p_threshold,
+      p_alpha = p_alpha,
       scale_size = scale_size,
       plot_topics_idx = plot_topics_idx,
-      color_negative_cor = ggplot2::scale_color_gradient(low = bivariate_color_codes[1], high = bivariate_color_codes[2]), # grey in hex code
-      color_positive_cor = ggplot2::scale_color_gradient(low = bivariate_color_codes[3], high = bivariate_color_codes[4]),
+      color_negative_cor = ggplot2::scale_color_gradient(
+        low = bivariate_color_codes[1], high = bivariate_color_codes[2]), # grey in hex code
+      color_positive_cor = ggplot2::scale_color_gradient(
+        low = bivariate_color_codes[3], high = bivariate_color_codes[4]),
       save_dir = save_dir,
       figure_format = figure_format,
       width = width, 
@@ -2406,11 +2485,10 @@ topicsPlot <- function(
       max_size = max_size, 
       seed = seed
     )
-    
   }
   
 
-  #### 1- or 2 dimensional topci-plots ####
+  #### 1- or 2 dimensional topic-plots ####
   if (!is.null(model) & !is.null(test)){
     
     if (dim == 1){
@@ -2435,7 +2513,7 @@ topicsPlot <- function(
           grid_pos = i,
           scale_size = scale_size,
           plot_topics_idx = plot_topics_idx,
-          p_threshold = p_threshold,
+          p_alpha = p_alpha,
           save_dir = save_dir,
           figure_format = figure_format,
           width = width, 
@@ -2467,7 +2545,7 @@ topicsPlot <- function(
               grid_pos = k,
               scale_size = scale_size,
               plot_topics_idx = plot_topics_idx,
-              p_threshold = p_threshold,
+              p_alpha = p_alpha,
               save_dir = save_dir,
               figure_format = figure_format,
               width = width, 
@@ -2478,25 +2556,25 @@ topicsPlot <- function(
       }
     }
   
-      topicsScatterLegendOriginal(
-        bivariate_color_codes = bivariate_color_codes_f,
-        filtered_test = test[[3]]$test,
-        num_popout = scatter_legend_n,
-        y_axes_1 = dim,
-        cor_var = test[[3]]$pred_var,
-        label_x_name = grid_legend_x_axes_label,
-        label_y_name = grid_legend_y_axes_label,
-        way_popout_topics = scatter_legend_method,
-        user_spec_topics = scatter_legend_specified_topics,
-        allow_topic_num_legend = scatter_legend_topic_n,
-        scatter_popout_dot_size = scatter_legend_dot_size,
-        scatter_bg_dot_size = scatter_legend_bg_dot_size,
-        save_dir = save_dir,
-        figure_format = figure_format,
-        # width = 10, 
-        # height = 8,
-        seed = seed
-        )
+   #   topicsScatterLegendOriginal(
+   #     bivariate_color_codes = bivariate_color_codes_f,
+   #     filtered_test = test[[3]]$test,
+   #     num_popout = scatter_legend_n,
+   #     y_axes_1 = dim,
+   #     cor_var = test[[3]]$pred_var,
+   #     label_x_name = grid_legend_x_axes_label,
+   #     label_y_name = grid_legend_y_axes_label,
+   #     way_popout_topics = scatter_legend_method,
+   #     user_spec_topics = scatter_legend_specified_topics,
+   #     allow_topic_num_legend = scatter_legend_topic_n,
+   #     scatter_popout_dot_size = scatter_legend_dot_size,
+   #     scatter_bg_dot_size = scatter_legend_bg_dot_size,
+   #     save_dir = save_dir,
+   #     figure_format = figure_format,
+   #     # width = 10, 
+   #     # height = 8,
+   #     seed = seed
+   #     )
       
       topicsScatterLegendNew(
         bivariate_color_codes = bivariate_color_codes_f,

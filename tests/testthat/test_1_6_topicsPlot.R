@@ -5,7 +5,8 @@ library(topics)
 test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   
   testthat::skip_on_cran()
-  save_dir_temp <- tempfile()
+   save_dir_temp <- tempfile()
+  #save_dir_temp = "./results"
   
   # No test (i.e., no dimension) help(topicsGrams)
   ngrams <- topics::topicsGrams(
@@ -42,7 +43,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     ngrams = ngrams, 
     test = test,
     figure_format = "png", 
-    p_threshold = 1, 
+    p_alpha = 1, 
     save_dir = save_dir_temp)
   
   testthat::expect_true(file.exists(paste0(
@@ -88,7 +89,7 @@ test_that("topicsPlot WITH test", {
   
   testthat::skip_on_cran()
   save_dir_temp <- tempfile()
-  
+  save_dir_temp = "./results"
   ## 1-Dimension
   dtm <- topics::topicsDtm(
     data = dep_wor_data$Deptext, 
@@ -113,7 +114,7 @@ test_that("topicsPlot WITH test", {
   topics::topicsPlot(
     model = model, 
     test = test1, 
-    p_threshold = 1,
+    p_alpha = 1,
     figure_format = "png",
     seed = 11, 
     save_dir = save_dir_temp)
@@ -140,7 +141,7 @@ test_that("topicsPlot WITH test", {
   topics::topicsPlot(
     model = model, 
     test = test2, 
-    p_threshold = 1, 
+    p_alpha = 1, 
     color_scheme =  c(
       "yellow", "#398CF9",  # quadrant 1 (upper left corner)
       "yellow", "#60A1F7",  # quadrant 2 

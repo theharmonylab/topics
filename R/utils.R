@@ -641,8 +641,6 @@ topic_test <- function(
       )
     }
 
-    
-    
     return (trained_model$results)
     
   }

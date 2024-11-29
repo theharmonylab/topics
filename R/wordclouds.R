@@ -102,7 +102,7 @@ create_topic_words_dfs <- function(
 #' @param grid_pos (numeric) position of grid plots
 #' @param scale_size (bool) if True, then the size of the topic cloud is scaled by the prevalence of the topic
 #' @param plot_topics_idx (list) if specified, then only the specified topics are plotted
-#' @param p_threshold (float) set threshold which determines which topics are plotted
+#' @param p_alpha (float) set threshold which determines which topics are plotted
 #' @param save_dir (string) save plots in specified directory, if left blank, plots is not saved,
 #' thus save_dir is necessary.
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
@@ -123,7 +123,7 @@ create_plots <- function(
     grid_pos = "",
     scale_size = FALSE,
     plot_topics_idx = NULL,
-    p_threshold = NULL,
+    p_alpha = NULL,
     save_dir,
     figure_format = "svg",
     width = 10,
@@ -199,14 +199,14 @@ create_plots <- function(
       
       
       # this will ensure that all topics are plotted
-      if (is.null(p_threshold) ){
+      if (is.null(p_alpha) ){
         if (grid == ""){
-          p_threshold <- p_adjusted +1 
+          p_alpha <- p_adjusted +1 
         }
       }
       
       #
-      if (!is.nan(p_adjusted) & p_adjusted < p_threshold){
+      if (!is.nan(p_adjusted) & p_adjusted < p_alpha){
         
         
         #estimate <- test[i,][[grep(estimate_col, colnames(test), value=TRUE)]]# $PHQtot.estimate
@@ -400,8 +400,8 @@ create_plots <- function(
         test <- test %>% dplyr::rename(estimate = contains("estimate"))
         test <- test %>% dplyr::rename(p_adjusted = contains("p_adjusted"))
         test <- test %>% dplyr::left_join(ngrams, by = "top_terms")
-        if (!is.null(p_threshold)){
-          test <- test %>% dplyr::filter(p_adjusted < p_threshold)
+        if (!is.null(p_alpha)){
+          test <- test %>% dplyr::filter(p_adjusted < p_alpha)
         }
         # test for the fact that all words could be insignificant
         if (nrow(test) == 0){

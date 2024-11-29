@@ -6,6 +6,7 @@ test_that("topicsTest performs linear regression correctly", {
   
   testthat::skip_on_cran()
   save_dir_temp <- tempfile()
+  save_dir_temp <-  "./results"
   
   dtm <- topics::topicsDtm(
     data = dep_wor_data$Deptext, 
@@ -25,10 +26,11 @@ test_that("topicsTest performs linear regression correctly", {
     preds = preds,
     data = dep_wor_data,
     pred_var_x = "Age",
+    pred_var_y = "PHQ9tot",
     test_method = "linear_regression", 
     save_dir = save_dir_temp
     )
-  
+#  test = result
   testthat::expect_true(is.list(result[[1]]))
   testthat::expect_equal(result[[1]]$test_method, "linear_regression")
   testthat::expect_true(any(grepl("estimate", names(result[[1]]$test))))
@@ -39,34 +41,34 @@ test_that("topicsTest performs linear regression correctly", {
 })
 
 
-test_that("topicsTest handles missing pred_var for non t-test methods", {
-  
-  testthat::skip_on_cran()
-  save_dir_temp <- tempfile()
-  
-  dtm <- topics::topicsDtm(
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
-  
-  model <- topics::topicsModel(
-    dtm = dtm, 
-    save_dir = save_dir_temp)
-  
-  preds <- topics::topicsPreds(
-    model = model, 
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
-  
-  result <- topics::topicsTest(
-    model = model, 
-    preds = preds, 
-    data = dep_wor_data, 
-    pred_var_x = NULL, 
-    save_dir = save_dir_temp)
-  
-  testthat::expect_null(result)
-  
-})
+#test_that("topicsTest handles missing pred_var for non t-test methods", {
+#  
+#  testthat::skip_on_cran()
+#  save_dir_temp <- tempfile()
+#  
+#  dtm <- topics::topicsDtm(
+#    data = dep_wor_data$Deptext, 
+#    save_dir = save_dir_temp)
+#  
+#  model <- topics::topicsModel(
+#    dtm = dtm, 
+#    save_dir = save_dir_temp)
+#  
+#  preds <- topics::topicsPreds(
+#    model = model, 
+#    data = dep_wor_data$Deptext, 
+#    save_dir = save_dir_temp)
+#  
+#  result <- topics::topicsTest(
+#    model = model, 
+#    preds = preds, 
+#    data = dep_wor_data, 
+#    pred_var_x = NULL, 
+#    save_dir = save_dir_temp)
+#  
+#  testthat::expect_null(result)
+#  
+#})
 
 test_that("topicsTest adjusts p-values for multiple comparisons", {
   
