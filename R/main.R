@@ -1196,6 +1196,10 @@ topicsScatterLegendOriginal <- function(
       }
     }
   }
+    
+  if (length(bivariate_color_codes) == 3){
+      y_axes_1 <- 1
+  } # Note: one can modify this later to extend the pop_n in 1-dim topic plot.
   if (!only_five && is.null(user_spec_topics) && length(num_popout) != 1 && length(num_popout) == 3 && y_axes_1 == 1){
     legend_map_num_pop <- c(
       "1" = num_popout[1], "2" = num_popout[2], # 0 if skip non-sig center topics
@@ -1211,7 +1215,7 @@ topicsScatterLegendOriginal <- function(
                        table1[[i]], ' popped out topics. Cannot specify ',
                        as.character(legend_map_num_pop[[i]]), 
                        ' topics in it!\n')
-        msg1 <- "Cannot save the scatter legend!\n"
+        msg2 <- "Cannot save the scatter legend!\n"
         
         message(
           colourise(msg1, "brown"))
@@ -1313,6 +1317,33 @@ topicsScatterLegendOriginal <- function(
         dplyr::ungroup()
     }
   }
+  if (!only_five && is.null(user_spec_topics) && way_popout_topics == "mean" && y_axes_1 == 1){
+    
+    msg <- "Generating the scatter legend with topics emphasised using 'mean' in 1 dimension. \n"
+    
+    message(
+      colourise(msg, "blue"))
+    
+    if (length(num_popout) > 1){
+      popout <- filtered_test %>%
+        dplyr::filter(color_categories != 2) %>%
+        dplyr::mutate(map_num = dplyr::recode(as.character(color_categories), !!!legend_map_num_pop)) %>%
+        dplyr::group_by(color_categories) %>%
+        dplyr::group_modify(~ dplyr::slice_max(.x, order_by = abs(!!sym(estimate_col_x)), n = as.integer(.x$map_num[1]), with_ties = FALSE)) %>%
+        dplyr::ungroup() # Will change the order of columns
+      # Re-arrange the columns to keep the same.
+      colname_bak <- names(filtered_test)
+      popout <- popout %>%
+        dplyr::select(dplyr::all_of(colname_bak), map_num)
+    }
+    if (length(num_popout) == 1){
+      popout <- filtered_test %>%
+        dplyr::filter(color_categories != 2) %>%
+        dplyr::group_by(color_categories) %>%
+        dplyr::slice_max(order_by = abs(!!rlang::sym(estimate_col_x)), n = num_popout, with_ties = FALSE) %>%
+        dplyr::ungroup()
+    }
+  }    
   if (!only_five && is.null(user_spec_topics) && way_popout_topics == "max_x" && y_axes_1 == 1){
     
     msg <- "Generating the scatter legend with topics emphasised using 'max_x' in 1 dimension. \n"
@@ -1586,7 +1617,7 @@ determine_popout_topics <- function(
     filtered_test, 
     num_popout, 
     way_popout_topics, 
-    y_col, 
+    y_col = NULL, 
     x_col) {
   # Ensure `color_categories` exists
   if (!"color_categories" %in% colnames(filtered_test)) {
@@ -1602,13 +1633,17 @@ determine_popout_topics <- function(
     stop("The `color_categories` column contains missing (NA) values.")
   }
   
-  # Ensure `num_popout` has 9 values
-  if (length(num_popout) != 9) {
-    stop("`num_popout` must have exactly 9 values, one for each quadrant of a 3x3 grid.")
+  # Ensure `num_popout` has the correct number of values
+  if (!(length(num_popout) %in% c(3, 9))) {
+    stop("`num_popout` must have exactly 3 or 9 values.")
   }
   
   # Map `num_popout` to corresponding categories
-  legend_map_num_pop <- setNames(as.integer(num_popout), as.character(1:9))
+  legend_map_num_pop <- if (length(num_popout) == 9) {
+    setNames(as.integer(num_popout), as.character(1:9))
+  } else {
+    setNames(as.integer(num_popout), as.character(1:3))
+  }
   
   # Filter for categories present in `filtered_test`
   existing_categories <- unique(filtered_test$color_categories)
@@ -1618,42 +1653,41 @@ determine_popout_topics <- function(
     stop("No valid `color_categories` in `filtered_test` match `num_popout` mapping.")
   }
   
+  # Helper function to select rows based on `way_popout_topics`
+  select_rows <- function(data, n_pop) {
+    if (way_popout_topics == "max_y" && !is.null(y_col)) {
+      return(dplyr::slice_max(data, order_by = abs(!!sym(y_col)), n = n_pop, with_ties = FALSE))
+    }
+    if (way_popout_topics == "max_x") {
+      return(dplyr::slice_max(data, order_by = abs(!!sym(x_col)), n = n_pop, with_ties = FALSE))
+    }
+    if (way_popout_topics == "mean") {
+      if (!is.null(y_col)) {
+        data <- data %>%
+          mutate(mean_value = rowMeans(cbind(abs(!!sym(x_col)), abs(!!sym(y_col)))))
+      } else {
+        data <- data %>%
+          mutate(mean_value = abs(!!sym(x_col)))
+      }
+      return(dplyr::slice_max(data, order_by = mean_value, n = n_pop, with_ties = FALSE))
+    }
+    stop("Invalid `way_popout_topics`. Supported values are 'max_y', 'max_x', or 'mean'.")
+  }
+  
   # Process each category based on the popout criteria
   filtered_test %>%
     filter(color_categories %in% names(valid_map)) %>%
     group_by(color_categories) %>%
     group_modify(~ {
-      # Access the category directly from `.y`
       category <- .y$color_categories
-      
-      if (is.na(category) || category == "") {
-        warning("Unexpected category format or missing value.")
-      }
-      
-      # Get the number of items to pop out for this category
       n_pop <- valid_map[[category]]
-      
-      # Handle each `way_popout_topics` criterion
       if (n_pop > 0) {
-        if (way_popout_topics == "max_y") {
-          dplyr::slice_max(.x, order_by = abs(!!sym(y_col)), n = n_pop, with_ties = FALSE)
-        } else if (way_popout_topics == "max_x") {
-          dplyr::slice_max(.x, order_by = abs(!!sym(x_col)), n = n_pop, with_ties = FALSE)
-        } else if (way_popout_topics == "mean") {
-          .x %>%
-            dplyr::mutate(mean_value = rowMeans(cbind(
-              abs(!!sym(x_col)), 
-              abs(!!sym(y_col))
-            ))) %>%
-            dplyr::slice_max(order_by = mean_value, n = n_pop, with_ties = FALSE)
-        } else {
-          stop("Invalid `way_popout_topics`. Supported values are 'max_y', 'max_x', or 'mean'.")
-        }
+        select_rows(.x, n_pop)
       } else {
         .x[0, ]  # Return empty tibble for categories with 0 `n_pop`
       }
     }) %>%
-    dplyr::ungroup()
+    ungroup()
 }
 
 
@@ -2111,6 +2145,7 @@ colour_settings <- function(
         bivariate_color_codes_b <- color_scheme[seq(1, length(color_scheme), by = 2)]
         # Select every second color for "front" colour in the gradient 
         bivariate_color_codes_f <- color_scheme[seq(2, length(color_scheme), by = 2)]
+        bivariate_color_codes_f <- setNames(bivariate_color_codes_f, seq_along(bivariate_color_codes_f))
         
       } else {
         stop("Please provide 6 colours for the gradient.")
@@ -2125,6 +2160,7 @@ colour_settings <- function(
         bivariate_color_codes_b <- color_scheme[seq(1, length(color_scheme), by = 2)]
         # Select every second color for "front" colour in the gradient 
         bivariate_color_codes_f <- color_scheme[seq(2, length(color_scheme), by = 2)]
+        bivariate_color_codes_f <- setNames(bivariate_color_codes_f, seq_along(bivariate_color_codes_f))
         
       } else {
         stop("Please provide 18 colours or use color_scheme = 'default'.")
