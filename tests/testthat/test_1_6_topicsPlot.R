@@ -6,7 +6,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   
   testthat::skip_on_cran()
    save_dir_temp <- tempfile()
-  #save_dir_temp = "./results"
+  save_dir_temp = "./results"
   
   # No test (i.e., no dimension) help(topicsGrams)
   ngrams <- topics::topicsGrams(

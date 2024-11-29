@@ -420,11 +420,11 @@ create_plots <- function(
             dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
           }
           # Word cloud with correlation strength mapped to color gradient
-          plot <- ggplot2::ggplot(test_positive, aes(label = top_terms, size = estimate, color = prop)) +
+          plot <- ggplot2::ggplot(test_positive, ggplot2::aes(label = top_terms, size = estimate, color = prop)) +
             ggwordcloud::geom_text_wordcloud() +
-            scale_size_area(max_size = max_size) +  # Adjust max size
+            ggplot2::scale_size_area(max_size = max_size) +  # Adjust max size
             #scale_color_gradient(low = "grey", high = "red") +  # Blue for low, red for high correlation strength
-            theme_minimal() +
+            ggplot2::theme_minimal() +
             color_positive_cor
           
           ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
@@ -437,11 +437,11 @@ create_plots <- function(
                           units = "in", 
                           create.dir = TRUE) 
           # Word cloud with correlation strength mapped to color gradient
-          plot <- ggplot2::ggplot(test_negative, aes(label = top_terms, size = estimate, color = prop)) +
+          plot <- ggplot2::ggplot(test_negative, ggplot2::aes(label = top_terms, size = estimate, color = prop)) +
             ggwordcloud::geom_text_wordcloud() +
-            scale_size_area(max_size = max_size) +  # Adjust max size
+            ggplot2::scale_size_area(max_size = max_size) +  # Adjust max size
             #scale_color_gradient(low = "grey", high = "red") +  # Blue for low, red for high correlation strength
-            theme_minimal() +
+            ggplot2::theme_minimal() +
             color_negative_cor
           
           ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 

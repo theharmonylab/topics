@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{topicsTest}
 \alias{topicsTest}
-\title{Statistically test topics}
+\title{Test topics or n-grams}
 \usage{
 topicsTest(
   data,
@@ -21,13 +21,13 @@ topicsTest(
 )
 }
 \arguments{
-\item{data}{(tibble) The data to test on}
+\item{data}{(tibble) The data containing the variables to be tested.}
 
-\item{model}{(list) The trained model}
+\item{model}{(list) A trained model LDA-model from the topicsModel() function.}
 
-\item{preds}{(tibble) The predictions}
+\item{preds}{(tibble) The predictions from the topicsPred() function.}
 
-\item{ngrams}{(list) output of the ngram function}
+\item{ngrams}{(list) output of the n-gram function}
 
 \item{pred_var_x}{(string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)}
 
@@ -52,7 +52,8 @@ topicsTest(
 A list of the test results, test method, and prediction variable
 }
 \description{
-The function to test the lda model for multiple dimensions, e.g., 2.
+Statistically test topics or n-grams in relation to one or two other variables using 
+regression or t-test.
 }
 \examples{
 \donttest{

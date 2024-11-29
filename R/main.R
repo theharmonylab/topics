@@ -247,7 +247,7 @@ topicsDtmEval <- function(dtm) {
   if(nrow(dtm_summary) <= 30){
     
     
-    plot_all <- ggplot2::ggplot(data = dtm_summary, aes(x = reorder(term, freq), y = freq, fill = nr))+
+    plot_all <- ggplot2::ggplot(data = dtm_summary, ggplot2::aes(x = reorder(term, freq), y = freq, fill = nr))+
       ggplot2::geom_bar(stat = "identity", show.legend = F)+
       ggplot2::labs(title = paste0("Frequencies of all terms in the DTM (N = ", nrow(dtm_summary), ")"),
            x = "Terms", 
@@ -263,7 +263,7 @@ topicsDtmEval <- function(dtm) {
         panel.grid.major.x = ggplot2::element_blank())
     
     # histogram of term frequencies
-    plot_hist <- ggplot2::ggplot(data = dtm_summary, aes(x = freq)) +
+    plot_hist <- ggplot2::ggplot(data = dtm_summary, ggplot2::aes(x = freq)) +
       ggplot2::geom_histogram(fill = "#15637F", color = "white") +
       ggplot2::labs(x = "Term frequency",
            y = "Number of terms with this frequency",
@@ -286,7 +286,7 @@ topicsDtmEval <- function(dtm) {
   
   
   # plot 30 least frequent
-  plot_30_least <- ggplot2::ggplot(data = dtm_summary_30_min, aes(x = reorder(term, freq), y = freq))+
+  plot_30_least <- ggplot2::ggplot(data = dtm_summary_30_min, ggplot2::aes(x = reorder(term, freq), y = freq))+
     ggplot2::geom_bar(stat = "identity", color = "white", fill = "#9BD7E9")+
     ggplot2::labs(title = "30 least frequent terms in the DTM",
          x = "Term", y = "Frequency")+
@@ -298,7 +298,7 @@ topicsDtmEval <- function(dtm) {
           axis.title.x = element_text(margin = margin(t = 5), size = 12, face = "bold"))
   
   # plot 30 msot frequent
-  plot_30_most <- ggplot2::ggplot(data = dtm_summary_30_max, aes(x = reorder(term, freq), y = freq))+
+  plot_30_most <- ggplot2::ggplot(data = dtm_summary_30_max, ggplot2::aes(x = reorder(term, freq), y = freq))+
     ggplot2::geom_bar(stat = "identity", color = "white", fill = "#15637F")+
     ggplot2::labs(title = "30 most frequent terms in the DTM",
          x = "Term", y = "Frequency")+
@@ -315,7 +315,7 @@ topicsDtmEval <- function(dtm) {
   dtm_summary <- dtm_summary %>%
     mutate(example_terms =  ifelse(1:nrow(dtm_summary) %in% keep, term, ""))
   
-  plot_all <- ggplot2::ggplot(data = dtm_summary, aes(x = reorder(term, freq), y = freq, fill = nr))+
+  plot_all <- ggplot2::ggplot(data = dtm_summary, ggplot2::aes(x = reorder(term, freq), y = freq, fill = nr))+
     ggplot2::geom_bar(stat = "identity", show.legend = F)+
     ggplot2::labs(title = paste0("Frequencies of all terms in the DTM (N = ", nrow(dtm_summary), ")"),
          x = "Terms (only a few terms shown for illustration)", 
@@ -333,7 +333,7 @@ topicsDtmEval <- function(dtm) {
   
   
   # histogram of term frequencies
-  plot_hist <- ggplot(data = dtm_summary, aes(x = freq)) +
+  plot_hist <- ggplot(data = dtm_summary, ggplot2::aes(x = freq)) +
     ggplot2::geom_histogram(fill = "#15637F", color = "white") +
     ggplot2::labs(x = "Term frequency",
          y = "Number of terms with this frequency",
@@ -1031,15 +1031,7 @@ topicsTest <- function(
     topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
     topic_loadings_all[[3]]$pred_var <- paste0(topic_loadings_all[[1]]$pred_var, '_',
                                                topic_loadings_all[[2]]$pred_var) 
- #   
- #   bak1 <- colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)]
- #   colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)] <- c('x_plotted', 'adjusted_p_values.x',
- #                                                            'y_plotted', 'adjusted_p_values.y')
- #   
- #   #### This should be moved to topicsPlot <-  we do not want to set colour categories in the test
- #   topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 2)
- #   colnames(topic_loadings_all[[3]]$test)[c(3,6,7,10)] <- bak1
-    
+
   } else {
     
     if (test_method == "linear_regression" | test_method == "logistic_regression"){
@@ -1053,18 +1045,14 @@ topicsTest <- function(
       topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
       topic_loadings_all[[3]]$pred_var <- topic_loadings_all[[1]]$pred_var
       
-#      #### This should be moved to topicsPlot <-  we do not want to set colour categories in the test
-#      bak1 <- colnames(topic_loadings_all[[3]]$test)[c(3,6)]
-#      colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- c('x_plotted', 'adjusted_p_values.x')
-#      
-#      topic_loadings_all[[3]]$test <- topicsNumAssign_dim2(topic_loadings_all[[3]]$test, p_alpha, 1)
-#      colnames(topic_loadings_all[[3]]$test)[c(3,6)] <- bak1
-      
     } else if (test_method == "ridge_regression"){
       topic_loadings_all[[1]] <- topic_loading
     }
   }
   
+  # Not sure why we are keep all three lists - since the last list appear to have all the information.
+  # so trying here to only keep the last, to see if anything else breaks. 
+  topic_loadings_all <- topic_loadings_all[[length(topic_loadings_all)]]
   return(topic_loadings_all)
 }
 
@@ -2254,7 +2242,7 @@ colour_settings <- function(
 #model = NULL
 #ngrams = NULL
 #test = NULL
-#p_alpha = 0.05 # Why is this set here since the test[[3]]$test$color_categories is determnied in in testTopics test?
+#p_alpha = 0.05 # Why is this set here since the test$test$color_categories is determnied in in testTopics test?
 #color_scheme = "default"
 #scale_size = FALSE
 #plot_topics_idx = NULL
@@ -2277,7 +2265,7 @@ colour_settings <- function(
 #grid_legend_y_axes_label = "legend_y_axes_label"
 #grid_legend_number_color = 'black'
 #grid_legend_number_size = 5
-#
+
 
 
 #' Plot word clouds
@@ -2410,7 +2398,7 @@ topicsPlot <- function(
     dim = 1
   
     # Only set dim to 2 if the test include enough tests
-    if(ncol(test[[3]]$test) == 10) {
+    if(ncol(test$test) == 10) {
       dim = 2
     }
   }
@@ -2439,23 +2427,23 @@ topicsPlot <- function(
   if (dim == 1) {
     
     # Getting column names
-    bak1 <- colnames(test[[3]]$test)[c(3,6)]
-    colnames(test[[3]]$test)[c(3,6)] <- c('x_plotted', 'adjusted_p_values.x')
+    bak1 <- colnames(test$test)[c(3,6)]
+    colnames(test$test)[c(3,6)] <- c('x_plotted', 'adjusted_p_values.x')
     
     # Getting colour-categories
-    test[[3]]$test <- topicsNumAssign_dim2(test[[3]]$test, p_alpha, 1)
+    test$test <- topicsNumAssign_dim2(test$test, p_alpha, 1)
     # Setting the original clumns
-    colnames(test[[3]]$test)[c(3,6)] <- bak1
+    colnames(test$test)[c(3,6)] <- bak1
     
   }
   if (dim == 2){
     
-     bak1 <- colnames(test[[3]]$test)[c(3,6,7,10)]
-     colnames(test[[3]]$test)[c(3,6,7,10)] <- c('x_plotted', 'adjusted_p_values.x',
+     bak1 <- colnames(test$test)[c(3,6,7,10)]
+     colnames(test$test)[c(3,6,7,10)] <- c('x_plotted', 'adjusted_p_values.x',
                                                 'y_plotted', 'adjusted_p_values.y')
      
-     test[[3]]$test <- topicsNumAssign_dim2(test[[3]]$test, p_alpha, 2)
-     colnames(test[[3]]$test)[c(3,6,7,10)] <- bak1
+     test$test <- topicsNumAssign_dim2(test$test, p_alpha, 2)
+     colnames(test$test)[c(3,6,7,10)] <- bak1
   }
   
   
@@ -2470,7 +2458,7 @@ topicsPlot <- function(
     topicsPlot1(
       model = model,
       ngrams = ngrams,
-      test = test[[1]],
+      test = test,
       p_alpha = p_alpha,
       scale_size = scale_size,
       plot_topics_idx = plot_topics_idx,
@@ -2494,9 +2482,9 @@ topicsPlot <- function(
     if (dim == 1){
       #i=1
       for (i in 1:3){
-        if (! (i %in% test[[3]]$test$color_categories)){next}
+        if (! (i %in% test$test$color_categories)){next}
         
-        filtered_test <- test[[3]]
+        filtered_test <- test
         filtered_test$test <- dplyr::filter(
           tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
                                             color_categories == i)
@@ -2527,8 +2515,8 @@ topicsPlot <- function(
     if (dim == 2){
       
       for (k in 1:9){
-        if (! (k %in% test[[3]]$test$color_categories)){next}
-        filtered_test <- test[[3]]
+        if (! (k %in% test$test$color_categories)){next}
+        filtered_test <- test
             filtered_test$test <- dplyr::filter(
               tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
                                                 color_categories == k)
@@ -2558,10 +2546,10 @@ topicsPlot <- function(
   
    #   topicsScatterLegendOriginal(
    #     bivariate_color_codes = bivariate_color_codes_f,
-   #     filtered_test = test[[3]]$test,
+   #     filtered_test = test$test,
    #     num_popout = scatter_legend_n,
    #     y_axes_1 = dim,
-   #     cor_var = test[[3]]$pred_var,
+   #     cor_var = test$pred_var,
    #     label_x_name = grid_legend_x_axes_label,
    #     label_y_name = grid_legend_y_axes_label,
    #     way_popout_topics = scatter_legend_method,
@@ -2578,10 +2566,10 @@ topicsPlot <- function(
       
       topicsScatterLegendNew(
         bivariate_color_codes = bivariate_color_codes_f,
-        filtered_test = test[[3]]$test,
+        filtered_test = test$test,
         num_popout = scatter_legend_n,
         y_axes_1 = dim,
-        cor_var = test[[3]]$pred_var,
+        cor_var = test$pred_var,
         label_x_name = grid_legend_x_axes_label,
         label_y_name = grid_legend_y_axes_label,
         way_popout_topics = scatter_legend_method,
@@ -2598,8 +2586,8 @@ topicsPlot <- function(
       
       topicsGridLegend(
             bivariate_color_codes = bivariate_color_codes_f,
-            filtered_test = test[[3]]$test,
-            cor_var = test[[3]]$pred_var,
+            filtered_test = test$test,
+            cor_var = test$pred_var,
             save_dir = save_dir,
             figure_format = figure_format,
             seed = seed,
@@ -2611,7 +2599,7 @@ topicsPlot <- function(
             titles_color = grid_legend_title_color,
             legend_x_axes_label = grid_legend_x_axes_label,
             legend_y_axes_label = grid_legend_y_axes_label,
-            topic_data_all = test[[3]][["test"]],
+            topic_data_all = test[["test"]],
             legend_number_color = grid_legend_number_color,
             legend_number_size = grid_legend_number_size
           )

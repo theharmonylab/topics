@@ -3,6 +3,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+# topics 0.22
+- change p_threshold to p_alpha
+- moved p_alpha from the topicsTest() function to the topicsPlots() function
+- removed unneccassary list items from topicsTest()
+
 # topics 0.21
 - Changes related to compatability with the text-package
 
