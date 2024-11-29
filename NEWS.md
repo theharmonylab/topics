@@ -3,6 +3,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+# topics 0.21
+- Changes related to compatability with the text-package
+
 # topics 0.20
 
 - Cleaning up code and ensuring improved compatibility across platforms. 
