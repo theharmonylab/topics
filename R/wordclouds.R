@@ -306,7 +306,7 @@ create_plots <- function(
           if (i %in% popout$topic){fileHead <- '0_scatter_emphasised'}else{fileHead <- ''}
           ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
                                  "/wordclouds/", 
-                                 fileHead,'_'
+                                 fileHead,'_',
                                  grid,
                                  "corvar_", cor_var,"_",
                                  i, fileMsg),
