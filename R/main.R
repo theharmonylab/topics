@@ -1490,6 +1490,8 @@ topicsScatterLegendOriginal <- function(
                   height = height, 
                   units = "in", 
                   create.dir = TRUE)   
+
+   if (!only_two && !only_five){return (popout)}else{ return (NULL) }
 }
 
 
@@ -1606,6 +1608,8 @@ topicsScatterLegendNew <- function(
                 figure_format),
          plot = plot, 
          width = width, height = height, units = "in", device = figure_format)
+    
+   if (!only_two && !only_five){return (popout)}else{ return (NULL) }
 }
 
 
