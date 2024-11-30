@@ -2012,6 +2012,7 @@ topicsGridLegend <- function(
 #' The function to create lda wordclouds
 #' @param model (list) The trained model
 #' @param test (list) The test results
+#' @param popout (tibble) The tibble containing the topic idx to popout
 #' @param color_negative_cor (R_obj) The color gradient for negative correlations
 #' @param color_positive_cor (R_obj) The color gradient for positive correlations
 #' @param grid_pos (numeric) The position for grid topics
@@ -2030,6 +2031,7 @@ topicsPlot1 <- function(
     model = NULL,
     ngrams = NULL,
     test = NULL,
+    popout = NULL,
     color_negative_cor = NULL,
     color_positive_cor = NULL,
     grid_pos = "",
@@ -2097,6 +2099,7 @@ topicsPlot1 <- function(
     test = test, 
     test_type = test_type,
     cor_var = cor_var,
+    popout = popout,
     color_negative_cor = color_negative_cor,
     color_positive_cor = color_positive_cor,
     grid_pos = grid_pos,
