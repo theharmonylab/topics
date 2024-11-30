@@ -288,6 +288,7 @@ create_plots <- function(
           if (length(strsplit(cor_var, "_")[[1]]) > 1){
             p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
             p_adjusted_y <- sprintf("%.2e", p_adjusted_y)
+            if (i %in% popout$)
             fileMsg <- paste0(
               "_rx_", estimate_x,
               "_ry_", estimate_y, 
@@ -303,8 +304,10 @@ create_plots <- function(
               figure_format
             )
           }
+          if (i %in% popout$topic){fileHead <- '0_scatter_emphasised'}else{fileHead <- ''}
           ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
-                                 "/wordclouds/",
+                                 "/wordclouds/", 
+                                 fileHead,'_'
                                  grid,
                                  "corvar_", cor_var,"_",
                                  i, fileMsg),
