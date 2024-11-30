@@ -11,10 +11,10 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   # No test (i.e., no dimension) help(topicsGrams)
   ngrams <- topics::topicsGrams(
     data = dep_wor_data$Worphrase, 
-    top_n = 10, 
+    top_n = 50, 
     n = 3, 
-    pmi_threshold = 3)
-  
+    pmi_threshold = 6)
+  #ngrams$ngrams$pmi
   topics::topicsPlot(
     ngrams = ngrams, 
     figure_format = "png", 

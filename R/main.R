@@ -2277,6 +2277,8 @@ colour_settings <- function(
 #' @param p_alpha (integer) The p-value threshold to use for significance testing.
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
 #' see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").
+#' @param ngrams_max (integer) The max number of n-grams to include.
+#' @param ngram_select (character) Method to select ngrams_max including "pmi", "frequency", "proportion", and "correlation". 
 #' @param color_scheme (string 'default' or vector) The color scheme.
 #'  
 #' For plots not including a test, the color_scheme should in clude 2 colours (1 gradient pair), such as:
@@ -2361,6 +2363,8 @@ topicsPlot <- function(
     test = NULL,
     p_alpha = 0.05,
     p_adjust_method = "none",
+    ngrams_max = NULL,
+    ngram_select = "frequency",
     color_scheme = "default",
     scale_size = FALSE,
     plot_topics_idx = NULL,
@@ -2401,6 +2405,28 @@ topicsPlot <- function(
     if(ncol(test$test) == 10) {
       dim = 2
     }
+  }
+  
+  
+  if(is.null(ngrams) & !is.null(ngrams_max)){
+    
+    if (!ngram_select %in% c("pmi", "frequency", "proportion")){
+      stop("ngram_select incorrect -- correlation and t-statistics has not been implemented yet")
+    }
+    
+    ngrams$ngrams <- ngrams$ngrams %>% 
+      dplyr::arrange(
+        if (ngram_select == "pmi") {
+          dplyr::desc(pmi)
+        } else if (ngram_select == "frequency") {
+          dplyr::desc(freq)
+        } else if (ngram_select == "proportion") {
+          dplyr::desc(prop)
+        } else {
+          stop("Invalid value for ngram_select")
+        }
+      ) %>%
+      dplyr::slice_head(n = ngrams_max)  
   }
   
   #### Setting colors ####

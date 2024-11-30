@@ -10,6 +10,8 @@ topicsPlot(
   test = NULL,
   p_alpha = 0.05,
   p_adjust_method = "none",
+  ngrams_max = NULL,
+  ngram_select = "frequency",
   color_scheme = "default",
   scale_size = FALSE,
   plot_topics_idx = NULL,
@@ -45,6 +47,10 @@ topicsPlot(
 
 \item{p_adjust_method}{(character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
 see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").}
+
+\item{ngrams_max}{(integer) The max number of n-grams to include.}
+
+\item{ngram_select}{(character) Method to select ngrams_max including "pmi", "frequency", "proportion", and "correlation".}
 
 \item{color_scheme}{(string 'default' or vector) The color scheme.
  
