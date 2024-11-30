@@ -64,7 +64,7 @@ test_that("topicsDtm handles different occurrence rates", {
   
   result <-topics:: topicsDtm(
     data = dep_wor_data$Deptext,
-    occ_rate = 1, 
+    occurance_rate = 1, 
     save_dir =   save_dir_temp)
   
   testthat::expect_true(is.list(result))
