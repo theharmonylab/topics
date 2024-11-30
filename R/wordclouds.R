@@ -288,7 +288,6 @@ create_plots <- function(
           if (length(strsplit(cor_var, "_")[[1]]) > 1){
             p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
             p_adjusted_y <- sprintf("%.2e", p_adjusted_y)
-            if (i %in% popout$)
             fileMsg <- paste0(
               "_rx_", estimate_x,
               "_ry_", estimate_y, 
