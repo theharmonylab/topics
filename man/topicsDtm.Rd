@@ -9,7 +9,7 @@ topicsDtm(
   ngram_window = c(1, 3),
   stopwords = stopwords::stopwords("en", source = "snowball"),
   removalword = "",
-  occ_rate = 0,
+  occurance_rate = 0,
   removal_mode = "none",
   removal_rate_most = 0,
   removal_rate_least = 0,
@@ -29,7 +29,7 @@ topicsDtm(
 
 \item{removalword}{(string) the word to remove}
 
-\item{occ_rate}{(integer) the rate of occurence of a word to be removed}
+\item{occurance_rate}{(integer) the rate of occurence of a word to be removed}
 
 \item{removal_mode}{(string) the mode of removal -> "none", "frequency", "term" or "percentage", frequency removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, term removes an absolute amount of terms that are most frequent and least frequent, percentage the amount of terms indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix}
 

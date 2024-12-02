@@ -12,7 +12,7 @@
 #' @param seed (integer) the random seed for reproducibility
 #' @param save_dir (string) the directory to save the results, if NULL, no results are saved.
 #' @param load_dir (string) the directory to load from.
-#' @param occ_rate (integer) the rate of occurence of a word to be removed
+#' @param occurance_rate (integer) the rate of occurence of a word to be removed
 #' @param threads (integer) the number of threads to use
 #' @return the document term matrix
 #' @examples
@@ -57,7 +57,7 @@ topicsDtm <- function(
     ngram_window = c(1,3),
     stopwords = stopwords::stopwords("en", source = "snowball"),
     removalword = "",
-    occ_rate = 0,
+    occurance_rate = 0,
     removal_mode = "none",
     removal_rate_most = 0,
     removal_rate_least = 0,
@@ -119,8 +119,8 @@ topicsDtm <- function(
       cpus = threads) # default is all available cpus on the system
   
     
-    if (occ_rate>0){
-      removal_frequency <- round(nrow(train)*occ_rate) -1
+    if (occurance_rate>0){
+      removal_frequency <- round(nrow(train)*occurance_rate) -1
       train_dtm <- train_dtm[,Matrix::colSums(train_dtm) > removal_frequency]
     }
     if (removal_mode != "frequency"){
@@ -157,13 +157,13 @@ topicsDtm <- function(
       verbose = FALSE, # Turn off status bar for this demo
       cpus = threads) # default is all available cpus on the system
     
-    if (occ_rate>0){
+    if (occurance_rate>0){
       
-      removal_frequency <- round(nrow(test)*occ_rate) -1
+      removal_frequency <- round(nrow(test)*occurance_rate) -1
       
       test_dtm <- test_dtm[, Matrix::colSums(test_dtm) > removal_frequency]
     }
-    #removal_frequency <- get_occ_frequency(test_dtm, occ_rate)
+    #removal_frequency <- get_occ_frequency(test_dtm, occurance_rate)
     #test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_frequency]
     
     if (removal_mode != "frequency"){
@@ -459,9 +459,9 @@ topicsModel <- function(
 #' 
 #' The function computes ngrams from a text
 #' @param data (tibble) The data
-#' @param n (integer) The length of ngram
-#' @param sep (string) The separator
-#' @param top_n (integer) The number of top ngrams to be displayed
+#' @param ngram_window (list) the minimum and maximum n-gram length, e.g. c(1,3)
+#' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
+#' @param top_n (integer) The number of most occuring ngrams to included in the output for every ngram type
 #' @param pmi_threshold (integer) The pmi threshold, if it shall not be used set to 0
 #' @importFrom ngram ngram get.ngrams get.phrasetable
 #' @importFrom tibble as_tibble tibble
@@ -472,69 +472,92 @@ topicsModel <- function(
 #' @export
 topicsGrams <- function(
     data, 
-    n=2, 
-    sep = " ", 
+    ngram_window = c(1,3),
+    stopwords = stopwords::stopwords("en", source = "snowball"), 
     top_n = NULL, 
     pmi_threshold=0){
   
   data <- tolower(data)
-  data <- gsub("[()].$", "", data)
+  data <- gsub("[()].$?", "", data)
   
+  # this currently breaks the code, as no ngrams with length 1 can be computed when stopwords are removed
+  # data_stopped <- vector("character", length(data))
+  # stop_words <- stopwords("en")
+  # 
+  # for (i in seq_along(data)) {
+  #   words <- strsplit(data[i], " ")[[1]]
+  #   words_stopped <- words[!tolower(words) %in% stop_words]
+  #   data_stopped[i] <- paste(words_stopped, collapse = " ")
+  # }
+  # data <- data_stopped
+
   ngrams <- list()
   counts <- c()
-  for (i in 1:n){
-    ngrams[[i]] <- ngram::ngram(data, n = i, sep = " ")
+
+  single_grams <- ngram::ngram(data, n = 1, sep = " ")
+  single_grams <- ngram::get.phrasetable(single_grams)
+  single_count <- nrow(single_grams)
+  single_grams
+
+  for (i in 1:length(ngram_window)){
+    ngrams[[i]] <- ngram::ngram(data, n = ngram_window[i], sep = " ")
     ngrams[[i]] <- ngram::get.phrasetable(ngrams[[i]])
     counts <- c(counts,nrow(ngrams[[i]]))
   }
-  
   total <- 0
-  for (i in 1:n){
+  for (i in 1:length(ngram_window)){
     total <- total + sum(ngrams[[i]]$freq)
   }
-  for (i in 1:n){
+  for (i in 1:length(ngram_window)){
     ngrams[[i]]$prop <- ngrams[[i]]$freq/total
   }
 
   # calculate the pmi score pmi $($ phrase $)=\log \frac{p(\text { phrase })}{\Pi_{w \in p h r a s e} p(w)}$
- 
-  for (k in 2:n){
+  start <- 1
+  pmi_threshold <- 0
+  if (ngram_window[1] == 1){
+    start <- 2
+    ngrams[[1]]$pmi <- pmi_threshold
+  }
+  for (k in start:length(ngram_window)){
     pmi <- list()
     for (i in 1:nrow(ngrams[[k]])) {
       words <- strsplit(ngrams[[k]]$ngrams[i], " ")[[1]]
       denum <- 1
       for (j in 1:length(words)) {
-        denum <- denum * ngrams[[1]][ngrams[[1]]$ngrams == paste0(words[j], " "), "prop"]
+        denum <- denum * single_grams[single_grams$ngrams == paste0(words[j], " "), "prop"]
       }
       pmi[[i]] <- log(ngrams[[k]]$prop[i]/denum)
     }
     ngrams[[k]]$pmi <- unlist(pmi)
   }
-  ngrams[[1]]$pmi <- pmi_threshold
-  
-  
+
   # filter ngrams based on pmi
   if (!is.null(pmi_threshold)){
     removed <- c()
-    for (i in 2:n){
+    start <- 1
+    if (ngram_window[1] == 1){
+      start <- 2
+    }
+    for (i in start:length(ngram_window)){
       ngrams[[i]] <- ngrams[[i]] %>% dplyr::filter(pmi > pmi_threshold)
       removed <- c(removed, counts[[i]] - nrow(ngrams[[i]]))
     }
-    removed <- c(0, removed)
+    if (ngram_window[1] == 1)
+      removed <- c(0, removed)
   } else {
-    removed <- rep(0, n)
+    removed <- rep(0, length(n))
   }
   
   stats <- tibble(
-    ngram_type = paste0(1:n, "-grams"),           # Create n-gram labels dynamically
+    ngram_type = paste0(ngram_window, "-grams"),           # Create n-gram labels dynamically
     initial_count = counts,  #  initial counts for illustration
     removed_count = removed,    #  removed counts for illustration
     final_count = counts - removed
   )
-  
   # take top n ngrams
   if (!is.null(top_n)){
-    for (i in 1:n){
+    for (i in 1:length(ngram_window)){
       ngrams[[i]] <- ngrams[[i]][1:top_n,]
     }
   }
@@ -562,7 +585,6 @@ topicsGrams <- function(
   
   # change the ngrams to a single string with "_" as connector
   ngrams$ngrams <- sapply(ngrams$ngrams, function(x) paste(unlist(strsplit(x, " ")), collapse = "_"))
-  
   return(list(ngrams=as_tibble(ngrams),
               freq_per_user = as_tibble(freq_per_user),
               stats=stats))

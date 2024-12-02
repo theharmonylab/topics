@@ -4,16 +4,22 @@
 \alias{topicsGrams}
 \title{N-grams}
 \usage{
-topicsGrams(data, n = 2, sep = " ", top_n = NULL, pmi_threshold = 0)
+topicsGrams(
+  data,
+  ngram_window = c(1, 3),
+  stopwords = stopwords::stopwords("en", source = "snowball"),
+  top_n = NULL,
+  pmi_threshold = 0
+)
 }
 \arguments{
 \item{data}{(tibble) The data}
 
-\item{n}{(integer) The length of ngram}
+\item{ngram_window}{(list) the minimum and maximum n-gram length, e.g. c(1,3)}
 
-\item{sep}{(string) The separator}
+\item{stopwords}{(stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")}
 
-\item{top_n}{(integer) The number of top ngrams to be displayed}
+\item{top_n}{(integer) The number of most occuring ngrams to included in the output for every ngram type}
 
 \item{pmi_threshold}{(integer) The pmi threshold, if it shall not be used set to 0}
 }
