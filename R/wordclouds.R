@@ -303,7 +303,9 @@ create_plots <- function(
               figure_format
             )
           }
-          if (i %in% popout$topic && !is.null(popout)){fileHead <- '0_scatter_emphasised_'}else{fileHead <- ''}
+          if (is.null(popout)){fileHead <- ''}else{
+              if (i %in% popout$topic){fileHead <- '0_scatter_emphasised_'}else{fileHead <- ''}
+          }
           ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
                                  "/wordclouds/", 
                                  fileHead,
