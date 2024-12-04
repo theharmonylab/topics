@@ -18,9 +18,9 @@ test_that("topicsDtm creates a DTM correctly with default parameters", {
   
   testthat::expect_true(is.list(result))
   testthat::expect_true("train_dtm" %in% names(result))
-  testthat::expect_true("test_dtm" %in% names(result))
-  testthat::expect_true("train_data" %in% names(result))
-  testthat::expect_true("test_data" %in% names(result))
+  #testthat::expect_true("test_dtm" %in% names(result))
+  #testthat::expect_true("train_data" %in% names(result))
+  #testthat::expect_true("test_data" %in% names(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
 
 })

@@ -145,52 +145,57 @@ topicsDtm <- function(
     }
     
     
-    # create a document term matrix for test set
-    test_dtm <- textmineR::CreateDtm(
-      doc_vec = test[[data_col]], # character vector of documents
-      doc_names = test[[id_col]], # document names
-      ngram_window = ngram_window, # minimum and maximum n-gram length
-      stopword_vec = stopwords::stopwords("en", source = "snowball"),
-      lower = TRUE, # lowercase - this is the default value
-      remove_punctuation = TRUE, # punctuation - this is the default
-      remove_numbers = TRUE, # numbers - this is the default
-      verbose = FALSE, # Turn off status bar for this demo
-      cpus = threads) # default is all available cpus on the system
+
     
-    if (occurance_rate>0){
-      
-      removal_frequency <- round(nrow(test)*occurance_rate) -1
-      
-      test_dtm <- test_dtm[, Matrix::colSums(test_dtm) > removal_frequency]
-    }
-    #removal_frequency <- get_occ_frequency(test_dtm, occurance_rate)
-    #test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_frequency]
     
-    if (removal_mode != "frequency"){
-      if (removal_rate_least > 0){
-        removal_columns <- get_removal_columns(test_dtm, removal_rate_least, "least", removal_mode)
-        if (removal_rate_most > 0){
-          removal_columns_most <- get_removal_columns(test_dtm, removal_rate_most, "most", removal_mode)
-          removal_columns <- c(removal_columns, removal_columns_most)
-        }
-        test_dtm <- test_dtm[,-removal_columns]
-      } else if (removal_rate_most > 0){
-        removal_columns <- get_removal_columns(test_dtm, removal_rate_most, "most", removal_mode)
-        test_dtm <- test_dtm[,-removal_columns]
-      }
-    } else if (removal_mode == "frequency"){
-      if (!is.null(removal_rate_least)){
-        test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_rate_least]
-      }
-      if (!is.null(removal_rate_most)){
-        test_dtm <- test_dtm[,Matrix::colSums(test_dtm) < removal_rate_most]
-      }
-    }
-    
-    dtms <- list(train_dtm = train_dtm, 
-                 test_dtm = test_dtm, 
-                 train_data = train, 
-                 test_data = test)
+#    # create a document term matrix for test set
+#    test_dtm <- textmineR::CreateDtm(
+#      doc_vec = test[[data_col]], # character vector of documents
+#      doc_names = test[[id_col]], # document names
+#      ngram_window = ngram_window, # minimum and maximum n-gram length
+#      stopword_vec = stopwords::stopwords("en", source = "snowball"),
+#      lower = TRUE, # lowercase - this is the default value
+#      remove_punctuation = TRUE, # punctuation - this is the default
+#      remove_numbers = TRUE, # numbers - this is the default
+#      verbose = FALSE, # Turn off status bar for this demo
+#      cpus = threads) # default is all available cpus on the system
+#    
+#    if (occurance_rate>0){
+#      
+#      removal_frequency <- round(nrow(test)*occurance_rate) -1
+#      
+#      test_dtm <- test_dtm[, Matrix::colSums(test_dtm) > removal_frequency]
+#    }
+#    #removal_frequency <- get_occ_frequency(test_dtm, occurance_rate)
+#    #test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_frequency]
+#    
+#    if (removal_mode != "frequency"){
+#      if (removal_rate_least > 0){
+#        removal_columns <- get_removal_columns(test_dtm, removal_rate_least, "least", removal_mode)
+#        if (removal_rate_most > 0){
+#          removal_columns_most <- get_removal_columns(test_dtm, removal_rate_most, "most", removal_mode)
+#          removal_columns <- c(removal_columns, removal_columns_most)
+#        }
+#        test_dtm <- test_dtm[,-removal_columns]
+#      } else if (removal_rate_most > 0){
+#        removal_columns <- get_removal_columns(test_dtm, removal_rate_most, "most", removal_mode)
+#        test_dtm <- test_dtm[,-removal_columns]
+#      }
+#    } else if (removal_mode == "frequency"){
+#      if (!is.null(removal_rate_least)){
+#        test_dtm <- test_dtm[,Matrix::colSums(test_dtm) > removal_rate_least]
+#      }
+#      if (!is.null(removal_rate_most)){
+#        test_dtm <- test_dtm[,Matrix::colSums(test_dtm) < removal_rate_most]
+#      }
+#    }
+#    
+    dtms <- list(
+      train_dtm = train_dtm#, 
+      #test_dtm = test_dtm, 
+      #train_data = train, 
+      #test_data = test
+      )
   }
   
   if (!is.null(save_dir)){
@@ -655,9 +660,10 @@ topicsPreds <- function(
     
     pred_ids <- as.character(1:length(data))
     
-    new_instances <- compatible_instances(ids=pred_ids,
-                                          texts=pred_text,
-                                          instances=model$instances)
+    new_instances <- compatible_instances(
+      ids=pred_ids,
+      texts=pred_text,
+      instances=model$instances)
     
     inf_model <- model$inferencer
     preds <- infer_topics(

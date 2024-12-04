@@ -15,6 +15,7 @@ test_that("topicsPreds generates predictions with default parameters", {
   model <- topics::topicsModel(
     dtm = dtm, 
     save_dir = save_dir_temp)
+  names(model)
   
   result <- topics::topicsPreds(
     model = model, 
