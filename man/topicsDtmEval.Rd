@@ -16,7 +16,7 @@ A named list containing:
   \item{frequency_plot}{A bar plot of all term frequencies with example terms.}
   \item{frequency_plot_30_least}{A bar plot of the 30 least frequent terms (if numer of terms > 30).}
   \item{frequency_plot_30_most}{A bar plot of the 30 most frequent terms (if numer of terms > 30).}
-  \item{historgam_of_frequencies}{A histogram of term frequencies (this is the same information as
+  \item{histogram_of_frequencies}{A histogram of term frequencies (this is the same information as
   in the frequency_plot but presented differently).}
 }
 }

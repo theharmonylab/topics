@@ -4,16 +4,18 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # topics 0.22.1
-- added pmi_threshold (experimental) to `topicsDtm()`
-- removed saving raw data and split procedure in the `topicsDtm()`
+- added `pmi_threshold` (experimental) to `topicsDtm()`
+- removed the saving of raw data and the `split` procedure in the `topicsDtm()`
+- adding function that name emphasized topics so the file name starts with 0_.
+- add a parameter to turn off the shuffling of the data in `topicsDtm()` 
 
 # topics 0.22
-- change p_threshold to p_alpha
-- moved p_alpha from the topicsTest() function to the topicsPlots() function
-- removed unneccassary list items from topicsTest()
+- change `p_threshold` to `p_alpha`
+- moved `p_alpha` from the `topicsTest()` function to the `topicsPlots()` function
+- removed unnecessary list items from `topicsTest()`
 
 # topics 0.21
-- Changes related to compatability with the text-package
+- Changes related to compatability with the `text`-package
 
 # topics 0.20
 
@@ -23,10 +25,10 @@
 # topics 0.10.1
 
 ## Change
-- Removing dim and grid_plot arguments in topicsPlot().
+- Removing dim and grid_plot arguments in `topicsPlot()`.
 - Fixing the color bugs.
 - Adding possibility for the user to use gradient colors in all plots.
-- Adding a stop warning when the variable name contains an underscore in topicsTest().
+- Adding a stop warning when the variable name contains an underscore in `topicsTest().`
 
 
 

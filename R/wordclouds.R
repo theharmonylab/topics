@@ -138,10 +138,10 @@ create_plots <- function(
   if(!is.null(test) & !is.null(df_list) & !is.null(summary)){
   
     if (is.null(plot_topics_idx)){
-      grid <- ""
+      grid1 <- ""
       plot_topics_idx <- seq(1, length(df_list))
     }else{
-      grid <- paste0("grid_pos_", grid_pos, "_")
+      grid1 <- paste0("grid_pos_", grid_pos, "_")
       pred_var_x <- strsplit(cor_var, "_")[[1]][1]
       if (length(strsplit(cor_var, "_")[[1]]) > 1){
         pred_var_y <- strsplit(cor_var, "_")[[1]][2]
@@ -151,7 +151,7 @@ create_plots <- function(
       #for (i in 1:length(df_list)){
       #view(df_list[[i]])
       if (test_type == "linear_regression"){
-        if (grid == ""){
+        if (grid1 == ""){
           colNo.estimate <- grep(paste0(cor_var, '.estimate'),colnames(test))
           colNo.p_adjusted <- grep(paste0(cor_var, '.p_adjusted'),colnames(test))
           estimate_col <- colnames(test)[colNo.estimate] 
@@ -177,7 +177,7 @@ create_plots <- function(
         p_adjusted_col <- "p_adjusted"
         
       }
-      if (grid == ""){
+      if (grid1 == ""){
         estimate <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[estimate_col]] # $PHQtot.estimate
         p_adjusted <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[p_adjusted_col]] # $PHQtot.p_adjustedfdr
       }else{
@@ -202,7 +202,7 @@ create_plots <- function(
       
       # this will ensure that all topics are plotted
       if (is.null(p_alpha) ){
-        if (grid == ""){
+        if (grid1 == ""){
           p_alpha <- p_adjusted +1 
         }
       }
@@ -226,7 +226,7 @@ create_plots <- function(
           y <- ""
         }
 
-        if (grid == ""){ .
+        if (grid1 == ""){ .
           plot <- ggplot2::ggplot(df_list[[as.numeric(sub(".*_", "", i))]], 
                                   ggplot2::aes(label = Word, 
                                                size = phi, 
@@ -269,10 +269,10 @@ create_plots <- function(
           dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
         }
         p_adjusted <- sprintf("%.2e", p_adjusted)
-        if (grid == ""){
+        if (grid1 == ""){
           ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
                                  "/wordclouds/",
-                                 grid,
+                                 grid1,
                                  "corvar_", cor_var,"_",
                                  i, "_r_", 
                                  estimate, "_p_", 
@@ -306,10 +306,11 @@ create_plots <- function(
           if (is.null(popout)){fileHead <- ''}else{
               if (i %in% popout$topic){fileHead <- '0_scatter_emphasised_'}else{fileHead <- ''}
           }
+          
           ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
                                  "/wordclouds/", 
                                  fileHead,
-                                 grid,
+                                 grid1,
                                  "corvar_", cor_var,"_",
                                  i, fileMsg),
                           plot = plot, 

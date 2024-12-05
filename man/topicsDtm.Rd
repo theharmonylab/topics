@@ -14,6 +14,7 @@ topicsDtm(
   removal_mode = "none",
   removal_rate_most = 0,
   removal_rate_least = 0,
+  shuffle = TRUE,
   seed = 42L,
   save_dir,
   load_dir = NULL,
@@ -42,6 +43,8 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
 
 \item{removal_rate_least}{(integer) the rate of least frequent words to be removed, functionality depends on removal_mode}
 
+\item{shuffle}{(boolean) shuffle the data before analyses}
+
 \item{seed}{(integer) the random seed for reproducibility}
 
 \item{save_dir}{(string) the directory to save the results, if NULL, no results are saved.}
@@ -49,8 +52,6 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
 \item{load_dir}{(string) the directory to load from.}
 
 \item{threads}{(integer) the number of threads to use}
-
-\item{split}{(float) the proportion of the data to be used for training}
 }
 \value{
 the document term matrix
@@ -70,14 +71,14 @@ dtm <- topicsDtm(data = dep_wor_data$Depphrase,
                  removal_rate_most = 500,
                  save_dir = save_dir_temp)
 
-# Create Dtm and remove the 5 least and 5 most frequent terms.
+# Create Dtm and remove the 1 least and 1 most frequent terms.
 dtm <- topicsDtm(data = dep_wor_data$Depphrase,
                  removal_mode = "term",
                  removal_rate_least = 1,
                  removal_rate_most = 1,
                  save_dir = save_dir_temp)
 
-# Create Dtm and remove the 5\% least frequent and 1\% most frequent terms.
+# Create Dtm and remove the 1\% least frequent and 1\% most frequent terms.
 dtm <- topicsDtm(data = dep_wor_data$Depphrase,
                  removal_mode = "percentage",
                  removal_rate_least = 1,

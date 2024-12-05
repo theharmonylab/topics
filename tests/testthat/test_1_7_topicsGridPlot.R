@@ -101,6 +101,7 @@ test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall retu
   
   testthat::skip_on_cran()
   save_dir_temp <- tempfile()
+  save_dir_temp <- "./res"
   dtmtest <- topics::topicsDtm(
     data = dep_wor_data$Wortext, 
     save_dir = save_dir_temp

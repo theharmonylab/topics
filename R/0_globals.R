@@ -23,5 +23,11 @@ utils::globalVariables(c(
   "msg2",
   
   # topicsDtmEval
-  "nr", "term", "freq"
+  "nr", "term", "freq",
+  
+  # topicsGrams
+  "n",
+  
+  # topicsPlot
+  "pmi"
 ))

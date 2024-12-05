@@ -13,7 +13,7 @@
 #' between terms by comparing their co-occurrence probability to their individual probabilities, 
 #' highlighting term pairs that occur together more often than expected by chance; in this implementation,
 #' terms with average PMI below the specified threshold (pmi_threshold) are removed from the document-term matrix. 
-#' @param split (float) the proportion of the data to be used for training
+#' @param shuffle (boolean) shuffle the data before analyses
 #' @param seed (integer) the random seed for reproducibility
 #' @param save_dir (string) the directory to save the results, if NULL, no results are saved.
 #' @param load_dir (string) the directory to load from.
@@ -67,12 +67,13 @@ topicsDtm <- function(
     removal_mode = "none",
     removal_rate_most = 0,
     removal_rate_least = 0,
- #   split = 1,
+    shuffle = TRUE,
     seed = 42L,
     save_dir,
     load_dir = NULL,
     threads = 1){
   
+  pmi_tibble = NULL
   if (!is.null(load_dir)){
     dtms <- readRDS(paste0(load_dir, 
                             "/seed_",
@@ -100,7 +101,14 @@ topicsDtm <- function(
     text_cols[[id_col]] <- 1:nrow(text_cols) # create unique ID
     text_cols <- as_tibble(text_cols)
     text_cols <- text_cols[complete.cases(text_cols), ] # remove missing rows
-    train <- text_cols
+    
+    if(shuffle){
+      text_cols = text_cols[sample(1:nrow(text_cols)), ] # shuffle
+      split_index <- round(nrow(text_cols) * 1) 
+      train <- text_cols[1:split_index, ]
+    } else {
+      train <- text_cols 
+    }
     
     if (removalword != ""){
       train[[data_col]] <- gsub(paste0("\\b", removalword, "\\b"), "", train[[data_col]]) 
@@ -210,7 +218,7 @@ topicsDtm <- function(
     }
 
     dtms <- list(
-      n_grams_pmi = pmi_tibble,
+      n_grams_pmi = if (!is.null(pmi_tibble)) pmi_tibble else "No pmi_threshold was used",
       train_dtm = train_dtm
     )
   }
@@ -1652,7 +1660,11 @@ topicsScatterLegendNew <- function(
                 "corvar_", cor_var, ".", 
                 figure_format),
          plot = plot, 
-         width = width, height = height, units = "in", device = figure_format)
+         width = width, 
+         height = height, 
+         units = "in", 
+         device = figure_format, 
+         create.dir = TRUE)
     
    if (!only_two && !only_five){return (popout)}else{ return (NULL) }
 }
@@ -2576,25 +2588,28 @@ topicsPlot <- function(
    #     seed = seed
    #     )
       
-   popout <- topicsScatterLegendNew(
-        bivariate_color_codes = bivariate_color_codes_f,
-        filtered_test = test$test,
-        num_popout = scatter_legend_n,
-        y_axes_1 = dim,
-        cor_var = test$pred_var,
-        label_x_name = grid_legend_x_axes_label,
-        label_y_name = grid_legend_y_axes_label,
-        way_popout_topics = scatter_legend_method,
-        user_spec_topics = scatter_legend_specified_topics,
-        allow_topic_num_legend = scatter_legend_topic_n,
-        scatter_popout_dot_size = scatter_legend_dot_size,
-        scatter_bg_dot_size = scatter_legend_bg_dot_size,
-        save_dir = save_dir,
-        figure_format = figure_format,
-        # width = 10, 
-        # height = 8,
-        seed = seed
-      )
+  if(is.null(ngrams) & !is.null(test$test)){
+    popout <- topicsScatterLegendNew(
+      bivariate_color_codes = bivariate_color_codes_f,
+      filtered_test = test$test,
+      num_popout = scatter_legend_n,
+      y_axes_1 = dim,
+      cor_var = test$pred_var,
+      label_x_name = grid_legend_x_axes_label,
+      label_y_name = grid_legend_y_axes_label,
+      way_popout_topics = scatter_legend_method,
+      user_spec_topics = scatter_legend_specified_topics,
+      allow_topic_num_legend = scatter_legend_topic_n,
+      scatter_popout_dot_size = scatter_legend_dot_size,
+      scatter_bg_dot_size = scatter_legend_bg_dot_size,
+      save_dir = save_dir,
+      figure_format = figure_format,
+      # width = 10, 
+      # height = 8,
+      seed = seed
+    )  
+  }
+
 
     
   if (!is.null(model) & !is.null(test)){

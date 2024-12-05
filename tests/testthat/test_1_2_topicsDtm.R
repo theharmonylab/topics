@@ -93,8 +93,7 @@ test_that("topicsDtm handles different split proportions", {
   save_dir_temp <- tempdir()
   
   result <- topics::topicsDtm(
-    data = dep_wor_data$Deptext, 
-    split = 0.5, 
+    data = dep_wor_data$Deptext,
     save_dir = save_dir_temp)
   
   testthat::expect_true(is.list(result))
