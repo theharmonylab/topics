@@ -97,6 +97,7 @@ create_topic_words_dfs <- function(
 #' @param test (data.frame) the test returned from textTopicTest()
 #' @param test_type (string) "linear_regression", or "binary_regression"
 #' @param cor_var (string) Variable for t-test, linear, binary or ridge regression
+#' @param popout (tibble) The tibble containing topic idx to popout
 #' @param color_negative_cor (function) color of topic cloud with negative correlation
 #' @param color_positive_cor (function) color of topic cloud with positive correlation
 #' @param grid_pos (numeric) position of grid plots
@@ -118,6 +119,7 @@ create_plots <- function(
     test = NULL,
     test_type = NULL,
     cor_var = NULL,
+    popout = NULL,
     color_negative_cor = NULL,
     color_positive_cor = NULL,
     grid_pos = "",
@@ -301,8 +303,12 @@ create_plots <- function(
               figure_format
             )
           }
+          if (is.null(popout)){fileHead <- ''}else{
+              if (i %in% popout$topic){fileHead <- '0_scatter_emphasised_'}else{fileHead <- ''}
+          }
           ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
-                                 "/wordclouds/",
+                                 "/wordclouds/", 
+                                 fileHead,
                                  grid,
                                  "corvar_", cor_var,"_",
                                  i, fileMsg),
