@@ -1535,6 +1535,8 @@ topicsScatterLegendOriginal <- function(
                   height = height, 
                   units = "in", 
                   create.dir = TRUE)   
+
+   if (!only_two && !only_five){return (popout)}else{ return (NULL) }
 }
 
 
@@ -1651,6 +1653,8 @@ topicsScatterLegendNew <- function(
                 figure_format),
          plot = plot, 
          width = width, height = height, units = "in", device = figure_format)
+    
+   if (!only_two && !only_five){return (popout)}else{ return (NULL) }
 }
 
 
@@ -2053,6 +2057,7 @@ topicsGridLegend <- function(
 #' The function to create lda wordclouds
 #' @param model (list) The trained model
 #' @param test (list) The test results
+#' @param popout (tibble) The tibble containing the topic idx to popout
 #' @param color_negative_cor (R_obj) The color gradient for negative correlations
 #' @param color_positive_cor (R_obj) The color gradient for positive correlations
 #' @param grid_pos (numeric) The position for grid topics
@@ -2071,6 +2076,7 @@ topicsPlot1 <- function(
     model = NULL,
     ngrams = NULL,
     test = NULL,
+    popout = NULL,
     color_negative_cor = NULL,
     color_positive_cor = NULL,
     grid_pos = "",
@@ -2138,6 +2144,7 @@ topicsPlot1 <- function(
     test = test, 
     test_type = test_type,
     cor_var = cor_var,
+    popout = popout,
     color_negative_cor = color_negative_cor,
     color_positive_cor = color_positive_cor,
     grid_pos = grid_pos,
@@ -2533,6 +2540,7 @@ topicsPlot <- function(
       p_alpha = p_alpha,
       scale_size = scale_size,
       plot_topics_idx = plot_topics_idx,
+      popout = NULL,
       color_negative_cor = ggplot2::scale_color_gradient(
         low = bivariate_color_codes[1], high = bivariate_color_codes[2]), # grey in hex code
       color_positive_cor = ggplot2::scale_color_gradient(
@@ -2548,6 +2556,47 @@ topicsPlot <- function(
   
 
   #### 1- or 2 dimensional topic-plots ####
+     #   topicsScatterLegendOriginal(
+   #     bivariate_color_codes = bivariate_color_codes_f,
+   #     filtered_test = test$test,
+   #     num_popout = scatter_legend_n,
+   #     y_axes_1 = dim,
+   #     cor_var = test$pred_var,
+   #     label_x_name = grid_legend_x_axes_label,
+   #     label_y_name = grid_legend_y_axes_label,
+   #     way_popout_topics = scatter_legend_method,
+   #     user_spec_topics = scatter_legend_specified_topics,
+   #     allow_topic_num_legend = scatter_legend_topic_n,
+   #     scatter_popout_dot_size = scatter_legend_dot_size,
+   #     scatter_bg_dot_size = scatter_legend_bg_dot_size,
+   #     save_dir = save_dir,
+   #     figure_format = figure_format,
+   #     # width = 10, 
+   #     # height = 8,
+   #     seed = seed
+   #     )
+      
+   popout <- topicsScatterLegendNew(
+        bivariate_color_codes = bivariate_color_codes_f,
+        filtered_test = test$test,
+        num_popout = scatter_legend_n,
+        y_axes_1 = dim,
+        cor_var = test$pred_var,
+        label_x_name = grid_legend_x_axes_label,
+        label_y_name = grid_legend_y_axes_label,
+        way_popout_topics = scatter_legend_method,
+        user_spec_topics = scatter_legend_specified_topics,
+        allow_topic_num_legend = scatter_legend_topic_n,
+        scatter_popout_dot_size = scatter_legend_dot_size,
+        scatter_bg_dot_size = scatter_legend_bg_dot_size,
+        save_dir = save_dir,
+        figure_format = figure_format,
+        # width = 10, 
+        # height = 8,
+        seed = seed
+      )
+
+    
   if (!is.null(model) & !is.null(test)){
     
     if (dim == 1){
@@ -2567,6 +2616,7 @@ topicsPlot <- function(
         topicsPlot1(
           model = model,
           test = filtered_test,
+          popout = popout,
           color_negative_cor = ggplot2::scale_color_gradient(low = color_b, high = color_f),
           color_positive_cor = ggplot2::scale_color_gradient(low = color_b, high = color_f),
           grid_pos = i,
@@ -2599,6 +2649,7 @@ topicsPlot <- function(
             topicsPlot1(
               model = model,
               test = filtered_test,
+              popout = popout,
               color_negative_cor = ggplot2::scale_color_gradient(low = color_b, high = color_f),
               color_positive_cor = ggplot2::scale_color_gradient(low = color_b, high = color_f),
               grid_pos = k,
@@ -2614,46 +2665,6 @@ topicsPlot <- function(
             )
       }
     }
-  
-   #   topicsScatterLegendOriginal(
-   #     bivariate_color_codes = bivariate_color_codes_f,
-   #     filtered_test = test$test,
-   #     num_popout = scatter_legend_n,
-   #     y_axes_1 = dim,
-   #     cor_var = test$pred_var,
-   #     label_x_name = grid_legend_x_axes_label,
-   #     label_y_name = grid_legend_y_axes_label,
-   #     way_popout_topics = scatter_legend_method,
-   #     user_spec_topics = scatter_legend_specified_topics,
-   #     allow_topic_num_legend = scatter_legend_topic_n,
-   #     scatter_popout_dot_size = scatter_legend_dot_size,
-   #     scatter_bg_dot_size = scatter_legend_bg_dot_size,
-   #     save_dir = save_dir,
-   #     figure_format = figure_format,
-   #     # width = 10, 
-   #     # height = 8,
-   #     seed = seed
-   #     )
-      
-      topicsScatterLegendNew(
-        bivariate_color_codes = bivariate_color_codes_f,
-        filtered_test = test$test,
-        num_popout = scatter_legend_n,
-        y_axes_1 = dim,
-        cor_var = test$pred_var,
-        label_x_name = grid_legend_x_axes_label,
-        label_y_name = grid_legend_y_axes_label,
-        way_popout_topics = scatter_legend_method,
-        user_spec_topics = scatter_legend_specified_topics,
-        allow_topic_num_legend = scatter_legend_topic_n,
-        scatter_popout_dot_size = scatter_legend_dot_size,
-        scatter_bg_dot_size = scatter_legend_bg_dot_size,
-        save_dir = save_dir,
-        figure_format = figure_format,
-        # width = 10, 
-        # height = 8,
-        seed = seed
-      )
       
       topicsGridLegend(
             bivariate_color_codes = bivariate_color_codes_f,
