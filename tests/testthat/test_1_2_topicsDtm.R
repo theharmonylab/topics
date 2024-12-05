@@ -18,9 +18,9 @@ test_that("topicsDtm creates a DTM correctly with default parameters", {
   
   testthat::expect_true(is.list(result))
   testthat::expect_true("train_dtm" %in% names(result))
-  testthat::expect_true("test_dtm" %in% names(result))
-  testthat::expect_true("train_data" %in% names(result))
-  testthat::expect_true("test_data" %in% names(result))
+  #testthat::expect_true("test_dtm" %in% names(result))
+  #testthat::expect_true("train_data" %in% names(result))
+  #testthat::expect_true("test_data" %in% names(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
 
 })
@@ -212,3 +212,32 @@ test_that("topicsDtm removes most frequent words in percent mode", {
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
   
 })
+
+
+test_that("topicsDtm PMI thresholhd ", {
+  
+  testthat::skip_on_cran()
+  save_dir_temp <- tempfile()
+  
+  result_pmi0 <- topics::topicsDtm(
+    data = dep_wor_data$Deptext,
+    pmi_threshold = NULL, 
+    save_dir = save_dir_temp)
+  
+  result_pmi1 <- topics::topicsDtm(
+    data = dep_wor_data$Deptext,
+    pmi_threshold = 1, 
+    save_dir = save_dir_temp)
+  
+  # Check the n-grams arranged according to pmi
+  result_pmi1$n_grams_pmi %>% 
+    arrange(desc(pmi_value))
+  
+  result_pmi1$n_grams_pmi %>% 
+    arrange(-desc(pmi_value))
+  
+  testthat::expect_true(ncol(result_pmi1$train_dtm) == 19278)
+  
+})
+
+

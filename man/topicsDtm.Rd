@@ -9,11 +9,11 @@ topicsDtm(
   ngram_window = c(1, 3),
   stopwords = stopwords::stopwords("en", source = "snowball"),
   removalword = "",
+  pmi_threshold = NULL,
   occurance_rate = 0,
   removal_mode = "none",
   removal_rate_most = 0,
   removal_rate_least = 0,
-  split = 1,
   seed = 42L,
   save_dir,
   load_dir = NULL,
@@ -29,6 +29,11 @@ topicsDtm(
 
 \item{removalword}{(string) the word to remove}
 
+\item{pmi_threshold}{(integer; experimental) Pointwise Mutual Information (PMI) measures the association 
+between terms by comparing their co-occurrence probability to their individual probabilities, 
+highlighting term pairs that occur together more often than expected by chance; in this implementation,
+terms with average PMI below the specified threshold (pmi_threshold) are removed from the document-term matrix.}
+
 \item{occurance_rate}{(integer) the rate of occurence of a word to be removed}
 
 \item{removal_mode}{(string) the mode of removal -> "none", "frequency", "term" or "percentage", frequency removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, term removes an absolute amount of terms that are most frequent and least frequent, percentage the amount of terms indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix}
@@ -37,8 +42,6 @@ topicsDtm(
 
 \item{removal_rate_least}{(integer) the rate of least frequent words to be removed, functionality depends on removal_mode}
 
-\item{split}{(float) the proportion of the data to be used for training}
-
 \item{seed}{(integer) the random seed for reproducibility}
 
 \item{save_dir}{(string) the directory to save the results, if NULL, no results are saved.}
@@ -46,6 +49,8 @@ topicsDtm(
 \item{load_dir}{(string) the directory to load from.}
 
 \item{threads}{(integer) the number of threads to use}
+
+\item{split}{(float) the proportion of the data to be used for training}
 }
 \value{
 the document term matrix
