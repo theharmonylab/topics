@@ -32,14 +32,14 @@
 #'                  removal_rate_most = 500,
 #'                  save_dir = save_dir_temp)
 #' 
-#' # Create Dtm and remove the 5 least and 5 most frequent terms.
+#' # Create Dtm and remove the 1 least and 1 most frequent terms.
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 #'                  removal_mode = "term",
 #'                  removal_rate_least = 1,
 #'                  removal_rate_most = 1,
 #'                  save_dir = save_dir_temp)
 #' 
-#' # Create Dtm and remove the 5% least frequent and 1% most frequent terms.
+#' # Create Dtm and remove the 1% least frequent and 1% most frequent terms.
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 #'                  removal_mode = "percentage",
 #'                  removal_rate_least = 1,
@@ -251,7 +251,7 @@ topicsDtm <- function(
 #'   \item{frequency_plot}{A bar plot of all term frequencies with example terms.}
 #'   \item{frequency_plot_30_least}{A bar plot of the 30 least frequent terms (if numer of terms > 30).}
 #'   \item{frequency_plot_30_most}{A bar plot of the 30 most frequent terms (if numer of terms > 30).}
-#'   \item{historgam_of_frequencies}{A histogram of term frequencies (this is the same information as
+#'   \item{histogram_of_frequencies}{A histogram of term frequencies (this is the same information as
 #'   in the frequency_plot but presented differently).}
 #' }
 #' @export
@@ -297,7 +297,7 @@ topicsDtmEval <- function(dtm) {
     # return output with only 2 plots
     return(list(dtm_summary = dtm_summary[,2:3],
                 frequency_plot = plot_all,
-                historgam_of_frequencies = plot_hist))
+                histogram_of_frequencies = plot_hist))
   }
   
   # Otherwise, split into 3 plots (first 30, last 30, overview):
@@ -371,7 +371,7 @@ topicsDtmEval <- function(dtm) {
               frequency_plot = plot_all,
               frequency_plot_30_least = plot_30_least,
               frequency_plot_30_most = plot_30_most,
-              historgam_of_frequencies = plot_hist))
+              histogram_of_frequencies = plot_hist))
 }
 
 
