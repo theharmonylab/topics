@@ -142,9 +142,9 @@ create_plots <- function(
       plot_topics_idx <- seq(1, length(df_list))
     }else{
       grid1 <- paste0("grid_pos_", grid_pos, "_")
-      pred_var_x <- strsplit(cor_var, "_")[[1]][1]
-      if (length(strsplit(cor_var, "_")[[1]]) > 1){
-        pred_var_y <- strsplit(cor_var, "_")[[1]][2]
+      pred_var_x <- strsplit(cor_var, "__")[[1]][1]
+      if (length(strsplit(cor_var, "__")[[1]]) > 1){
+        pred_var_y <- strsplit(cor_var, "__")[[1]][2]
       }
     }
     for (i in paste0('t_', plot_topics_idx)){ 
@@ -163,7 +163,9 @@ create_plots <- function(
           colNo.p_adjusted.x <- grep(paste0(pred_var_x, '.p_adjusted'),colnames(test))
           estimate_col_x <- colnames(test)[colNo.estimate.x] 
           p_adjusted_col_x <- colnames(test)[colNo.p_adjusted.x]
-          if (length(strsplit(cor_var, "_")[[1]]) > 1){
+          
+          # Why is it doing this? Its not reliable to split it up based on "_"
+          if (length(strsplit(cor_var, "__")[[1]]) > 1){
             colNo.estimate.y <- grep(paste0(pred_var_y, '.estimate'),colnames(test))
             colNo.p_adjusted.y <- grep(paste0(pred_var_y, '.p_adjusted'),colnames(test))
             estimate_col_y <- colnames(test)[colNo.estimate.y] 
@@ -184,7 +186,7 @@ create_plots <- function(
         estimate_x <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[estimate_col_x]]
         p_adjusted_x <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[p_adjusted_col_x]]
         estimate <- estimate_x
-        if (length(strsplit(cor_var, "_")[[1]]) > 1){
+        if (length(strsplit(cor_var, "__")[[1]]) > 1){
           estimate_y <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[estimate_col_y]]
           p_adjusted_y <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[p_adjusted_col_y]]
           p_adjusted <- min(p_adjusted_x, p_adjusted_y)
@@ -239,7 +241,7 @@ create_plots <- function(
             ggplot2::labs(x = paste0("r = ", estimate),
                           y= y)
         }else{
-          if (length(strsplit(cor_var, "_")[[1]]) > 1){
+          if (length(strsplit(cor_var, "__")[[1]]) > 1){
             x_message = paste0("r_x = ", round(estimate_x,4), "\n",
                                "r_y = ", round(estimate_y,4))
           }else{
@@ -285,7 +287,7 @@ create_plots <- function(
                           units = "in", 
                           create.dir = TRUE)
         }else{
-          if (length(strsplit(cor_var, "_")[[1]]) > 1){
+          if (length(strsplit(cor_var, "__")[[1]]) > 1){
             p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
             p_adjusted_y <- sprintf("%.2e", p_adjusted_y)
             fileMsg <- paste0(

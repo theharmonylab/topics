@@ -3,6 +3,10 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+# topics 0.30.0
+- Harmonizing parameters in `topicsTest()` incl. x_variable, y_variable and controls
+- fixing error that variable names cannot be names with 1 underscore.
+
 # topics 0.22.1
 - added `pmi_threshold` (experimental) to `topicsDtm()`
 - removed the saving of raw data and the `split` procedure in the `topicsDtm()`

@@ -914,7 +914,6 @@ topicsTest <- function(
     ngrams = NULL,
     x_variable = NULL, # for all test types except t-test
     y_variable = NULL,
-#    group_var = NULL, # only one in the case of t-test
     controls = c(),
     test_method = "linear_regression",
     p_adjust_method = "fdr",
@@ -931,10 +930,16 @@ topicsTest <- function(
   }
   
   #### Warnings and instructions ####
-  if(!is.null(x_variable) | !is.null(x_variable)){
-    if(grepl("_", x_variable) | grepl("_", x_variable)){
-      stop("Please note that at the moment x_variable or y_variable 
-    cannot have an an underscore '_' in the name. Please rename the variable in the dataset.")
+  if(!is.null(y_variable)){
+    if(grepl("__", y_variable)){
+      stop("The x_variable, y_variable or controls cannot have names containing 2 underscores in a row ('__'). 
+           Please rename the variable in the dataset.")
+    }
+  }
+  if(!is.null(x_variable)){
+    if(grepl("__", x_variable)){
+      stop("The x_variable, y_variable or controls cannot have names containing 2 underscores in a row ('__'). 
+           Please rename the variable in the dataset.")
     }
   }
   
@@ -942,7 +947,7 @@ topicsTest <- function(
     for (control_var in controls){
       if (!is.numeric(data[[control_var]])){
         
-        msg <- paste0("The control variable '", 
+        msg <- paste0("The controls variable '", 
                    control_var, 
                    "' should be numeric!\n")
         
@@ -1071,7 +1076,7 @@ topicsTest <- function(
                                                      topic_loadings_all[[2]][[1]][,1:6],
                                                      by = c("topic", "top_terms"))
     topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
-    topic_loadings_all[[3]]$pred_var <- paste0(topic_loadings_all[[1]]$pred_var, '_',
+    topic_loadings_all[[3]]$pred_var <- paste0(topic_loadings_all[[1]]$pred_var, '__',
                                                topic_loadings_all[[2]]$pred_var) 
 
   } else {
@@ -2289,35 +2294,6 @@ colour_settings <- function(
   return(codes)
 }
 
-
-
-
-#model = NULL
-#ngrams = NULL
-#test = NULL
-#p_alpha = 0.05 # Why is this set here since the test$test$color_categories is determnied in in testTopics test?
-#color_scheme = "default"
-#scale_size = FALSE
-#plot_topics_idx = NULL
-#save_dir
-#figure_format = "svg"
-#width = 10
-#height = 8
-#max_size = 10
-#seed = 42
-#scatter_legend_dot_size = 15
-#scatter_legend_bg_dot_size = 9
-#scatter_legend_n = c(1,1,1,1,0,1,1,1,1) 
-#scatter_legend_method = c("mean")
-#scatter_legend_specified_topics = NULL
-#scatter_legend_topic_n = FALSE
-#grid_legend_title = "legend_title"
-#grid_legend_title_size = 5
-#grid_legend_title_color = 'black'
-#grid_legend_x_axes_label = "legend_x_axes_label"
-#grid_legend_y_axes_label = "legend_y_axes_label"
-#grid_legend_number_color = 'black'
-#grid_legend_number_size = 5
 
 
 

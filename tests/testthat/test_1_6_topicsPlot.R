@@ -15,7 +15,6 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     n = 3, 
     pmi_threshold = 6)
   
-  #ngrams$ngrams$pmi
   topics::topicsPlot(
     ngrams = ngrams, 
     figure_format = "png", 
@@ -91,6 +90,7 @@ test_that("topicsPlot WITH test", {
   testthat::skip_on_cran()
   save_dir_temp <- tempfile()
   save_dir_temp = "./results"
+  
   ## 1-Dimension
   dtm <- topics::topicsDtm(
     data = dep_wor_data$Deptext, 
@@ -167,5 +167,95 @@ test_that("topicsPlot WITH test", {
     save_dir_temp, "/seed_12/wordclouds/grid_legend_corvar_PHQ9tot_Age.png")))
   
 })
+
+
+
+
+test_that("topicsPlot WITH underscores in names", {
+  # strsplit(cor_var,
+  testthat::skip_on_cran()
+  save_dir_temp <- tempfile()
+  save_dir_temp <- "./reok"
+  # Testing with _ 
+  dep_wor_data$Dep_text <- dep_wor_data$Deptext
+  dep_wor_data$Age_test <- dep_wor_data$Age
+  ## 1-Dimension
+  dtm <- topics::topicsDtm(
+    data = dep_wor_data$Dep_text, 
+    save_dir = save_dir_temp)
+  
+  model <- topics::topicsModel(
+    dtm = dtm, 
+    save_dir = save_dir_temp)
+  
+  preds <- topics::topicsPreds(
+    model = model, 
+    data = dep_wor_data$Dep_text, 
+    save_dir = save_dir_temp)
+  
+  test1 <- topics::topicsTest(
+    model= model,
+    preds = preds,
+    data = dep_wor_data,
+    x_variable = "Age_test",
+    y_variable = "Age",
+    save_dir = save_dir_temp)
+  
+  topics::topicsPlot(
+    model = model, 
+    test = test1, 
+    p_alpha = 1,
+    figure_format = "png",
+    seed = 11, 
+    save_dir = save_dir_temp)
+  
+  # Check if the wordcloud directory exists
+  testthat::expect_true(file.exists(paste0(
+    save_dir_temp, "/seed_11/wordclouds/dot_legend_corvar_Age_test__Age.png")))
+  
+  testthat::expect_true(file.exists(paste0(
+    save_dir_temp, "/seed_11/wordclouds/grid_legend_corvar_Age_test__Age.png")))
+  
+  
+  ## 2-Dimension  
+  
+  test2 <- topics::topicsTest(
+    model = model, 
+    preds = preds, 
+    data = dep_wor_data, 
+    x_variable = "PHQ9tot",
+    y_variable = "Age", 
+    save_dir = save_dir_temp
+  )
+  
+  topics::topicsPlot(
+    model = model, 
+    test = test2, 
+    p_alpha = 1, 
+    color_scheme =  c(
+      "yellow", "#398CF9",  # quadrant 1 (upper left corner)
+      "yellow", "#60A1F7",  # quadrant 2 
+      "yellow", "#5dc688",  # quadrant 3 (upper right corner)
+      "yellow", "#e07f6a",  # quadrant 4
+      "yellow", "darkgray", # quadrant 5 (middle square)
+      "yellow", "#40DD52",  # quadrant 6 
+      "yellow", "#FF0000",  # quadrant 7 (bottom left corner)
+      "yellow", "#EA7467",  # quadrant 8 
+      "yellow", "#85DB8E"),
+    figure_format = "png",
+    seed = 12, 
+    save_dir = save_dir_temp
+  )
+  
+  
+  # Check if the wordcloud directory exists
+  testthat::expect_true(file.exists(paste0(
+    save_dir_temp, "/seed_12/wordclouds/dot_legend_corvar_PHQ9tot__Age.png")))
+  
+  testthat::expect_true(file.exists(paste0(
+    save_dir_temp, "/seed_12/wordclouds/grid_legend_corvar_PHQ9tot__Age.png")))
+  
+})
+
 
 
