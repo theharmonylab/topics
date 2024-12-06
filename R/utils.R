@@ -339,7 +339,7 @@ topic_test <- function(
     topic_terms,
     topics_loadings,
     grouping_variable,
-    control_vars,
+    controls,
     test_method = "correlation",
     split = "median",
     n_min_max = 20,
@@ -352,9 +352,9 @@ topic_test <- function(
   topics_loadings <- topics_loadings[stats::complete.cases(topics_groupings), ]
   grouping_variable <- grouping_variable[stats::complete.cases(topics_groupings), ]
   
-  
+  # format checker
   if (TRUE){
-    # format checker
+    
     if (!tibble::is_tibble(topics_loadings)) {
       stop("Parameter `topics_loadings` must be a tibble.")
     }
@@ -385,18 +385,18 @@ topic_test <- function(
   }
   
   
-  if (FALSE){
-    model1$prevalence <- colSums(model1$theta) / sum(model1$theta) * 100
-    model1$top_terms <- textmineR::GetTopTerms(phi = model1$phi, M = 5)
-    model1$summary <- data.frame(topic = rownames(model1$phi),
-                                 label = model1$labels,
-                                 coherence = round(model1$coherence, 3),
-                                 prevalence = round(model1$prevalence,3),
-                                 top_terms = apply(model1$top_terms, 2, function(x){
-                                   paste(x, collapse = ", ")
-                                 }),
-                                 stringsAsFactors = FALSE)
-  }
+#  if (FALSE){
+#    model1$prevalence <- colSums(model1$theta) / sum(model1$theta) * 100
+#    model1$top_terms <- textmineR::GetTopTerms(phi = model1$phi, M = 5)
+#    model1$summary <- data.frame(topic = rownames(model1$phi),
+#                                 label = model1$labels,
+#                                 coherence = round(model1$coherence, 3),
+#                                 prevalence = round(model1$prevalence,3),
+#                                 top_terms = apply(model1$top_terms, 2, function(x){
+#                                   paste(x, collapse = ", ")
+#                                 }),
+#                                 stringsAsFactors = FALSE)
+#  }
   
 
   if (test_method == "correlation"){
@@ -499,7 +499,7 @@ topic_test <- function(
       preds[[paste0("z_",topic)]] <- (preds[[topic]] - mean_value) / std_dev#preds[[topic]] # scale(preds[[topic]])
     }
     
-    control_variables <- control_vars
+    control_variables <- controls
     for (variable in control_variables){
       preds[[paste0("z_",variable)]] <- scale(preds[[variable]])
     }
@@ -603,9 +603,9 @@ topic_test <- function(
     output <- dplyr::right_join(topic_terms[c("topic", "top_terms")], 
                          data.frame(control_variable_summary), 
                          by = join_by(topic))
-    # add the adjustment for bonferroni
-    return(output)    
     
+    # add the adjustment for bonferroni
+    return(output)
     
   }
   

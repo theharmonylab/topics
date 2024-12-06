@@ -25,8 +25,8 @@ test_that("topicsTest performs linear regression correctly", {
     model = model,
     preds = preds,
     data = dep_wor_data,
-    pred_var_x = "Age",
-    pred_var_y = "PHQ9tot",
+    x_variable = "Age",
+    y_variable = "PHQ9tot",
     test_method = "linear_regression", 
     save_dir = save_dir_temp
     )
@@ -40,21 +40,39 @@ test_that("topicsTest performs linear regression correctly", {
   
   
   testthat::expect_equal(result$test_method, "linear_regression")
-  
   testthat::expect_equal(result$test$x.Age.estimate[1:5], 
            c(-0.02968493, -0.02739334,  0.03571515, -0.01120996, -0.08525859), tolerance = 0.0001)
-
   testthat::expect_equal(result$test$x.Age.t[1:5], 
                          c(-0.6627383, -0.6115369,  0.7975251, -0.2501762, -1.9095765), tolerance = 0.0001)
-  
   testthat::expect_equal(result$test$x.Age.p[1:5], 
                          c(0.50780478, 0.54112328, 0.42552623, 0.80255430, 0.05676206), tolerance = 0.0001)
-  
   testthat::expect_equal(result$test$x.Age.p_adjusted[1:5], 
                          c(0.7459746, 0.7459746, 0.7459746, 0.8917270, 0.3784137), tolerance = 0.0001)
-  
   testthat::expect_equal(result$test$y.PHQ9tot.estimate[1:5], 
                          c(-0.028913708,  0.063841350, -0.012663082, -0.048725894,  0.004654584), tolerance = 0.0001)
+  
+  
+#  result <- topics::topicsTest(
+#    model = model,
+#    preds = preds,
+#    data = dep_wor_data,
+#    x_variable = "Age",
+#    y_variable = "PHQ9tot",
+#    test_method = "correlation", 
+#    save_dir = save_dir_temp
+#  )
+#  
+#  result <- topics::topicsTest(
+#    model = model,
+#    preds = preds,
+#    data = dep_wor_data,
+#    group_var = "PHQ9tot",
+#    test_method = "t-test", 
+#    save_dir = save_dir_temp
+#  )
+  
+  
+  
 })
 
 test_that("topicsTest performs logistic regression correctly", {
@@ -81,7 +99,7 @@ test_that("topicsTest performs logistic regression correctly", {
     model = model, 
     preds = preds, 
     data = dep_wor_data, 
-    pred_var_x = "Age", 
+    x_variable = "Age", 
     test_method = "logistic_regression", 
     save_dir = save_dir_temp)
   
@@ -120,7 +138,7 @@ test_that("topicsTest performs logistic regression correctly", {
 #    model = model, 
 #    preds = preds, 
 #    data = dep_wor_data, 
-#    pred_var_x = NULL, 
+#    x_variable = NULL, 
 #    save_dir = save_dir_temp)
 #  
 #  testthat::expect_null(result)
@@ -149,7 +167,7 @@ test_that("topicsTest adjusts p-values for multiple comparisons", {
     model = model, 
     preds = preds, 
     data = dep_wor_data, 
-    pred_var_x = "Age", 
+    x_variable = "Age", 
     p_adjust_method = "bonferroni", 
     save_dir = save_dir_temp)
   
@@ -183,7 +201,7 @@ test_that("topicsTest saves test results to the specified directory", {
     model = model, 
     preds = preds, 
     data = dep_wor_data, 
-    pred_var_x = "Age", 
+    x_variable = "Age", 
     save_dir = save_dir_temp)
   
   testthat::expect_true(file.exists(file.path(save_dir_temp, "seed_42", paste0("test_", result$test_method, "_Age.rds"))))
@@ -201,7 +219,7 @@ test_that("topicsTest saves test results to the specified directory", {
 #  
 #
 #  # Generate and save test results
-#  topicsTest(model, preds, data, pred_var_x = "hilstotal")
+#  topicsTest(model, preds, data, x_variable = "hilstotal")
 #  
 #  # Load test results
 #  result <- topicsTest(load_dir = "./results")
@@ -223,7 +241,7 @@ test_that("topicsTest saves test results to the specified directory", {
 #  model <- topicsModel(dtm = dtm)
 #  preds <- topicsPreds(model = model, data = data$Deptext)
 #  
-#  result <- topicsTest(model = model, preds = preds, data = data, pred_var_x = "Age", test_method = "ridge_regression")
+#  result <- topicsTest(model = model, preds = preds, data = data, x_variable = "Age", test_method = "ridge_regression")
 #  result
 #  expect_true(is.list(result))
 #  expect_equal(result$test_method, "ridge_regression")

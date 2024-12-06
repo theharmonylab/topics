@@ -732,8 +732,8 @@ topicsPreds <- function(
 #' @param data (tibble) The data to test on
 #' @param preds (tibble) The predictions
 #' @param pred_var (string) The variable to be predicted (only needed for regression or correlation)
-#' @param group_var (string) The variable to group by (only needed for t-test)
-#' @param control_vars (vector) The control variables
+# @param group_var (string) The variable to group by (only needed for t-test)
+#' @param controls (vector) The control variables
 #' @param test_method (string) The test method to use, either "correlation","t-test", 
 #' "linear_regression","logistic_regression", or "ridge_regression"
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
@@ -750,14 +750,14 @@ topicsTest1 <- function(
     preds,
     data,
     pred_var = NULL, # for all test types except t-test
-    group_var = NULL, # only one in the case of t-test
-    control_vars = c(),
+#    group_var = NULL, # only one in the case of t-test
+    controls = c(),
     test_method = "linear_regression",
     p_adjust_method = "fdr",
     seed = 42,
     load_dir = NULL,
     save_dir){
-  
+  group_var = NULL
   if (!is.null(load_dir)){
     test_path <- paste0(load_dir, "/seed_", seed, "/test.rds")
     if (!file.exists(test_path)) {
@@ -768,72 +768,36 @@ topicsTest1 <- function(
     test <- readRDS(test_path)
   } else {
     
-    if (is.null(pred_var) && test_method != "t-test") {
-      msg <- "Prediction variable is missing. Please input a prediction variable."
-      message(colourise(msg, "brown"))
-      return(NULL)
-    }
-    
-    if (test_method == "t-test" && is.null(group_var)){
-      msg <- "Group variable is missing. Please input a group variable"
-      message(colourise(msg, "brown"))
-      return(NULL)
-    }
-    
-    if (!is.list(model)){
-      msg <- "Input a model created with topicsModel"
-      
-      message(colourise(msg, "brown"))
-      
-      return(NULL)
-    }
-    
-    if (length(data) == 0){
-      msg <- "The data provided is empty. Please provide a list of text data."
-      message(colourise(msg, "brown"))
-      
-      return(NULL)
-    }
-    
-    if (nrow(preds) == 0){
-      msg <- "The predictions provided are empty. Please provide a list of predictions."
-      message(colourise(msg, "brown"))
-      return(NULL)
-    }
-    
-    if (nrow(data) != nrow(preds)){
-      msg <- "The number of data points and predictions do not match. Please provide predictions that were created from the same data."
-      message(colourise(msg, "brown"))
-      return(NULL)
-    }
-    
-    control_vars <- c(pred_var, control_vars)
+    controls <- c(pred_var, controls)
     
     
-    if (!is.null(group_var)){
-      if (!(group_var %in% names(preds))){
-        preds <- dplyr::bind_cols(data[group_var], preds)
-      }
-    }
-    for (control_var in control_vars){
+  #  if (!is.null(group_var)){
+  #    if (!(group_var %in% names(preds))){
+  #      preds <- dplyr::bind_cols(data[group_var], preds)
+  #    }
+  #  }
+    for (control_var in controls){
       if (!(control_var %in% names(preds))){
         preds <- dplyr::bind_cols(data[control_var], preds)
       }
     }
-    if (test_method == "ridge_regression"){
-      group_var <- pred_var
-    }
     
+#    if (test_method == "ridge_regression"){
+#      group_var <- pred_var
+#    }
+    
+    # I think this can be removed. 
     preds <- preds %>% tibble::tibble()
     
-    test <- topic_test(topic_terms = model$summary,
-                       topics_loadings = preds,
-                       grouping_variable = preds[group_var],
-                       control_vars = control_vars,
-                       test_method = test_method,
-                       split = "median",
-                       n_min_max = 20,
-                       multiple_comparison = p_adjust_method)
+    test <- topic_test(
+      topic_terms = model$summary,
+      topics_loadings = preds,
+      grouping_variable = preds[group_var],
+      controls = controls,
+      test_method = test_method,
+      split = "median",
+      n_min_max = 20,
+      multiple_comparison = p_adjust_method)
   }
   
   if (!is.null(save_dir)){
@@ -857,7 +821,7 @@ topicsTest1 <- function(
     }
     
     if (test_method == "ridge_regression"){
-      df <- list(variable = group_var,
+      df <- list(#variable = group_var,
                  estimate = test$estimate,
                  t_value = test$statistic,
                  p_value = test$p.value)
@@ -889,20 +853,6 @@ topicsTest1 <- function(
               pred_var = pred_var))
 }
 
-#data
-#model = NULL
-#preds = NULL
-#ngrams = NULL
-#pred_var_x = NULL # for all test types except t-test
-#pred_var_y = NULL
-#group_var = NULL # only one in the case of t-test
-#control_vars = c()
-#test_method = "linear_regression"
-##    p_alpha = 0.05
-#p_adjust_method = "fdr"
-#seed = 42
-#load_dir = NULL
-#save_dir
 
 #' Test topics or n-grams
 #' 
@@ -912,10 +862,10 @@ topicsTest1 <- function(
 #' @param data (tibble) The data containing the variables to be tested.
 #' @param preds (tibble) The predictions from the topicsPred() function.
 #' @param ngrams (list) output of the n-gram function
-#' @param pred_var_x (string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)
-#' @param pred_var_y (string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)
+#' @param x_variable (string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)
+#' @param y_variable (string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)
 #' @param group_var (string) The variable to group by (only needed for t-test)
-#' @param control_vars (vector) The control variables (not supported yet)
+#' @param controls (vector) The control variables (not supported yet)
 #' @param test_method (string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"
 # @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
@@ -951,7 +901,7 @@ topicsTest1 <- function(
 #'   data=dep_wor_data,
 #'   preds = preds, # output of topicsPreds()
 #'   test_method = "linear_regression",
-#'   pred_var_x = "Age",
+#'   x_variable = "Age",
 #'   save_dir = save_dir_temp)
 #' }                 
 #' @importFrom dplyr bind_cols
@@ -962,33 +912,34 @@ topicsTest <- function(
     model = NULL,
     preds = NULL,
     ngrams = NULL,
-    pred_var_x = NULL, # for all test types except t-test
-    pred_var_y = NULL,
-    group_var = NULL, # only one in the case of t-test
-    control_vars = c(),
+    x_variable = NULL, # for all test types except t-test
+    y_variable = NULL,
+#    group_var = NULL, # only one in the case of t-test
+    controls = c(),
     test_method = "linear_regression",
-#    p_alpha = 0.05,
     p_adjust_method = "fdr",
     seed = 42,
     load_dir = NULL,
     save_dir){
   
-  
-  # Need to have a variable to test against
-  if(is.null(pred_var_x) & is.null(pred_var_x)){
-      stop("Please note that you have to set pred_var_x or pred_var_y.")
+  group_var = NULL
+
+  if (is.null(x_variable) & is.null(y_variable)){
+    msg <- 'Please input the x_variable, and/or y_variable.'
+    message(colourise(msg, "brown"))
+    # return (NULL)
   }
   
   #### Warnings and instructions ####
-  if(!is.null(pred_var_x) | !is.null(pred_var_x)){
-    if(grepl("_", pred_var_x) | grepl("_", pred_var_x)){
-      stop("Please note that at the moment pred_var_x or pred_var_y 
+  if(!is.null(x_variable) | !is.null(x_variable)){
+    if(grepl("_", x_variable) | grepl("_", x_variable)){
+      stop("Please note that at the moment x_variable or y_variable 
     cannot have an an underscore '_' in the name. Please rename the variable in the dataset.")
     }
   }
   
-  if (length(control_vars) > 0){
-    for (control_var in control_vars){
+  if (length(controls) > 0){
+    for (control_var in controls){
       if (!is.numeric(data[[control_var]])){
         
         msg <- paste0("The control variable '", 
@@ -1002,11 +953,48 @@ topicsTest <- function(
     }}
   }
   
-  if (is.null(pred_var_x) & is.null(group_var)){
-    msg <- 'Please input the pred_var_x or group_var!'
+  if (is.null(x_variable) & is.null(y_variable) && test_method != "t-test") {
+    msg <- "Prediction variable is missing. Please input a prediction variable."
     message(colourise(msg, "brown"))
-    # return (NULL)
+    return(NULL)
   }
+  
+#  if (test_method == "t-test" && is.null(group_var)){
+#    msg <- "Group variable is missing. Please input a group variable"
+#    message(colourise(msg, "brown"))
+#    return(NULL)
+#  }
+  
+  if (!is.list(model) & !is.list(ngrams)){
+    msg <- "Input a model from the topicsModel() function or an ngram object from the topicsGrams() function."
+    
+    message(colourise(msg, "brown"))
+    
+    return(NULL)
+  }
+  
+  if (length(data) == 0){
+    msg <- "The data provided is empty. Please provide a list of text data."
+    message(colourise(msg, "brown"))
+    
+    return(NULL)
+  }
+  
+  if(!is.null(preds)){
+    if (nrow(preds) == 0){
+      msg <- "The predictions provided are empty. Please provide a list of predictions."
+      message(colourise(msg, "brown"))
+      return(NULL)
+    }
+    
+    if (nrow(data) != nrow(preds)){
+      msg <- "The number of data points and predictions do not match. Please provide predictions that were created from the same data."
+      message(colourise(msg, "brown"))
+      return(NULL)
+    }
+  }
+  
+
   
   #### Load test ####
   if (!is.null(load_dir)){
@@ -1027,7 +1015,7 @@ topicsTest <- function(
   
   
   #### Testing the elements (i.e., ngrams or topics) ####
-  pred_vars_all <- c(pred_var_x, pred_var_y)
+  pred_vars_all <- c(x_variable, y_variable)
   
   # TBD: Change the column of pred_var into the numeric variable.
   # for (pred_var in pred_vars_all){
@@ -1046,6 +1034,7 @@ topicsTest <- function(
   # }
   topic_loadings_all <- list()
   pre <- c('x','y')
+  # i = 1
   for (i in 1:length(pred_vars_all)){
     
     topic_loading <- topicsTest1(
@@ -1053,9 +1042,9 @@ topicsTest <- function(
       preds = preds, 
       data = data,
       pred_var = pred_vars_all[i], # for all test types except t-test
-      group_var= group_var, # only one in the case of t-test
-      control_vars= control_vars,
-      test_method= test_method,
+     # group_var = group_var, # only one in the case of t-test
+      controls = controls,
+      test_method = test_method,
       p_adjust_method = p_adjust_method,
       seed = seed,
       load_dir = load_dir,
@@ -1075,7 +1064,7 @@ topicsTest <- function(
     }
   }
   
-  if (!is.null(pred_var_y)){
+  if (!is.null(y_variable)){
     # create the x.y.word.category
     topic_loadings_all[[3]] <- list()
     topic_loadings_all[[3]]$test <- dplyr::left_join(topic_loadings_all[[1]][[1]][,1:6], 
@@ -1089,8 +1078,8 @@ topicsTest <- function(
     
     if (test_method == "linear_regression" | test_method == "logistic_regression"){
     
-      msg <- "The parameter pred_var_y is not set! Output 1 dimensional results."
-      message(colourise(msg, "brown"))
+      msg <- "The parameter y_variable is not set! Output 1 dimensional results."
+      message(colourise(msg, "blue"))
       
       topic_loadings_all[[2]] <- list()
       topic_loadings_all[[3]] <- list()

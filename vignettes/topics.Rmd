@@ -77,14 +77,14 @@ preds <- topicsPreds(
 To analyze the relationship between the topics and the prediction variable, run the following command:
 ```{r test, eval = TRUE, warning=FALSE, message=FALSE}
 
-test <- topicsTest(
-  data = dep_wor_data,
-  model = model,
-  preds = preds,
-  pred_var_x = "PHQ9tot",
-  control_vars = c("Age"),
-  test_method = "linear_regression", 
-  save_dir = save_dir)
+#test <- topicsTest(
+#  data = dep_wor_data,
+#  model = model,
+#  preds = preds,
+#  x_variable = "PHQ9tot",
+#  controls = c("Age"),
+#  test_method = "linear_regression", 
+#  save_dir = save_dir)
 
 ```
 

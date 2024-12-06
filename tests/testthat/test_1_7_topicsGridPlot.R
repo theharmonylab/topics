@@ -24,14 +24,14 @@ test_that('Case 1: Save all topics without the topic grid plot by using the topi
   )
 
 #  dat1 <- dplyr::mutate(dep_wor_data, gender = ifelse(gender == "male", 0, 1))
-  
+  #help(topicsTest)
   tests2D <- topics::topicsTest(
     model = model,
     preds = preds,
     data =  dep_wor_data,
-    pred_var_x = 'PHQ9tot',
-    pred_var_y = 'GAD7tot',
-    control_vars = c('Age','Gender'), 
+    x_variable = 'PHQ9tot',
+    y_variable = 'GAD7tot',
+    controls = c('Age','Gender'), 
     save_dir = save_dir_temp
   )
   
@@ -78,9 +78,9 @@ test_that('Case 2: Save the scatter legend and grid legend for topic grids using
     model = model,
     preds = preds,
     data =  dep_wor_data,
-    pred_var_x = 'PHQ9tot',
-    pred_var_y = 'GAD7tot',
-    control_vars = c('Age','Gender'), 
+    x_variable = 'PHQ9tot',
+    y_variable = 'GAD7tot',
+    controls = c('Age','Gender'), 
     save_dir = save_dir_temp
   )
   
@@ -123,9 +123,9 @@ test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall retu
     model = model,
     preds = preds,
     data =  dep_wor_data,
-    pred_var_x = 'PHQ9tot',
-    pred_var_y = 'GAD7tot',
-    control_vars = c('Age','Gender'), 
+    x_variable = 'PHQ9tot',
+    y_variable = 'GAD7tot',
+    controls = c('Age','Gender'), 
     save_dir = save_dir_temp
   )
 #  random_sequence <- sample(1:9, size = nrow(tests2D[[3]]$test), replace = TRUE)
@@ -181,9 +181,9 @@ test_that('Case 4: Set dimension = 2 for successfully saving the legends.',{
     model = model,
     preds = preds,
     data = dep_wor_data,
-    pred_var_x = 'PHQ9tot',
-    pred_var_y = 'GAD7tot',
-    control_vars = c('Age','Gender'), 
+    x_variable = 'PHQ9tot',
+    y_variable = 'GAD7tot',
+    controls = c('Age','Gender'), 
     save_dir = save_dir_temp
   )
   
@@ -230,9 +230,9 @@ test_that('Case 5: Change the popout method to "max_x", and "max_y".',{
     model = model,
     preds = preds,
     data = dep_wor_data,
-    pred_var_x = 'PHQ9tot',
-    pred_var_y = 'GAD7tot',
-    control_vars = c('Age','Gender'), 
+    x_variable = 'PHQ9tot',
+    y_variable = 'GAD7tot',
+    controls = c('Age','Gender'), 
     save_dir = save_dir_temp
   )
   #random_sequence <- sample(1:9, size = nrow(tests2D[[3]]$test), replace = TRUE)
@@ -297,8 +297,8 @@ test_that('Case 6: Manually set the topic numbers to save topics',{
     model = model,
     preds = preds,
     data = dep_wor_data,
-    pred_var_x = 'PHQ9tot',
-    pred_var_y = 'GAD7tot', 
+    x_variable = 'PHQ9tot',
+    y_variable = 'GAD7tot', 
     save_dir = save_dir_temp
   )
   
@@ -308,9 +308,9 @@ test_that('Case 6: Manually set the topic numbers to save topics',{
     model = model,
     preds = preds,
     data = dep_wor_data,
-    pred_var_x = 'PHQ9tot',
-    pred_var_y = 'GAD7tot',
-    control_vars = c('Age','Gender'), 
+    x_variable = 'PHQ9tot',
+    y_variable = 'GAD7tot',
+    controls = c('Age','Gender'), 
     save_dir = save_dir_temp
   )
   
@@ -360,7 +360,7 @@ test_that('Case 7: Set dimension = 1 for successfully saving the legends',{
     model = model,
     preds = preds,
     data =  dep_wor_data,
-    pred_var_x = 'PHQ9tot', 
+    x_variable = 'PHQ9tot', 
     save_dir = save_dir_temp
   )
   

@@ -9,10 +9,9 @@ topicsTest(
   model = NULL,
   preds = NULL,
   ngrams = NULL,
-  pred_var_x = NULL,
-  pred_var_y = NULL,
-  group_var = NULL,
-  control_vars = c(),
+  x_variable = NULL,
+  y_variable = NULL,
+  controls = c(),
   test_method = "linear_regression",
   p_adjust_method = "fdr",
   seed = 42,
@@ -29,13 +28,11 @@ topicsTest(
 
 \item{ngrams}{(list) output of the n-gram function}
 
-\item{pred_var_x}{(string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)}
+\item{x_variable}{(string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)}
 
-\item{pred_var_y}{(string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)}
+\item{y_variable}{(string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)}
 
-\item{group_var}{(string) The variable to group by (only needed for t-test)}
-
-\item{control_vars}{(vector) The control variables (not supported yet)}
+\item{controls}{(vector) The control variables (not supported yet)}
 
 \item{test_method}{(string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"}
 
@@ -47,6 +44,8 @@ topicsTest(
 \item{load_dir}{(string) The directory to load the test from, if NULL, the test will not be loaded}
 
 \item{save_dir}{(string) The directory to save the test, if NULL, the test will not be saved}
+
+\item{group_var}{(string) The variable to group by (only needed for t-test)}
 }
 \value{
 A list of the test results, test method, and prediction variable
@@ -82,7 +81,7 @@ test <- topicsTest(
   data=dep_wor_data,
   preds = preds, # output of topicsPreds()
   test_method = "linear_regression",
-  pred_var_x = "Age",
+  x_variable = "Age",
   save_dir = save_dir_temp)
 }                 
 }

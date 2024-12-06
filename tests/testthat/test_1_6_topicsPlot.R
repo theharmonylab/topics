@@ -36,7 +36,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   test <- topics::topicsTest(
     data = dep_wor_data,
     ngrams = ngrams, 
-    pred_var_x = "Age", 
+    x_variable = "Age", 
     save_dir = save_dir_temp)
   
   #help(topicsPlot)
@@ -109,7 +109,7 @@ test_that("topicsPlot WITH test", {
     model= model,
     preds = preds,
     data = dep_wor_data,
-    pred_var_x = "Age", 
+    x_variable = "Age", 
     save_dir = save_dir_temp)
 
   topics::topicsPlot(
@@ -134,8 +134,8 @@ test_that("topicsPlot WITH test", {
     model = model, 
     preds = preds, 
     data = dep_wor_data, 
-    pred_var_x = "PHQ9tot",
-    pred_var_y = "Age", 
+    x_variable = "PHQ9tot",
+    y_variable = "Age", 
     save_dir = save_dir_temp
     )
   
