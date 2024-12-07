@@ -600,7 +600,10 @@ topic_test <- function(
     
     #return (control_variable_summary)
     control_variable_summary$topic <- lda_topics
-    output <- dplyr::right_join(topic_terms[c("topic", "top_terms")], 
+
+    # since ngram does not have coherence and prevalence
+    output <- dplyr::right_join(topic_terms[c("topic", "top_terms", 
+                                              "prevalence", "coherence")], #, "prevalence", "coherence"
                          data.frame(control_variable_summary), 
                          by = join_by(topic))
     
@@ -760,7 +763,71 @@ get_mallet_model <- function(
   
   #return_model$labels <- LabelTopics(assignments = return_model$theta > 0.05, dtm = dtm, M = 1)
   
-  return_model$coherence <- return_model$prevalence
+  #### Compute a Coherence Score ####
+  
+  # Step 1: Calculate Term Co-occurrence Matrix from the DTM
+  # Convert the document-term matrix (DTM) to a binary form indicating term presence/absence
+  # Multiplying by 1 converts the TRUE values to 1 and FALSE values to 0.
+  binary_dtm <- (dtm > 0) * 1
+  
+  # Compute the co-occurrence matrix by multiplying the transposed binary DTM with itself
+  # This results in a matrix where each entry [i, j] represents the number of documents where both terms i and j co-occur
+  co_occurrence <- Matrix::t(binary_dtm) %*% binary_dtm
+  
+  # Step 2: Compute Total Number of Documents
+  N <- nrow(dtm)  # The total number of documents in the corpus
+  
+  # Step 3: Calculate the Probability of Each Individual Term
+  # p_wi is a vector where each entry represents the proportion of documents containing a specific term
+  p_wi <- Matrix::diag(co_occurrence) / N
+  
+  # Step 4: Define a Function to Compute Coherence for a Topic
+  compute_topic_coherence <- function(terms, co_occurrence, p_wi, N) {
+    
+    # Get the indices of the terms in the DTM's vocabulary
+    term_indices <- match(terms, colnames(dtm))
+    
+    # Create all possible pairs of the term indices
+    term_pairs <- combn(term_indices, 2)
+    
+    # Calculate PMI (Pointwise Mutual Information) for each pair of terms
+    pmi_values <- apply(term_pairs, 2, function(pair) {
+      w1 <- pair[1]
+      w2 <- pair[2]
+      
+      # Ensure both term indices are valid and co-occur in at least one document
+      if (!is.na(w1) && !is.na(w2) && co_occurrence[w1, w2] > 0) {
+        
+        # Calculate the joint probability of terms w1 and w2
+        p_wi_wj <- co_occurrence[w1, w2] / N
+        
+        # Calculate the PMI score for the pair
+        pmi <- log(p_wi_wj / (p_wi[w1] * p_wi[w2]))
+        
+        return(pmi)
+      } else {
+        return(0)  # Return 0 if terms do not co-occur or indices are invalid
+      }
+    })
+    
+    # Return the average PMI for all term pairs in the topic
+    mean(pmi_values)
+  }
+  
+  # Step 5: Compute Coherence Scores for Each Topic
+  coherence_scores <- sapply(1:num_topics, function(i) {
+    
+    # Get the top terms for the current topic from the `df_top_terms` data frame
+    top_terms <- df_top_terms[, i]
+    
+    # Compute the coherence score for the current topic using the defined function
+    compute_topic_coherence(top_terms, co_occurrence, p_wi, N)
+  })
+  
+  # Step 6: Add the Computed Coherence Scores to the `return_model` List
+  return_model$coherence <- coherence_scores
+  
+  ##############
   
   # put theta into the right format
   df_theta <- data.frame(return_model$theta)

@@ -393,7 +393,7 @@ topicsDtmEval <- function(dtm) {
 #' @param seed (integer) The seed to set for reproducibility
 #' @param save_dir (string) The directory to save the model, if NULL, the model will not be saved
 #' @param load_dir (string) The directory to load the model from, if NULL, the model will not be loaded
-#' @return A list of the model, the top terms, the labels, the coherence, and the prevalence
+#' @return A list of the model, the top terms, the labels, the coherence (experimental), and the prevalence.
 #' @examples
 #' \donttest{
 #' # Create LDA Topic Model 
@@ -502,10 +502,10 @@ topicsModel <- function(
 #' @export
 topicsGrams <- function(
     data, 
-    ngram_window = c(1,3),
+    ngram_window = c(1, 3),
     stopwords = stopwords::stopwords("en", source = "snowball"), 
     top_n = NULL, 
-    pmi_threshold=0){
+    pmi_threshold = 0){
   
   data <- tolower(data)
   data <- gsub("[()].$?", "", data)
@@ -527,7 +527,7 @@ topicsGrams <- function(
   single_grams <- ngram::ngram(data, n = 1, sep = " ")
   single_grams <- ngram::get.phrasetable(single_grams)
   single_count <- nrow(single_grams)
-  single_grams
+  colnames(single_grams) <- c("ngrams", "freq", "prevalence")
 
   for (i in 1:length(ngram_window)){
     ngrams[[i]] <- ngram::ngram(data, n = ngram_window[i], sep = " ")
@@ -539,7 +539,9 @@ topicsGrams <- function(
     total <- total + sum(ngrams[[i]]$freq)
   }
   for (i in 1:length(ngram_window)){
-    ngrams[[i]]$prop <- ngrams[[i]]$freq/total
+    ngrams[[i]]$prevalence <- ngrams[[i]]$freq/total
+    # this is to create the same columns in both topicsGrams and topcisModels()
+    ngrams[[i]]$coherence <- NA
   }
 
   # calculate the pmi score pmi $($ phrase $)=\log \frac{p(\text { phrase })}{\Pi_{w \in p h r a s e} p(w)}$
@@ -555,9 +557,9 @@ topicsGrams <- function(
       words <- strsplit(ngrams[[k]]$ngrams[i], " ")[[1]]
       denum <- 1
       for (j in 1:length(words)) {
-        denum <- denum * single_grams[single_grams$ngrams == paste0(words[j], " "), "prop"]
+        denum <- denum * single_grams[single_grams$ngrams == paste0(words[j], " "), "prevalence"]
       }
-      pmi[[i]] <- log(ngrams[[k]]$prop[i]/denum)
+      pmi[[i]] <- log(ngrams[[k]]$prevalence[i]/denum)
     }
     ngrams[[k]]$pmi <- unlist(pmi)
   }
@@ -605,7 +607,7 @@ topicsGrams <- function(
     for (j in 1:length(data$value)) {
       gram <- as.character(ngrams$ngrams[i])
       sentence <- as.character(tolower(data$value[j]))
-      ngram_count <- str_count(sentence,gram)
+      ngram_count <- stringr::str_count(sentence,gram)
       frequency <- ngrams$freq[i]
       relative_frequency <- ngram_count / frequency
       temp <- c(temp, relative_frequency)
@@ -615,9 +617,12 @@ topicsGrams <- function(
   
   # change the ngrams to a single string with "_" as connector
   ngrams$ngrams <- sapply(ngrams$ngrams, function(x) paste(unlist(strsplit(x, " ")), collapse = "_"))
-  return(list(ngrams=as_tibble(ngrams),
-              freq_per_user = as_tibble(freq_per_user),
-              stats=stats))
+  return(list(
+    ngrams = tibble::as_tibble(ngrams),
+    freq_per_user = tibble::as_tibble(freq_per_user),
+    stats=stats)
+    )
+  
 }
 
 
@@ -686,16 +691,16 @@ topicsPreds <- function(
     pred_ids <- as.character(1:length(data))
     
     new_instances <- compatible_instances(
-      ids=pred_ids,
-      texts=pred_text,
-      instances=model$instances)
+      ids = pred_ids,
+      texts = pred_text,
+      instances = model$instances)
     
     inf_model <- model$inferencer
     preds <- infer_topics(
       inferencer = inf_model,
       #instances = model$instances,
       instances = new_instances,
-      n_iterations= 200,
+      n_iterations = 200,
       sampling_interval = 10, # aka "thinning"
       burn_in = 10,
       random_seed = seed
@@ -757,7 +762,9 @@ topicsTest1 <- function(
     seed = 42,
     load_dir = NULL,
     save_dir){
+  
   group_var = NULL
+  
   if (!is.null(load_dir)){
     test_path <- paste0(load_dir, "/seed_", seed, "/test.rds")
     if (!file.exists(test_path)) {
@@ -767,7 +774,7 @@ topicsTest1 <- function(
     }
     test <- readRDS(test_path)
   } else {
-    
+    #rm(controls)
     controls <- c(pred_var, controls)
     
     
@@ -786,7 +793,7 @@ topicsTest1 <- function(
 #      group_var <- pred_var
 #    }
     
-    # I think this can be removed. 
+    # I think this can be removed. (i.e., its already a tibble)
     preds <- preds %>% tibble::tibble()
     
     test <- topic_test(
@@ -830,6 +837,7 @@ topicsTest1 <- function(
                                               seed, 
                                               "/textTrain_regression.csv"))
     }
+    
     saveRDS(test, paste0(save_dir, 
                          "/seed_", 
                          seed, 
@@ -964,12 +972,6 @@ topicsTest <- function(
     return(NULL)
   }
   
-#  if (test_method == "t-test" && is.null(group_var)){
-#    msg <- "Group variable is missing. Please input a group variable"
-#    message(colourise(msg, "brown"))
-#    return(NULL)
-#  }
-  
   if (!is.list(model) & !is.list(ngrams)){
     msg <- "Input a model from the topicsModel() function or an ngram object from the topicsGrams() function."
     
@@ -999,8 +1001,6 @@ topicsTest <- function(
     }
   }
   
-
-  
   #### Load test ####
   if (!is.null(load_dir)){
     test <- topicsTest1(load_dir = load_dir)
@@ -1013,8 +1013,13 @@ topicsTest <- function(
     ngrams <- ngrams$ngrams
     colnames(freq_per_user) <- paste0("t_", 1:ncol(freq_per_user))
     preds <- freq_per_user
+    
     model$summary <- list(topic = paste0("t_", 1:ncol(freq_per_user)),
-                          top_terms = ngrams$ngrams)
+                          top_terms = ngrams$ngrams, 
+                          prevalence = ngrams$prevalence, 
+                          coherence = ngrams$coherence, 
+                          pmi = ngrams$pmi)
+    
     model$summary <- data.frame(model$summary)
   }
   
@@ -1059,10 +1064,9 @@ topicsTest <- function(
     # Sorting output when not using ridge regression
     if (test_method != "ridge_regression") {
       
-    
-      colnames(topic_loading$test) <- c("topic", "top_terms", 
+      colnames(topic_loading$test) <- c("topic", "top_terms", "prevalence", "coherence",
                                         paste(pre[i], 
-                                              colnames(topic_loading$test)[3:6], 
+                                              colnames(topic_loading$test)[5:8], 
                                               sep = "."))
       
       topic_loadings_all[[i]] <- topic_loading
@@ -1072,9 +1076,11 @@ topicsTest <- function(
   if (!is.null(y_variable)){
     # create the x.y.word.category
     topic_loadings_all[[3]] <- list()
-    topic_loadings_all[[3]]$test <- dplyr::left_join(topic_loadings_all[[1]][[1]][,1:6], 
-                                                     topic_loadings_all[[2]][[1]][,1:6],
-                                                     by = c("topic", "top_terms"))
+    topic_loadings_all[[3]]$test <- dplyr::left_join(topic_loadings_all[[1]][[1]][,1:8], 
+                                                     topic_loadings_all[[2]][[1]][,1:8],
+                                                     by = c("topic", "top_terms", 
+                                                            "prevalence", "coherence"))
+    
     topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
     topic_loadings_all[[3]]$pred_var <- paste0(topic_loadings_all[[1]]$pred_var, '__',
                                                topic_loadings_all[[2]]$pred_var) 
@@ -1088,7 +1094,7 @@ topicsTest <- function(
       
       topic_loadings_all[[2]] <- list()
       topic_loadings_all[[3]] <- list()
-      topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]][,1:6]
+      topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]][,1:8]
       topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
       topic_loadings_all[[3]]$pred_var <- topic_loadings_all[[1]]$pred_var
       
@@ -2431,7 +2437,7 @@ topicsPlot <- function(
     dim = 1
   
     # Only set dim to 2 if the test include enough tests
-    if(ncol(test$test) == 10) {
+    if(ncol(test$test) == 12) {
       dim = 2
     }
   }

@@ -59,6 +59,7 @@ test_that("topicsPlot WITHOUT test and preds", {
   
   testthat::skip_on_cran()
   save_dir_temp <- tempfile()
+  save_dir_temp <- "./Oscar"
   
   dtm <- topics::topicsDtm(
     data = dep_wor_data$Deptext, 
@@ -68,6 +69,11 @@ test_that("topicsPlot WITHOUT test and preds", {
     dtm = dtm, 
     save_dir = save_dir_temp)
   
+  # names(model)
+  # cor.test(model$coherence, model$summary$coherence)
+  # cor.test(model$prevalence, model$summary$prevalence)
+  
+  colnames(model$summary)
   #help(topicsPlot)
   topics::topicsPlot(
     model = model,
@@ -89,7 +95,7 @@ test_that("topicsPlot WITH test", {
   
   testthat::skip_on_cran()
   save_dir_temp <- tempfile()
-  save_dir_temp = "./results"
+  #save_dir_temp = "./results"
   
   ## 1-Dimension
   dtm <- topics::topicsDtm(
@@ -161,10 +167,10 @@ test_that("topicsPlot WITH test", {
   
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists(paste0(
-    save_dir_temp, "/seed_12/wordclouds/dot_legend_corvar_PHQ9tot_Age.png")))
+    save_dir_temp, "/seed_12/wordclouds/dot_legend_corvar_PHQ9tot__Age.png")))
   
   testthat::expect_true(file.exists(paste0(
-    save_dir_temp, "/seed_12/wordclouds/grid_legend_corvar_PHQ9tot_Age.png")))
+    save_dir_temp, "/seed_12/wordclouds/grid_legend_corvar_PHQ9tot__Age.png")))
   
 })
 
@@ -175,7 +181,7 @@ test_that("topicsPlot WITH underscores in names", {
   # strsplit(cor_var,
   testthat::skip_on_cran()
   save_dir_temp <- tempfile()
-  save_dir_temp <- "./reok"
+  save_dir_temp <- "./res_under"
   # Testing with _ 
   dep_wor_data$Dep_text <- dep_wor_data$Deptext
   dep_wor_data$Age_test <- dep_wor_data$Age
