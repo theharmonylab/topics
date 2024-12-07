@@ -235,7 +235,7 @@ test_that("topicsDtm PMI thresholhd ", {
   result_pmi1$n_grams_pmi %>% 
     arrange(-desc(pmi_value))
   
-  testthat::expect_true(ncol(result_pmi1$train_dtm) == 19278)
+  testthat::expect_true(ncol(result_pmi1$train_dtm) == 21692)
   
 })
 

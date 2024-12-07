@@ -16,6 +16,7 @@ test_that("topicsTest performs linear regression correctly", {
     dtm = dtm, 
     save_dir = save_dir_temp)
   
+  #help(topicsPreds)
   preds <- topics::topicsPreds(
     model = model, 
     data = dep_wor_data$Deptext, 

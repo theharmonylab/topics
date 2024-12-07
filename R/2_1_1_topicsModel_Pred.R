@@ -277,6 +277,7 @@ topicsModel <- function(
     save_dir,
     load_dir = NULL){
   
+  dtm_settings <- dtm$settings
   
   if (!is.null(load_dir)){
     model <- readRDS(paste0(load_dir, 
@@ -302,6 +303,7 @@ topicsModel <- function(
       num_iterations = num_iterations, 
       seed = seed)
     
+    model$dtm_settings <- dtm_settings
     
     model$summary <- data.frame(
       topic = rownames(model$labels),
@@ -313,6 +315,7 @@ topicsModel <- function(
                         function(x){paste(x, collapse = ", ")}),
       stringsAsFactors = FALSE)
     model$summary[order(model$summary$prevalence, decreasing = TRUE) , ][ 1:10 , ]
+    
   }
   
   if (!is.null(save_dir)){
@@ -342,7 +345,25 @@ topicsModel <- function(
 #' @param model (list) The trained model
 #' @param data (tibble) The new data
 #' @param num_iterations (integer) The number of iterations to run the model
-#' @param seed (integer) The seed to set for reproducibility
+#' @param sampling_interval The number of iterations between consecutive samples collected 
+#' during the Gibbs Sampling process. This technique, known as thinning, helps reduce the 
+#' correlation between consecutive samples and improves the quality of the final estimates 
+#' by ensuring they are more independent.
+#' Purpose: By specifying a sampling_interval, you avoid collecting highly correlated samples, which can 
+#' lead to more robust and accurate topic distributions.
+#' Example: If sampling_interval = 10, the algorithm collects a 
+#' sample every 10 iterations (e.g., at iteration 10, 20, 30, etc.).
+#' Typical Values: Default: 10; Range: 5 to 50 (depending on the complexity and size of the data)
+#' @param burn_in The number of initial iterations discarded during the Gibbs Sampling process. 
+#' These early iterations may not be representative of the final sampling distribution because the model is still stabilizing.
+#' Purpose: The burn_in period allows the model to converge to a more stable state before collecting samples, 
+#' improving the quality of the inferred topic distributions.
+#' Example: If burn_in = 50, the first 50 iterations of the Gibbs Sampling process are discarded,
+#' and sampling begins afterward. Typical Values: Default: 50 to 100 
+#' Range: 10 to 1000 (larger datasets or more complex models may require a longer burn-in period)
+#' @param seed (integer) The seed to set for reproducibility.
+#' @param create_new_dtm (boolean) If applying the model on new data (not used in training), it can help to make a new dtm.
+#' Currently this is experimental, and using the textmineR::CreateDtm() function rather than the topicsDtm() function, which has more functions.
 #' @param save_dir (string) The directory to save the model, if NULL, the predictions will not be saved
 #' @param load_dir (string) The directory to load the model from, if NULL, the predictions will not be loaded
 #' @return A tibble of the predictions
@@ -371,12 +392,15 @@ topicsModel <- function(
 #' @importFrom dplyr %>%
 #' @export
 topicsPreds <- function(
-    model, # only needed if load_dir==NULL 
-    data, # data vector to infer distribution for
-    num_iterations=100, # only needed if load_dir==NULL,
-    seed=42,
+    model, 
+    data, 
+    num_iterations = 200,
+    sampling_interval = 10, # aka thinning
+    burn_in = 10, 
+    seed = 42,
+    create_new_dtm = FALSE,
     save_dir,
-    load_dir=NULL){
+    load_dir = NULL){
   
   set.seed(seed)
   
@@ -400,23 +424,89 @@ topicsPreds <- function(
     
     pred_ids <- as.character(1:length(data))
     
-    new_instances <- compatible_instances(
-      ids = pred_ids,
-      texts = pred_text,
-      instances = model$instances)
+    ###### 
+    if (create_new_dtm){
+      # Preprocess new data to create DTM
+      new_dtm <- list()
+      new_dtm$train_dtm <- textmineR::CreateDtm(
+        doc_vec = data,
+        doc_names = as.character(1:length(data)),
+        ngram_window = model$dtm_settings$ngram_window,
+        stopword_vec = model$dtm_settingsstopwords,  # Use the same stopwords as training
+        lower = TRUE,
+        remove_punctuation = TRUE,
+        remove_numbers = TRUE,
+        verbose = FALSE
+      )
+      
+     # new_dtm <- topicsDtm(
+     #   data = data,
+     #   ngram_window = model$dtm_settings$ngram_window,
+     #   stopwords = model$dtm_settings$stopwords,
+     #   removalword = model$dtm_settings$removalword,
+     #   pmi_threshold = model$dtm_settings$pmi_threshold,
+     #   occurance_rate = model$dtm_settings$occurance_rate,
+     #   removal_mode = model$dtm_settings$removal_mode,
+     #   removal_rate_most = model$dtm_settings$removal_rate_most,
+     #   removal_rate_least = model$dtm_settings$removal_rate_least,
+     #   shuffle = model$dtm_settings$shuffle,
+     #   seed = model$dtm_settings$seed,
+     #   save_dir = save_dir,
+     #   load_dir = load_dir,
+     #   threads = model$dtm_settings$threads
+     # )
+      # Align new DTM with model vocabulary
+      model_vocab <- model$vocabulary
+      new_vocab <- colnames(new_dtm$train_dtm)
+      
+      # Identify missing terms
+      missing_terms <- setdiff(model_vocab, colnames(new_dtm$train_dtm))
+      
+      # Add missing terms with zero counts
+      if (length(missing_terms) > 0) {
+        zero_matrix <- Matrix::Matrix(0, nrow = nrow(new_dtm$train_dtm), ncol = length(missing_terms),
+                                      dimnames = list(rownames(new_dtm$train_dtm), missing_terms))
+        new_dtm$train_dtm <- cbind(new_dtm$train_dtm, zero_matrix)
+      }
+      
+      new_dtm$train_dtm <- new_dtm$train_dtm[, model_vocab, drop = FALSE]
+      # Convert the new DTM to the Mallet instances format
+      new_docs <- textmineR::Dtm2Docs(new_dtm$train_dtm)
+      
+      new_instances <- mallet::mallet.import(
+        as.character(seq_along(new_docs)),
+        new_docs,
+        preserve.case = FALSE,
+        token.regexp = "[\\p{L}\\p{N}_]+|[\\p{P}]+\ "
+      )
+    }
     
+    
+    ######
+    if (create_new_dtm == FALSE){
+      
+      new_instances <- compatible_instances(
+        ids = pred_ids,
+        texts = pred_text,
+        instances = model$instances)
+      
+    }
+    
+    
+    # Use the inferencer to predict topics for new instances
     inf_model <- model$inferencer
+    
+    
     preds <- infer_topics(
       inferencer = inf_model,
-      #instances = model$instances,
       instances = new_instances,
-      n_iterations = 200,
-      sampling_interval = 10, # aka "thinning"
-      burn_in = 10,
+      n_iterations = num_iterations,
+      sampling_interval = sampling_interval, # aka "thinning"
+      burn_in = burn_in,
       random_seed = seed
     )
     
-    preds <- tibble::as_tibble(preds)
+    preds <- tibble::as_tibble(preds, .name_repair = "minimal")
     colnames(preds) <- paste("t_", 1:ncol(preds), sep="")
     preds <- preds %>% tibble::tibble()
     
@@ -441,4 +531,129 @@ topicsPreds <- function(
   
   return(preds)
 }
+
+
+
+
+
+
+
+## #' Predict topic distributions
+## #' 
+## #' The function to predict the topics of a new document with the trained model.
+## #' @param model (list) The trained model
+## #' @param data (tibble) The new data
+## #' @param num_iterations (integer) The number of iterations to run the model
+## #' @param seed (integer) The seed to set for reproducibility
+## #' @param save_dir (string) The directory to save the model, if NULL, the predictions will not be saved
+## #' @param load_dir (string) The directory to load the model from, if NULL, the predictions will not be loaded
+## #' @return A tibble of the predictions
+## #' @examples
+## #' \donttest{
+## #' # Predict topics for new data with the trained model
+## #' save_dir_temp <- tempfile()
+## #' 
+## #' dtm <- topicsDtm(
+## #' data = dep_wor_data$Depphrase, 
+## #' save_dir = save_dir_temp)
+## #' 
+## #' model <- topicsModel(dtm = dtm, # output of topicsDtm()
+## #'                      num_topics = 20,
+## #'                      num_top_words = 10,
+## #'                      num_iterations = 1000,
+## #'                      seed = 42,
+## #'                      save_dir = save_dir_temp)
+## #'                      
+## #' preds <- topicsPreds(
+## #' model = model, # output of topicsModel()
+## #' data = dep_wor_data$Depphrase, 
+## #' save_dir = save_dir_temp)
+## #' }
+## #' @importFrom tibble as_tibble tibble
+## #' @importFrom dplyr %>%
+## #' @export
+## topicsPreds_new <- function(
+##     model,
+##     data,
+##     num_iterations = 100,
+##     seed = 42,
+##     save_dir = NULL,
+##     load_dir = NULL) {
+##   
+##   set.seed(seed)
+##   
+##   if (!is.null(load_dir)) {
+##     preds <- readRDS(paste0(load_dir, "/seed_", seed, "/preds.rds"))
+##   } else {
+##     if (length(data) == 0) {
+##       message("The data provided is empty. Please provide a list of text data.")
+##       return(NULL)
+##     }
+##     
+##     # Preprocess new data to create DTM
+##     new_dtm <- textmineR::CreateDtm(
+##       doc_vec = data,
+##       doc_names = as.character(1:length(data)),
+##       ngram_window = c(1, 3),
+##       stopword_vec = stopwords::stopwords("en", source = "snowball"),  # Use the same stopwords as training
+##       lower = TRUE,
+##       remove_punctuation = TRUE,
+##       remove_numbers = TRUE,
+##       verbose = FALSE
+##     )
+##     
+##     # Align new DTM with model vocabulary
+##     
+##     model_vocab <- model$vocabulary
+##     new_vocab <- colnames(new_dtm)
+##     
+##     # Identify missing terms
+##     missing_terms <- setdiff(model_vocab, colnames(new_dtm))
+##     
+##     # Add missing terms with zero counts
+##     if (length(missing_terms) > 0) {
+##       zero_matrix <- Matrix::Matrix(0, nrow = nrow(new_dtm), ncol = length(missing_terms),
+##                                     dimnames = list(rownames(new_dtm), missing_terms))
+##       new_dtm <- cbind(new_dtm, zero_matrix)
+##     }
+##     
+##     new_dtm <- new_dtm[, model_vocab, drop = FALSE]
+##     # Convert the new DTM to the Mallet instances format
+##     new_docs <- textmineR::Dtm2Docs(new_dtm)
+##     
+##     new_instances <- mallet::mallet.import(
+##       as.character(seq_along(new_docs)),
+##       new_docs,
+##       preserve.case = FALSE,
+##       token.regexp = "[\\p{L}\\p{N}_]+|[\\p{P}]+\ "
+##     )
+##     
+##     # Use the inferencer to predict topics for new instances
+##     inf_model <- model$inferencer
+##     
+##     preds <- infer_topics(
+##       inferencer = inf_model,
+##       instances = new_instances,
+##       n_iterations = num_iterations,
+##       sampling_interval = 10,
+##       burn_in = 10,
+##       random_seed = seed
+##     )
+##     
+##     preds <- tibble::as_tibble(preds, .name_repair =  "minimal")
+##     colnames(preds) <- paste("t_", 1:ncol(preds), sep = "")
+##   }
+##   
+##   if (!is.null(save_dir)) {
+##     if (!dir.exists(save_dir)) {
+##       dir.create(save_dir, recursive = TRUE)
+##       message("Directory created successfully.")
+##     }
+##     saveRDS(preds, paste0(save_dir, "/seed_", seed, "/preds.rds"))
+##     message(paste0("Predictions saved in ", save_dir, "/seed_", seed, "/preds.rds"))
+##   }
+##   
+##   return(preds)
+## }
+## 
 

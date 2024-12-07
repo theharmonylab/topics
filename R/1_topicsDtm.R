@@ -151,6 +151,24 @@ topicsDtm <- function(
     load_dir = NULL,
     threads = 1){
   
+  # Create a named list of settings
+  settings <- list(
+    ngram_window = ngram_window,
+    stopwords = stopwords,
+    removalword = removalword,
+    pmi_threshold = pmi_threshold,
+    occurance_rate = occurance_rate,
+    removal_mode = removal_mode,
+    removal_rate_most = removal_rate_most,
+    removal_rate_least = removal_rate_least,
+    shuffle = shuffle,
+    seed = seed,
+    threads = threads,
+    save_dir = save_dir,
+    load_dir = load_dir
+  )
+  
+  
   pmi_tibble = NULL
   if (!is.null(load_dir)){
     dtms <- readRDS(paste0(load_dir, 
@@ -309,6 +327,7 @@ topicsDtm <- function(
 
     dtms <- list(
       n_grams_pmi = if (!is.null(pmi_tibble)) pmi_tibble else "No pmi_threshold was used",
+      settings = settings,
       train_dtm = train_dtm
     )
   }

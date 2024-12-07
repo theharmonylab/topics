@@ -229,7 +229,7 @@ test_that("topicsPlot WITH underscores in names", {
   test2 <- topics::topicsTest(
     model = model, 
     preds = preds, 
-    data = dep_wor_data, 
+    data = data_test, 
     x_variable = "PHQ9tot",
     y_variable = "Age_test", 
     save_dir = save_dir_temp
@@ -272,71 +272,11 @@ test_that("topicsPlot WITH PMI", {
   
   testthat::skip_on_cran()
   save_dir_temp <- tempfile()
-  save_dir_temp <- "./res_under"
-  
- ## dtm_1 <- topics::topicsDtm(
- ##   data = dep_wor_data$Dep_text, 
- ##   save_dir = save_dir_temp, 
- ##   pmi_threshold = 1
- ## )
- ## dtm_1$train_dtm
- ## dtm_null <- topics::topicsDtm(
- ##   data = dep_wor_data$Dep_text, 
- ##   save_dir = save_dir_temp, 
- ##   pmi_threshold = NULL
- ## )
- ## dtm_null$train_dtm
- ## 
- ## model_1 <- topics::topicsModel(
- ##   dtm = dtm_1, 
- ##   save_dir = save_dir_temp)
- ## model_1
- ## 
- ## model_null <- topics::topicsModel(
- ##   dtm = dtm_null, 
- ##   save_dir = save_dir_temp)
- ## model_null
- ## 
-##
- ## preds_1 <- topics::topicsPreds(
- ##   model = model_1, 
- ##   data = dep_wor_data$Dep_text, 
- ##   save_dir = save_dir_temp)
- ## preds_1
- ## 
- ## preds_null <- topics::topicsPreds(
- ##   model = model_null, 
- ##   data = dep_wor_data$Dep_text, 
- ##   save_dir = save_dir_temp)
- ## preds_null
- ## 
- ## # # # # #
-##
- ## # testing a model on new data = Same effect
- ## 
- ## preds_1_new <- topics::topicsPreds(
- ##   model = model_1, 
- ##   data = dep_wor_data$Wortext, 
- ##   save_dir = save_dir_temp)
- ## preds_1_new
- ## 
- ## preds_null_new <- topics::topicsPreds(
- ##   model = model_null, 
- ##   data = dep_wor_data$Wortext, 
- ##   save_dir = save_dir_temp)
- ## preds_null_new
- ## 
- ## preds_null_new <- topics::topicsPreds(
- ##   model = model_null, 
- ##   data = dep_wor_data$Wortext[1:2], 
- ##   save_dir = save_dir_temp)
- ## preds_null_new
- ## 
- ## # # # # #
+
   
   ## 1-Dimension
   dtm <- topics::topicsDtm(
-    data = dep_wor_data$Dep_text, 
+    data = dep_wor_data$Deptext, 
     save_dir = save_dir_temp, 
     pmi_threshold = 1
     )
@@ -347,7 +287,7 @@ test_that("topicsPlot WITH PMI", {
   
   preds <- topics::topicsPreds(
     model = model, 
-    data = dep_wor_data$Dep_text, 
+    data = dep_wor_data$Deptext, 
     save_dir = save_dir_temp)
   
   test1 <- topics::topicsTest(
