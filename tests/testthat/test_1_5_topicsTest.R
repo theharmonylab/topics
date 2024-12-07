@@ -25,6 +25,7 @@ test_that("topicsTest performs linear regression correctly", {
     y_variable = "PHQ9tot",
     test_method = "linear_regression"
     )
+  result
 #  test = result
   testthat::expect_true(is.list(result))
   testthat::expect_equal(result$test_method, "linear_regression")

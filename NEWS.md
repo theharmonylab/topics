@@ -9,6 +9,7 @@
 - implemented `create_new_dtm` for creating a new `dtm` for new data 
 - adding test for using `topics` dimension for training using `textTrainRegression()`. 
 - removing forcing user to set save_dir on most functions (only need to do it for topics functions).
+
 # topics 0.30.2
 - fixing coherence bug
 - showing prevalence and coherence for in results
