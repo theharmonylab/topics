@@ -274,7 +274,7 @@ topicsModel <- function(
     num_top_words = 10,
     num_iterations = 1000,
     seed = 42,
-    save_dir,
+    save_dir = NULL,
     load_dir = NULL){
   
   dtm_settings <- dtm$settings
@@ -399,7 +399,7 @@ topicsPreds <- function(
     burn_in = 10, 
     seed = 42,
     create_new_dtm = FALSE,
-    save_dir,
+    save_dir = NULL,
     load_dir = NULL){
   
   set.seed(seed)
@@ -531,129 +531,4 @@ topicsPreds <- function(
   
   return(preds)
 }
-
-
-
-
-
-
-
-## #' Predict topic distributions
-## #' 
-## #' The function to predict the topics of a new document with the trained model.
-## #' @param model (list) The trained model
-## #' @param data (tibble) The new data
-## #' @param num_iterations (integer) The number of iterations to run the model
-## #' @param seed (integer) The seed to set for reproducibility
-## #' @param save_dir (string) The directory to save the model, if NULL, the predictions will not be saved
-## #' @param load_dir (string) The directory to load the model from, if NULL, the predictions will not be loaded
-## #' @return A tibble of the predictions
-## #' @examples
-## #' \donttest{
-## #' # Predict topics for new data with the trained model
-## #' save_dir_temp <- tempfile()
-## #' 
-## #' dtm <- topicsDtm(
-## #' data = dep_wor_data$Depphrase, 
-## #' save_dir = save_dir_temp)
-## #' 
-## #' model <- topicsModel(dtm = dtm, # output of topicsDtm()
-## #'                      num_topics = 20,
-## #'                      num_top_words = 10,
-## #'                      num_iterations = 1000,
-## #'                      seed = 42,
-## #'                      save_dir = save_dir_temp)
-## #'                      
-## #' preds <- topicsPreds(
-## #' model = model, # output of topicsModel()
-## #' data = dep_wor_data$Depphrase, 
-## #' save_dir = save_dir_temp)
-## #' }
-## #' @importFrom tibble as_tibble tibble
-## #' @importFrom dplyr %>%
-## #' @export
-## topicsPreds_new <- function(
-##     model,
-##     data,
-##     num_iterations = 100,
-##     seed = 42,
-##     save_dir = NULL,
-##     load_dir = NULL) {
-##   
-##   set.seed(seed)
-##   
-##   if (!is.null(load_dir)) {
-##     preds <- readRDS(paste0(load_dir, "/seed_", seed, "/preds.rds"))
-##   } else {
-##     if (length(data) == 0) {
-##       message("The data provided is empty. Please provide a list of text data.")
-##       return(NULL)
-##     }
-##     
-##     # Preprocess new data to create DTM
-##     new_dtm <- textmineR::CreateDtm(
-##       doc_vec = data,
-##       doc_names = as.character(1:length(data)),
-##       ngram_window = c(1, 3),
-##       stopword_vec = stopwords::stopwords("en", source = "snowball"),  # Use the same stopwords as training
-##       lower = TRUE,
-##       remove_punctuation = TRUE,
-##       remove_numbers = TRUE,
-##       verbose = FALSE
-##     )
-##     
-##     # Align new DTM with model vocabulary
-##     
-##     model_vocab <- model$vocabulary
-##     new_vocab <- colnames(new_dtm)
-##     
-##     # Identify missing terms
-##     missing_terms <- setdiff(model_vocab, colnames(new_dtm))
-##     
-##     # Add missing terms with zero counts
-##     if (length(missing_terms) > 0) {
-##       zero_matrix <- Matrix::Matrix(0, nrow = nrow(new_dtm), ncol = length(missing_terms),
-##                                     dimnames = list(rownames(new_dtm), missing_terms))
-##       new_dtm <- cbind(new_dtm, zero_matrix)
-##     }
-##     
-##     new_dtm <- new_dtm[, model_vocab, drop = FALSE]
-##     # Convert the new DTM to the Mallet instances format
-##     new_docs <- textmineR::Dtm2Docs(new_dtm)
-##     
-##     new_instances <- mallet::mallet.import(
-##       as.character(seq_along(new_docs)),
-##       new_docs,
-##       preserve.case = FALSE,
-##       token.regexp = "[\\p{L}\\p{N}_]+|[\\p{P}]+\ "
-##     )
-##     
-##     # Use the inferencer to predict topics for new instances
-##     inf_model <- model$inferencer
-##     
-##     preds <- infer_topics(
-##       inferencer = inf_model,
-##       instances = new_instances,
-##       n_iterations = num_iterations,
-##       sampling_interval = 10,
-##       burn_in = 10,
-##       random_seed = seed
-##     )
-##     
-##     preds <- tibble::as_tibble(preds, .name_repair =  "minimal")
-##     colnames(preds) <- paste("t_", 1:ncol(preds), sep = "")
-##   }
-##   
-##   if (!is.null(save_dir)) {
-##     if (!dir.exists(save_dir)) {
-##       dir.create(save_dir, recursive = TRUE)
-##       message("Directory created successfully.")
-##     }
-##     saveRDS(preds, paste0(save_dir, "/seed_", seed, "/preds.rds"))
-##     message(paste0("Predictions saved in ", save_dir, "/seed_", seed, "/preds.rds"))
-##   }
-##   
-##   return(preds)
-## }
-## 
 

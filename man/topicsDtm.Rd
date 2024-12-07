@@ -16,7 +16,7 @@ topicsDtm(
   removal_rate_least = 0,
   shuffle = TRUE,
   seed = 42L,
-  save_dir,
+  save_dir = NULL,
   load_dir = NULL,
   threads = 1
 )

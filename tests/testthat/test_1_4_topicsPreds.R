@@ -6,21 +6,16 @@ library(tibble)
 test_that("topicsPreds generates predictions with default parameters", {
   
   testthat::skip_on_cran()
-  save_dir_temp <- tempfile()
   
   dtm <- topics::topicsDtm(
-    data = dep_wor_data$Depphrase, 
-    save_dir = save_dir_temp)
+    data = dep_wor_data$Depphrase)
   
   model <- topics::topicsModel(
-    dtm = dtm, 
-    save_dir = save_dir_temp)
-  names(model)
+    dtm = dtm)
   
   result <- topics::topicsPreds(
     model = model, 
-    data = dep_wor_data$Depphrase, 
-    save_dir = save_dir_temp)
+    data = dep_wor_data$Depphrase)
   
   testthat::expect_true(is_tibble(result))
   testthat::expect_equal(result$t_1[[1]], 0.006824058, tolerance = 0.00001)
@@ -32,8 +27,7 @@ test_that("topicsPreds generates predictions with default parameters", {
   result <- topics::topicsPreds(
     model, 
     data = dep_wor_data$Depphrase, 
-    num_iterations = 200, 
-    save_dir = save_dir_temp)
+    num_iterations = 200)
   
   testthat::expect_true(is_tibble(result))
   testthat::expect_equal(nrow(result), length(dep_wor_data$Depphrase))
@@ -42,20 +36,18 @@ test_that("topicsPreds generates predictions with default parameters", {
   result1 <- topics::topicsPreds(
     model, 
     data = dep_wor_data$Depphrase, 
-    seed = 123, 
-    save_dir = save_dir_temp)
+    seed = 123)
   
   result2 <- topics::topicsPreds(
     model, 
     data = dep_wor_data$Depphrase, 
-    seed = 123, 
-    save_dir = save_dir_temp)
+    seed = 123)
   
   testthat::expect_equal(result1, result2)
   
   
   # topicsPreds saves predictions to the specified directory
-  
+  save_dir_temp <-  tempfile()
   result <- topics::topicsPreds(
     model, 
     data = dep_wor_data$Depphrase, 

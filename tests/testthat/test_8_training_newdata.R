@@ -7,16 +7,13 @@ library(text)
 test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   
   testthat::skip_on_cran()
-  save_dir_temp <- tempfile()
-  save_dir_temp = "./results1"
   
 
   dtm <- topics::topicsDtm(
     data = dep_wor_data$Deptext, 
     removal_mode = "frequency",
     removal_rate_most = 50,
-    removal_rate_least = 5,
-    save_dir = save_dir_temp)
+    removal_rate_least = 5)
   
   dtmeval <- topicsDtmEval(dtm)
   dtmeval$frequency_plot
@@ -27,15 +24,13 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     dtm = dtm, 
     num_topics = 50,
     num_top_words = 10,
-    num_iterations = 1500,
-    save_dir = save_dir_temp)
+    num_iterations = 1500)
   
   #### Same data predictions  ####
   same_data_preds <- topicsPreds(
     model = model,
     data = dep_wor_data$Deptext,
     num_iterations = 1000,
-    save_dir = save_dir_temp,
     load_dir = NULL
   )
   
@@ -53,7 +48,6 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     data = dep_wor_data$Worphrase,
     num_iterations = 1000,
     create_new_dtm = FALSE,
-    save_dir = save_dir_temp,
     load_dir = NULL
   )
   colnames(new_data_preds) <- paste0("Dim", 1:20, "_", colnames(new_data_preds)) 
@@ -70,7 +64,6 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     data = dep_wor_data$Worphrase,
     num_iterations = 1000,
     create_new_dtm = TRUE,
-    save_dir = save_dir_temp,
     load_dir = NULL
   )
   colnames(new_data_newdtm_preds) <- paste0("Dim", 1:20, "_", colnames(new_data_newdtm_preds)) 

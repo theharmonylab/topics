@@ -12,7 +12,7 @@ topicsPreds(
   burn_in = 10,
   seed = 42,
   create_new_dtm = FALSE,
-  save_dir,
+  save_dir = NULL,
   load_dir = NULL
 )
 }

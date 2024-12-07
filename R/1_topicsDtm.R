@@ -1,6 +1,5 @@
 
 
-
 #' Get the most or least frequent terms in a document-term matrix
 #' @param dtm (R_obj) A document-term matrix
 #' @param n (integer) The number of terms to be removed
@@ -147,7 +146,7 @@ topicsDtm <- function(
     removal_rate_least = 0,
     shuffle = TRUE,
     seed = 42L,
-    save_dir,
+    save_dir = NULL,
     load_dir = NULL,
     threads = 1){
   

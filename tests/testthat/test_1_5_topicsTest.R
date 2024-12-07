@@ -5,22 +5,17 @@ library(dplyr)
 test_that("topicsTest performs linear regression correctly", {
   
   testthat::skip_on_cran()
-  save_dir_temp <- tempfile()
-  save_dir_temp <-  "./results"
   
   dtm <- topics::topicsDtm(
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
+    data = dep_wor_data$Deptext)
   
   model <- topics::topicsModel(
-    dtm = dtm, 
-    save_dir = save_dir_temp)
+    dtm = dtm)
   
   #help(topicsPreds)
   preds <- topics::topicsPreds(
     model = model, 
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
+    data = dep_wor_data$Deptext)
   
   result <- topics::topicsTest(
     model = model,
@@ -28,8 +23,7 @@ test_that("topicsTest performs linear regression correctly", {
     data = dep_wor_data,
     x_variable = "Age",
     y_variable = "PHQ9tot",
-    test_method = "linear_regression", 
-    save_dir = save_dir_temp
+    test_method = "linear_regression"
     )
 #  test = result
   testthat::expect_true(is.list(result))
@@ -79,30 +73,25 @@ test_that("topicsTest performs linear regression correctly", {
 test_that("topicsTest performs logistic regression correctly", {
   
   testthat::skip_on_cran()
-  save_dir_temp <- tempfile()
   
   #  data <- dep_wor_data %>% dplyr::mutate(Gender = ifelse(Gender == "male", 1, 0))
   
   dtm <- topics::topicsDtm(
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp) 
+    data = dep_wor_data$Deptext) 
   
   model <- topics::topicsModel(
-    dtm = dtm, 
-    save_dir = save_dir_temp)
+    dtm = dtm)
   
   preds <- topics::topicsPreds(
     model = model, 
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
+    data = dep_wor_data$Deptext)
   
   result <- topics::topicsTest(
     model = model, 
     preds = preds, 
     data = dep_wor_data, 
     x_variable = "Age", 
-    test_method = "logistic_regression", 
-    save_dir = save_dir_temp)
+    test_method = "logistic_regression")
   
   testthat::expect_true(is.list(result))
   testthat::expect_equal(result$test_method, "logistic_regression")
@@ -149,28 +138,23 @@ test_that("topicsTest performs logistic regression correctly", {
 test_that("topicsTest adjusts p-values for multiple comparisons", {
   
   testthat::skip_on_cran()
-  save_dir_temp <- tempfile()
   
   dtm <- topics::topicsDtm(
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
+    data = dep_wor_data$Deptext)
   
   model <- topics::topicsModel(
-    dtm = dtm, 
-    save_dir = save_dir_temp)
+    dtm = dtm)
   
   preds <- topics::topicsPreds(
     model = model, 
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
+    data = dep_wor_data$Deptext)
   
   result <- topics::topicsTest(
     model = model, 
     preds = preds, 
     data = dep_wor_data, 
     x_variable = "Age", 
-    p_adjust_method = "bonferroni", 
-    save_dir = save_dir_temp)
+    p_adjust_method = "bonferroni")
   
   testthat::expect_true(is.list(result))
   testthat::expect_equal(result$test_method, "linear_regression")
