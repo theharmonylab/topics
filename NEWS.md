@@ -3,6 +3,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+# topics 0.30.2
+- fixing coherence bug
+- showing prevalence and coherence for in results
+- restructuring the files
+
 # topics 0.30.0
 - Harmonizing parameters in `topicsTest()` incl. x_variable, y_variable and controls
 - fixing error that variable names cannot be names with 1 underscore.

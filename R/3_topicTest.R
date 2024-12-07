@@ -792,7 +792,7 @@ topicsTest1 <- function(
 #' @param ngrams (list) output of the n-gram function
 #' @param x_variable (string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)
 #' @param y_variable (string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)
-#' @param group_var (string) The variable to group by (only needed for t-test)
+# @param group_var (string) The variable to group by (only needed for t-test)
 #' @param controls (vector) The control variables (not supported yet)
 #' @param test_method (string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"
 # @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
@@ -849,7 +849,7 @@ topicsTest <- function(
     load_dir = NULL,
     save_dir){
   
-  group_var = NULL
+  # group_var = NULL
   
   if (is.null(x_variable) & is.null(y_variable)){
     msg <- 'Please input the x_variable, and/or y_variable.'
