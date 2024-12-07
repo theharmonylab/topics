@@ -10,7 +10,7 @@ test_that("topicsModel creates an LDA model correctly with default parameters", 
   save_dir_temp <- tempfile()
   
   dtm <- topicsDtm(
-    c("This is a test document.", "This is another test."), 
+    data = c("This is a test document.", "This is another test."), 
     save_dir = save_dir_temp)
   
   result <- topicsModel(

@@ -181,13 +181,14 @@ test_that("topicsPlot WITH underscores in names", {
   # strsplit(cor_var,
   testthat::skip_on_cran()
   save_dir_temp <- tempfile()
-  save_dir_temp <- "./res_under"
+  #save_dir_temp <- "./res_under"
   # Testing with _ 
-  dep_wor_data$Dep_text <- dep_wor_data$Deptext
-  dep_wor_data$Age_test <- dep_wor_data$Age
+  data_test <- dep_wor_data
+  data_test$Dep_text <- data_test$Deptext
+  data_test$Age_test <- data_test$Age
   ## 1-Dimension
   dtm <- topics::topicsDtm(
-    data = dep_wor_data$Dep_text, 
+    data = data_test$Dep_text, 
     save_dir = save_dir_temp)
   
   model <- topics::topicsModel(
@@ -196,13 +197,13 @@ test_that("topicsPlot WITH underscores in names", {
   
   preds <- topics::topicsPreds(
     model = model, 
-    data = dep_wor_data$Dep_text, 
+    data = data_test$Dep_text, 
     save_dir = save_dir_temp)
   
   test1 <- topics::topicsTest(
     model= model,
     preds = preds,
-    data = dep_wor_data,
+    data = data_test,
     x_variable = "Age_test",
     y_variable = "Age",
     save_dir = save_dir_temp)
@@ -230,7 +231,7 @@ test_that("topicsPlot WITH underscores in names", {
     preds = preds, 
     data = dep_wor_data, 
     x_variable = "PHQ9tot",
-    y_variable = "Age", 
+    y_variable = "Age_test", 
     save_dir = save_dir_temp
   )
   
@@ -256,12 +257,110 @@ test_that("topicsPlot WITH underscores in names", {
   
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists(paste0(
-    save_dir_temp, "/seed_12/wordclouds/dot_legend_corvar_PHQ9tot__Age.png")))
+    save_dir_temp, "/seed_12/wordclouds/dot_legend_corvar_PHQ9tot__Age_test.png")))
   
   testthat::expect_true(file.exists(paste0(
-    save_dir_temp, "/seed_12/wordclouds/grid_legend_corvar_PHQ9tot__Age.png")))
+    save_dir_temp, "/seed_12/wordclouds/grid_legend_corvar_PHQ9tot__Age_test.png")))
   
 })
 
 
 
+
+
+test_that("topicsPlot WITH PMI", {
+  
+  testthat::skip_on_cran()
+  save_dir_temp <- tempfile()
+  save_dir_temp <- "./res_under"
+  
+ ## dtm_1 <- topics::topicsDtm(
+ ##   data = dep_wor_data$Dep_text, 
+ ##   save_dir = save_dir_temp, 
+ ##   pmi_threshold = 1
+ ## )
+ ## dtm_1$train_dtm
+ ## dtm_null <- topics::topicsDtm(
+ ##   data = dep_wor_data$Dep_text, 
+ ##   save_dir = save_dir_temp, 
+ ##   pmi_threshold = NULL
+ ## )
+ ## dtm_null$train_dtm
+ ## 
+ ## model_1 <- topics::topicsModel(
+ ##   dtm = dtm_1, 
+ ##   save_dir = save_dir_temp)
+ ## model_1
+ ## 
+ ## model_null <- topics::topicsModel(
+ ##   dtm = dtm_null, 
+ ##   save_dir = save_dir_temp)
+ ## model_null
+ ## 
+##
+ ## preds_1 <- topics::topicsPreds(
+ ##   model = model_1, 
+ ##   data = dep_wor_data$Dep_text, 
+ ##   save_dir = save_dir_temp)
+ ## preds_1
+ ## 
+ ## preds_null <- topics::topicsPreds(
+ ##   model = model_null, 
+ ##   data = dep_wor_data$Dep_text, 
+ ##   save_dir = save_dir_temp)
+ ## preds_null
+ ## 
+ ## # # # # #
+##
+ ## # testing a model on new data = Same effect
+ ## 
+ ## preds_1_new <- topics::topicsPreds(
+ ##   model = model_1, 
+ ##   data = dep_wor_data$Wortext, 
+ ##   save_dir = save_dir_temp)
+ ## preds_1_new
+ ## 
+ ## preds_null_new <- topics::topicsPreds(
+ ##   model = model_null, 
+ ##   data = dep_wor_data$Wortext, 
+ ##   save_dir = save_dir_temp)
+ ## preds_null_new
+ ## 
+ ## preds_null_new <- topics::topicsPreds(
+ ##   model = model_null, 
+ ##   data = dep_wor_data$Wortext[1:2], 
+ ##   save_dir = save_dir_temp)
+ ## preds_null_new
+ ## 
+ ## # # # # #
+  
+  ## 1-Dimension
+  dtm <- topics::topicsDtm(
+    data = dep_wor_data$Dep_text, 
+    save_dir = save_dir_temp, 
+    pmi_threshold = 1
+    )
+  
+  model <- topics::topicsModel(
+    dtm = dtm, 
+    save_dir = save_dir_temp)
+  
+  preds <- topics::topicsPreds(
+    model = model, 
+    data = dep_wor_data$Dep_text, 
+    save_dir = save_dir_temp)
+  
+  test1 <- topics::topicsTest(
+    model= model,
+    preds = preds,
+    data = dep_wor_data,
+    x_variable = "Age",
+    save_dir = save_dir_temp)
+  
+  testthat::expect_equal(test1$test$x.Age.estimate[1:4], 
+                         c(0.012425389,  0.034527241,  0.039768994,  0.007723522), 
+                         tolerance = 0.00001)
+  
+  
+  
+})

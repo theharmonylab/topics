@@ -249,6 +249,7 @@ topicsDtm <- function(
     }
     
     # PMI Filter
+    train_dtm_null <- train_dtm
     if (!is.null(pmi_threshold)) {
       total_terms <- sum(train_dtm)
       ngram_probs <- Matrix::colSums(train_dtm) / total_terms
@@ -292,8 +293,19 @@ topicsDtm <- function(
         pmi_value = values         # Use the PMI values as the value column
       )
       
-      train_dtm <- train_dtm[, values >= pmi_threshold, drop = FALSE]
-    }
+      # Identify unigrams (terms without underscores)
+      unigram_indices <- grep("^[^_]+$", colnames(train_dtm))
+      
+      # Apply PMI filtering only to n-grams (terms with underscores)
+      pmi_indices <- which(values >= pmi_threshold)
+      
+      # Combine unigrams and filtered n-grams
+      selected_indices <- union(unigram_indices, pmi_indices)
+      
+      # Filter the DTM
+      train_dtm <- train_dtm[, selected_indices, drop = FALSE]
+      
+      }
 
     dtms <- list(
       n_grams_pmi = if (!is.null(pmi_tibble)) pmi_tibble else "No pmi_threshold was used",
