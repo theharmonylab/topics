@@ -1,1115 +1,4 @@
 
-#' Document Term Matrix
-#' 
-#' The function for creating a document term matrix
-#' @param data (list) the list containing the text data with each entry belonging to a unique id
-#' @param ngram_window (list) the minimum and maximum n-gram length, e.g. c(1,3)
-#' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
-#' @param removalword (string) the word to remove
-#' @param removal_mode (string) the mode of removal -> "none", "frequency", "term" or "percentage", frequency removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, term removes an absolute amount of terms that are most frequent and least frequent, percentage the amount of terms indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix
-#' @param removal_rate_most (integer) the rate of most frequent words to be removed, functionality depends on removal_mode
-#' @param removal_rate_least (integer) the rate of least frequent words to be removed, functionality depends on removal_mode
-#' @param pmi_threshold (integer; experimental) Pointwise Mutual Information (PMI) measures the association 
-#' between terms by comparing their co-occurrence probability to their individual probabilities, 
-#' highlighting term pairs that occur together more often than expected by chance; in this implementation,
-#' terms with average PMI below the specified threshold (pmi_threshold) are removed from the document-term matrix. 
-#' @param shuffle (boolean) shuffle the data before analyses
-#' @param seed (integer) the random seed for reproducibility
-#' @param save_dir (string) the directory to save the results, if NULL, no results are saved.
-#' @param load_dir (string) the directory to load from.
-#' @param occurance_rate (integer) the rate of occurence of a word to be removed
-#' @param threads (integer) the number of threads to use
-#' @return the document term matrix
-#' @examples
-#' \donttest{
-#' 
-#' # Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
-#' save_dir_temp <- tempfile()
-#' 
-#' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
-#'                  removal_mode = "frequency",
-#'                  removal_rate_least = 4,
-#'                  removal_rate_most = 500,
-#'                  save_dir = save_dir_temp)
-#' 
-#' # Create Dtm and remove the 1 least and 1 most frequent terms.
-#' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
-#'                  removal_mode = "term",
-#'                  removal_rate_least = 1,
-#'                  removal_rate_most = 1,
-#'                  save_dir = save_dir_temp)
-#' 
-#' # Create Dtm and remove the 1% least frequent and 1% most frequent terms.
-#' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
-#'                  removal_mode = "percentage",
-#'                  removal_rate_least = 1,
-#'                  removal_rate_most = 1,
-#'                  save_dir = save_dir_temp)
-#'                  
-#' # Load precomputed Dtm from directory
-#' dtm <- topicsDtm(load_dir = save_dir_temp,
-#'                  seed = 42,
-#'                  save_dir = save_dir_temp)
-#' }
-#' @importFrom textmineR CreateDtm 
-#' @importFrom stats complete.cases
-#' @importFrom stopwords stopwords
-#' @importFrom Matrix colSums t
-#' @importFrom tibble as_tibble
-#' @export
-topicsDtm <- function(
-    data, #
-    ngram_window = c(1,3),
-    stopwords = stopwords::stopwords("en", source = "snowball"),
-    removalword = "",
-    pmi_threshold = NULL, 
-    occurance_rate = 0,
-    removal_mode = "none",
-    removal_rate_most = 0,
-    removal_rate_least = 0,
-    shuffle = TRUE,
-    seed = 42L,
-    save_dir,
-    load_dir = NULL,
-    threads = 1){
-  
-  pmi_tibble = NULL
-  if (!is.null(load_dir)){
-    dtms <- readRDS(paste0(load_dir, 
-                            "/seed_",
-                            seed, 
-                            "/dtms.rds"))
-    
-  } else {
-    
-    if (length(data) == 0){
-      msg <- "The data provided is empty. Please provide a list of text data."
-      message(colourise(msg, "brown"))
-      
-      return(NULL)
-    }
-    
-    set.seed(seed)
-    id_col <- "id"
-    data_col <- "text"
-    
-    if (is.data.frame(data)){
-      data <- data[,1]
-    }
-    
-    text_cols <- data.frame(text = data)
-    text_cols[[id_col]] <- 1:nrow(text_cols) # create unique ID
-    text_cols <- as_tibble(text_cols)
-    text_cols <- text_cols[complete.cases(text_cols), ] # remove missing rows
-    
-    if(shuffle){
-      text_cols = text_cols[sample(1:nrow(text_cols)), ] # shuffle
-      split_index <- round(nrow(text_cols) * 1) 
-      train <- text_cols[1:split_index, ]
-    } else {
-      train <- text_cols 
-    }
-    
-    if (removalword != ""){
-      train[[data_col]] <- gsub(paste0("\\b", removalword, "\\b"), "", train[[data_col]]) 
-    }
-    
-    # Create Trigram DTM
-    train_dtm <- textmineR::CreateDtm(
-      doc_vec = train[["text"]], 
-      doc_names = train[["id"]], 
-      ngram_window = ngram_window, 
-      stopword_vec = stopwords, 
-      lower = TRUE, 
-      remove_punctuation = TRUE, 
-      remove_numbers = TRUE, 
-      verbose = FALSE, 
-      cpus = threads
-    )
-    
-    # Create Unigram DTM if necessary for PMI
-    if (!is.null(pmi_threshold)) {
-      unigram_dtm <- textmineR::CreateDtm(
-        doc_vec = train[["text"]], 
-        doc_names = train[["id"]], 
-        ngram_window = c(1, 1), # Unigrams only
-        stopword_vec = stopwords, 
-        lower = TRUE, 
-        remove_punctuation = TRUE, 
-        remove_numbers = TRUE, 
-        verbose = FALSE, 
-        cpus = threads
-      )
-    }
-    
-    # Apply Occurrence Filtering
-    if (occurance_rate > 0){
-      removal_frequency <- round(nrow(train) * occurance_rate) - 1
-      train_dtm <- train_dtm[, Matrix::colSums(train_dtm) > removal_frequency]
-    }
-    
-    # Removal by Frequency or Custom Modes
-    if (removal_mode != "frequency"){
-      if (removal_rate_least > 0){
-        removal_columns <- get_removal_columns(train_dtm, removal_rate_least, "least", removal_mode)
-        if (removal_rate_most > 0){
-          removal_columns_most <- get_removal_columns(train_dtm, removal_rate_most, "most", removal_mode)
-          removal_columns <- c(removal_columns, removal_columns_most)
-        }
-        train_dtm <- train_dtm[, -removal_columns, drop = FALSE]
-      } else if (removal_rate_most > 0){
-        removal_columns <- get_removal_columns(train_dtm, removal_rate_most, "most", removal_mode)
-        train_dtm <- train_dtm[, -removal_columns, drop = FALSE]
-      }
-    } else if (removal_mode == "frequency"){
-      if (!is.null(removal_rate_least)){
-        train_dtm <- train_dtm[, Matrix::colSums(train_dtm) > removal_rate_least]
-      }
-      if (!is.null(removal_rate_most)){
-        train_dtm <- train_dtm[, Matrix::colSums(train_dtm) < removal_rate_most]
-      }
-    }
-    
-    # PMI Filter
-    if (!is.null(pmi_threshold)) {
-      total_terms <- sum(train_dtm)
-      ngram_probs <- Matrix::colSums(train_dtm) / total_terms
-      ngram_components <- strsplit(colnames(train_dtm), "_")
-      
-      # Compute marginal probabilities
-      component_probs <- sapply(ngram_components, function(component) {
-        # Compute probabilities for all components of the n-gram
-        probs <- sapply(component, function(word) {
-          if (word %in% colnames(unigram_dtm)) {
-            word_index <- which(colnames(unigram_dtm) == word)
-            prob <- Matrix::colSums(unigram_dtm[, word_index, drop = FALSE]) / sum(unigram_dtm)
-            return(prob)
-          } else {
-            return(1e-10)  # Small value for unmatched words
-          }
-        })
-        # Multiply probabilities for all components
-        return(prod(probs))
-      })
-      
-      # Initialize a function to compute PMI for a single n-gram
-      compute_pmi <- function(joint_prob, marg_prob) {
-        # Avoid division by very small probabilities
-        safe_marg_prob <- max(marg_prob, 1e-10)
-        # Compute PMI
-        pmi <- log2(joint_prob / safe_marg_prob)
-        return(pmi)
-      }
-      
-      # Apply the PMI computation across all n-grams
-      values <- mapply(compute_pmi, ngram_probs, component_probs)
-      
-      # Handle invalid values
-      # values[is.infinite(values) | is.nan(values) | values < 0] <- 0
-      names(values) <- colnames(train_dtm)
-
-      # Convert values into a tibble
-      pmi_tibble <- tibble(
-        n_gram = names(values),  # Use the names of 'values' as the word column
-        pmi_value = values         # Use the PMI values as the value column
-      )
-      
-      train_dtm <- train_dtm[, values >= pmi_threshold, drop = FALSE]
-    }
-
-    dtms <- list(
-      n_grams_pmi = if (!is.null(pmi_tibble)) pmi_tibble else "No pmi_threshold was used",
-      train_dtm = train_dtm
-    )
-  }
-  
-  if (!is.null(save_dir)){
-    if (!dir.exists(save_dir)) {
-      # Create the directory
-      dir.create(save_dir)
-      
-      msg <- "Directory created successfully.\n"
-      message(
-        colourise(msg, "green"))
-    } 
-    if(!dir.exists(paste0(save_dir, "/seed_", seed))){
-      dir.create(paste0(save_dir, "/seed_", seed))
-    }
-    msg <- paste0("The Dtm, data, and summary are saved in", save_dir,"/seed_", seed,"/dtms.rds")
-    message(colourise(msg, "green"))
-    
-    saveRDS(dtms, paste0(save_dir, "/seed_", seed, "/dtms.rds"))
-  }
-  
-  return(dtms)
-}
-
-
-#' Summarize and Visualize your Document Term Matrix
-#' 
-#' This function creates a frequency table of your DTM and generates up to four plots for visualization
-#' @param dtm (R_obj) The document term matrix - output from topicsDtm
-#' @importFrom Matrix colSums
-#' @importFrom dplyr %>% select 
-#' @importFrom ggplot2 ggplot margin
-#' @importFrom stats reorder
-#' @return A named list containing:
-#' \describe{
-#'   \item{dtm_summary}{A dataframe of terms and their frequencies.}
-#'   \item{frequency_plot}{A bar plot of all term frequencies with example terms.}
-#'   \item{frequency_plot_30_least}{A bar plot of the 30 least frequent terms (if numer of terms > 30).}
-#'   \item{frequency_plot_30_most}{A bar plot of the 30 most frequent terms (if numer of terms > 30).}
-#'   \item{histogram_of_frequencies}{A histogram of term frequencies (this is the same information as
-#'   in the frequency_plot but presented differently).}
-#' }
-#' @export
-topicsDtmEval <- function(dtm) {
-  
-  # create a summary dataframe of the dtm
-  dtm_summary <- as.data.frame(Matrix::colSums(dtm$train_dtm))
-  names(dtm_summary) <- c("freq") # rename column
-  dtm_summary$term <- rownames(dtm_summary)
-  rownames(dtm_summary) <- NULL
-  dtm_summary$nr <- c(1:nrow(dtm_summary))
-  dtm_summary <- dtm_summary %>% dplyr::select(nr, term, freq) # reorder columns
-  
-  # If the summary df has <= 30 words, we can use just 2 plots 
-  if(nrow(dtm_summary) <= 30){
-    
-    
-    plot_all <- ggplot2::ggplot(data = dtm_summary, ggplot2::aes(x = reorder(term, freq), y = freq, fill = nr))+
-      ggplot2::geom_bar(stat = "identity", show.legend = F)+
-      ggplot2::labs(title = paste0("Frequencies of all terms in the DTM (N = ", nrow(dtm_summary), ")"),
-           x = "Terms", 
-           y = "Frequency",
-           subtitle = paste0("Min = ", min(dtm_summary$freq), ", Max = ", max(dtm_summary$freq), ", Med = ",
-                             med = median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
-      ggplot2::scale_y_continuous(expand = c(0,0))+
-      ggplot2::scale_fill_gradient(low = "#9BD7E9", high ="#15637F")+
-      ggplot2::theme_minimal()+
-      ggplot2::theme(
-        axis.text.x = element_text(angle = 35, hjust = 1, size = 11),
-        panel.grid.minor.x = ggplot2::element_blank(),
-        panel.grid.major.x = ggplot2::element_blank())
-    
-    # histogram of term frequencies
-    plot_hist <- ggplot2::ggplot(data = dtm_summary, ggplot2::aes(x = freq)) +
-      ggplot2::geom_histogram(fill = "#15637F", color = "white") +
-      ggplot2::labs(x = "Term frequency",
-           y = "Number of terms with this frequency",
-           title = paste0("Histogram of term frequencies (N = ", nrow(dtm_summary), ")"),
-           subtitle = paste0("Min = ", min(dtm_summary$freq), ", Max = ", max(dtm_summary$freq), ", Med = ",
-                             med = median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
-      ggplot2::theme_minimal()
-    
-    # return output with only 2 plots
-    return(list(dtm_summary = dtm_summary[,2:3],
-                frequency_plot = plot_all,
-                histogram_of_frequencies = plot_hist))
-  }
-  
-  # Otherwise, split into 3 plots (first 30, last 30, overview):
-  
-  # subset first 30 terms (lowest frequencies) and last 30 terms (highest frequencies)
-  dtm_summary_30_min <- dtm_summary[1:30,]
-  dtm_summary_30_max <- dtm_summary[(nrow(dtm_summary)-30):nrow(dtm_summary),]
-  
-  
-  # plot 30 least frequent
-  plot_30_least <- ggplot2::ggplot(data = dtm_summary_30_min, ggplot2::aes(x = reorder(term, freq), y = freq))+
-    ggplot2::geom_bar(stat = "identity", color = "white", fill = "#9BD7E9")+
-    ggplot2::labs(title = "30 least frequent terms in the DTM",
-         x = "Term", y = "Frequency")+
-    ggplot2::scale_y_continuous(limits = c(0,max(dtm_summary$freq)))+
-    ggplot2::theme_minimal()+
-    ggplot2::theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 12),
-          axis.title.y = element_text(size = 12, face = "bold"),
-          plot.title = element_text(size = 15),
-          axis.title.x = element_text(margin = margin(t = 5), size = 12, face = "bold"))
-  
-  # plot 30 msot frequent
-  plot_30_most <- ggplot2::ggplot(data = dtm_summary_30_max, ggplot2::aes(x = reorder(term, freq), y = freq))+
-    ggplot2::geom_bar(stat = "identity", color = "white", fill = "#15637F")+
-    ggplot2::labs(title = "30 most frequent terms in the DTM",
-         x = "Term", y = "Frequency")+
-    ggplot2::theme_minimal()+
-    ggplot2::theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 12),
-          axis.title.y = element_text(size = 12, face = "bold"),
-          plot.title = element_text(size = 15),
-          axis.title.x = element_text(margin = margin(t = 5), size = 12, face = "bold"))
-  
-  
-  # plot all terms and only show some example terms
-  keep <- seq(nrow(dtm_summary), 1, -(ceiling(nrow(dtm_summary)/20))) 
-  
-  dtm_summary <- dtm_summary %>%
-    mutate(example_terms =  ifelse(1:nrow(dtm_summary) %in% keep, term, ""))
-  
-  plot_all <- ggplot2::ggplot(data = dtm_summary, ggplot2::aes(x = reorder(term, freq), y = freq, fill = nr))+
-    ggplot2::geom_bar(stat = "identity", show.legend = F)+
-    ggplot2::labs(title = paste0("Frequencies of all terms in the DTM (N = ", nrow(dtm_summary), ")"),
-         x = "Terms (only a few terms shown for illustration)", 
-         y = "Frequency",
-         subtitle = paste0("Min = ", min(dtm_summary$freq), ", Max = ", max(dtm_summary$freq), ", Med = ",
-                           med = median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
-    ggplot2::scale_x_discrete(labels = dtm_summary$example_terms) +
-    ggplot2::scale_y_continuous(expand = c(0,0))+
-    ggplot2::scale_fill_gradient(low = "#9BD7E9", high ="#15637F")+
-    ggplot2::theme_minimal()+
-    ggplot2::theme(
-      axis.text.x = element_text(angle = 35, hjust = 1, size = 11),
-      panel.grid.minor.x = ggplot2::element_blank(),
-      panel.grid.major.x = ggplot2::element_blank())
-  
-  
-  # histogram of term frequencies
-  plot_hist <- ggplot(data = dtm_summary, ggplot2::aes(x = freq)) +
-    ggplot2::geom_histogram(fill = "#15637F", color = "white") +
-    ggplot2::labs(x = "Term frequency",
-         y = "Number of terms with this frequency",
-         title = paste0("Histogram of term frequencies (N = ", nrow(dtm_summary), ")"),
-         subtitle = paste0("Min = ", min(dtm_summary$freq), ", Max = ", max(dtm_summary$freq), ", Med = ",
-                           med = median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
-    ggplot2::theme_minimal()
-  
-  df_final <- dtm_summary %>% dplyr::select(term, freq)
-  
-  # output
-  return(list(dtm_summary = df_final,
-              frequency_plot = plot_all,
-              frequency_plot_30_least = plot_30_least,
-              frequency_plot_30_most = plot_30_most,
-              histogram_of_frequencies = plot_hist))
-}
-
-
-#' Topic modelling
-#' 
-#' The function to create and train and an LDA model.
-#' @param dtm (R_obj) The document term matrix
-#' @param num_topics (integer) The number of topics to be created
-#' @param num_top_words (integer) The number of top words to be displayed
-#' @param num_iterations (integer) The number of iterations to run the model
-#' @param seed (integer) The seed to set for reproducibility
-#' @param save_dir (string) The directory to save the model, if NULL, the model will not be saved
-#' @param load_dir (string) The directory to load the model from, if NULL, the model will not be loaded
-#' @return A list of the model, the top terms, the labels, the coherence (experimental), and the prevalence.
-#' @examples
-#' \donttest{
-#' # Create LDA Topic Model 
-#' save_dir_temp <- tempfile()
-#' dtm <- topicsDtm(
-#' data = dep_wor_data$Depphrase, 
-#' save_dir = save_dir_temp)
-#' 
-#' model <- topicsModel(
-#' dtm = dtm, # output of topicsDtm()
-#' num_topics = 20,
-#' num_top_words = 10,
-#' num_iterations = 1000,
-#' seed = 42,
-#' save_dir = save_dir_temp)
-#'                    
-#' # Load precomputed LDA Topic Model
-#' model <- topicsModel(
-#' load_dir = save_dir_temp,
-#' seed = 42,
-#' save_dir = save_dir_temp)
-#' }
-#' @export
-topicsModel <- function(
-    dtm,
-    num_topics = 20,
-    num_top_words = 10,
-    num_iterations = 1000,
-    seed = 42,
-    save_dir,
-    load_dir = NULL){
-
-  
-  if (!is.null(load_dir)){
-    model <- readRDS(paste0(load_dir, 
-                            "/seed_",
-                            seed, 
-                            "/model.rds"))
-  } else {
-    
-    dtm <- dtm$train_dtm
-    
-    if (length(Matrix::colSums(dtm)) == 0) {
-      msg <- "The document term matrix is empty. Please provide a valid document term matrix."
-      message(colourise(msg, "brown"))
-      return(NULL)
-    }
-    
-    set.seed(seed)
-    
-    model <- get_mallet_model(
-      dtm = dtm,
-      num_topics = num_topics,
-      num_top_words = num_top_words,
-      num_iterations = num_iterations, 
-      seed = seed)
-    
-    
-    model$summary <- data.frame(
-      topic = rownames(model$labels),
-      label = model$labels,
-      coherence = round(model$coherence, 3),
-      prevalence = round(model$prevalence,3),
-      top_terms = apply(model$top_terms,
-                        2, 
-                          function(x){paste(x, collapse = ", ")}),
-                                stringsAsFactors = FALSE)
-    model$summary[order(model$summary$prevalence, decreasing = TRUE) , ][ 1:10 , ]
-  }
-  
-  if (!is.null(save_dir)){
-    if (!dir.exists(save_dir)) {
-      # Create the directory
-      dir.create(save_dir)
-
-      msg <- "Directory created successfully.\n"
-      message(
-        colourise(msg, "green"))
-      
-    } 
-    if(!dir.exists(paste0(save_dir, "/seed_", seed))){
-      dir.create(paste0(save_dir, "/seed_", seed))
-    }
-    msg <- paste0("The Model is saved in", save_dir,"/seed_", seed,"/model.rds")
-    message(colourise(msg, "green"))
-    saveRDS(model, paste0(save_dir, "/seed_", seed, "/model.rds"))
-  }
-  
-  return(model)
-}
-
-#' N-grams
-#' 
-#' The function computes ngrams from a text
-#' @param data (tibble) The data
-#' @param ngram_window (list) the minimum and maximum n-gram length, e.g. c(1,3)
-#' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
-#' @param top_n (integer) The number of most occuring ngrams to included in the output for every ngram type
-#' @param pmi_threshold (integer) The pmi threshold, if it shall not be used set to 0
-#' @importFrom ngram ngram get.ngrams get.phrasetable
-#' @importFrom tibble as_tibble tibble
-#' @importFrom stringr str_count
-#' @importFrom dplyr mutate row_number filter 
-#' @return A list containing tibble of the ngrams with the frequency and probability and 
-#' a tibble containing the relative frequency of the ngrams for each user
-#' @export
-topicsGrams <- function(
-    data, 
-    ngram_window = c(1, 3),
-    stopwords = stopwords::stopwords("en", source = "snowball"), 
-    top_n = NULL, 
-    pmi_threshold = 0){
-  
-  data <- tolower(data)
-  data <- gsub("[()].$?", "", data)
-  
-  # this currently breaks the code, as no ngrams with length 1 can be computed when stopwords are removed
-  # data_stopped <- vector("character", length(data))
-  # stop_words <- stopwords("en")
-  # 
-  # for (i in seq_along(data)) {
-  #   words <- strsplit(data[i], " ")[[1]]
-  #   words_stopped <- words[!tolower(words) %in% stop_words]
-  #   data_stopped[i] <- paste(words_stopped, collapse = " ")
-  # }
-  # data <- data_stopped
-
-  ngrams <- list()
-  counts <- c()
-
-  single_grams <- ngram::ngram(data, n = 1, sep = " ")
-  single_grams <- ngram::get.phrasetable(single_grams)
-  single_count <- nrow(single_grams)
-  colnames(single_grams) <- c("ngrams", "freq", "prevalence")
-
-  for (i in 1:length(ngram_window)){
-    ngrams[[i]] <- ngram::ngram(data, n = ngram_window[i], sep = " ")
-    ngrams[[i]] <- ngram::get.phrasetable(ngrams[[i]])
-    counts <- c(counts,nrow(ngrams[[i]]))
-  }
-  total <- 0
-  for (i in 1:length(ngram_window)){
-    total <- total + sum(ngrams[[i]]$freq)
-  }
-  for (i in 1:length(ngram_window)){
-    ngrams[[i]]$prevalence <- ngrams[[i]]$freq/total
-    # this is to create the same columns in both topicsGrams and topcisModels()
-    ngrams[[i]]$coherence <- NA
-  }
-
-  # calculate the pmi score pmi $($ phrase $)=\log \frac{p(\text { phrase })}{\Pi_{w \in p h r a s e} p(w)}$
-  start <- 1
-  pmi_threshold <- 0
-  if (ngram_window[1] == 1){
-    start <- 2
-    ngrams[[1]]$pmi <- pmi_threshold
-  }
-  for (k in start:length(ngram_window)){
-    pmi <- list()
-    for (i in 1:nrow(ngrams[[k]])) {
-      words <- strsplit(ngrams[[k]]$ngrams[i], " ")[[1]]
-      denum <- 1
-      for (j in 1:length(words)) {
-        denum <- denum * single_grams[single_grams$ngrams == paste0(words[j], " "), "prevalence"]
-      }
-      pmi[[i]] <- log(ngrams[[k]]$prevalence[i]/denum)
-    }
-    ngrams[[k]]$pmi <- unlist(pmi)
-  }
-
-  # filter ngrams based on pmi
-  if (!is.null(pmi_threshold)){
-    removed <- c()
-    start <- 1
-    if (ngram_window[1] == 1){
-      start <- 2
-    }
-    for (i in start:length(ngram_window)){
-      ngrams[[i]] <- ngrams[[i]] %>% dplyr::filter(pmi > pmi_threshold)
-      removed <- c(removed, counts[[i]] - nrow(ngrams[[i]]))
-    }
-    if (ngram_window[1] == 1)
-      removed <- c(0, removed)
-  } else {
-    removed <- rep(0, length(n))
-  }
-  
-  stats <- tibble(
-    ngram_type = paste0(ngram_window, "-grams"),           # Create n-gram labels dynamically
-    initial_count = counts,  #  initial counts for illustration
-    removed_count = removed,    #  removed counts for illustration
-    final_count = counts - removed
-  )
-  # take top n ngrams
-  if (!is.null(top_n)){
-    for (i in 1:length(ngram_window)){
-      ngrams[[i]] <- ngrams[[i]][1:top_n,]
-    }
-  }
-  ngrams <- do.call(rbind, ngrams) # concatenate
-  freq_per_user <- list()
-  # create unique integer for each row
-  data <- as_tibble(data)
-  data <- data %>% dplyr::mutate(row_id = row_number())
-  freq_per_user$usertexts <- data$row_id
-  
-  # calculate the relative frequency per user
-  for (i in 1:nrow(ngrams)) {
-    temp <- c()
-    
-    for (j in 1:length(data$value)) {
-      gram <- as.character(ngrams$ngrams[i])
-      sentence <- as.character(tolower(data$value[j]))
-      ngram_count <- stringr::str_count(sentence,gram)
-      frequency <- ngrams$freq[i]
-      relative_frequency <- ngram_count / frequency
-      temp <- c(temp, relative_frequency)
-    }
-    freq_per_user[[paste(unlist(strsplit(as.character(ngrams$ngrams[i]), " ")), collapse = "_")]] <- temp
-  }
-  
-  # change the ngrams to a single string with "_" as connector
-  ngrams$ngrams <- sapply(ngrams$ngrams, function(x) paste(unlist(strsplit(x, " ")), collapse = "_"))
-  return(list(
-    ngrams = tibble::as_tibble(ngrams),
-    freq_per_user = tibble::as_tibble(freq_per_user),
-    stats=stats)
-    )
-  
-}
-
-
-#' Predict topic distributions
-#' 
-#' The function to predict the topics of a new document with the trained model.
-#' @param model (list) The trained model
-#' @param data (tibble) The new data
-#' @param num_iterations (integer) The number of iterations to run the model
-#' @param seed (integer) The seed to set for reproducibility
-#' @param save_dir (string) The directory to save the model, if NULL, the predictions will not be saved
-#' @param load_dir (string) The directory to load the model from, if NULL, the predictions will not be loaded
-#' @return A tibble of the predictions
-#' @examples
-#' \donttest{
-#' # Predict topics for new data with the trained model
-#' save_dir_temp <- tempfile()
-#' 
-#' dtm <- topicsDtm(
-#' data = dep_wor_data$Depphrase, 
-#' save_dir = save_dir_temp)
-#' 
-#' model <- topicsModel(dtm = dtm, # output of topicsDtm()
-#'                      num_topics = 20,
-#'                      num_top_words = 10,
-#'                      num_iterations = 1000,
-#'                      seed = 42,
-#'                      save_dir = save_dir_temp)
-#'                      
-#' preds <- topicsPreds(
-#' model = model, # output of topicsModel()
-#' data = dep_wor_data$Depphrase, 
-#' save_dir = save_dir_temp)
-#' }
-#' @importFrom tibble as_tibble tibble
-#' @importFrom dplyr %>%
-#' @export
-topicsPreds <- function(
-    model, # only needed if load_dir==NULL 
-    data, # data vector to infer distribution for
-    num_iterations=100, # only needed if load_dir==NULL,
-    seed=42,
-    save_dir,
-    load_dir=NULL){
-
-  set.seed(seed)
-
-  if (!is.null(load_dir)){
-    preds <- readRDS(paste0(load_dir, "/seed_", seed, "/preds.rds"))
-  } else {
-    
-    if (length(data) == 0){
-      msg <- "The data provided is empty. Please provide a list of text data."
-      message(colourise(msg, "brown"))
-      
-      return(NULL)
-    }
-    # create an id column for the data
-    
-    if (is.data.frame(data)){
-      pred_text <- data[, 1]
-    } else {
-      pred_text <- data
-    }
-    
-    pred_ids <- as.character(1:length(data))
-    
-    new_instances <- compatible_instances(
-      ids = pred_ids,
-      texts = pred_text,
-      instances = model$instances)
-    
-    inf_model <- model$inferencer
-    preds <- infer_topics(
-      inferencer = inf_model,
-      #instances = model$instances,
-      instances = new_instances,
-      n_iterations = 200,
-      sampling_interval = 10, # aka "thinning"
-      burn_in = 10,
-      random_seed = seed
-    )
-  
-    preds <- tibble::as_tibble(preds)
-    colnames(preds) <- paste("t_", 1:ncol(preds), sep="")
-    preds <- preds %>% tibble::tibble()
-    
-  }
-  
-  if (!is.null(save_dir)){
-    if (!dir.exists(save_dir)) {
-      dir.create(save_dir)
-      
-      msg <- "Directory created successfully.\n"
-      message(
-        colourise(msg, "green"))
-      
-    } 
-    if(!dir.exists(paste0(save_dir, "/seed_", seed))){
-      dir.create(paste0(save_dir, "/seed_", seed))
-    }
-    msg <- paste0("Predictions are saved in", save_dir,"/seed_", seed,"/preds.rds")
-    message(colourise(msg, "green"))
-    saveRDS(preds, paste0(save_dir, "/seed_", seed, "/preds.rds"))
-  }
-  
-  return(preds)
-}
-
-#' The function to test the LDA model
-#' @param model (list) The trained model
-#' @param data (tibble) The data to test on
-#' @param preds (tibble) The predictions
-#' @param pred_var (string) The variable to be predicted (only needed for regression or correlation)
-# @param group_var (string) The variable to group by (only needed for t-test)
-#' @param controls (vector) The control variables
-#' @param test_method (string) The test method to use, either "correlation","t-test", 
-#' "linear_regression","logistic_regression", or "ridge_regression"
-#' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
-#' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
-#' @param seed (integer) The seed to set for reproducibility
-#' @param load_dir (string) The directory to load the test from, if NULL, the test will not be loaded
-#' @param save_dir (string) The directory to save the test, if NULL, the test will not be saved
-#' @return A list of the test results, test method, and prediction variable
-#' @importFrom dplyr bind_cols
-#' @importFrom readr write_csv
-#' @noRd
-topicsTest1 <- function(
-    model,
-    preds,
-    data,
-    pred_var = NULL, # for all test types except t-test
-#    group_var = NULL, # only one in the case of t-test
-    controls = c(),
-    test_method = "linear_regression",
-    p_adjust_method = "fdr",
-    seed = 42,
-    load_dir = NULL,
-    save_dir){
-  
-  group_var = NULL
-  
-  if (!is.null(load_dir)){
-    test_path <- paste0(load_dir, "/seed_", seed, "/test.rds")
-    if (!file.exists(test_path)) {
-      msg <- paste0("Test file not found at: ", test_path, ". Exiting function.")
-      message(colourise(msg, "brown"))
-      return(NULL)
-    }
-    test <- readRDS(test_path)
-  } else {
-    #rm(controls)
-    controls <- c(pred_var, controls)
-    
-    
-  #  if (!is.null(group_var)){
-  #    if (!(group_var %in% names(preds))){
-  #      preds <- dplyr::bind_cols(data[group_var], preds)
-  #    }
-  #  }
-    for (control_var in controls){
-      if (!(control_var %in% names(preds))){
-        preds <- dplyr::bind_cols(data[control_var], preds)
-      }
-    }
-    
-#    if (test_method == "ridge_regression"){
-#      group_var <- pred_var
-#    }
-    
-    # I think this can be removed. (i.e., its already a tibble)
-    preds <- preds %>% tibble::tibble()
-    
-    test <- topic_test(
-      topic_terms = model$summary,
-      topics_loadings = preds,
-      grouping_variable = preds[group_var],
-      controls = controls,
-      test_method = test_method,
-      split = "median",
-      n_min_max = 20,
-      multiple_comparison = p_adjust_method)
-  }
-  
-  if (!is.null(save_dir)){
-    if (!dir.exists(save_dir)) {
-      # Create the directory
-      dir.create(save_dir)
-      
-      msg <- "Directory created successfully.\n"
-      message(
-        colourise(msg, "green"))
-      
-    } else {
-      
-      msg <- "Directory already exists.\n"
-      message(
-        colourise(msg, "green"))
-    }
-    
-    if(!dir.exists(paste0(save_dir, "/seed_", seed))){
-      dir.create(paste0(save_dir, "/seed_", seed))
-    }
-    
-    if (test_method == "ridge_regression"){
-      df <- list(#variable = group_var,
-                 estimate = test$estimate,
-                 t_value = test$statistic,
-                 p_value = test$p.value)
-      readr::write_csv(data.frame(df), paste0(save_dir, 
-                                              "/seed_", 
-                                              seed, 
-                                              "/textTrain_regression.csv"))
-    }
-    
-    saveRDS(test, paste0(save_dir, 
-                         "/seed_", 
-                         seed, 
-                         "/test_",
-                         test_method, 
-                         "_", pred_var,".rds"))
-    
-    msg <- paste0("The test object of ", 
-                 pred_var, 
-                 " was saved in: ", 
-                 save_dir,"/seed_", 
-                 seed, "/test_",
-                 test_method, "_", 
-                 pred_var,".rds")
-    
-    message(colourise(msg, "green"))
-  }
-  
-  return(list(test = test, 
-              test_method = test_method, 
-              pred_var = pred_var))
-}
-
-
-#' Test topics or n-grams
-#' 
-#' Statistically test topics or n-grams in relation to one or two other variables using 
-#' regression or t-test.  
-#' @param model (list) A trained model LDA-model from the topicsModel() function.
-#' @param data (tibble) The data containing the variables to be tested.
-#' @param preds (tibble) The predictions from the topicsPred() function.
-#' @param ngrams (list) output of the n-gram function
-#' @param x_variable (string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)
-#' @param y_variable (string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)
-#' @param group_var (string) The variable to group by (only needed for t-test)
-#' @param controls (vector) The control variables (not supported yet)
-#' @param test_method (string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"
-# @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
-#' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
-#' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
-#' @param seed (integer) The seed to set for reproducibility
-#' @param load_dir (string) The directory to load the test from, if NULL, the test will not be loaded
-#' @param save_dir (string) The directory to save the test, if NULL, the test will not be saved
-#' @return A list of the test results, test method, and prediction variable
-#' @examples
-#' \donttest{
-#' # Test the topic document distribution in respect to a variable
-#' save_dir_temp <- tempfile()
-#' 
-#' dtm <- topicsDtm(
-#'   data = dep_wor_data$Depphrase, 
-#'   save_dir =  save_dir_temp)
-#' 
-#' model <- topicsModel(
-#'   dtm = dtm, # output of topicsDtm()
-#'   num_topics = 20,
-#'   num_top_words = 10,
-#'   num_iterations = 1000,
-#'   seed = 42,
-#'   save_dir = save_dir_temp)
-#'                      
-#' preds <- topicsPreds(
-#'  model = model, # output of topicsModel()
-#'  data = dep_wor_data$Depphrase,
-#'  save_dir = save_dir_temp)
-#'                      
-#' test <- topicsTest(
-#'   model = model, # output of topicsModel()
-#'   data=dep_wor_data,
-#'   preds = preds, # output of topicsPreds()
-#'   test_method = "linear_regression",
-#'   x_variable = "Age",
-#'   save_dir = save_dir_temp)
-#' }                 
-#' @importFrom dplyr bind_cols
-#' @importFrom readr write_csv
-#' @export
-topicsTest <- function(
-    data,
-    model = NULL,
-    preds = NULL,
-    ngrams = NULL,
-    x_variable = NULL, # for all test types except t-test
-    y_variable = NULL,
-    controls = c(),
-    test_method = "linear_regression",
-    p_adjust_method = "fdr",
-    seed = 42,
-    load_dir = NULL,
-    save_dir){
-  
-  group_var = NULL
-
-  if (is.null(x_variable) & is.null(y_variable)){
-    msg <- 'Please input the x_variable, and/or y_variable.'
-    message(colourise(msg, "brown"))
-    # return (NULL)
-  }
-  
-  #### Warnings and instructions ####
-  if(!is.null(y_variable)){
-    if(grepl("__", y_variable)){
-      stop("The x_variable, y_variable or controls cannot have names containing 2 underscores in a row ('__'). 
-           Please rename the variable in the dataset.")
-    }
-  }
-  if(!is.null(x_variable)){
-    if(grepl("__", x_variable)){
-      stop("The x_variable, y_variable or controls cannot have names containing 2 underscores in a row ('__'). 
-           Please rename the variable in the dataset.")
-    }
-  }
-  
-  if (length(controls) > 0){
-    for (control_var in controls){
-      if (!is.numeric(data[[control_var]])){
-        
-        msg <- paste0("The controls variable '", 
-                   control_var, 
-                   "' should be numeric!\n")
-        
-        message(
-          colourise(msg, "brown"))
-        
-        return (NULL)
-    }}
-  }
-  
-  if (is.null(x_variable) & is.null(y_variable) && test_method != "t-test") {
-    msg <- "Prediction variable is missing. Please input a prediction variable."
-    message(colourise(msg, "brown"))
-    return(NULL)
-  }
-  
-  if (!is.list(model) & !is.list(ngrams)){
-    msg <- "Input a model from the topicsModel() function or an ngram object from the topicsGrams() function."
-    
-    message(colourise(msg, "brown"))
-    
-    return(NULL)
-  }
-  
-  if (length(data) == 0){
-    msg <- "The data provided is empty. Please provide a list of text data."
-    message(colourise(msg, "brown"))
-    
-    return(NULL)
-  }
-  
-  if(!is.null(preds)){
-    if (nrow(preds) == 0){
-      msg <- "The predictions provided are empty. Please provide a list of predictions."
-      message(colourise(msg, "brown"))
-      return(NULL)
-    }
-    
-    if (nrow(data) != nrow(preds)){
-      msg <- "The number of data points and predictions do not match. Please provide predictions that were created from the same data."
-      message(colourise(msg, "brown"))
-      return(NULL)
-    }
-  }
-  
-  #### Load test ####
-  if (!is.null(load_dir)){
-    test <- topicsTest1(load_dir = load_dir)
-  }
-  
-  #### N-grams testing (rearranging the data so that it fits the topics pipeline) ####
-  if (!is.null(ngrams)){
-    
-    freq_per_user <- tibble(ngrams$freq_per_user[,2:ncol(ngrams$freq_per_user)])
-    ngrams <- ngrams$ngrams
-    colnames(freq_per_user) <- paste0("t_", 1:ncol(freq_per_user))
-    preds <- freq_per_user
-    
-    model$summary <- list(topic = paste0("t_", 1:ncol(freq_per_user)),
-                          top_terms = ngrams$ngrams, 
-                          prevalence = ngrams$prevalence, 
-                          coherence = ngrams$coherence, 
-                          pmi = ngrams$pmi)
-    
-    model$summary <- data.frame(model$summary)
-  }
-  
-  
-  #### Testing the elements (i.e., ngrams or topics) ####
-  pred_vars_all <- c(x_variable, y_variable)
-  
-  # TBD: Change the column of pred_var into the numeric variable.
-  # for (pred_var in pred_vars_all){
-  #   if (any(grepl(pred_var, colnames(preds)))){
-  #     if (!is.numeric(preds[[pred_var]])){
-  #       msg <- paste0("Change the variable ", pred_var, ' into a numeric variable in the `pred` object.')
-  #        message(colourise(msg, "brown"))
-  #       return (NULL)
-  #     }}
-  #   if (any(grepl(pred_var, colnames(data)))){
-  #     if (!is.numeric(data[[pred_var]])){
-  #       msg <- paste0("Change the variable ", pred_var, ' into a numeric variable in the `data` object.')
-  #        message(colourise(msg, "brown"))
-  #       return (NULL)
-  #     }}
-  # }
-  topic_loadings_all <- list()
-  pre <- c('x','y')
-  # i = 1
-  for (i in 1:length(pred_vars_all)){
-    
-    topic_loading <- topicsTest1(
-      model = model,
-      preds = preds, 
-      data = data,
-      pred_var = pred_vars_all[i], # for all test types except t-test
-     # group_var = group_var, # only one in the case of t-test
-      controls = controls,
-      test_method = test_method,
-      p_adjust_method = p_adjust_method,
-      seed = seed,
-      load_dir = load_dir,
-      save_dir = save_dir
-    )
-    
-    # Sorting output when not using ridge regression
-    if (test_method != "ridge_regression") {
-      
-      colnames(topic_loading$test) <- c("topic", "top_terms", "prevalence", "coherence",
-                                        paste(pre[i], 
-                                              colnames(topic_loading$test)[5:8], 
-                                              sep = "."))
-      
-      topic_loadings_all[[i]] <- topic_loading
-    }
-  }
-  
-  if (!is.null(y_variable)){
-    # create the x.y.word.category
-    topic_loadings_all[[3]] <- list()
-    topic_loadings_all[[3]]$test <- dplyr::left_join(topic_loadings_all[[1]][[1]][,1:8], 
-                                                     topic_loadings_all[[2]][[1]][,1:8],
-                                                     by = c("topic", "top_terms", 
-                                                            "prevalence", "coherence"))
-    
-    topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
-    topic_loadings_all[[3]]$pred_var <- paste0(topic_loadings_all[[1]]$pred_var, '__',
-                                               topic_loadings_all[[2]]$pred_var) 
-
-  } else {
-    
-    if (test_method == "linear_regression" | test_method == "logistic_regression"){
-    
-      msg <- "The parameter y_variable is not set! Output 1 dimensional results."
-      message(colourise(msg, "blue"))
-      
-      topic_loadings_all[[2]] <- list()
-      topic_loadings_all[[3]] <- list()
-      topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]][,1:8]
-      topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
-      topic_loadings_all[[3]]$pred_var <- topic_loadings_all[[1]]$pred_var
-      
-    } else if (test_method == "ridge_regression"){
-      topic_loadings_all[[1]] <- topic_loading
-    }
-  }
-  
-  # Not sure why we are keep all three lists - since the last list appear to have all the information.
-  # so trying here to only keep the last, to see if anything else breaks. 
-  topic_loadings_all <- topic_loadings_all[[length(topic_loadings_all)]]
-  return(topic_loadings_all)
-}
-
-
 #### topicsScatterLegendOriginal ####
 
 #' @param bivariate_color_codes A vector of color codes specifying colors for 
@@ -1178,7 +67,7 @@ topicsScatterLegendOriginal <- function(
     plot <- ggplot2::ggplot() +
       ggplot2::geom_point(data = plot_only3, 
                           ggplot2::aes(x = !!rlang::sym(x_column), y = 1,
-                              color = as.factor(.data[[color_column]])),
+                                       color = as.factor(.data[[color_column]])),
                           size = scatter_popout_dot_size, alpha = 0.8) +
       ggplot2::scale_color_manual(values = bivariate_color_codes) +
       ggplot2::labs(x = label_x_name, y = "", color = '') +
@@ -1191,7 +80,7 @@ topicsScatterLegendOriginal <- function(
         legend.position = "none"
       )
   }
-
+  
   
   only_five <- filtered_test %>%
     dplyr::summarise(contains_only_five = all(color_categories %in% 5)) %>%
@@ -1206,8 +95,8 @@ topicsScatterLegendOriginal <- function(
     plot <- ggplot2::ggplot() +
       ggplot2::geom_point(data = filtered_test,
                           ggplot2::aes(x = !!sym(x_column),
-                              y = !!sym(y_column),
-                              color = as.factor(.data[[color_column]])), 
+                                       y = !!sym(y_column),
+                                       color = as.factor(.data[[color_column]])), 
                           size = scatter_popout_dot_size, alpha = 0.8) +
       ggplot2::scale_color_manual(values = bivariate_color_codes) +
       ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
@@ -1243,9 +132,9 @@ topicsScatterLegendOriginal <- function(
       if (as.numeric(names(table1)[i]) != i){next} # skip the categories that not existing in the table1
       if (legend_map_num_pop[[i]] > table1[[i]]){
         msg1 <- paste0('Grid ', as.character(i), ' has only ',
-                   table1[[i]], ' popped out topics. Cannot specify ',
-                   as.character(legend_map_num_pop[[i]]), 
-                   ' topics in it!\n')
+                       table1[[i]], ' popped out topics. Cannot specify ',
+                       as.character(legend_map_num_pop[[i]]), 
+                       ' topics in it!\n')
         msg1 <- "Cannot save the scatter legend!\n"
         
         message(
@@ -1257,9 +146,9 @@ topicsScatterLegendOriginal <- function(
       }
     }
   }
-    
+  
   if (length(bivariate_color_codes) == 3){
-      y_axes_1 <- 1
+    y_axes_1 <- 1
   } # Note: one can modify this later to extend the pop_n in 1-dim topic plot.
   if (!only_five && is.null(user_spec_topics) && length(num_popout) != 1 && length(num_popout) == 3 && y_axes_1 == 1){
     legend_map_num_pop <- c(
@@ -1439,7 +328,7 @@ topicsScatterLegendOriginal <- function(
     backgr_dots <- filtered_test %>%
       dplyr::anti_join(popout, by = colnames(filtered_test))
   }
-
+  
   if(!only_five && y_axes_1 == 2){
     bivariate_color_codes <- bivariate_color_codes
     x_column <- names(filtered_test)[3]
@@ -1531,7 +420,7 @@ topicsScatterLegendOriginal <- function(
                                         size = scatter_popout_dot_size - 3, hjust = 0.5,vjust = 0.5, color = "black")
     }
   }  
-
+  
   ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
                          "/wordclouds/",
                          "dot_legend_",
@@ -1543,8 +432,8 @@ topicsScatterLegendOriginal <- function(
                   height = height, 
                   units = "in", 
                   create.dir = TRUE)   
-
-   if (!only_two && !only_five){return (popout)}else{ return (NULL) }
+  
+  if (!only_two && !only_five){return (popout)}else{ return (NULL) }
 }
 
 
@@ -1655,18 +544,18 @@ topicsScatterLegendNew <- function(
   
   # Save the plot
   ggplot2::ggsave(paste0(save_dir, "/seed_", seed, 
-                "/wordclouds/",
-                "dot_legend_",
-                "corvar_", cor_var, ".", 
-                figure_format),
-         plot = plot, 
-         width = width, 
-         height = height, 
-         units = "in", 
-         device = figure_format, 
-         create.dir = TRUE)
-    
-   if (!only_two && !only_five){return (popout)}else{ return (NULL) }
+                         "/wordclouds/",
+                         "dot_legend_",
+                         "corvar_", cor_var, ".", 
+                         figure_format),
+                  plot = plot, 
+                  width = width, 
+                  height = height, 
+                  units = "in", 
+                  device = figure_format, 
+                  create.dir = TRUE)
+  
+  if (!only_two && !only_five){return (popout)}else{ return (NULL) }
 }
 
 
@@ -1789,7 +678,7 @@ generate_scatter_plot <- function(
     bg_size, 
     allow_topic_num_legend
 ) {
-
+  
   # Define aesthetics for popout and background points
   # Ensure y_col is valid and resolve y_aesthetic
   y_aesthetic <- if (!is.null(y_col) && y_col != "") ggplot2::sym(y_col) else 1
@@ -1858,8 +747,8 @@ generate_scatter_plot <- function(
     plot <- plot + geom_text(
       data = popout, 
       ggplot2::aes(x = !!ggplot2::sym(x_col), 
-          y = if (is.null(y_col)) 1 else !!ggplot2::sym(y_col), 
-          label = topic_number),
+                   y = if (is.null(y_col)) 1 else !!ggplot2::sym(y_col), 
+                   label = topic_number),
       size = popout_size - 3, 
       color = "black", 
       hjust = 0.5, 
@@ -2102,8 +991,8 @@ topicsPlot1 <- function(
     max_size = 10, 
     seed = 42){
   
-   df_list = NULL
-
+  df_list = NULL
+  
   if (!is.null(model)){
     
     # if model$model_type == "bert_topic" (i.e., a maller model return null on model$model_type)
@@ -2126,7 +1015,7 @@ topicsPlot1 <- function(
         num_topics)
       
     } else {
-    # if from mallet: 
+      # if from mallet: 
       model <- name_cols_with_vocab(model, "phi", model$vocabulary)
       df_list <- create_topic_words_dfs(model$summary)
       df_list <- assign_phi_to_words(df_list, model$phi, "mallet")
@@ -2183,7 +1072,7 @@ colour_settings <- function(
     ngrams, 
     model, 
     dim){
-
+  
   bivariate_color_codes <- NULL
   bivariate_color_codes_b <- NULL
   bivariate_color_codes_f <- NULL  
@@ -2424,18 +1313,18 @@ topicsPlot <- function(
     grid_legend_number_size = 5){
   
   #### Setting the number of dimensions to plot ####
-
+  
   # If no test is provide set dim to 0 
   if(is.null(test)){
     dim = 0
   }
- 
+  
   # If a test is given
   if(!is.null(test)){
     
     # set default to 1 since that works for both n-grams and topics
     dim = 1
-  
+    
     # Only set dim to 2 if the test include enough tests
     if(ncol(test$test) == 12) {
       dim = 2
@@ -2471,18 +1360,18 @@ topicsPlot <- function(
     test = test, 
     ngrams = ngrams, 
     dim = dim)
- 
+  
   bivariate_color_codes   <- codes[[1]]
   bivariate_color_codes_b <- codes[[2]]
   bivariate_color_codes_f <- codes[[3]]
   
   #### Controlling parameter settings and giving instructions #####
   if (!is.vector(scatter_legend_n) || !is.numeric(scatter_legend_n)){
-      msg <- "The parameter 'scatter_legend_n' should be either a numeric vector or a number.\n"
-      message(colourise(msg, "brown"))
-      return (NULL)
+    msg <- "The parameter 'scatter_legend_n' should be either a numeric vector or a number.\n"
+    message(colourise(msg, "brown"))
+    return (NULL)
   }
- 
+  
   
   ### Setting colour-categories: Selecting elements to plot according to the p_alpha ####
   if (dim == 1) {
@@ -2499,12 +1388,12 @@ topicsPlot <- function(
   }
   if (dim == 2){
     
-     bak1 <- colnames(test$test)[c(3,6,7,10)]
-     colnames(test$test)[c(3,6,7,10)] <- c('x_plotted', 'adjusted_p_values.x',
-                                                'y_plotted', 'adjusted_p_values.y')
-     
-     test$test <- topicsNumAssign_dim2(test$test, p_alpha, 2)
-     colnames(test$test)[c(3,6,7,10)] <- bak1
+    bak1 <- colnames(test$test)[c(3,6,7,10)]
+    colnames(test$test)[c(3,6,7,10)] <- c('x_plotted', 'adjusted_p_values.x',
+                                          'y_plotted', 'adjusted_p_values.y')
+    
+    test$test <- topicsNumAssign_dim2(test$test, p_alpha, 2)
+    colnames(test$test)[c(3,6,7,10)] <- bak1
   }
   
   
@@ -2537,28 +1426,28 @@ topicsPlot <- function(
     )
   }
   
-
+  
   #### 1- or 2 dimensional topic-plots ####
-     #   topicsScatterLegendOriginal(
-   #     bivariate_color_codes = bivariate_color_codes_f,
-   #     filtered_test = test$test,
-   #     num_popout = scatter_legend_n,
-   #     y_axes_1 = dim,
-   #     cor_var = test$pred_var,
-   #     label_x_name = grid_legend_x_axes_label,
-   #     label_y_name = grid_legend_y_axes_label,
-   #     way_popout_topics = scatter_legend_method,
-   #     user_spec_topics = scatter_legend_specified_topics,
-   #     allow_topic_num_legend = scatter_legend_topic_n,
-   #     scatter_popout_dot_size = scatter_legend_dot_size,
-   #     scatter_bg_dot_size = scatter_legend_bg_dot_size,
-   #     save_dir = save_dir,
-   #     figure_format = figure_format,
-   #     # width = 10, 
-   #     # height = 8,
-   #     seed = seed
-   #     )
-      
+  #   topicsScatterLegendOriginal(
+  #     bivariate_color_codes = bivariate_color_codes_f,
+  #     filtered_test = test$test,
+  #     num_popout = scatter_legend_n,
+  #     y_axes_1 = dim,
+  #     cor_var = test$pred_var,
+  #     label_x_name = grid_legend_x_axes_label,
+  #     label_y_name = grid_legend_y_axes_label,
+  #     way_popout_topics = scatter_legend_method,
+  #     user_spec_topics = scatter_legend_specified_topics,
+  #     allow_topic_num_legend = scatter_legend_topic_n,
+  #     scatter_popout_dot_size = scatter_legend_dot_size,
+  #     scatter_bg_dot_size = scatter_legend_bg_dot_size,
+  #     save_dir = save_dir,
+  #     figure_format = figure_format,
+  #     # width = 10, 
+  #     # height = 8,
+  #     seed = seed
+  #     )
+  
   if(is.null(ngrams) & !is.null(test$test)){
     popout <- topicsScatterLegendNew(
       bivariate_color_codes = bivariate_color_codes_f,
@@ -2580,9 +1469,9 @@ topicsPlot <- function(
       seed = seed
     )  
   }
-
-
-    
+  
+  
+  
   if (!is.null(model) & !is.null(test)){
     
     if (dim == 1){
@@ -2593,7 +1482,7 @@ topicsPlot <- function(
         filtered_test <- test
         filtered_test$test <- dplyr::filter(
           tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
-                                            color_categories == i)
+          color_categories == i)
         color_b <- bivariate_color_codes_b[i]
         color_f <- bivariate_color_codes_f[i]
         
@@ -2624,58 +1513,56 @@ topicsPlot <- function(
       for (k in 1:9){
         if (! (k %in% test$test$color_categories)){next}
         filtered_test <- test
-            filtered_test$test <- dplyr::filter(
-              tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
-                                                color_categories == k)
-            color_b <- bivariate_color_codes_b[k]
-            color_f <- bivariate_color_codes_f[k]
-            
-            plot_topics_idx <- as.numeric(sub(".*_", "", filtered_test[["test"]]$topic))
-            
-            topicsPlot1(
-              model = model,
-              test = filtered_test,
-              popout = popout,
-              color_negative_cor = ggplot2::scale_color_gradient(low = color_b, high = color_f),
-              color_positive_cor = ggplot2::scale_color_gradient(low = color_b, high = color_f),
-              grid_pos = k,
-              scale_size = scale_size,
-              plot_topics_idx = plot_topics_idx,
-              p_alpha = p_alpha,
-              save_dir = save_dir,
-              figure_format = figure_format,
-              width = width, 
-              height = height,
-              max_size = max_size, 
-              seed = seed
-            )
+        filtered_test$test <- dplyr::filter(
+          tibble::as_tibble(filtered_test$test,.name_repair="minimal"),
+          color_categories == k)
+        color_b <- bivariate_color_codes_b[k]
+        color_f <- bivariate_color_codes_f[k]
+        
+        plot_topics_idx <- as.numeric(sub(".*_", "", filtered_test[["test"]]$topic))
+        
+        topicsPlot1(
+          model = model,
+          test = filtered_test,
+          popout = popout,
+          color_negative_cor = ggplot2::scale_color_gradient(low = color_b, high = color_f),
+          color_positive_cor = ggplot2::scale_color_gradient(low = color_b, high = color_f),
+          grid_pos = k,
+          scale_size = scale_size,
+          plot_topics_idx = plot_topics_idx,
+          p_alpha = p_alpha,
+          save_dir = save_dir,
+          figure_format = figure_format,
+          width = width, 
+          height = height,
+          max_size = max_size, 
+          seed = seed
+        )
       }
     }
-      
-      topicsGridLegend(
-            bivariate_color_codes = bivariate_color_codes_f,
-            filtered_test = test$test,
-            cor_var = test$pred_var,
-            save_dir = save_dir,
-            figure_format = figure_format,
-            seed = seed,
-            # width = 10, 
-            # height = 8,
-            y_axes_1 = dim,
-            legend_title = grid_legend_title,
-            legend_title_size = grid_legend_title_size,
-            titles_color = grid_legend_title_color,
-            legend_x_axes_label = grid_legend_x_axes_label,
-            legend_y_axes_label = grid_legend_y_axes_label,
-            topic_data_all = test[["test"]],
-            legend_number_color = grid_legend_number_color,
-            legend_number_size = grid_legend_number_size
-          )
-          msg <- "The grid plot legends are saved in the save_dir."
-          message(colourise(msg, "green"))
+    
+    topicsGridLegend(
+      bivariate_color_codes = bivariate_color_codes_f,
+      filtered_test = test$test,
+      cor_var = test$pred_var,
+      save_dir = save_dir,
+      figure_format = figure_format,
+      seed = seed,
+      # width = 10, 
+      # height = 8,
+      y_axes_1 = dim,
+      legend_title = grid_legend_title,
+      legend_title_size = grid_legend_title_size,
+      titles_color = grid_legend_title_color,
+      legend_x_axes_label = grid_legend_x_axes_label,
+      legend_y_axes_label = grid_legend_y_axes_label,
+      topic_data_all = test[["test"]],
+      legend_number_color = grid_legend_number_color,
+      legend_number_size = grid_legend_number_size
+    )
+    msg <- "The grid plot legends are saved in the save_dir."
+    message(colourise(msg, "green"))
   }
   
 }
-
-
 

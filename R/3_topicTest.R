@@ -1,5 +1,3 @@
-
-
 #### func topic testing ####
 # p.adjust https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/p.adjust
 
@@ -80,7 +78,7 @@ corr_topic_wise <- function(
     colname) {
   
   corr_results <- stats::cor.test(topics_loadings[[grouping1]],
-                           topics_loadings[[colname]])
+                                  topics_loadings[[colname]])
   
   return(corr_results)
 }
@@ -111,10 +109,10 @@ topics_corr_grouping <- function(
   
   # help(map)
   topics_stats <- purrr::map(topics_stats,
-                      ~ c(.x, adjust.p.value = stats::p.adjust(
-                        .x$p.value,
-                        method = method1,
-                        n = length(topics_loadings))))
+                             ~ c(.x, adjust.p.value = stats::p.adjust(
+                               .x$p.value,
+                               method = method1,
+                               n = length(topics_loadings))))
   return(topics_stats)
 }
 
@@ -344,7 +342,7 @@ topic_test <- function(
     split = "median",
     n_min_max = 20,
     multiple_comparison = "bonferroni"){
-
+  
   colnames(grouping_variable) <- "value"
   topics_groupings <- dplyr::bind_cols(topics_loadings,
                                        grouping_variable)
@@ -385,23 +383,23 @@ topic_test <- function(
   }
   
   
-#  if (FALSE){
-#    model1$prevalence <- colSums(model1$theta) / sum(model1$theta) * 100
-#    model1$top_terms <- textmineR::GetTopTerms(phi = model1$phi, M = 5)
-#    model1$summary <- data.frame(topic = rownames(model1$phi),
-#                                 label = model1$labels,
-#                                 coherence = round(model1$coherence, 3),
-#                                 prevalence = round(model1$prevalence,3),
-#                                 top_terms = apply(model1$top_terms, 2, function(x){
-#                                   paste(x, collapse = ", ")
-#                                 }),
-#                                 stringsAsFactors = FALSE)
-#  }
+  #  if (FALSE){
+  #    model1$prevalence <- colSums(model1$theta) / sum(model1$theta) * 100
+  #    model1$top_terms <- textmineR::GetTopTerms(phi = model1$phi, M = 5)
+  #    model1$summary <- data.frame(topic = rownames(model1$phi),
+  #                                 label = model1$labels,
+  #                                 coherence = round(model1$coherence, 3),
+  #                                 prevalence = round(model1$prevalence,3),
+  #                                 top_terms = apply(model1$top_terms, 2, function(x){
+  #                                   paste(x, collapse = ", ")
+  #                                 }),
+  #                                 stringsAsFactors = FALSE)
+  #  }
   
-
+  
   if (test_method == "correlation"){
     
-      if (TRUE){
+    if (TRUE){
       temp <- cbind(grouping_variable, topics_loadings)
       colnames(temp)[1] <- colnames(grouping_variable)[1]
       colnames(temp)[2:ncol(temp)] <- colnames(topics_loadings)
@@ -448,7 +446,7 @@ topic_test <- function(
       output <- extract_topic_stats_cate(result[[name]])
       #view(output)
       names(output)[1] <- c("topic_name")
-
+      
       #output <- dplyr::left_join(output, topic_terms, by = join_by(topic_name == topic))
       output <- dplyr::left_join(output, 
                                  topic_terms, 
@@ -488,9 +486,9 @@ topic_test <- function(
     for (i in 1:num_topics) {
       lda_topics[i] <- paste("t_", i, sep = "")
     }
-   
+    
     preds <- topics_loadings
-   
+    
     #preds <- topics_loadings # load topics_loading into different variable to reduce naming errors
     for (topic in lda_topics) {
       #view(preds[[topic]])
@@ -600,12 +598,12 @@ topic_test <- function(
     
     #return (control_variable_summary)
     control_variable_summary$topic <- lda_topics
-
+    
     # since ngram does not have coherence and prevalence
     output <- dplyr::right_join(topic_terms[c("topic", "top_terms", 
                                               "prevalence", "coherence")], #, "prevalence", "coherence"
-                         data.frame(control_variable_summary), 
-                         by = join_by(topic))
+                                data.frame(control_variable_summary), 
+                                by = join_by(topic))
     
     # add the adjustment for bonferroni
     return(output)
@@ -628,7 +626,7 @@ topic_test <- function(
     
     dims <- as.data.frame(preds) %>% dplyr::select(
       dplyr::contains("Dim"))
-
+    
     #dims <- step_zv(dims)
     dims <- tibble::as_tibble(dims)
     preds <- tibble::as_tibble(preds)
@@ -643,7 +641,7 @@ topic_test <- function(
         multi_cores = FALSE # This is FALSE due to CRAN testing and Windows machines.
       )
     }
-
+    
     return (trained_model$results)
     
   }
@@ -652,349 +650,381 @@ topic_test <- function(
 
 
 
-#' get_mallet_model
-#' @param dtm (R_obj) A document-term matrix
-#' @param num_topics (integer) The number of topics
-#' @param num_top_words (string) The number of words
-#' @param num_iterations (string) Number of iterations
-#' @param seed Set see with L, like 42L.
-#' @return Mallet model
-#' @importFrom textmineR Dtm2Docs CalcGamma
-#' @importFrom stats setNames
-#' @importFrom mallet mallet.top.words mallet.doc.topics mallet.word.freqs mallet.topic.labels MalletLDA  mallet.import  mallet.topic.words
-#' @noRd
-get_mallet_model <- function(
-    dtm,
-    num_topics = 20,
-    num_top_words = 10, 
-    num_iterations = 1000, 
-    seed){
-  
-  docs <- textmineR::Dtm2Docs(dtm)
-  
-  model <- mallet::MalletLDA(
-    num.topics = num_topics,
-    alpha.sum = 5,
-    beta = 0.01)
-  
-  instances <- mallet::mallet.import(
-    as.character(seq_along(docs)),
-    docs,
-    preserve.case = FALSE,
-    token.regexp = "[\\p{L}\\p{N}_]+|[\\p{P}]+\ ")
-  
-  # set seed (it does not make the entire ldaModel() output 
-  # https://stackoverflow.com/questions/37356001/using-a-random-seed-in-rmallet
-  # object setqual TRUE, but many more objectis within the object becomes equal)
-  model$setRandomSeed(as.integer(seed))
-  model$loadDocuments(instances)
 
-  model$train(num_iterations)
- 
-  topic.words <- mallet::mallet.topic.words(
+
+#' The function to test the LDA model
+#' @param model (list) The trained model
+#' @param data (tibble) The data to test on
+#' @param preds (tibble) The predictions
+#' @param pred_var (string) The variable to be predicted (only needed for regression or correlation)
+# @param group_var (string) The variable to group by (only needed for t-test)
+#' @param controls (vector) The control variables
+#' @param test_method (string) The test method to use, either "correlation","t-test", 
+#' "linear_regression","logistic_regression", or "ridge_regression"
+#' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
+#' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
+#' @param seed (integer) The seed to set for reproducibility
+#' @param load_dir (string) The directory to load the test from, if NULL, the test will not be loaded
+#' @param save_dir (string) The directory to save the test, if NULL, the test will not be saved
+#' @return A list of the test results, test method, and prediction variable
+#' @importFrom dplyr bind_cols
+#' @importFrom readr write_csv
+#' @noRd
+topicsTest1 <- function(
     model,
-    smoothed = TRUE,
-    normalized = TRUE)
+    preds,
+    data,
+    pred_var = NULL, # for all test types except t-test
+    #    group_var = NULL, # only one in the case of t-test
+    controls = c(),
+    test_method = "linear_regression",
+    p_adjust_method = "fdr",
+    seed = 42,
+    load_dir = NULL,
+    save_dir){
   
-  df_top_terms <- data.frame(matrix(NA, 
-                                    nrow = num_top_words, 
-                                    ncol = num_topics))
+  group_var = NULL
   
-  colnames(df_top_terms) <- paste0("t_", 
-                                   1:num_topics)
-  
-  for(i_topic in 1:num_topics){
-    top_terms <- mallet::mallet.top.words(
-      model,
-      word.weights = topic.words[i_topic,],
-      num.top.words = num_top_words)
+  if (!is.null(load_dir)){
+    test_path <- paste0(load_dir, "/seed_", seed, "/test.rds")
+    if (!file.exists(test_path)) {
+      msg <- paste0("Test file not found at: ", test_path, ". Exiting function.")
+      message(colourise(msg, "brown"))
+      return(NULL)
+    }
+    test <- readRDS(test_path)
+  } else {
+    #rm(controls)
+    controls <- c(pred_var, controls)
     
-    #top_terms <- paste(top_terms$term, collapse=" ")
-    #topic <- paste("t_", i_topic, sep="")
-    #df <- tibble(topic, top_terms)
-    #list_top_terms[[i_topic]] <- df
-    top_terms <- top_terms$term
-    df_top_terms[paste0("t_", i_topic)] <- top_terms
-  }
-  
-  return_model <- list()
-  #return_model$top_terms_mallet <- bind_rows(list_top_terms)
-  return_model$instances <- instances #model$instances()
-  return_model$inferencer <- model$getInferencer()
-  #view(return_model$instances)
-  return_model$top_terms_mallet <- df_top_terms
-  return_model$top_terms <- return_model$top_terms_mallet
-  #return_model$phi <- mallet.topic.w
-  return_model$phi <- mallet::mallet.topic.words(model, 
-                                                 smoothed=TRUE, 
-                                                 normalized=TRUE)
-  
-  return_model$topic_docs <- mallet::mallet.doc.topics(model, 
-                                                       smoothed=TRUE,
-                                                       normalized=TRUE)
-  #return_model$top_terms <- GetTopTerms(phi = return_model$phi, M = num_top_words)
-  return_model$frequencies <- mallet::mallet.word.freqs(model)
-  return_model$vocabulary <- model$getVocabulary()
-  
-  model$prevalence_mallet <- colSums(mallet::mallet.doc.topics(
-    model,
-    smoothed=TRUE,
-    normalized=TRUE)) /
-    sum(mallet::mallet.doc.topics(
-      model,
-      smoothed=TRUE,
-      normalized=TRUE)) * 100
-  
-  #sum(list_top_terms$prevalence)
-  return_model$labels <- mallet::mallet.topic.labels(model)
-  return_model$theta <- mallet::mallet.doc.topics(
-    model,
-    smoothed = TRUE,
-    normalized = TRUE)
-  
-  return_model$prevalence <- colSums(return_model$theta) / 
-    sum(return_model$theta) * 100
-  
-  keys <- paste0("t_", 1:num_topics)
-  
-  return_model$prevalence <- stats::setNames(
-    return_model$prevalence, 
-    keys)
-  
-  #return_model$labels <- LabelTopics(assignments = return_model$theta > 0.05, dtm = dtm, M = 1)
-  
-  #### Compute a Coherence Score ####
-  
-  # Step 1: Calculate Term Co-occurrence Matrix from the DTM
-  # Convert the document-term matrix (DTM) to a binary form indicating term presence/absence
-  # Multiplying by 1 converts the TRUE values to 1 and FALSE values to 0.
-  binary_dtm <- (dtm > 0) * 1
-  
-  # Compute the co-occurrence matrix by multiplying the transposed binary DTM with itself
-  # This results in a matrix where each entry [i, j] represents the number of documents where both terms i and j co-occur
-  co_occurrence <- Matrix::t(binary_dtm) %*% binary_dtm
-  
-  # Step 2: Compute Total Number of Documents
-  N <- nrow(dtm)  # The total number of documents in the corpus
-  
-  # Step 3: Calculate the Probability of Each Individual Term
-  # p_wi is a vector where each entry represents the proportion of documents containing a specific term
-  p_wi <- Matrix::diag(co_occurrence) / N
-  
-  # Step 4: Define a Function to Compute Coherence for a Topic
-  compute_topic_coherence <- function(terms, co_occurrence, p_wi, N) {
     
-    # Get the indices of the terms in the DTM's vocabulary
-    term_indices <- match(terms, colnames(dtm))
-    
-    # Create all possible pairs of the term indices
-    term_pairs <- combn(term_indices, 2)
-    
-    # Calculate PMI (Pointwise Mutual Information) for each pair of terms
-    pmi_values <- apply(term_pairs, 2, function(pair) {
-      w1 <- pair[1]
-      w2 <- pair[2]
-      
-      # Ensure both term indices are valid and co-occur in at least one document
-      if (!is.na(w1) && !is.na(w2) && co_occurrence[w1, w2] > 0) {
-        
-        # Calculate the joint probability of terms w1 and w2
-        p_wi_wj <- co_occurrence[w1, w2] / N
-        
-        # Calculate the PMI score for the pair
-        pmi <- log(p_wi_wj / (p_wi[w1] * p_wi[w2]))
-        
-        return(pmi)
-      } else {
-        return(0)  # Return 0 if terms do not co-occur or indices are invalid
+    #  if (!is.null(group_var)){
+    #    if (!(group_var %in% names(preds))){
+    #      preds <- dplyr::bind_cols(data[group_var], preds)
+    #    }
+    #  }
+    for (control_var in controls){
+      if (!(control_var %in% names(preds))){
+        preds <- dplyr::bind_cols(data[control_var], preds)
       }
-    })
+    }
     
-    # Return the average PMI for all term pairs in the topic
-    mean(pmi_values)
+    #    if (test_method == "ridge_regression"){
+    #      group_var <- pred_var
+    #    }
+    
+    # I think this can be removed. (i.e., its already a tibble)
+    preds <- preds %>% tibble::tibble()
+    
+    test <- topic_test(
+      topic_terms = model$summary,
+      topics_loadings = preds,
+      grouping_variable = preds[group_var],
+      controls = controls,
+      test_method = test_method,
+      split = "median",
+      n_min_max = 20,
+      multiple_comparison = p_adjust_method)
   }
   
-  # Step 5: Compute Coherence Scores for Each Topic
-  coherence_scores <- sapply(1:num_topics, function(i) {
+  if (!is.null(save_dir)){
+    if (!dir.exists(save_dir)) {
+      # Create the directory
+      dir.create(save_dir)
+      
+      msg <- "Directory created successfully.\n"
+      message(
+        colourise(msg, "green"))
+      
+    } else {
+      
+      msg <- "Directory already exists.\n"
+      message(
+        colourise(msg, "green"))
+    }
     
-    # Get the top terms for the current topic from the `df_top_terms` data frame
-    top_terms <- df_top_terms[, i]
+    if(!dir.exists(paste0(save_dir, "/seed_", seed))){
+      dir.create(paste0(save_dir, "/seed_", seed))
+    }
     
-    # Compute the coherence score for the current topic using the defined function
-    compute_topic_coherence(top_terms, co_occurrence, p_wi, N)
-  })
+    if (test_method == "ridge_regression"){
+      df <- list(#variable = group_var,
+        estimate = test$estimate,
+        t_value = test$statistic,
+        p_value = test$p.value)
+      readr::write_csv(data.frame(df), paste0(save_dir, 
+                                              "/seed_", 
+                                              seed, 
+                                              "/textTrain_regression.csv"))
+    }
+    
+    saveRDS(test, paste0(save_dir, 
+                         "/seed_", 
+                         seed, 
+                         "/test_",
+                         test_method, 
+                         "_", pred_var,".rds"))
+    
+    msg <- paste0("The test object of ", 
+                  pred_var, 
+                  " was saved in: ", 
+                  save_dir,"/seed_", 
+                  seed, "/test_",
+                  test_method, "_", 
+                  pred_var,".rds")
+    
+    message(colourise(msg, "green"))
+  }
   
-  # Step 6: Add the Computed Coherence Scores to the `return_model` List
-  return_model$coherence <- coherence_scores
-  
-  ##############
-  
-  # put theta into the right format
-  df_theta <- data.frame(return_model$theta)
-  df_theta <- stats::setNames(
-    df_theta,
-    keys)
-  
-  return_model$theta <- df_theta
-  
-  # take the first word as dummy label, no other solution worked
-  first_row <- return_model$top_terms_mallet[1,]
-  return_model$labels <- matrix(first_row, 
-                                nrow = num_topics, 
-                                ncol = 1)
-  
-  rownames(return_model$labels) <- paste0("t_", 
-                                          1:num_topics)
-  
-  colnames(return_model$labels) <- "label_1"
-  #return(c(result1 = result1, result2 = result2))
-  
-  pred_model <- list()
-  pred_model$phi <- mallet::mallet.topic.words(
-    model,
-    smoothed = TRUE,
-    normalized = TRUE)
-  
-  colnames(pred_model$phi) <- as.character(unlist(
-    return_model$vocabulary))
-  
-  pred_model$theta <- mallet::mallet.doc.topics(
-    model, 
-    smoothed = TRUE, 
-    normalized = TRUE)
-  
-  k <- ncol(pred_model$theta) # Specify the value of k  
-  new_col_names <- paste("t", 
-                         1:k, 
-                         sep = "_") # Generate new column names
-  
-  colnames(pred_model$theta) <- new_col_names # Assign new column names to the dataframe
-  pred_model$alpha <- model$alpha
-  
-  pred_model$gamma <- textmineR::CalcGamma(
-    phi = pred_model$phi, 
-    theta = pred_model$theta)
-  
-  pred_model$data <- dtm
-  #names(pred_model)
-  class(pred_model) <- "lda_topic_model"
-  
-  return_model$pred_model <- pred_model
-  
-  #return(list(pred_model = pred_model, return_model=return_model))
-  return(return_model)
+  return(list(test = test, 
+              test_method = test_method, 
+              pred_var = pred_var))
 }
 
-#' Get the most or least frequent terms in a document-term matrix
-#' @param dtm (R_obj) A document-term matrix
-#' @param n (integer) The number of terms to be removed
-#' @param type (string) most or least frequent terms
-#' @param mode (string) absolute or relative amount of terms to be removed
-#' @return A list of terms to be removed
-#' @noRd
-get_removal_terms <- function(
-    dtm, 
-    n, 
-    type, 
-    mode="absolute"){
+
+#' Test topics or n-grams
+#' 
+#' Statistically test topics or n-grams in relation to one or two other variables using 
+#' regression or t-test.  
+#' @param model (list) A trained model LDA-model from the topicsModel() function.
+#' @param data (tibble) The data containing the variables to be tested.
+#' @param preds (tibble) The predictions from the topicsPred() function.
+#' @param ngrams (list) output of the n-gram function
+#' @param x_variable (string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)
+#' @param y_variable (string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)
+#' @param group_var (string) The variable to group by (only needed for t-test)
+#' @param controls (vector) The control variables (not supported yet)
+#' @param test_method (string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"
+# @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
+#' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
+#' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
+#' @param seed (integer) The seed to set for reproducibility
+#' @param load_dir (string) The directory to load the test from, if NULL, the test will not be loaded
+#' @param save_dir (string) The directory to save the test, if NULL, the test will not be saved
+#' @return A list of the test results, test method, and prediction variable
+#' @examples
+#' \donttest{
+#' # Test the topic document distribution in respect to a variable
+#' save_dir_temp <- tempfile()
+#' 
+#' dtm <- topicsDtm(
+#'   data = dep_wor_data$Depphrase, 
+#'   save_dir =  save_dir_temp)
+#' 
+#' model <- topicsModel(
+#'   dtm = dtm, # output of topicsDtm()
+#'   num_topics = 20,
+#'   num_top_words = 10,
+#'   num_iterations = 1000,
+#'   seed = 42,
+#'   save_dir = save_dir_temp)
+#'                      
+#' preds <- topicsPreds(
+#'  model = model, # output of topicsModel()
+#'  data = dep_wor_data$Depphrase,
+#'  save_dir = save_dir_temp)
+#'                      
+#' test <- topicsTest(
+#'   model = model, # output of topicsModel()
+#'   data=dep_wor_data,
+#'   preds = preds, # output of topicsPreds()
+#'   test_method = "linear_regression",
+#'   x_variable = "Age",
+#'   save_dir = save_dir_temp)
+#' }                 
+#' @importFrom dplyr bind_cols
+#' @importFrom readr write_csv
+#' @export
+topicsTest <- function(
+    data,
+    model = NULL,
+    preds = NULL,
+    ngrams = NULL,
+    x_variable = NULL, # for all test types except t-test
+    y_variable = NULL,
+    controls = c(),
+    test_method = "linear_regression",
+    p_adjust_method = "fdr",
+    seed = 42,
+    load_dir = NULL,
+    save_dir){
   
-  term_frequencies <- colSums(as.matrix(dtm))
-  df <- data.frame(as.matrix(dtm))
+  group_var = NULL
   
-  # Create a data frame with term and frequency
-  term_frequency_df <- data.frame(Term = colnames(dtm),
-                                  Frequency = term_frequencies)
+  if (is.null(x_variable) & is.null(y_variable)){
+    msg <- 'Please input the x_variable, and/or y_variable.'
+    message(colourise(msg, "brown"))
+    # return (NULL)
+  }
   
-  # Sort the data frame in descending order of frequency
-  term_frequency_df <- term_frequency_df[order(-term_frequency_df$Frequency), ]
+  #### Warnings and instructions ####
+  if(!is.null(y_variable)){
+    if(grepl("__", y_variable)){
+      stop("The x_variable, y_variable or controls cannot have names containing 2 underscores in a row ('__'). 
+           Please rename the variable in the dataset.")
+    }
+  }
+  if(!is.null(x_variable)){
+    if(grepl("__", x_variable)){
+      stop("The x_variable, y_variable or controls cannot have names containing 2 underscores in a row ('__'). 
+           Please rename the variable in the dataset.")
+    }
+  }
   
-  # Print the terms with the highest frequencies (e.g., top 10 terms)
-  #top_terms <- head(term_frequency_df, n = 10)
-  if (mode=="percentage"){
-    removal_index <- nrow(term_frequency_df)*n 
+  if (length(controls) > 0){
+    for (control_var in controls){
+      if (!is.numeric(data[[control_var]])){
+        
+        msg <- paste0("The controls variable '", 
+                      control_var, 
+                      "' should be numeric!\n")
+        
+        message(
+          colourise(msg, "brown"))
+        
+        return (NULL)
+      }}
+  }
+  
+  if (is.null(x_variable) & is.null(y_variable) && test_method != "t-test") {
+    msg <- "Prediction variable is missing. Please input a prediction variable."
+    message(colourise(msg, "brown"))
+    return(NULL)
+  }
+  
+  if (!is.list(model) & !is.list(ngrams)){
+    msg <- "Input a model from the topicsModel() function or an ngram object from the topicsGrams() function."
     
-  } else if (mode == "term"){
-    removal_index <- n-1
+    message(colourise(msg, "brown"))
     
-  } 
-  if (type=="most"){
-    removal_index <- round(removal_index) 
-    removal_words <- term_frequency_df[["Term"]][1:removal_index]
+    return(NULL)
+  }
+  
+  if (length(data) == 0){
+    msg <- "The data provided is empty. Please provide a list of text data."
+    message(colourise(msg, "brown"))
+    
+    return(NULL)
+  }
+  
+  if(!is.null(preds)){
+    if (nrow(preds) == 0){
+      msg <- "The predictions provided are empty. Please provide a list of predictions."
+      message(colourise(msg, "brown"))
+      return(NULL)
+    }
+    
+    if (nrow(data) != nrow(preds)){
+      msg <- "The number of data points and predictions do not match. Please provide predictions that were created from the same data."
+      message(colourise(msg, "brown"))
+      return(NULL)
+    }
+  }
+  
+  #### Load test ####
+  if (!is.null(load_dir)){
+    test <- topicsTest1(load_dir = load_dir)
+  }
+  
+  #### N-grams testing (rearranging the data so that it fits the topics pipeline) ####
+  if (!is.null(ngrams)){
+    
+    freq_per_user <- tibble(ngrams$freq_per_user[,2:ncol(ngrams$freq_per_user)])
+    ngrams <- ngrams$ngrams
+    colnames(freq_per_user) <- paste0("t_", 1:ncol(freq_per_user))
+    preds <- freq_per_user
+    
+    model$summary <- list(topic = paste0("t_", 1:ncol(freq_per_user)),
+                          top_terms = ngrams$ngrams, 
+                          prevalence = ngrams$prevalence, 
+                          coherence = ngrams$coherence, 
+                          pmi = ngrams$pmi)
+    
+    model$summary <- data.frame(model$summary)
+  }
+  
+  
+  #### Testing the elements (i.e., ngrams or topics) ####
+  pred_vars_all <- c(x_variable, y_variable)
+  
+  # TBD: Change the column of pred_var into the numeric variable.
+  # for (pred_var in pred_vars_all){
+  #   if (any(grepl(pred_var, colnames(preds)))){
+  #     if (!is.numeric(preds[[pred_var]])){
+  #       msg <- paste0("Change the variable ", pred_var, ' into a numeric variable in the `pred` object.')
+  #        message(colourise(msg, "brown"))
+  #       return (NULL)
+  #     }}
+  #   if (any(grepl(pred_var, colnames(data)))){
+  #     if (!is.numeric(data[[pred_var]])){
+  #       msg <- paste0("Change the variable ", pred_var, ' into a numeric variable in the `data` object.')
+  #        message(colourise(msg, "brown"))
+  #       return (NULL)
+  #     }}
+  # }
+  topic_loadings_all <- list()
+  pre <- c('x','y')
+  # i = 1
+  for (i in 1:length(pred_vars_all)){
+    
+    topic_loading <- topicsTest1(
+      model = model,
+      preds = preds, 
+      data = data,
+      pred_var = pred_vars_all[i], # for all test types except t-test
+      # group_var = group_var, # only one in the case of t-test
+      controls = controls,
+      test_method = test_method,
+      p_adjust_method = p_adjust_method,
+      seed = seed,
+      load_dir = load_dir,
+      save_dir = save_dir
+    )
+    
+    # Sorting output when not using ridge regression
+    if (test_method != "ridge_regression") {
+      
+      colnames(topic_loading$test) <- c("topic", "top_terms", "prevalence", "coherence",
+                                        paste(pre[i], 
+                                              colnames(topic_loading$test)[5:8], 
+                                              sep = "."))
+      
+      topic_loadings_all[[i]] <- topic_loading
+    }
+  }
+  
+  if (!is.null(y_variable)){
+    # create the x.y.word.category
+    topic_loadings_all[[3]] <- list()
+    topic_loadings_all[[3]]$test <- dplyr::left_join(topic_loadings_all[[1]][[1]][,1:8], 
+                                                     topic_loadings_all[[2]][[1]][,1:8],
+                                                     by = c("topic", "top_terms", 
+                                                            "prevalence", "coherence"))
+    
+    topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
+    topic_loadings_all[[3]]$pred_var <- paste0(topic_loadings_all[[1]]$pred_var, '__',
+                                               topic_loadings_all[[2]]$pred_var) 
     
   } else {
-    removal_index <- nrow(term_frequency_df) - round(removal_index) # calculates index of term that has highest freqency of all percent least frequent words
-    removal_words <- term_frequency_df[["Term"]][nrow(term_frequency_df):removal_index]
+    
+    if (test_method == "linear_regression" | test_method == "logistic_regression"){
+      
+      msg <- "The parameter y_variable is not set! Output 1 dimensional results."
+      message(colourise(msg, "blue"))
+      
+      topic_loadings_all[[2]] <- list()
+      topic_loadings_all[[3]] <- list()
+      topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]][,1:8]
+      topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
+      topic_loadings_all[[3]]$pred_var <- topic_loadings_all[[1]]$pred_var
+      
+    } else if (test_method == "ridge_regression"){
+      topic_loadings_all[[1]] <- topic_loading
+    }
   }
   
-  return(removal_words)
-}
-
-#' Get the column indices of the most or least frequent terms in a document-term matrix
-#' @param dtm (R_obj) A document-term matrix
-#' @param n (integer) The number of terms to be removed
-#' @param type (string) most or least frequent terms
-#' @param mode (string) absolute or relative amount of terms to be removed
-#' @return A list of column indices to be removed
-#' @noRd
-get_removal_columns <- function(
-    dtm, 
-    n, 
-    type, 
-    mode="absolute"){
-  
-  terms <- get_removal_terms(dtm, 
-                             n, 
-                             type, 
-                             mode)
-  
-  filtered_terms_test <- c()
-  
-  for (term in terms){
-    filtered_terms_test <- c(filtered_terms_test, 
-                             term)
-  }
-  
-  #filtered_terms_test <- c("sad", "tired", "happy", "low")
-  column_indices_to_remove <- which(colnames(dtm) %in% filtered_terms_test)
-  
-  return(column_indices_to_remove)
-}
-
-#' Assgning numeric categories for further topic visualization colors.
-#' @param topic_loadings_all (tibble) The tibble from topicsTest1
-#' @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
-#' @param dimNo (numeric) 1 dimension or 2 dimensions
-#' @return A new tibble with the assigned numbers
-#' @importFrom dplyr mutate
-#' @noRd
-topicsNumAssign_dim2 <- function(
-    topic_loadings_all,
-    p_alpha = 0.05, 
-    dimNo = 2){
-  
-  if (dimNo == 1){
-    num1 <- 1:3
-    topic_loadings_all <- topic_loadings_all %>%
-      dplyr::mutate(color_categories = dplyr::case_when(
-        x_plotted < 0 & adjusted_p_values.x < p_alpha ~ num1[1],
-        adjusted_p_values.x > p_alpha ~ num1[2],
-        x_plotted > 0 & adjusted_p_values.x < p_alpha ~ num1[3]
-      ))
-  }else{
-    num1 <- 1:9
-    topic_loadings_all <- topic_loadings_all %>%
-      dplyr::mutate(color_categories = dplyr::case_when(
-        x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[1],
-        adjusted_p_values.x > p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[2],
-        x_plotted > 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[3],
-        x_plotted < 0 & adjusted_p_values.x < p_alpha & adjusted_p_values.y > p_alpha ~ num1[4],
-        adjusted_p_values.x > p_alpha & adjusted_p_values.y > p_alpha ~ num1[5],
-        x_plotted > 0 & adjusted_p_values.x < p_alpha & adjusted_p_values.y > p_alpha ~ num1[6],
-        x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[7],
-        adjusted_p_values.x > p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[8],
-        x_plotted > 0 & adjusted_p_values.x < p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[9]
-      ))
-  }
-  
-  return (topic_loadings_all)
+  # Not sure why we are keep all three lists - since the last list appear to have all the information.
+  # so trying here to only keep the last, to see if anything else breaks. 
+  topic_loadings_all <- topic_loadings_all[[length(topic_loadings_all)]]
+  return(topic_loadings_all)
 }
