@@ -94,7 +94,7 @@ create_topic_words_dfs <- function(
 #' @param df_list (list) list of data.frames with topics most frequent words and assigned topic term scores
 #' @param test (data.frame) the test returned from textTopicTest()
 #' @param test_type (string) "linear_regression", or "binary_regression"
-#' @param cor_var (string) Variable for t-test, linear, binary or ridge regression
+#' @param cor_var (string) Variable for t-test, linear, or binary/logistic regression
 #' @param popout (tibble) The tibble containing topic idx to popout
 #' @param color_negative_cor (function) color of topic cloud with negative correlation
 #' @param color_positive_cor (function) color of topic cloud with positive correlation

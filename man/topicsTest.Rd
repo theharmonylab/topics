@@ -34,7 +34,8 @@ topicsTest(
 
 \item{controls}{(vector) The control variables (not supported yet)}
 
-\item{test_method}{(string) The test method to use, either "correlation","t-test", "linear_regression","logistic_regression", or "ridge_regression"}
+\item{test_method}{(string) The test method to use, either "mixed_regression", where it automatiacally 
+selectes logistic regression if the variable only contain 0s and 1s, or "linear_regression", or "logistic_regression".}
 
 \item{p_adjust_method}{(character) Method to adjust/correct p-values for multiple comparisons
 (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").}
