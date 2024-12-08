@@ -103,8 +103,18 @@ jobs:
       - name: Install R Dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
-          install.packages("glmnet")
+          install.packages("glmnet", dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
+        shell: Rscript {0}
+
+      # Verify glmnet Installation
+      - name: Verify glmnet Installation
+        run: |
+          if (!requireNamespace("glmnet", quietly = TRUE)) {
+            stop("glmnet is not installed")
+          } else {
+            message("glmnet is installed")
+          }
         shell: Rscript {0}
 
       # Fix Conda permissions (macOS only)
@@ -116,7 +126,6 @@ jobs:
       - name: Install and Test "text" Package
         run: |
           install.packages("devtools")
-          install.packages("glmnet")
           library(devtools)
           devtools::install_github("oscarkjell/text")
           text::textrpp_install(prompt = FALSE)

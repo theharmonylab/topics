@@ -10,16 +10,25 @@ options(mc.cores = 1)
 test_that("topicsDtm creates a DTM correctly with default parameters", {
 
   testthat::skip_on_cran()
-
-  result <- topics::topicsDtm(
-    data =  dep_wor_data$Deptext)
+help(topicsDtm)
+  dtm_result <- topics::topicsDtm(
+    data =  dep_wor_data$Deptext, 
+    ngram_window = c(1,1), 
+    removal_mode = "frequency",
+    removal_rate_most = 30,
+    removal_rate_least = 25
+    )
   
-  testthat::expect_true(is.list(result))
-  testthat::expect_true("train_dtm" %in% names(result))
-  #testthat::expect_true("test_dtm" %in% names(result))
-  #testthat::expect_true("train_data" %in% names(result))
-  #testthat::expect_true("test_data" %in% names(result))
-  testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
+  testthat::expect_true(is.list(dtm_result))
+  testthat::expect_true("train_dtm" %in% names(dtm_result))
+  #testthat::expect_true("test_dtm" %in% names(dtm_result))
+  #testthat::expect_true("train_data" %in% names(dtm_result))
+  #testthat::expect_true("test_data" %in% names(dtm_result))
+  testthat::expect_s4_class(dtm_result$train_dtm, "dgCMatrix")
+  
+  # Testing with less than 30 words
+  dtmeval <- topicsDtmEval(dtm_result)
+  dtmeval$frequency_plot
 
 })
 
