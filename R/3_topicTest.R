@@ -150,7 +150,7 @@ topic_test <- function(
       )
       
       colnames(res) <- c(
-        paste0(target_name, ".estimate"),
+        paste0(target_name, ".estimate_beta"),
         if(test_method == "linear_regression") paste0(target_name, ".t"),
         if(test_method == "logistic_regression") paste0(target_name, ".z"), 
         paste0(target_name, ".p")

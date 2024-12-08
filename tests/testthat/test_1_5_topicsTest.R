@@ -39,7 +39,7 @@ test_that("topicsTest performs linear regression correctly", {
     save_dir = save_dir
     )
   result
-#  test = result
+
   testthat::expect_true(is.list(result))
   testthat::expect_equal(result$test_method, "linear_regression")
   testthat::expect_true(any(grepl("estimate", names(result$test))))
@@ -57,7 +57,7 @@ test_that("topicsTest performs linear regression correctly", {
                          c(1.453, 0.803, 1.236, 0.361), tolerance = 0.001)
   
   
-  testthat::expect_equal(result$test$x.z_Age.estimate[1:5], 
+  testthat::expect_equal(result$test$x.z_Age.estimate_beta[1:5], 
            c(-0.02968493, -0.02739334,  0.03571515, -0.01120996, -0.08525859), tolerance = 0.0001)
   testthat::expect_equal(result$test$x.z_Age.t[1:5], 
                          c(-0.6627383, -0.6115369,  0.7975251, -0.2501762, -1.9095765), tolerance = 0.0001)
@@ -86,7 +86,7 @@ test_that("topicsTest performs linear regression correctly", {
   
   # these are with the previous code; where controls where scaled in manua calcuation
   # -0.03121410, -0.02527967,  0.03445701, -0.02278217) the (average diff: 0.000265)
-  testthat::expect_equal(result_ctrl$test$x.z_Age.estimate[1:4], 
+  testthat::expect_equal(result_ctrl$test$x.z_Age.estimate_beta[1:4], 
                          c(-0.03089316, -0.02503072,  0.03423101, -0.02287568), tolerance = 0.0001)
   
   testthat::expect_equal(result_ctrl$test$x.z_Age.t[1:4], 
@@ -97,7 +97,7 @@ test_that("topicsTest performs linear regression correctly", {
                          c(0.7527852, 0.7858261, 0.7527852, 0.7858261), tolerance = 0.0001)
   
   # When not z-scoring control in scale:-0.02416600, 0.10753802, -0.07512578, 0.17245684; the average diff: 0.0653)
-  testthat::expect_equal(result_ctrl$test$y.z_PHQ9tot.estimate[1:4], 
+  testthat::expect_equal(result_ctrl$test$y.z_PHQ9tot.estimate_beta[1:4], 
                          c(-0.007475498,  0.033280355, -0.023326785,  0.054123169), tolerance = 0.0001)
   
   
@@ -117,7 +117,7 @@ test_that("topicsTest performs linear regression correctly", {
   result_log
   
   
-  testthat::expect_equal(result_log$test$x.Gender.estimate[1:4], 
+  testthat::expect_equal(result_log$test$x.Gender.estimate_beta[1:4], 
                          c(-0.07507502,  0.05734802,  0.15556099, -0.03501527), tolerance = 0.0001)
   testthat::expect_equal(result_log$test$x.Gender.z[1:4], 
                          c(-0.7553748,  0.6360858,  1.4940836, -0.3581462), tolerance = 0.0001)
@@ -128,78 +128,10 @@ test_that("topicsTest performs linear regression correctly", {
   
   # Should be able to have different test methods for x and y. 
   # Or could make it so that is is using logistic when it is a dichotomouse factor, 
-  # otherwise it uses linearregression. 
+  # otherwise it uses linear regression. 
   
-
-  ##############################
-  #### t-test #####
-  ##############################
-  
-#  result_t_test <- topics::topicsTest(
-#    model = model,
-#    preds = preds,
-#    data = dep_wor_data,
-#    x_variable = "Age",
-#    y_variable = "PHQ9tot",
-#    test_method = "t-test", 
-#    save_dir = save_dir_temp
-#  )
-  #result_t_test
-  
-  #Error in utils::combn(unique(topics_loadings$value), 2, simplify = FALSE) : 
-  #  n < m
-  #In addition: Warning message:
-  #  In colnames(temp)[2:ncol(temp)] <- colnames(topics_loadings) :
-  #  number of items to replace is not a multiple of replacement length
-#  
-#  result <- topics::topicsTest(
-#    model = model,
-#    preds = preds,
-#    data = dep_wor_data,
-#    group_var = "PHQ9tot",
-#    test_method = "correlation", 
-#    save_dir = save_dir_temp
-#  )
-  
-#  Error in topics::topicsTest(model = model, preds = preds, data = dep_wor_data,  : 
-#                                unused argument (group_var = "PHQ9tot")
   
 })
-
-
-#### Test t-test here! 
-
-
-
-
-#test_that("topicsTest handles missing pred_var for non t-test methods", {
-#  
-#  testthat::skip_on_cran()
-#  save_dir_temp <- tempfile()
-#  
-#  dtm <- topics::topicsDtm(
-#    data = dep_wor_data$Deptext, 
-#    save_dir = save_dir_temp)
-#  
-#  model <- topics::topicsModel(
-#    dtm = dtm, 
-#    save_dir = save_dir_temp)
-#  
-#  preds <- topics::topicsPreds(
-#    model = model, 
-#    data = dep_wor_data$Deptext, 
-#    save_dir = save_dir_temp)
-#  
-#  result <- topics::topicsTest(
-#    model = model, 
-#    preds = preds, 
-#    data = dep_wor_data, 
-#    x_variable = NULL, 
-#    save_dir = save_dir_temp)
-#  
-#  testthat::expect_null(result)
-#  
-#})
 
 test_that("topicsTest adjusts p-values for multiple comparisons", {
   
