@@ -16,6 +16,9 @@ utils::globalVariables(c(
   # generate_scatter_plot
   "geom_text", 
   
+  # topicsTest
+  "binomial", 
+  
   # topicsScatterLegendNew
   "contains_only", 
   

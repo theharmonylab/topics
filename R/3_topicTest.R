@@ -9,7 +9,7 @@
 #' @param n_min_max (integer) If split = "min_max", the number of records to test per group.
 #' @param multiple_comparison (string) The p-correction method
 #' @return Results
-#' @importFrom dplyr contains select everything bind_cols right_join join_by
+#' @importFrom dplyr contains select everything bind_cols bind_rows right_join join_by rename_with mutate across
 #' @importFrom tibble is_tibble as_tibble
 #' @importFrom stats  complete.cases sd lm glm as.formula
 #' @noRd
@@ -19,7 +19,7 @@ topic_test <- function(
     x_y_axis1,
     controls,
     test_method,
-    split = "median",
+    split,
     n_min_max = 20,
     multiple_comparison = "bonferroni"
 ) {
@@ -58,7 +58,11 @@ topic_test <- function(
      }
     
     column_name <- colnames(x_y_axis1)
-    z_outcome <- tibble(!!paste0("z_", column_name) := base::scale(x_y_axis1)[1:nrow(x_y_axis1)])
+   # z_outcome <- tibble(!!paste0("z_", column_name) := base::scale(x_y_axis1)[1:nrow(x_y_axis1)])
+    z_outcome <- tibble::tibble(x_y_axis1) %>%
+      dplyr::mutate(dplyr::across(dplyr::everything(), ~ base::scale(.))) %>%
+      dplyr::rename_with(~ paste0("z_", column_name))
+    
     colnames(z_outcome) <- (paste0("z_", column_name))
     
     # Replace NA values with 0 #### Should be a flag
@@ -153,7 +157,7 @@ topic_test <- function(
       )
       summary_statistics[[i]] <- res
     }
-    summary_statistics <- bind_rows(summary_statistics)
+    summary_statistics <- dplyr::bind_rows(summary_statistics)
   
     ### Adjust p-value here
     p_variable <- summary_statistics[, grepl("\\.p", colnames(summary_statistics))]

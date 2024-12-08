@@ -360,7 +360,7 @@ topicsDtm <- function(
 #' @importFrom Matrix colSums
 #' @importFrom dplyr %>% select 
 #' @importFrom ggplot2 ggplot margin
-#' @importFrom stats reorder
+#' @importFrom stats reorder median
 #' @return A named list containing:
 #' \describe{
 #'   \item{dtm_summary}{A dataframe of terms and their frequencies.}
@@ -391,7 +391,7 @@ topicsDtmEval <- function(dtm) {
            x = "Terms", 
            y = "Frequency",
            subtitle = paste0("Min = ", min(dtm_summary$freq), ", Max = ", max(dtm_summary$freq), ", Med = ",
-                             med = median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
+                             med = stats::median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
       ggplot2::scale_y_continuous(expand = c(0,0))+
       ggplot2::scale_fill_gradient(low = "#9BD7E9", high ="#15637F")+
       ggplot2::theme_minimal()+
@@ -407,7 +407,7 @@ topicsDtmEval <- function(dtm) {
            y = "Number of terms with this frequency",
            title = paste0("Histogram of term frequencies (N = ", nrow(dtm_summary), ")"),
            subtitle = paste0("Min = ", min(dtm_summary$freq), ", Max = ", max(dtm_summary$freq), ", Med = ",
-                             med = median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
+                             med = stats::median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
       ggplot2::theme_minimal()
     
     # return output with only 2 plots
@@ -459,7 +459,7 @@ topicsDtmEval <- function(dtm) {
          x = "Terms (only a few terms shown for illustration)", 
          y = "Frequency",
          subtitle = paste0("Min = ", min(dtm_summary$freq), ", Max = ", max(dtm_summary$freq), ", Med = ",
-                           med = median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
+                           med = stats::median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
     ggplot2::scale_x_discrete(labels = dtm_summary$example_terms) +
     ggplot2::scale_y_continuous(expand = c(0,0))+
     ggplot2::scale_fill_gradient(low = "#9BD7E9", high ="#15637F")+
@@ -477,7 +477,7 @@ topicsDtmEval <- function(dtm) {
          y = "Number of terms with this frequency",
          title = paste0("Histogram of term frequencies (N = ", nrow(dtm_summary), ")"),
          subtitle = paste0("Min = ", min(dtm_summary$freq), ", Max = ", max(dtm_summary$freq), ", Med = ",
-                           med = median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
+                           med = stats::median(dtm_summary$freq), ", SD = ", round(sd(dtm_summary$freq),2)))+
     ggplot2::theme_minimal()
   
   df_final <- dtm_summary %>% dplyr::select(term, freq)

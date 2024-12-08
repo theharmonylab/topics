@@ -9,6 +9,7 @@
 #' @importFrom textmineR Dtm2Docs CalcGamma
 #' @importFrom stats setNames
 #' @importFrom mallet mallet.top.words mallet.doc.topics mallet.word.freqs mallet.topic.labels MalletLDA  mallet.import  mallet.topic.words
+#' @importFrom utils combn
 #' @noRd
 get_mallet_model <- function(
     dtm,
@@ -135,7 +136,7 @@ get_mallet_model <- function(
     term_indices <- match(terms, colnames(dtm))
     
     # Create all possible pairs of the term indices
-    term_pairs <- combn(term_indices, 2)
+    term_pairs <- utils::combn(term_indices, 2)
     
     # Calculate PMI (Pointwise Mutual Information) for each pair of terms
     pmi_values <- apply(term_pairs, 2, function(pair) {
