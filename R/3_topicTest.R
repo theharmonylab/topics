@@ -62,7 +62,13 @@ topic_test <- function(
     colnames(z_outcome) <- (paste0("z_", column_name))
     
     # Replace NA values with 0 #### Should be a flag
-    preds[is.na(preds)] <- 0
+    #preds[is.na(preds)] <- 0
+    if (any(is.na(preds))) {
+      message("There are NA values in the predictions (preds).")
+      message("No all NAs are set to 0 - this need to be updated.")
+      preds[is.na(preds)] <- 0
+    } 
+    
     
     # For logistic regression, ensure the outcome variable is binary
     if (test_method == "logistic_regression") {

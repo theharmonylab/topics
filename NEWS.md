@@ -4,7 +4,8 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 # topics 0.30.4
 - scaling controls with scale instead of manually resulting in sligthtly different estimates. (but still same p-value and t-values)
-
+- removed ridge regression, t-test and correlation codes since they did not work
+- removed automatic removal of NAs in the topics predictions (this should be handled explicitly).
 
 
 # topics 0.30.3
