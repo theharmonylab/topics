@@ -116,7 +116,8 @@ test_that("topicsDtm handles different split proportions", {
 test_that("topicsDtm saves results to the specified directory", {
   
   testthat::skip_on_cran()
-
+  save_dir <- tempdir()
+  
   result <- topics::topicsDtm(
     data = dep_wor_data$Deptext, 
     save_dir = save_dir)

@@ -297,7 +297,7 @@ test_that("topicsPlot WITH PMI", {
     x_variable = "Age",
     save_dir = save_dir_temp)
   
-  testthat::expect_equal(test1$test$x.Age.estimate[1:4], 
+  testthat::expect_equal(test1$test$x.z_Age.estimate[1:4], 
                          c(0.012425389,  0.034527241,  0.039768994,  0.007723522), 
                          tolerance = 0.00001)
   

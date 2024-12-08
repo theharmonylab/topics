@@ -333,7 +333,7 @@ sort_stats_tibble <- function(
 # @importFrom text textTrainRegression
 #' @importFrom stats  complete.cases sd lm glm as.formula
 #' @noRd
-topic_test <- function(
+topic_test_original <- function(
     topic_terms,
     topics_loadings,
     grouping_variable,
@@ -343,7 +343,7 @@ topic_test <- function(
     n_min_max = 20,
     multiple_comparison = "bonferroni"){
   
-  colnames(grouping_variable) <- "value"
+  
   topics_groupings <- dplyr::bind_cols(topics_loadings,
                                        grouping_variable)
   
@@ -433,13 +433,21 @@ topic_test <- function(
     return (output %>% sort_stats_tibble())
   }
   if (test_method == "t-test"){
+    
+    topics_loadings_original <- topics_loadings
+    grouping_variable <- topics_loadings[1]
+    colnames(grouping_variable) <- "value"
+    topics_loadings <- topics_loadings %>%  dplyr::select(-Age)
+    
+    
     temp <- cbind(grouping_variable, topics_loadings)
     colnames(temp)[1] <- colnames(grouping_variable)[1]
     colnames(temp)[2:ncol(temp)] <- colnames(topics_loadings)
     topics_loadings <- temp
     temp <- NULL
-    result <- topics_t_test_grouping(topics_loadings,
-                                     method1 = multiple_comparison)
+    result <- topics_t_test_grouping(
+      topics_loadings,
+      method1 = multiple_comparison)
     
     # Produce the topic list through the pairs of categories
     output_list <- purrr::map(names(result), function(name) {
@@ -477,8 +485,8 @@ topic_test <- function(
     return (output_list)
   }
   if (test_method == "linear_regression" | test_method == "logistic_regression"){
-    # still get number of topics automatically
     
+    # still get number of topics automatically
     num_topics <- sum(grepl("t_", names(topics_loadings)))
     lda_topics <- character(num_topics)
     
@@ -649,6 +657,167 @@ topic_test <- function(
 }
 
 
+#' The function for topic testing
+#' @param topic_loadings (tibble) The predicted loadings of topics including the grouping variable.
+#' @param grouping_variable (tibble) The variable for grouping
+#' @param topic_terms (R_obj) The object from model$summary in textmineR package vignette topic_modeling
+#' @param split (string) How to split the CONTINUOUS test_values for testing
+#' @param n_min_max (integer) If split = "min_max", the number of records to test per group.
+#' @param multiple_comparison (string) The p-correction method
+#' @return Results
+#' @importFrom dplyr contains select everything bind_cols right_join join_by
+#' @importFrom tibble is_tibble as_tibble
+#' @importFrom stats  complete.cases sd lm glm as.formula
+#' @noRd
+topic_test <- function(
+    topic_terms,
+    topics_loadings,
+    x_y_axis1,
+    controls,
+    test_method,
+    split = "median",
+    n_min_max = 20,
+    multiple_comparison = "bonferroni"
+) {
+  
+  
+  # Format Checker
+  if (!tibble::is_tibble(topics_loadings)) {
+    stop("Parameter `topics_loadings` must be a tibble.")
+  }
+
+  if (test_method %in% c("linear_regression", "logistic_regression")) {
+    
+    # Get number of topics automatically
+    num_topics <- ncol(topics_loadings)
+    lda_topics <- paste0("t_", 1:num_topics)
+    z_lda_topics <- paste0("z_", lda_topics)
+    preds <- topics_loadings
+    
+    # Standardize topic loadings; harmonize how scaling are made. 
+    for (topic in lda_topics) {
+      mean_value <- mean(preds[[topic]], na.rm = TRUE)
+      std_dev <- stats::sd(preds[[topic]], na.rm = TRUE)
+      preds[[paste0("z_", topic)]] <- (preds[[topic]] - mean_value) / std_dev
+    }
+    
+    # Standardize control variables
+    if(ncol(controls) != 0){
+       # Rename columns to start with "z_"
+       controls <- controls %>%
+         dplyr::rename_with(~ paste0("z_", .), dplyr::everything())
+       
+       # Scale each column and convert the result to a numeric vector
+       controls <- controls %>%
+         dplyr::mutate(dplyr::across(dplyr::everything(), ~ as.numeric(base::scale(.))))
+       
+     }
+    
+    column_name <- colnames(x_y_axis1)
+    z_outcome <- tibble(!!paste0("z_", column_name) := base::scale(x_y_axis1)[1:nrow(x_y_axis1)])
+    colnames(z_outcome) <- (paste0("z_", column_name))
+    
+    # Replace NA values with 0 #### Should be a flag
+    preds[is.na(preds)] <- 0
+    
+    # For logistic regression, ensure the outcome variable is binary
+    if (test_method == "logistic_regression") {
+      if (!all(x_y_axis1[[1]] %in% c(0, 1))) {
+        stop(paste("The outcome variable", colnames(x_y_axis1), "must be binary (0 or 1) for logistic regression."))
+      }
+    }
+    
+    # Initialize an empty list to store models
+    multi_models <- list()
+    
+    # Making the regression formulas
+    if(!ncol(controls) == 0){
+      formula_tail <- paste0("+", paste(paste0(colnames(controls)), collapse = " + "))
+    } else {
+      formula_tail <- NULL
+    }
+    
+    regression_data <-  dplyr::bind_cols(
+      preds, x_y_axis1, z_outcome, controls)
+    
+    if (test_method == "linear_regression" | test_method == "logistic_regression"){
+      
+      if (test_method == "linear_regression") {
+        target_name <- colnames(z_outcome)
+      }
+      if (test_method == "logistic_regression") {
+        target_name <- colnames(x_y_axis1)
+      }
+      
+      for (i in 1:length(lda_topics)) {
+        topic <- paste0("z_", lda_topics[i])
+          
+        #formula <- stats::as.formula(paste0(topic, formula_tail))
+        formula <- stats::as.formula(paste0(target_name, "~", topic, formula_tail))
+        
+        message(colourise(
+            paste0(i, ": fitting model formula: ", 
+                   paste(deparse(formula), collapse = " "), "\n"), 
+            "green"))
+          
+        if (test_method == "linear_regression") {
+          multi_models[[i]] <- stats::lm(formula, data = regression_data)
+        }
+        if (test_method == "logistic_regression") {
+          multi_models[[topic]] <- stats::glm(formula, family = binomial, data = regression_data)
+        }
+      }
+    }
+    
+    #### Extract statistics from models ####
+    summary_statistics <- list()
+    
+    for (i in seq_along(multi_models)) {
+      
+      model_summary <- summary(multi_models[[i]])$coefficients
+      
+      if (test_method == "linear_regression") {
+        
+        estimate_values <- model_summary[, "Estimate"][z_lda_topics[i]][[1]]
+        t_values <- model_summary[, "t value"][z_lda_topics[i]][[1]]
+        p_values <- model_summary[, "Pr(>|t|)"][z_lda_topics[i]][[1]]
+        
+      } else if (test_method == "logistic_regression") {
+        
+        estimate_values <- model_summary[, "Estimate"][z_lda_topics[i]][[1]]
+        t_values <- model_summary[, "z value"][z_lda_topics[i]][[1]]
+        p_values <- model_summary[, "Pr(>|z|)"][z_lda_topics[i]][[1]]
+        
+      }
+      res <- tibble::tibble(
+        estimate_values = estimate_values,
+        t_values = t_values,
+        p_values = p_values 
+      )
+      
+      colnames(res) <- c(
+        paste0(target_name, ".estimate"),
+        if(test_method == "linear_regression") paste0(target_name, ".t"),
+        if(test_method == "logistic_regression") paste0(target_name, ".z"), 
+        paste0(target_name, ".p")
+      )
+      summary_statistics[[i]] <- res
+    }
+    summary_statistics <- bind_rows(summary_statistics)
+  
+    ### Adjust p-value here
+    p_variable <- summary_statistics[, grepl("\\.p", colnames(summary_statistics))]
+    summary_statistics[paste0(target_name, ".p_adjusted")] <- stats::p.adjust(
+      p_variable[[1]], multiple_comparison)
+    
+    # Merge with topic_terms for additional metadata
+    output <- dplyr::bind_cols(
+      topic_terms[c("topic", "top_terms", "prevalence", "coherence")], 
+      summary_statistics)
+    
+    return(output)
+  }
+}
 
 
 
@@ -656,7 +825,7 @@ topic_test <- function(
 #' @param model (list) The trained model
 #' @param data (tibble) The data to test on
 #' @param preds (tibble) The predictions
-#' @param pred_var (string) The variable to be predicted (only needed for regression or correlation)
+#' @param x_y_axis (string) The variable to be predicted (only needed for regression or correlation)
 # @param group_var (string) The variable to group by (only needed for t-test)
 #' @param controls (vector) The control variables
 #' @param test_method (string) The test method to use, either "correlation","t-test", 
@@ -674,8 +843,7 @@ topicsTest1 <- function(
     model,
     preds,
     data,
-    pred_var = NULL, # for all test types except t-test
-    #    group_var = NULL, # only one in the case of t-test
+    x_y_axis1 = NULL,
     controls = c(),
     test_method = "linear_regression",
     p_adjust_method = "fdr",
@@ -683,7 +851,6 @@ topicsTest1 <- function(
     load_dir = NULL,
     save_dir = NULL){
   
-  group_var = NULL
   
   if (!is.null(load_dir)){
     test_path <- paste0(load_dir, "/seed_", seed, "/test.rds")
@@ -694,36 +861,15 @@ topicsTest1 <- function(
     }
     test <- readRDS(test_path)
   } else {
-    #rm(controls)
-    controls <- c(pred_var, controls)
-    
-    
-    #  if (!is.null(group_var)){
-    #    if (!(group_var %in% names(preds))){
-    #      preds <- dplyr::bind_cols(data[group_var], preds)
-    #    }
-    #  }
-    for (control_var in controls){
-      if (!(control_var %in% names(preds))){
-        preds <- dplyr::bind_cols(data[control_var], preds)
-      }
-    }
-    
-    #    if (test_method == "ridge_regression"){
-    #      group_var <- pred_var
-    #    }
-    
-    # I think this can be removed. (i.e., its already a tibble)
-    preds <- preds %>% tibble::tibble()
     
     test <- topic_test(
       topic_terms = model$summary,
       topics_loadings = preds,
-      grouping_variable = preds[group_var],
-      controls = controls,
+      x_y_axis1 = data[x_y_axis1],
+      controls = data[controls],
       test_method = test_method,
-      split = "median",
-      n_min_max = 20,
+     # split = "median",
+    #  n_min_max = 20,
       multiple_comparison = p_adjust_method)
   }
   
@@ -763,22 +909,22 @@ topicsTest1 <- function(
                          seed, 
                          "/test_",
                          test_method, 
-                         "_", pred_var,".rds"))
+                         "_", x_y_axis1,".rds"))
     
     msg <- paste0("The test object of ", 
-                  pred_var, 
+                  x_y_axis1, 
                   " was saved in: ", 
                   save_dir,"/seed_", 
                   seed, "/test_",
                   test_method, "_", 
-                  pred_var,".rds")
+                  x_y_axis1,".rds")
     
     message(colourise(msg, "green"))
   }
   
   return(list(test = test, 
               test_method = test_method, 
-              pred_var = pred_var))
+              x_y_axis1 = x_y_axis1))
 }
 
 
@@ -840,7 +986,7 @@ topicsTest <- function(
     model = NULL,
     preds = NULL,
     ngrams = NULL,
-    x_variable = NULL, # for all test types except t-test
+    x_variable = NULL,
     y_variable = NULL,
     controls = c(),
     test_method = "linear_regression",
@@ -886,7 +1032,7 @@ topicsTest <- function(
       }}
   }
   
-  if (is.null(x_variable) & is.null(y_variable) && test_method != "t-test") {
+  if (is.null(x_variable) & is.null(y_variable)) {
     msg <- "Prediction variable is missing. Please input a prediction variable."
     message(colourise(msg, "brown"))
     return(NULL)
@@ -926,7 +1072,8 @@ topicsTest <- function(
     test <- topicsTest1(load_dir = load_dir)
   }
   
-  #### N-grams testing (rearranging the data so that it fits the topics pipeline) ####
+  #### N-grams testing ####
+  # (rearranging the data so that it fits the topics pipeline)
   if (!is.null(ngrams)){
     
     freq_per_user <- tibble(ngrams$freq_per_user[,2:ncol(ngrams$freq_per_user)])
@@ -945,34 +1092,18 @@ topicsTest <- function(
   
   
   #### Testing the elements (i.e., ngrams or topics) ####
-  pred_vars_all <- c(x_variable, y_variable)
+  x_y_axis <- c(x_variable, y_variable)
   
-  # TBD: Change the column of pred_var into the numeric variable.
-  # for (pred_var in pred_vars_all){
-  #   if (any(grepl(pred_var, colnames(preds)))){
-  #     if (!is.numeric(preds[[pred_var]])){
-  #       msg <- paste0("Change the variable ", pred_var, ' into a numeric variable in the `pred` object.')
-  #        message(colourise(msg, "brown"))
-  #       return (NULL)
-  #     }}
-  #   if (any(grepl(pred_var, colnames(data)))){
-  #     if (!is.numeric(data[[pred_var]])){
-  #       msg <- paste0("Change the variable ", pred_var, ' into a numeric variable in the `data` object.')
-  #        message(colourise(msg, "brown"))
-  #       return (NULL)
-  #     }}
-  # }
   topic_loadings_all <- list()
   pre <- c('x','y')
   # i = 1
-  for (i in 1:length(pred_vars_all)){
+  for (i in 1:length(x_y_axis)){
     
     topic_loading <- topicsTest1(
       model = model,
       preds = preds, 
       data = data,
-      pred_var = pred_vars_all[i], # for all test types except t-test
-      # group_var = group_var, # only one in the case of t-test
+      x_y_axis1 = x_y_axis[i],
       controls = controls,
       test_method = test_method,
       p_adjust_method = p_adjust_method,
@@ -1002,8 +1133,8 @@ topicsTest <- function(
                                                             "prevalence", "coherence"))
     
     topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
-    topic_loadings_all[[3]]$pred_var <- paste0(topic_loadings_all[[1]]$pred_var, '__',
-                                               topic_loadings_all[[2]]$pred_var) 
+    topic_loadings_all[[3]]$x_y_axis <- paste0(topic_loadings_all[[1]]$x_y_axis, '__',
+                                               topic_loadings_all[[2]]$x_y_axis) 
     
   } else {
     
@@ -1016,15 +1147,13 @@ topicsTest <- function(
       topic_loadings_all[[3]] <- list()
       topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]][,1:8]
       topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
-      topic_loadings_all[[3]]$pred_var <- topic_loadings_all[[1]]$pred_var
+      topic_loadings_all[[3]]$x_y_axis <- topic_loadings_all[[1]]$x_y_axis
       
     } else if (test_method == "ridge_regression"){
       topic_loadings_all[[1]] <- topic_loading
     }
   }
   
-  # Not sure why we are keep all three lists - since the last list appear to have all the information.
-  # so trying here to only keep the last, to see if anything else breaks. 
   topic_loadings_all <- topic_loadings_all[[length(topic_loadings_all)]]
   return(topic_loadings_all)
 }

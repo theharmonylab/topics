@@ -2,6 +2,10 @@
 
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+# topics 0.30.4
+- scaling controls with scale instead of manually resulting in sligthtly different estimates. (but still same p-value and t-values)
+
+
 
 # topics 0.30.3
 - saving settings in `dtm` for downstream use in other functions.

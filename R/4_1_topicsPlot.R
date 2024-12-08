@@ -1024,7 +1024,7 @@ topicsPlot1 <- function(
   
   if (!is.null(test) && !is.null(model)){
     summary = model$summary
-    cor_var = test$pred_var
+    cor_var = test$x_y_axis
     test_type = test$test_method
     test = test$test
     
@@ -1433,7 +1433,7 @@ topicsPlot <- function(
   #     filtered_test = test$test,
   #     num_popout = scatter_legend_n,
   #     y_axes_1 = dim,
-  #     cor_var = test$pred_var,
+  #     cor_var = test$x_y_axis,
   #     label_x_name = grid_legend_x_axes_label,
   #     label_y_name = grid_legend_y_axes_label,
   #     way_popout_topics = scatter_legend_method,
@@ -1454,7 +1454,7 @@ topicsPlot <- function(
       filtered_test = test$test,
       num_popout = scatter_legend_n,
       y_axes_1 = dim,
-      cor_var = test$pred_var,
+      cor_var = test$x_y_axis,
       label_x_name = grid_legend_x_axes_label,
       label_y_name = grid_legend_y_axes_label,
       way_popout_topics = scatter_legend_method,
@@ -1544,7 +1544,7 @@ topicsPlot <- function(
     topicsGridLegend(
       bivariate_color_codes = bivariate_color_codes_f,
       filtered_test = test$test,
-      cor_var = test$pred_var,
+      cor_var = test$x_y_axis,
       save_dir = save_dir,
       figure_format = figure_format,
       seed = seed,
