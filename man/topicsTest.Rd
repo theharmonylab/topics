@@ -12,7 +12,7 @@ topicsTest(
   x_variable = NULL,
   y_variable = NULL,
   controls = c(),
-  test_method = "linear_regression",
+  test_method = "default",
   p_adjust_method = "fdr",
   seed = 42,
   load_dir = NULL,
@@ -34,7 +34,9 @@ topicsTest(
 
 \item{controls}{(vector) The control variables (not supported yet)}
 
-\item{test_method}{(string) The test method to use, either "mixed_regression", where it automatiacally 
+\item{test_method}{(string) The test method to use. The "default", check wether x_variable and y_variable
+only contain 0s and 1 for which it applied logistic regression otherwise it applies linear regression. 
+Can also set it to either "linear_regression" or "logistic_regression.  
 selectes logistic regression if the variable only contain 0s and 1s, or "linear_regression", or "logistic_regression".}
 
 \item{p_adjust_method}{(character) Method to adjust/correct p-values for multiple comparisons

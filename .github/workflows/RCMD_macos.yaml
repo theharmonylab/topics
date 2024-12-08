@@ -115,6 +115,7 @@ jobs:
       - name: Install and Test "text" Package
         run: |
           install.packages("devtools")
+          install.packages("glmnet")
           library(devtools)
           devtools::install_github("oscarkjell/text")
           text::textrpp_install(prompt = FALSE)

@@ -155,7 +155,7 @@ test_that("topicsTest adjusts p-values for multiple comparisons", {
     p_adjust_method = "bonferroni")
   
   testthat::expect_true(is.list(result))
-  testthat::expect_equal(result$test_method, "linear_regression")
+  testthat::expect_equal(result$test_method[[1]], "linear_regression")
   testthat::expect_true(any(grepl("Age.estimate", names(result$test))))
   testthat::expect_true(any(grepl("Age.t", names(result$test))))
   testthat::expect_true(any(grepl("Age.p", names(result$test))))

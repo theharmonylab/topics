@@ -21,7 +21,7 @@ topic_test <- function(
     test_method,
     split,
     n_min_max = 20,
-    multiple_comparison = "bonferroni"
+    multiple_comparison
 ) {
   
   
@@ -197,11 +197,11 @@ topicsTest1 <- function(
     model,
     preds,
     data,
-    x_y_axis1 = NULL,
-    controls = c(),
-    test_method = "linear_regression",
-    p_adjust_method = "fdr",
-    seed = 42,
+    x_y_axis1,
+    controls,
+    test_method,
+    p_adjust_method,
+    seed,
     load_dir = NULL,
     save_dir = NULL){
   
@@ -222,8 +222,6 @@ topicsTest1 <- function(
       x_y_axis1 = data[x_y_axis1],
       controls = data[controls],
       test_method = test_method,
-     # split = "median",
-    #  n_min_max = 20,
       multiple_comparison = p_adjust_method)
   }
   
@@ -283,7 +281,9 @@ topicsTest1 <- function(
 #' @param y_variable (string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)
 # @param group_var (string) The variable to group by (only needed for t-test)
 #' @param controls (vector) The control variables (not supported yet)
-#' @param test_method (string) The test method to use, either "mixed_regression", where it automatiacally 
+#' @param test_method (string) The test method to use. The "default", check wether x_variable and y_variable
+#' only contain 0s and 1 for which it applied logistic regression otherwise it applies linear regression. 
+#' Can also set it to either "linear_regression" or "logistic_regression.  
 #' selectes logistic regression if the variable only contain 0s and 1s, or "linear_regression", or "logistic_regression".
 # @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
@@ -333,7 +333,7 @@ topicsTest <- function(
     x_variable = NULL,
     y_variable = NULL,
     controls = c(),
-    test_method = "linear_regression",
+    test_method = "default",
     p_adjust_method = "fdr",
     seed = 42,
     load_dir = NULL,
@@ -379,10 +379,6 @@ topicsTest <- function(
 #  data <- cleaned_data %>% dplyr::select(all_of(relevant_columns))
 #  
   ###### End of handling NAs ####
-  
-  
-  
-  
   
   if (is.null(x_variable) & is.null(y_variable)){
     msg <- 'Please input the x_variable, and/or y_variable.'
@@ -481,6 +477,30 @@ topicsTest <- function(
   #### Testing the elements (i.e., ngrams or topics) ####
   x_y_axis <- c(x_variable, y_variable)
   
+  if(test_method == "default"){
+    # Function to check if a column is binary (contains only 0 and 1)
+    is_binary <- function(column) {
+      all(unique(column[!is.na(column)]) %in% c(0, 1))
+    }
+    
+    # Create a vector of test_method for each column in x_y_axis
+    test_method <- sapply(data[x_y_axis], function(col) {
+      if (is_binary(col)) {
+        "logistic_regression"
+      } else {
+        "linear_regression"
+      }
+    })
+  } else if (test_method == "linear_regression") {
+    
+    test_method <- rep("linear_regression", 2)
+    
+  } else if (test_method == "logistic_regression") {
+    
+    test_method <- rep("logistic_regression", 2)
+    
+  }
+  
   topic_loadings_all <- list()
   pre <- c('x','y')
   # i = 1
@@ -492,7 +512,7 @@ topicsTest <- function(
       data = data,
       x_y_axis1 = x_y_axis[i],
       controls = controls,
-      test_method = test_method,
+      test_method = test_method[i],
       p_adjust_method = p_adjust_method,
       seed = seed,
       load_dir = load_dir,
@@ -500,7 +520,6 @@ topicsTest <- function(
     )
     
     # Sorting output when not using ridge regression
-    if (test_method != "ridge_regression") {
       
       colnames(topic_loading$test) <- c("topic", "top_terms", "prevalence", "coherence",
                                         paste(pre[i], 
@@ -508,8 +527,6 @@ topicsTest <- function(
                                               sep = "."))
       
       topic_loadings_all[[i]] <- topic_loading
-    }
-    
     
   }
   
@@ -527,7 +544,7 @@ topicsTest <- function(
     
   } else {
     
-    if (test_method == "linear_regression" | test_method == "logistic_regression"){
+ #   if (test_method == "linear_regression" | test_method == "logistic_regression"){
       
       msg <- "The parameter y_variable is not set! Output 1 dimensional results."
       message(colourise(msg, "blue"))
@@ -538,10 +555,7 @@ topicsTest <- function(
       topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
       topic_loadings_all[[3]]$x_y_axis <- topic_loadings_all[[1]]$x_y_axis
       
-    } 
-    #else if (test_method == "ridge_regression"){
-    #  topic_loadings_all[[1]] <- topic_loading
-    #}
+  #  } 
   }
   
   topic_loadings_all <- topic_loadings_all[[length(topic_loadings_all)]]
