@@ -3,7 +3,7 @@
 library(testthat)
 library(topics)
 library(text)
-
+library(glmnet)
 test_that("Handling NAs",{
   
   testthat::skip_on_cran()
