@@ -47,8 +47,8 @@ topicsScatterLegendNew <- function(
 ) {
   
   # Determine x, y, and color columns
-  x_column <- names(filtered_test)[4]
-  y_column <- if (y_axes_1 == 2) names(filtered_test)[8] else NULL
+  x_column <- names(filtered_test)[5]
+  y_column <- if (y_axes_1 == 2) names(filtered_test)[9] else NULL
   color_column <- names(filtered_test)[ncol(filtered_test)]
   
   # Check for only significant or non-significant topics
