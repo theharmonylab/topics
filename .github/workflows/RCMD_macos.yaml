@@ -18,59 +18,47 @@ jobs:
         config:
           - {os: macOS-latest, r: 'release'}
           - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-20.04, r: 'release'}
+          - {os: ubuntu-latest, r: 'release'}
 
     env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v2
-
-      # Step to clear cache (by changing the key or deleting the cache)
-      - name: Invalidate Cache
-        run: echo "Invalidating cache..."
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       # Set up R environment
-      - uses: r-lib/actions/setup-r@v2-branch
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
 
-      - uses: r-lib/actions/setup-pandoc@v2-branch
+      - name: Set up Pandoc
+        uses: r-lib/actions/setup-pandoc@v2
 
-      # Query R Dependencies
-      - name: Query R Dependencies
+      # Install system dependencies on Linux
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
-          install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
-
-      # Clear and reset the cache
-      - name: Clear Cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-clear-cache-${{ hashFiles('.github/R-version') }}-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-clear-cache-
+          sudo apt-get update
+          sudo apt-get install -y libxml2-dev libssl-dev libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
 
       # Install R dependencies
-      - name: Install R Dependencies
+      - name: Install R dependencies
         run: |
+          install.packages(c("remotes", "glmnet"))
           remotes::install_deps(dependencies = TRUE)
-          install.packages("glmnet", dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
-      # Verify glmnet Installation
+      # Verify glmnet installation
       - name: Verify glmnet Installation
         run: |
           if (!requireNamespace("glmnet", quietly = TRUE)) {
             stop("glmnet is not installed")
           } else {
-            message("glmnet is installed")
+            message("glmnet is installed successfully")
           }
         shell: Rscript {0}
 
@@ -78,6 +66,12 @@ jobs:
       - name: R CMD Check
         env:
           _R_CHECK_CRAN_INCOMING_: false
-          OMP_MAX_ACTIVE_LEVELS: 0
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+        run: |
+          rcmdcheck::rcmdcheck(args = c("--no-manual", "--no-build-vignettes", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
+
+      # Display testthat output for debugging
+      - name: Display Testthat Output
+        if: always()
+        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash

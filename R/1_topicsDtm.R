@@ -359,7 +359,7 @@ topicsDtm <- function(
 #' @param dtm (R_obj) The document term matrix - output from topicsDtm
 #' @importFrom Matrix colSums
 #' @importFrom dplyr %>% select 
-#' @importFrom ggplot2 ggplot margin
+#' @importFrom ggplot2 ggplot margin element_text
 #' @importFrom stats reorder median
 #' @return A named list containing:
 #' \describe{
@@ -396,7 +396,7 @@ topicsDtmEval <- function(dtm) {
       ggplot2::scale_fill_gradient(low = "#9BD7E9", high ="#15637F")+
       ggplot2::theme_minimal()+
       ggplot2::theme(
-        axis.text.x = element_text(angle = 35, hjust = 1, size = 11),
+        axis.text.x = ggplot2::element_text(angle = 35, hjust = 1, size = 11),
         panel.grid.minor.x = ggplot2::element_blank(),
         panel.grid.major.x = ggplot2::element_blank())
     
@@ -430,10 +430,10 @@ topicsDtmEval <- function(dtm) {
          x = "Term", y = "Frequency")+
     ggplot2::scale_y_continuous(limits = c(0,max(dtm_summary$freq)))+
     ggplot2::theme_minimal()+
-    ggplot2::theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 12),
-          axis.title.y = element_text(size = 12, face = "bold"),
-          plot.title = element_text(size = 15),
-          axis.title.x = element_text(margin = margin(t = 5), size = 12, face = "bold"))
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 50, hjust = 1, size = 12),
+          axis.title.y = ggplot2::element_text(size = 12, face = "bold"),
+          plot.title = ggplot2::element_text(size = 15),
+          axis.title.x = ggplot2::element_text(margin = margin(t = 5), size = 12, face = "bold"))
   
   # plot 30 msot frequent
   plot_30_most <- ggplot2::ggplot(data = dtm_summary_30_max, ggplot2::aes(x = reorder(term, freq), y = freq))+
@@ -441,10 +441,10 @@ topicsDtmEval <- function(dtm) {
     ggplot2::labs(title = "30 most frequent terms in the DTM",
          x = "Term", y = "Frequency")+
     ggplot2::theme_minimal()+
-    ggplot2::theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 12),
-          axis.title.y = element_text(size = 12, face = "bold"),
-          plot.title = element_text(size = 15),
-          axis.title.x = element_text(margin = margin(t = 5), size = 12, face = "bold"))
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 50, hjust = 1, size = 12),
+          axis.title.y = ggplot2::element_text(size = 12, face = "bold"),
+          plot.title = ggplot2::element_text(size = 15),
+          axis.title.x = ggplot2::element_text(margin = margin(t = 5), size = 12, face = "bold"))
   
   
   # plot all terms and only show some example terms
@@ -465,7 +465,7 @@ topicsDtmEval <- function(dtm) {
     ggplot2::scale_fill_gradient(low = "#9BD7E9", high ="#15637F")+
     ggplot2::theme_minimal()+
     ggplot2::theme(
-      axis.text.x = element_text(angle = 35, hjust = 1, size = 11),
+      axis.text.x = ggplot2::element_text(angle = 35, hjust = 1, size = 11),
       panel.grid.minor.x = ggplot2::element_blank(),
       panel.grid.major.x = ggplot2::element_blank())
   
