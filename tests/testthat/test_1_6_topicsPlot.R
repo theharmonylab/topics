@@ -120,7 +120,8 @@ test_that("topicsPlot WITH test", {
     figure_format = "png",
     seed = 11, 
     save_dir = save_dir_temp)
-  
+  #plots3$legend
+  #plots3$distribution
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_11/wordclouds/dot_legend_corvar_Age.png")))

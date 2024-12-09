@@ -118,7 +118,14 @@ topicsScatterLegendNew <- function(
                   device = figure_format, 
                   create.dir = TRUE)
   
-  if (!only_two && !only_five){return (popout)}else{ return (NULL) }
+  #if (!only_two && !only_five){return (popout)}else{ return (NULL) }
+  
+  output <- list()
+  output[[1]] <- popout
+  output[[2]] <- plot
+  names(output) <- c("popout", "legend")
+  
+  return(output)
 }
 
 
@@ -516,6 +523,7 @@ topicsGridLegend <- function(
                   height = height, 
                   units = "in", 
                   create.dir = TRUE)
+  return(legend)
 }
 
 #' The function to create lda wordclouds
@@ -998,7 +1006,7 @@ topicsPlot <- function(
 
   
   if(is.null(ngrams) & !is.null(test$test)){
-    popout <- topicsScatterLegendNew(
+    popout1 <- topicsScatterLegendNew(
       bivariate_color_codes = bivariate_color_codes_f,
       filtered_test = test$test,
       num_popout = scatter_legend_n,
@@ -1016,7 +1024,8 @@ topicsPlot <- function(
       # width = 10, 
       # height = 8,
       seed = seed
-    )  
+    )
+    popout <- popout1$popout
   }
   
   
@@ -1095,7 +1104,7 @@ topicsPlot <- function(
       }
     }
     
-    topicsGridLegend(
+    legend <- topicsGridLegend(
       bivariate_color_codes = bivariate_color_codes_f,
       filtered_test = test$test,
       cor_var = test$x_y_axis,
@@ -1112,6 +1121,9 @@ topicsPlot <- function(
       legend_number_color = grid_legend_number_color,
       legend_number_size = grid_legend_number_size
     )
+    
+    plot_list[["legend"]] <- legend
+    plot_list[["distribution"]] <- popout1$legend
     msg <- "The grid plot legends are saved in the save_dir."
     message(colourise(msg, "green"))
   }

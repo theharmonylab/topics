@@ -23,92 +23,38 @@ jobs:
           - {os: ubuntu-20.04, r: 'release'}
 
     env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      CODECOV_DEBUG: true
+      OMP_NUM_THREADS: 1  # Limit parallel processing to 1 core
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      # Clear R package cache to avoid corrupted packages
+      # Clear R package cache explicitly
       - name: Clear R package cache
         run: rm -rf ${{ env.R_LIBS_USER }}
-
-      # macOS-specific steps to fix Homebrew issues
-      - name: Fix Homebrew Issues
-        if: runner.os == 'macOS'
-        run: |
-          if [ -d "/opt/homebrew/Library/Taps/homebrew/homebrew-core" ]; then
-              cd /opt/homebrew/Library/Taps/homebrew/homebrew-core
-              git stash -u || echo "No changes to stash"
-              git clean -d -f || echo "No files to clean"
-          fi
-          brew uninstall openssl@1.1 ruby@3.0 || echo "Deprecated formulae not found"
-          brew install openssl@3 ruby || echo "Failed to install replacements"
-          brew doctor || echo "brew doctor warnings"
-          brew config || echo "brew config warnings"
-          brew update || echo "Failed to update Homebrew"
-          brew install libomp qpdf || echo "Failed to install utilities"
-          export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
-          echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
-
-      # Install system dependencies for Linux
-      - name: Install system dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libomp-dev libharfbuzz-dev libfribidi-dev
-
-      # Install system dependencies for macOS
-      - name: Install system dependencies (macOS)
-        if: runner.os == 'macOS'
-        run: brew install libomp
 
       # Set up R environment
       - uses: r-lib/actions/setup-r@v2-branch
         with:
           r-version: ${{ matrix.config.r }}
 
-      - uses: r-lib/actions/setup-pandoc@v2-branch
+      # Install system dependencies for Linux
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libomp-dev libharfbuzz-dev libfribidi-dev
 
-      # Install Miniconda
-      - uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-update-conda: true
-          python-version: 3.9
-          miniconda-version: "latest"
+      # Install system dependencies for macOS
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install libomp
 
-      # Query R dependencies
-      - name: Query R dependencies
-        run: |
-          install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
-
-      # Cache R packages
-      - name: Cache R packages
-        if: runner.os != 'Windows'
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
-
-      # Install R dependencies
+      # Install R dependencies including glmnet
       - name: Install R dependencies
         run: |
+          install.packages(c("remotes", "glmnet"))
           remotes::install_deps(dependencies = TRUE)
-          install.packages("glmnet")
-          remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
-
-      # Fix Conda permissions on macOS
-      - name: Fix Conda permissions (macOS)
-        if: runner.os == 'macOS'
-        run: sudo chown -R $UID $CONDA
 
       # Install and test "text" package
       - name: Install and test "text" package
@@ -123,15 +69,8 @@ jobs:
       - name: R CMD check
         env:
           _R_CHECK_CRAN_INCOMING_: false
-          OMP_MAX_ACTIVE_LEVELS: 2
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
-
-      # Display testthat output if there's an error
-      - name: Display testthat output
-        if: always()
-        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
 
       # Session info for debugging
       - name: Session info
@@ -141,7 +80,7 @@ jobs:
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
 
-      # Upload test coverage to Codecov
+      # Upload coverage to Codecov
       - name: Test coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
