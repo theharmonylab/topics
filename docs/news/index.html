@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">topics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.30.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.30.4</span>
       </span>
     </div>
 
@@ -60,6 +60,13 @@
       <small>Source: <a href="https://github.com/theharmonylab/topics/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.30.4" id="topics-0304">topics 0.30.4<a class="anchor" aria-label="anchor" href="#topics-0304"></a></h2>
+<ul><li>scaling controls with scale instead of manually resulting in sligthtly different estimates. (but still same p-value and t-values)</li>
+<li>removed ridge regression, t-test and correlation codes since they did not work</li>
+<li>removed automatic removal of NAs in the topics predictions (this should be handled explicitly).</li>
+<li>topicsTest <code>default</code> to linear_regression if not the variable only contains 0s and 1s; i.e., now different tests can be applied to different axes.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.30.3" id="topics-0303">topics 0.30.3<a class="anchor" aria-label="anchor" href="#topics-0303"></a></h2>
 <ul><li>saving settings in <code>dtm</code> for downstream use in other functions.</li>
