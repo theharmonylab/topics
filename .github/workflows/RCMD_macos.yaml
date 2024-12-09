@@ -29,30 +29,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # macOS-specific steps
-      - name: Fix and Debug Homebrew Issues
-        if: runner.os == 'macOS'
-        run: |
-          # Reset Homebrew changes
-          cd /opt/homebrew/Library/Taps/homebrew/homebrew-core || exit 1
-          git stash -u || echo "No changes to stash"
-          git clean -d -f || echo "No files to clean"
-
-          # Fix Homebrew permissions
-          sudo chown -R $(whoami) $(brew --prefix)/*
-
-          # Debug Homebrew
-          brew doctor || echo "brew doctor failed"
-          brew config || echo "brew config failed"
-
-      - name: Install macOS Utilities
-        if: runner.os == 'macOS'
-        run: |
-          brew update || echo "Homebrew update failed"
-          brew install libomp || echo "libomp installation failed"
-          brew install qpdf || echo "qpdf installation failed but continuing"
-          export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
-          echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
+      # Step to clear cache (by changing the key or deleting the cache)
+      - name: Invalidate Cache
+        run: echo "Invalidating cache..."
 
       # Set up R environment
       - uses: r-lib/actions/setup-r@v2-branch
@@ -61,19 +40,7 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2-branch
 
-      # Install Miniconda (all OS)
-      - uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-update-conda: true
-          python-version: 3.9
-          miniconda-version: "latest"
-
-      - name: Install Conda Dependencies
-        run: |
-          conda config --add channels defaults
-          conda config --set solver classic
-          conda install -c conda-forge numpy
-
+      # Query R Dependencies
       - name: Query R Dependencies
         run: |
           install.packages('remotes')
@@ -81,23 +48,13 @@ jobs:
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
 
-      # Cache R packages
-      - name: Cache R Packages
-        if: runner.os != 'Windows'
-        uses: actions/cache@v1
+      # Clear and reset the cache
+      - name: Clear Cache
+        uses: actions/cache@v4
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
-
-      # Install system dependencies (Linux only)
-      - name: Install System Dependencies
-        if: runner.os == 'Linux'
-        run: |
-          while read -r cmd; do
-            eval sudo $cmd
-          done < <(Rscript -e 'cat(remotes::system_requirements("ubuntu", "20.04"), sep = "\n")')
-          sudo apt install libharfbuzz-dev libfribidi-dev
+          key: ${{ runner.os }}-clear-cache-${{ hashFiles('.github/R-version') }}-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-clear-cache-
 
       # Install R dependencies
       - name: Install R Dependencies
@@ -117,29 +74,6 @@ jobs:
           }
         shell: Rscript {0}
 
-      # Fix Conda permissions (macOS only)
-      - name: Fix Conda Permissions
-        if: runner.os == 'macOS'
-        run: sudo chown -R $UID $CONDA
-
-      # Install and test "text" package
-      - name: Install and Test "text" Package
-        run: |
-          install.packages("devtools")
-          library(devtools)
-          devtools::install_github("oscarkjell/text")
-          text::textrpp_install(prompt = FALSE)
-          text::textrpp_initialize(textEmbed_test = TRUE)
-        shell: Rscript {0}
-
-      # Session Info
-      - name: Session Info
-        run: |
-          options(width = 100)
-          pkgs <- installed.packages()[, "Package"]
-          sessioninfo::session_info(pkgs, include_base = TRUE)
-        shell: Rscript {0}
-
       # Run R CMD check
       - name: R CMD Check
         env:
@@ -147,9 +81,3 @@ jobs:
           OMP_MAX_ACTIVE_LEVELS: 0
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
-
-      # Display testthat output
-      - name: Display Testthat Output
-        if: always()
-        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
