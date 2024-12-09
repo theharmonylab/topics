@@ -5,12 +5,13 @@
 
 # topics 0.30.5
 - plots are not added as a list (and not only saved to the folder)
+- added `scatter_show_axis_values` to the topcisPlot()
 
 # topics 0.30.4
-- scaling controls with scale instead of manually resulting in sligthtly different estimates. (but still same p-value and t-values)
+- scaling controls with scale instead of manually resulting in slightly different estimates. (but still same p-value and t-values)
 - removed ridge regression, t-test and correlation codes since they did not work
 - removed automatic removal of NAs in the topics predictions (this should be handled explicitly).
-- topicsTest `default` to linear_regression if not the variable only contains 0s and 1s; i.e., now different tests can be applied to different axes. 
+- topicsTest() `default` to linear_regression if not the variable only contains 0s and 1s; i.e., now different tests can be applied to different axes. 
 
 # topics 0.30.3
 - saving settings in `dtm` for downstream use in other functions.

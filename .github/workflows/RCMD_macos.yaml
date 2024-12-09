@@ -30,10 +30,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Clear R package cache explicitly
-      - name: Clear R package cache
-        run: rm -rf ${{ env.R_LIBS_USER }}
-
       # Set up R environment
       - uses: r-lib/actions/setup-r@v2-branch
         with:
@@ -49,7 +45,24 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install libomp
 
-      # Install R dependencies including glmnet
+      # Install Miniconda for Linux and Windows
+      - name: Install Miniconda (Linux and Windows)
+        if: runner.os != 'macOS'
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: 3.9
+          miniconda-version: "latest"
+
+      # Install Miniforge for macOS
+      - name: Install Miniforge (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          curl -L -O https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh
+          bash Miniforge3-MacOSX-arm64.sh -b -p $HOME/miniforge
+          echo "$HOME/miniforge/bin" >> $GITHUB_PATH
+
+      # Install R dependencies
       - name: Install R dependencies
         run: |
           install.packages(c("remotes", "glmnet"))
@@ -79,17 +92,3 @@ jobs:
           pkgs <- installed.packages()[, "Package"]
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
-
-      # Upload coverage to Codecov
-      - name: Test coverage
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: covr::codecov(token = Sys.getenv("CODECOV_TOKEN"))
-        shell: Rscript {0}
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: ${{ matrix.config.os }}
-          verbose: true

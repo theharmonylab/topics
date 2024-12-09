@@ -9,7 +9,6 @@ topicsPlot(
   ngrams = NULL,
   test = NULL,
   p_alpha = 0.05,
-  p_adjust_method = "none",
   ngrams_max = NULL,
   ngram_select = "frequency",
   color_scheme = "default",
@@ -17,8 +16,8 @@ topicsPlot(
   plot_topics_idx = NULL,
   save_dir,
   figure_format = "svg",
-  width = 10,
-  height = 8,
+  width = 4,
+  height = 3,
   max_size = 10,
   seed = 42,
   scatter_legend_dot_size = 15,
@@ -27,6 +26,7 @@ topicsPlot(
   scatter_legend_method = c("mean"),
   scatter_legend_specified_topics = NULL,
   scatter_legend_topic_n = FALSE,
+  scatter_show_axis_values = TRUE,
   grid_legend_title = "legend_title",
   grid_legend_title_size = 5,
   grid_legend_title_color = "black",
@@ -44,9 +44,6 @@ topicsPlot(
 \item{test}{(list) The test results; if plotting according to dimension(s) include the object from topicsTest() function.}
 
 \item{p_alpha}{(integer) The p-value threshold to use for significance testing.}
-
-\item{p_adjust_method}{(character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
-see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").}
 
 \item{ngrams_max}{(integer) The max number of n-grams to include.}
 
@@ -131,6 +128,8 @@ For example c("t_1", "t_2"). If set, scatter_legend_method will have no effect.}
 
 \item{scatter_legend_topic_n}{(boolean) Allow showing the topic number or not in the scatter legend}
 
+\item{scatter_show_axis_values}{(boolean) Show the estiamte values on the distribution plot axes.}
+
 \item{grid_legend_title}{The title of grid topic plot.}
 
 \item{grid_legend_title_size}{The size of the title of the plot.}
@@ -146,7 +145,8 @@ For example c("t_1", "t_2"). If set, scatter_legend_method will have no effect.}
 \item{grid_legend_number_size}{The color in the text in the legend.}
 }
 \value{
-The function saves figures in the save_dir.
+The function provide a list of plots (if ther are any significant plots) as well as 
+saves them in the save_dir.
 }
 \description{
 This function create word clouds and topic fugures

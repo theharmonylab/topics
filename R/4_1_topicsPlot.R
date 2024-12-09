@@ -11,6 +11,7 @@
 #' @param way_popout_topics The method for selecting pop-out topics. Options: "mean", "max_y", or "max_x". Default: "mean".
 #' @param user_spec_topics A vector of user-specified topics to highlight in the scatter plot. Default: NULL.
 #' @param allow_topic_num_legend Logical; if TRUE, displays topic numbers in the legend. Default: FALSE.
+#' @param scatter_show_axis_values Show values on the axises. 
 #' @param y_axes_1 Specifies axis alignment for the scatter legend. Options: 1 (x-axis) or 2 (y-axis). Default: 2.
 #' @param cor_var A string used for naming the correlation variable in labels or file names. Default: "".
 #' @param label_x_name Label for the x-axis in the scatter plot. Default: "x".
@@ -33,6 +34,7 @@ topicsScatterLegendNew <- function(
     way_popout_topics = "mean", 
     user_spec_topics = NULL, 
     allow_topic_num_legend = FALSE,
+    scatter_show_axis_values = TRUE,
     y_axes_1 = 2, 
     cor_var = "", 
     label_x_name = "x", 
@@ -102,7 +104,8 @@ topicsScatterLegendNew <- function(
     color_col = color_column, 
     popout_size = scatter_popout_dot_size, 
     bg_size = scatter_bg_dot_size, 
-    allow_topic_num_legend = allow_topic_num_legend
+    allow_topic_num_legend = allow_topic_num_legend, 
+    scatter_show_axis_values = scatter_show_axis_values
   )
   
   # Save the plot
@@ -234,6 +237,7 @@ determine_popout_topics <- function(
 #' @param popout_size The size of the dots for pop-out points in the scatter plot.
 #' @param bg_size The size of the dots for background points in the scatter plot.
 #' @param allow_topic_num_legend Logical; if TRUE, adds topic numbers as text labels to the pop-out points. Default: FALSE.
+#' @param scatter_show_axis_values Show the values on the axises. 
 #' @noRd
 generate_scatter_plot <- function(
     popout,
@@ -246,7 +250,8 @@ generate_scatter_plot <- function(
     color_col, 
     popout_size, 
     bg_size, 
-    allow_topic_num_legend
+    allow_topic_num_legend, 
+    scatter_show_axis_values
 ) {
   
   # Define aesthetics for popout and background points
@@ -305,15 +310,18 @@ generate_scatter_plot <- function(
   plot <- plot +
     ggplot2::geom_point(data = popout, 
                         popout_aes, 
-                        size = popout_size, alpha = 0.8) +
+                        size = popout_size, 
+                        alpha = 0.8) +
     ggplot2::scale_color_manual(values = bivariate_color_codes) +
     ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
     ggplot2::theme_minimal() +
     ggplot2::theme(
-      axis.text = ggplot2::element_blank(),
-      axis.ticks = ggplot2::element_blank(),
+      axis.text = if (scatter_show_axis_values) ggplot2::element_text(size = 12) else ggplot2::element_blank(),
+      axis.ticks = if (scatter_show_axis_values) ggplot2::element_line() else ggplot2::element_blank(),
       legend.position = "none"
     )
+  
+  
   # Add topic numbers if enabled
   if (allow_topic_num_legend) {
     plot <- plot + geom_text(
@@ -844,6 +852,7 @@ colour_settings <- function(
 #' @param scatter_legend_specified_topics (vector) Specify which topic(s) to be emphasised in the scatter legend. 
 #' For example c("t_1", "t_2"). If set, scatter_legend_method will have no effect.
 #' @param scatter_legend_topic_n (boolean) Allow showing the topic number or not in the scatter legend
+#' @param scatter_show_axis_values (boolean) Show the estiamte values on the distribution plot axes.
 #' @param grid_legend_title The title of grid topic plot.
 #' @param grid_legend_title_size The size of the title of the plot.
 #' @param grid_legend_title_color The color of the legend title.
@@ -880,6 +889,7 @@ topicsPlot <- function(
     scatter_legend_method = c("mean"),
     scatter_legend_specified_topics = NULL,
     scatter_legend_topic_n = FALSE,
+    scatter_show_axis_values = TRUE,
     grid_legend_title = "legend_title",
     grid_legend_title_size = 5,
     grid_legend_title_color = 'black',
@@ -1021,6 +1031,7 @@ topicsPlot <- function(
       allow_topic_num_legend = scatter_legend_topic_n,
       scatter_popout_dot_size = scatter_legend_dot_size,
       scatter_bg_dot_size = scatter_legend_bg_dot_size,
+      scatter_show_axis_values = scatter_show_axis_values,
       save_dir = save_dir,
       figure_format = figure_format,
       # width = 10, 
