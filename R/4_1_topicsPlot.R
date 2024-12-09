@@ -47,8 +47,8 @@ topicsScatterLegendNew <- function(
 ) {
   
   # Determine x, y, and color columns
-  x_column <- names(filtered_test)[3]
-  y_column <- if (y_axes_1 == 2) names(filtered_test)[7] else NULL
+  x_column <- names(filtered_test)[4]
+  y_column <- if (y_axes_1 == 2) names(filtered_test)[8] else NULL
   color_column <- names(filtered_test)[ncol(filtered_test)]
   
   # Check for only significant or non-significant topics
@@ -303,7 +303,9 @@ generate_scatter_plot <- function(
   
   # Add popout points
   plot <- plot +
-    ggplot2::geom_point(data = popout, popout_aes, size = popout_size, alpha = 0.8) +
+    ggplot2::geom_point(data = popout, 
+                        popout_aes, 
+                        size = popout_size, alpha = 0.8) +
     ggplot2::scale_color_manual(values = bivariate_color_codes) +
     ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
     ggplot2::theme_minimal() +
