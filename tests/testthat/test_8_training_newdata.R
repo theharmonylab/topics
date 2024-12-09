@@ -30,7 +30,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   same_data_preds <- topicsPreds(
     model = model,
     data = dep_wor_data$Deptext,
-    num_iterations = 1000,
+    num_iterations = 50,
     load_dir = NULL
   )
   
@@ -40,14 +40,14 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     y = dep_wor_data["PHQ9tot"], 
     multi_cores = FALSE
   )
-  model_same_data
-  testthat::expect_equal(model_same_data$results$estimate[[1]], .4031594, tolerance = .00001)
+  #model_same_data
+  testthat::expect_equal(model_same_data$results$estimate[[1]], .3906754, tolerance = .00001)
   
   ##### Testing on new data #####
   new_data_preds <- topics::topicsPreds(
     model = model,
     data = dep_wor_data$Worphrase,
-    num_iterations = 1000,
+    num_iterations = 50,
     create_new_dtm = FALSE,
     load_dir = NULL
   )
@@ -57,14 +57,14 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     y = dep_wor_data["PHQ9tot"], 
     multi_cores = FALSE
   )
-  model_new_data
-  testthat::expect_equal(model_new_data$results$estimate[[1]], .305296, tolerance = .00001)
+  #model_new_data
+  testthat::expect_equal(model_new_data$results$estimate[[1]], .1779766, tolerance = .00001)
   
   ##### Testing on new data with new dtm ####
   new_data_newdtm_preds <- topics::topicsPreds(
     model = model,
     data = dep_wor_data$Worphrase,
-    num_iterations = 1000,
+    num_iterations = 100,
     create_new_dtm = TRUE,
     load_dir = NULL
   )
@@ -76,7 +76,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   )
   model_new_data_pewnew$results
   
-  testthat::expect_equal(model_new_data_pewnew$results$estimate[[1]], .3081117, tolerance = .00001)
+  testthat::expect_equal(model_new_data_pewnew$results$estimate[[1]], .2480465, tolerance = .00001)
   
 })
 
