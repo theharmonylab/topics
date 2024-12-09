@@ -1,8 +1,10 @@
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - 'main'
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - 'main'
 
 name: R-CMD-check
 
@@ -18,62 +20,137 @@ jobs:
         config:
           - {os: macOS-latest, r: 'release'}
           - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-latest, r: 'release'}
+          - {os: ubuntu-20.04, r: 'release'}
 
     env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_ACTIONS: true
-      NUM_CORES: 2
+      CODECOV_DEBUG: true
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v2
 
-      # Set up R environment
-      - name: Set up R
-        uses: r-lib/actions/setup-r@v2
-        with:
-          r-version: ${{ matrix.config.r }}
+      # Clear R package cache to avoid corrupted packages
+      - name: Clear R package cache
+        run: rm -rf ${{ env.R_LIBS_USER }}
 
-      - name: Set up Pandoc
-        uses: r-lib/actions/setup-pandoc@v2
+      # macOS-specific steps to fix Homebrew issues
+      - name: Fix Homebrew Issues
+        if: runner.os == 'macOS'
+        run: |
+          if [ -d "/opt/homebrew/Library/Taps/homebrew/homebrew-core" ]; then
+              cd /opt/homebrew/Library/Taps/homebrew/homebrew-core
+              git stash -u || echo "No changes to stash"
+              git clean -d -f || echo "No files to clean"
+          fi
+          brew uninstall openssl@1.1 ruby@3.0 || echo "Deprecated formulae not found"
+          brew install openssl@3 ruby || echo "Failed to install replacements"
+          brew doctor || echo "brew doctor warnings"
+          brew config || echo "brew config warnings"
+          brew update || echo "Failed to update Homebrew"
+          brew install libomp qpdf || echo "Failed to install utilities"
+          export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
+          echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
 
-      # Install system dependencies on Linux
+      # Install system dependencies for Linux
       - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libxml2-dev libssl-dev libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
+          sudo apt-get install -y libomp-dev libharfbuzz-dev libfribidi-dev
+
+      # Install system dependencies for macOS
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install libomp
+
+      # Set up R environment
+      - uses: r-lib/actions/setup-r@v2-branch
+        with:
+          r-version: ${{ matrix.config.r }}
+
+      - uses: r-lib/actions/setup-pandoc@v2-branch
+
+      # Install Miniconda
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: 3.9
+          miniconda-version: "latest"
+
+      # Query R dependencies
+      - name: Query R dependencies
+        run: |
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
+        shell: Rscript {0}
+
+      # Cache R packages
+      - name: Cache R packages
+        if: runner.os != 'Windows'
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
       # Install R dependencies
       - name: Install R dependencies
         run: |
-          install.packages(c("remotes", "glmnet", "mallet", "rJava"))
           remotes::install_deps(dependencies = TRUE)
+          install.packages("glmnet")
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
-      # Verify glmnet installation
-      - name: Verify glmnet Installation
+      # Fix Conda permissions on macOS
+      - name: Fix Conda permissions (macOS)
+        if: runner.os == 'macOS'
+        run: sudo chown -R $UID $CONDA
+
+      # Install and test "text" package
+      - name: Install and test "text" package
         run: |
-          if (!requireNamespace("glmnet", quietly = TRUE)) {
-            stop("glmnet is not installed")
-          } else {
-            message("glmnet is installed successfully")
-          }
+          install.packages("devtools")
+          devtools::install_github("oscarkjell/text")
+          text::textrpp_install(prompt = FALSE)
+          text::textrpp_initialize(textEmbed_test = TRUE)
         shell: Rscript {0}
 
       # Run R CMD check
-      - name: R CMD Check
+      - name: R CMD check
         env:
           _R_CHECK_CRAN_INCOMING_: false
-        run: |
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--no-build-vignettes", "--as-cran"), error_on = "warning", check_dir = "check")
+          OMP_MAX_ACTIVE_LEVELS: 2
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
-      # Display testthat output for debugging
-      - name: Display Testthat Output
+      # Display testthat output if there's an error
+      - name: Display testthat output
         if: always()
         run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
         shell: bash
+
+      # Session info for debugging
+      - name: Session info
+        run: |
+          options(width = 100)
+          pkgs <- installed.packages()[, "Package"]
+          sessioninfo::session_info(pkgs, include_base = TRUE)
+        shell: Rscript {0}
+
+      # Upload test coverage to Codecov
+      - name: Test coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: covr::codecov(token = Sys.getenv("CODECOV_TOKEN"))
+        shell: Rscript {0}
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: ${{ matrix.config.os }}
+          verbose: true
