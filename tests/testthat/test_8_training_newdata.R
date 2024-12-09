@@ -8,7 +8,8 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   
   testthat::skip_on_cran()
   
-
+  options(mc.cores = 1)
+  
   dtm <- topics::topicsDtm(
     data = dep_wor_data$Deptext, 
     removal_mode = "frequency",

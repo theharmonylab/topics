@@ -131,6 +131,7 @@ create_plots <- function(
     max_size = 10,
     seed = 42){
   
+  plot_list <- list()
   # this code plots the wordclouds in respect to the statistical test
   # For test, topics list and summary
   if(!is.null(test) & !is.null(df_list) & !is.null(summary)){
@@ -138,13 +139,14 @@ create_plots <- function(
     if (is.null(plot_topics_idx)){
       grid1 <- ""
       plot_topics_idx <- seq(1, length(df_list))
-    }else{
+    } else {
       grid1 <- paste0("grid_pos_", grid_pos, "_")
       pred_var_x <- strsplit(cor_var, "__")[[1]][1]
       if (length(strsplit(cor_var, "__")[[1]]) > 1){
         pred_var_y <- strsplit(cor_var, "__")[[1]][2]
       }
     }
+    
     for (i in paste0('t_', plot_topics_idx)){ 
       #for (i in 1:length(df_list)){
       #view(df_list[[i]])
@@ -156,7 +158,7 @@ create_plots <- function(
           p_adjusted_col <- colnames(test)[colNo.p_adjusted]
           #estimate_col <- paste0(cor_var,".estimate") # grep(partial_name, data_frame_names, value = TRUE)
           #p_adjusted_col <- paste0(cor_var,".p_adjusted")
-        }else{
+        } else {
           colNo.estimate.x <- grep(paste0(pred_var_x, '.estimate'),colnames(test))
           colNo.p_adjusted.x <- grep(paste0(pred_var_x, '.p_adjusted'),colnames(test))
           estimate_col_x <- colnames(test)[colNo.estimate.x] 
@@ -238,11 +240,13 @@ create_plots <- function(
             color_scheme + 
             ggplot2::labs(x = paste0("r = ", estimate),
                           y= y)
-        }else{
+        } else {
+          
           if (length(strsplit(cor_var, "__")[[1]]) > 1){
             x_message = paste0("r_x = ", round(estimate_x,4), "\n",
                                "r_y = ", round(estimate_y,4))
-          }else{
+          } else {
+            
             x_message = paste0("r_x = ", round(estimate_x,4))                    
           }
           plot <- ggplot2::ggplot(df_list[[as.numeric(sub(".*_", "", i))]], 
@@ -260,6 +264,7 @@ create_plots <- function(
         
         
         if (!dir.exists(save_dir)) {
+          
           # Create the directory
           dir.create(save_dir)
           msg <- "Directory created successfully.\n"
@@ -284,7 +289,7 @@ create_plots <- function(
                           height = height, 
                           units = "in", 
                           create.dir = TRUE)
-        }else{
+        } else {
           if (length(strsplit(cor_var, "__")[[1]]) > 1){
             p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
             p_adjusted_y <- sprintf("%.2e", p_adjusted_y)
@@ -295,7 +300,8 @@ create_plots <- function(
               "_py_", p_adjusted_y, ".",
               figure_format
             )
-          }else{
+          } else {
+            
             p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
             fileMsg <- paste0(
               "_rx_", estimate_x, 
@@ -303,7 +309,7 @@ create_plots <- function(
               figure_format
             )
           }
-          if (is.null(popout)){fileHead <- ''}else{
+          if (is.null(popout)){fileHead <- ''} else {
               if (i %in% popout$topic){fileHead <- '0_scatter_emphasised_'}else{fileHead <- ''}
           }
           
@@ -320,6 +326,7 @@ create_plots <- function(
                           create.dir = TRUE)
         }
       }
+      plot_list[[i]] <- plot
     }
   }
   
@@ -355,7 +362,6 @@ create_plots <- function(
         ggplot2::scale_size_area(max_size = max_size) +
         ggplot2::theme_minimal() +
         color_negative_cor
-              #ggplot2::scale_color_gradient(low = "purple", high = "blue") # These colour does not work
     
       ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
                              "/wordclouds/",
@@ -367,6 +373,7 @@ create_plots <- function(
                       height = height, 
                       units = "in", 
                       create.dir = TRUE)
+      plot_list[[i]] <- plot
     }
   }
   
@@ -397,7 +404,8 @@ create_plots <- function(
                       width = width, 
                       height = height, 
                       units = "in", 
-                      create.dir = TRUE) 
+                      create.dir = TRUE)
+      plot_list <- plot
     } 
   
   # For N-gram with test  
@@ -427,7 +435,9 @@ create_plots <- function(
             dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
           }
           # Word cloud with correlation strength mapped to color gradient
-          plot <- ggplot2::ggplot(test_positive, ggplot2::aes(label = top_terms, size = estimate, color = prop)) +
+          plot1 <- ggplot2::ggplot(test_positive, ggplot2::aes(label = top_terms, 
+                                                              size = estimate, 
+                                                              color = prop)) +
             ggwordcloud::geom_text_wordcloud() +
             ggplot2::scale_size_area(max_size = max_size) +  # Adjust max size
             #scale_color_gradient(low = "grey", high = "red") +  # Blue for low, red for high correlation strength
@@ -438,13 +448,15 @@ create_plots <- function(
                                  "/wordclouds/ngrams_positive", 
                                  ".",
                                  figure_format),
-                          plot = plot, 
+                          plot = plot1, 
                           width = width, 
                           height = height, 
                           units = "in", 
                           create.dir = TRUE) 
           # Word cloud with correlation strength mapped to color gradient
-          plot <- ggplot2::ggplot(test_negative, ggplot2::aes(label = top_terms, size = estimate, color = prop)) +
+          plot2 <- ggplot2::ggplot(test_negative, ggplot2::aes(label = top_terms, 
+                                                              size = estimate, 
+                                                              color = prop)) +
             ggwordcloud::geom_text_wordcloud() +
             ggplot2::scale_size_area(max_size = max_size) +  # Adjust max size
             #scale_color_gradient(low = "grey", high = "red") +  # Blue for low, red for high correlation strength
@@ -455,14 +467,20 @@ create_plots <- function(
                                  "/wordclouds/ngrams_negative", 
                                  ".",
                                  figure_format),
-                          plot = plot, 
+                          plot = plot2, 
                           width = width, 
                           height = height, 
                           units = "in", 
                           create.dir = TRUE) 
+          plot_list[[1]] <- plot1
+          plot_list[[2]] <- plot2
+          names(plot_list) <- c("positive", "negative")
         }
-    }
+  }
+  return(plot_list)
+  
 }
+
 
 
 

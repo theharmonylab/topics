@@ -601,7 +601,7 @@ topicsPlot1 <- function(
     test = test$test
   }
   
-  create_plots(
+  plot <- create_plots(
     df_list = df_list, 
     summary = summary,
     ngrams = ngrams$ngrams,
@@ -621,6 +621,8 @@ topicsPlot1 <- function(
     height = height,
     max_size = max_size,
     seed = seed)
+  
+  return(plot)
   
 }
 
@@ -762,8 +764,8 @@ colour_settings <- function(
 #' @param ngrams (list) The output from the the topicsGram() function . Should be NULL if plotting topics.
 #' @param test (list) The test results; if plotting according to dimension(s) include the object from topicsTest() function. 
 #' @param p_alpha (integer) The p-value threshold to use for significance testing.
-#' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
-#' see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").
+# @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
+# see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").
 #' @param ngrams_max (integer) The max number of n-grams to include.
 #' @param ngram_select (character) Method to select ngrams_max including "pmi", "frequency", "proportion", and "correlation". 
 #' @param color_scheme (string 'default' or vector) The color scheme.
@@ -839,7 +841,8 @@ colour_settings <- function(
 #' @param grid_legend_y_axes_label The label of the y axes.
 #' @param grid_legend_number_color The color in the text in the legend.
 #' @param grid_legend_number_size The color in the text in the legend.
-#' @return The function saves figures in the save_dir.
+#' @return The function provide a list of plots (if ther are any significant plots) as well as 
+#' saves them in the save_dir.
 #' @importFrom dplyr filter
 #' @importFrom ggplot2 scale_color_gradient
 #' @importFrom tibble as_tibble
@@ -849,7 +852,7 @@ topicsPlot <- function(
     ngrams = NULL,
     test = NULL,
     p_alpha = 0.05,
-    p_adjust_method = "none",
+   # p_adjust_method = "none",
     ngrams_max = NULL,
     ngram_select = "frequency",
     color_scheme = "default",
@@ -857,8 +860,8 @@ topicsPlot <- function(
     plot_topics_idx = NULL,
     save_dir,
     figure_format = "svg",
-    width = 10, 
-    height = 8,
+    width = 4, 
+    height = 3,
     max_size = 10, 
     seed = 42,
     scatter_legend_dot_size = 15,
@@ -968,7 +971,8 @@ topicsPlot <- function(
      !is.null(ngrams) && !is.null(test)|
      !is.null(ngrams) && is.null(test)){
     
-    topicsPlot1(
+    
+    plot_list <- topicsPlot1(
       model = model,
       ngrams = ngrams,
       test = test,
@@ -1021,6 +1025,7 @@ topicsPlot <- function(
     
     if (dim == 1){
       #i=1
+      plot_list <- list()
       for (i in 1:3){
         if (! (i %in% test$test$color_categories)){next}
         
@@ -1033,12 +1038,14 @@ topicsPlot <- function(
         
         plot_topics_idx <- as.numeric(sub(".*_", "", filtered_test[["test"]]$topic))
         
-        topicsPlot1(
+        plot <- topicsPlot1(
           model = model,
           test = filtered_test,
           popout = popout,
-          color_negative_cor = ggplot2::scale_color_gradient(low = color_b, high = color_f),
-          color_positive_cor = ggplot2::scale_color_gradient(low = color_b, high = color_f),
+          color_negative_cor = ggplot2::scale_color_gradient(
+            low = color_b, high = color_f),
+          color_positive_cor = ggplot2::scale_color_gradient(
+            low = color_b, high = color_f),
           grid_pos = i,
           scale_size = scale_size,
           plot_topics_idx = plot_topics_idx,
@@ -1050,11 +1057,12 @@ topicsPlot <- function(
           max_size = max_size, 
           seed = seed
         )
+        plot_list[[i]] <- plot
       }
     }
     
     if (dim == 2){
-      
+      plot_list <- list()
       for (k in 1:9){
         if (! (k %in% test$test$color_categories)){next}
         filtered_test <- test
@@ -1066,7 +1074,7 @@ topicsPlot <- function(
         
         plot_topics_idx <- as.numeric(sub(".*_", "", filtered_test[["test"]]$topic))
         
-        topicsPlot1(
+        plot <- topicsPlot1(
           model = model,
           test = filtered_test,
           popout = popout,
@@ -1083,6 +1091,7 @@ topicsPlot <- function(
           max_size = max_size, 
           seed = seed
         )
+        plot_list[[k]] <- plot
       }
     }
     
@@ -1093,8 +1102,6 @@ topicsPlot <- function(
       save_dir = save_dir,
       figure_format = figure_format,
       seed = seed,
-      # width = 10, 
-      # height = 8,
       y_axes_1 = dim,
       legend_title = grid_legend_title,
       legend_title_size = grid_legend_title_size,
@@ -1108,6 +1115,6 @@ topicsPlot <- function(
     msg <- "The grid plot legends are saved in the save_dir."
     message(colourise(msg, "green"))
   }
-  
+  return(plot_list)
 }
 

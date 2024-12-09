@@ -15,7 +15,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     n = 3, 
     pmi_threshold = 6)
   
-  topics::topicsPlot(
+  plots1 <- topics::topicsPlot(
     ngrams = ngrams, 
     figure_format = "png", 
     save_dir = save_dir_temp)
@@ -39,7 +39,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     save_dir = save_dir_temp)
   
   #help(topicsPlot)
-  topics::topicsPlot(
+  plot2 <- topics::topicsPlot(
     ngrams = ngrams, 
     test = test,
     figure_format = "png", 
@@ -69,12 +69,7 @@ test_that("topicsPlot WITHOUT test and preds", {
     dtm = dtm, 
     save_dir = save_dir_temp)
   
-  # names(model)
-  # cor.test(model$coherence, model$summary$coherence)
-  # cor.test(model$prevalence, model$summary$prevalence)
-  
-  colnames(model$summary)
-  #help(topicsPlot)
+  help(topicsPlot)
   topics::topicsPlot(
     model = model,
     plot_topics_idx = c(1,3),
@@ -112,13 +107,13 @@ test_that("topicsPlot WITH test", {
     save_dir = save_dir_temp)
   
   test1 <- topics::topicsTest(
-    model= model,
+    model = model,
     preds = preds,
     data = dep_wor_data,
     x_variable = "Age", 
     save_dir = save_dir_temp)
 
-  topics::topicsPlot(
+  plots3 <- topics::topicsPlot(
     model = model, 
     test = test1, 
     p_alpha = 1,
@@ -133,7 +128,7 @@ test_that("topicsPlot WITH test", {
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_11/wordclouds/grid_legend_corvar_Age.png")))
   
-
+  
   ## 2-Dimension  
   
   test2 <- topics::topicsTest(
@@ -145,7 +140,7 @@ test_that("topicsPlot WITH test", {
     save_dir = save_dir_temp
     )
   
-  topics::topicsPlot(
+  plot4 <- topics::topicsPlot(
     model = model, 
     test = test2, 
     p_alpha = 1, 
@@ -208,14 +203,14 @@ test_that("topicsPlot WITH underscores in names", {
     y_variable = "Age",
     save_dir = save_dir_temp)
   
-  topics::topicsPlot(
+  plot5 <- topics::topicsPlot(
     model = model, 
     test = test1, 
     p_alpha = 1,
     figure_format = "png",
     seed = 11, 
     save_dir = save_dir_temp)
-  
+  plot5
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_11/wordclouds/dot_legend_corvar_Age_test__Age.png")))
@@ -235,7 +230,7 @@ test_that("topicsPlot WITH underscores in names", {
     save_dir = save_dir_temp
   )
   
-  topics::topicsPlot(
+  plot6 <- topics::topicsPlot(
     model = model, 
     test = test2, 
     p_alpha = 1, 
