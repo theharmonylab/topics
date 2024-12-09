@@ -37,7 +37,8 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   colnames(same_data_preds) <- paste0("Dim", 1:20, "_", colnames(same_data_preds)) 
   model_same_data <- textTrainRegression(
     x = same_data_preds, 
-    y = dep_wor_data["PHQ9tot"]
+    y = dep_wor_data["PHQ9tot"], 
+    multi_cores = FALSE
   )
   model_same_data
   testthat::expect_equal(model_same_data$results$estimate[[1]], .4031594, tolerance = .00001)
@@ -53,7 +54,8 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   colnames(new_data_preds) <- paste0("Dim", 1:20, "_", colnames(new_data_preds)) 
   model_new_data <- textTrainRegression(
     x = new_data_preds, 
-    y = dep_wor_data["PHQ9tot"]
+    y = dep_wor_data["PHQ9tot"], 
+    multi_cores = FALSE
   )
   model_new_data
   testthat::expect_equal(model_new_data$results$estimate[[1]], .305296, tolerance = .00001)
@@ -69,7 +71,8 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   colnames(new_data_newdtm_preds) <- paste0("Dim", 1:20, "_", colnames(new_data_newdtm_preds)) 
   model_new_data_pewnew <- textTrainRegression(
     x = new_data_newdtm_preds, 
-    y = dep_wor_data["PHQ9tot"]
+    y = dep_wor_data["PHQ9tot"], 
+    multi_cores = FALSE
   )
   model_new_data_pewnew$results
   

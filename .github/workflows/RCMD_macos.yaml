@@ -47,7 +47,7 @@ jobs:
       # Install R dependencies
       - name: Install R dependencies
         run: |
-          install.packages(c("remotes", "glmnet"))
+          install.packages(c("remotes", "glmnet", "mallet", "rJava"))
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
