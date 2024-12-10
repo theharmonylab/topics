@@ -10,8 +10,7 @@ topicsModel(
   num_top_words = 10,
   num_iterations = 1000,
   seed = 42,
-  save_dir = NULL,
-  load_dir = NULL
+  save_dir = NULL
 )
 }
 \arguments{
@@ -26,8 +25,6 @@ topicsModel(
 \item{seed}{(integer) The seed to set for reproducibility}
 
 \item{save_dir}{(string) The directory to save the model, if NULL, the model will not be saved}
-
-\item{load_dir}{(string) The directory to load the model from, if NULL, the model will not be loaded}
 }
 \value{
 A list of the model, the top terms, the labels, the coherence (experimental), and the prevalence.
@@ -48,12 +45,6 @@ dtm = dtm, # output of topicsDtm()
 num_topics = 20,
 num_top_words = 10,
 num_iterations = 1000,
-seed = 42,
-save_dir = save_dir_temp)
-                   
-# Load precomputed LDA Topic Model
-model <- topicsModel(
-load_dir = save_dir_temp,
 seed = 42,
 save_dir = save_dir_temp)
 }

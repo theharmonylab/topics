@@ -244,7 +244,7 @@ get_mallet_model <- function(
 #' @param num_iterations (integer) The number of iterations to run the model
 #' @param seed (integer) The seed to set for reproducibility
 #' @param save_dir (string) The directory to save the model, if NULL, the model will not be saved
-#' @param load_dir (string) The directory to load the model from, if NULL, the model will not be loaded
+# @param load_dir (string) The directory to load the model from, if NULL, the model will not be loaded
 #' @return A list of the model, the top terms, the labels, the coherence (experimental), and the prevalence.
 #' @examples
 #' \donttest{
@@ -261,12 +261,6 @@ get_mallet_model <- function(
 #' num_iterations = 1000,
 #' seed = 42,
 #' save_dir = save_dir_temp)
-#'                    
-#' # Load precomputed LDA Topic Model
-#' model <- topicsModel(
-#' load_dir = save_dir_temp,
-#' seed = 42,
-#' save_dir = save_dir_temp)
 #' }
 #' @export
 topicsModel <- function(
@@ -275,49 +269,37 @@ topicsModel <- function(
     num_top_words = 10,
     num_iterations = 1000,
     seed = 42,
-    save_dir = NULL,
-    load_dir = NULL){
+    save_dir = NULL){
   
+  set.seed(seed)
   dtm_settings <- dtm$settings
+  dtm <- dtm$train_dtm
   
-  if (!is.null(load_dir)){
-    model <- readRDS(paste0(load_dir, 
-                            "/seed_",
-                            seed, 
-                            "/model.rds"))
-  } else {
-    
-    dtm <- dtm$train_dtm
-    
-    if (length(Matrix::colSums(dtm)) == 0) {
-      msg <- "The document term matrix is empty. Please provide a valid document term matrix."
-      message(colourise(msg, "brown"))
-      return(NULL)
-    }
-    
-    set.seed(seed)
-    
-    model <- get_mallet_model(
-      dtm = dtm,
-      num_topics = num_topics,
-      num_top_words = num_top_words,
-      num_iterations = num_iterations, 
-      seed = seed)
-    
-    model$dtm_settings <- dtm_settings
-    
-    model$summary <- data.frame(
-      topic = rownames(model$labels),
-      label = model$labels,
-      coherence = round(model$coherence, 3),
-      prevalence = round(model$prevalence,3),
-      top_terms = apply(model$top_terms,
-                        2, 
-                        function(x){paste(x, collapse = ", ")}),
-      stringsAsFactors = FALSE)
-    model$summary[order(model$summary$prevalence, decreasing = TRUE) , ][ 1:10 , ]
-    
+  if (length(Matrix::colSums(dtm)) == 0) {
+    msg <- "The document term matrix is empty. Please provide a valid document term matrix."
+    message(colourise(msg, "brown"))
+    return(NULL)
   }
+  
+  model <- get_mallet_model(
+    dtm = dtm,
+    num_topics = num_topics,
+    num_top_words = num_top_words,
+    num_iterations = num_iterations, 
+    seed = seed)
+  
+  model$dtm_settings <- dtm_settings
+  
+  model$summary <- data.frame(
+    topic = rownames(model$labels),
+    label = model$labels,
+    coherence = round(model$coherence, 3),
+    prevalence = round(model$prevalence,3),
+    top_terms = apply(model$top_terms,
+                      2, 
+                      function(x){paste(x, collapse = ", ")}),
+    stringsAsFactors = FALSE)
+  model$summary[order(model$summary$prevalence, decreasing = TRUE) , ][ 1:10 , ]
   
   if (!is.null(save_dir)){
     if (!dir.exists(save_dir)) {
@@ -328,10 +310,12 @@ topicsModel <- function(
       message(
         colourise(msg, "green"))
       
-    } 
+    }
+    
     if(!dir.exists(paste0(save_dir, "/seed_", seed))){
       dir.create(paste0(save_dir, "/seed_", seed))
     }
+    
     msg <- paste0("The Model is saved in", save_dir,"/seed_", seed,"/model.rds")
     message(colourise(msg, "green"))
     saveRDS(model, paste0(save_dir, "/seed_", seed, "/model.rds"))
