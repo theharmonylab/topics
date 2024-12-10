@@ -964,23 +964,23 @@ topicsPlot <- function(
   if (dim == 1) {
     
     # Getting column names
-    bak1 <- colnames(test$test)[c(3,6)]
-    colnames(test$test)[c(3,6)] <- c('x_plotted', 'adjusted_p_values.x')
+    bak1 <- colnames(test$test)[c(5,8)]
+    colnames(test$test)[c(5,8)] <- c('x_plotted', 'adjusted_p_values.x')
     
     # Getting colour-categories
     test$test <- topicsNumAssign_dim2(test$test, p_alpha, 1)
     # Setting the original clumns
-    colnames(test$test)[c(3,6)] <- bak1
+    colnames(test$test)[c(5,8)] <- bak1
     
   }
   if (dim == 2){
     
-    bak1 <- colnames(test$test)[c(3,6,7,10)]
-    colnames(test$test)[c(3,6,7,10)] <- c('x_plotted', 'adjusted_p_values.x',
+    bak1 <- colnames(test$test)[c(5,8,9,12)]
+    colnames(test$test)[c(5,8,9,12)] <- c('x_plotted', 'adjusted_p_values.x',
                                           'y_plotted', 'adjusted_p_values.y')
     
     test$test <- topicsNumAssign_dim2(test$test, p_alpha, 2)
-    colnames(test$test)[c(3,6,7,10)] <- bak1
+    colnames(test$test)[c(5,8,9,12)] <- bak1
   }
   
   
