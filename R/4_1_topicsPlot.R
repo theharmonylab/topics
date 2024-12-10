@@ -863,7 +863,7 @@ colour_settings <- function(
 #' @param grid_legend_number_size The color in the text in the legend.
 #' @return The function provide a list of plots (if ther are any significant plots) as well as 
 #' saves them in the save_dir.
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter arrange desc top_n select
 #' @importFrom ggplot2 scale_color_gradient
 #' @importFrom tibble as_tibble
 #' @export
@@ -992,9 +992,9 @@ topicsPlot <- function(
   if (!is.null(plot_n_most_prevalent_topics)) {
     
     plot_topics_idx <- model$summary %>% 
-      arrange(desc(prevalence)) %>% 
-      top_n(plot_n_most_prevalent_topics, prevalence) %>% 
-      select(topic)
+      dplyr::arrange(dplyr::desc(prevalence)) %>% 
+      dplyr::top_n(plot_n_most_prevalent_topics, prevalence) %>% 
+      dplyr::select(topic)
     
     plot_topics_idx <- plot_topics_idx$topic
 

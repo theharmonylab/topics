@@ -82,6 +82,21 @@ test_that("topicsPlot WITHOUT test and preds", {
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_42/wordclouds/t_3.png")))
   
+  #### Plot most prevalent topics in model ####  
+  
+  plots_prevalence <- topics::topicsPlot(
+    model = model,
+    plot_n_most_prevalent_topics = 5,
+    figure_format = "png", 
+    save_dir = save_dir_temp)
+  
+  testthat::expect_error(topics::topicsPlot(
+    model = model,
+    plot_topics_idx = c("t1"),
+    plot_n_most_prevalent_topics = 5,
+    figure_format = "png", 
+    save_dir = save_dir_temp))
+  
 })
 
 
@@ -99,21 +114,6 @@ test_that("topicsPlot WITH test", {
   model <- topics::topicsModel(
     dtm = dtm, 
     save_dir = save_dir_temp)
-  
-  #### Plot most prevalent topics in model ####  
-  
-  plots_prevalence <- topics::topicsPlot(
-    model = model,
-    plot_n_most_prevalent_topics = 5,
-    figure_format = "png", 
-    save_dir = save_dir_temp)
-  
-  testthat::expect_error(topics::topicsPlot(
-    model = model,
-    plot_topics_idx = c("t1"),
-    plot_n_most_prevalent_topics = 5,
-    figure_format = "png", 
-    save_dir = save_dir_temp))
   
   #### Plots one-dimensional plot ####
   preds <- topics::topicsPreds(
@@ -135,8 +135,10 @@ test_that("topicsPlot WITH test", {
     figure_format = "png",
     seed = 11, 
     save_dir = save_dir_temp)
-  #plots3$legend
-  #plots3$distribution
+  
+  plots3$legend
+  plots3$distribution
+  
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_11/wordclouds/dot_legend_corvar_Age.png")))
@@ -175,7 +177,8 @@ test_that("topicsPlot WITH test", {
     save_dir = save_dir_temp
     )
   
-  
+  plot4$legend
+  plot4$distribution
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_12/wordclouds/dot_legend_corvar_PHQ9tot__Age.png")))
