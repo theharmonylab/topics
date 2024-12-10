@@ -1,81 +1,118 @@
 on:
   push:
     branches:
-      - 'main'
+      - '*'
   pull_request:
     branches:
-      - 'main'
+      - main
 
-name: R-CMD-check
+name: CODECOV
 
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
-
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - {os: macOS-latest, r: 'release'}
+          - {os: macOS-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-20.04, r: 'release'}
+          - {os: ubuntu-20.04,   r: 'release'}
 
     env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      OMP_NUM_THREADS: 1  # Limit parallel processing to 1 core
+      CODECOV_DEBUG: true
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      # Set up R environment
+      # macOS-specific steps
+      - name: Fix Homebrew Issues
+        if: runner.os == 'macOS'
+        run: |
+          if [ -d "/opt/homebrew/Library/Taps/homebrew/homebrew-core" ]; then
+              cd /opt/homebrew/Library/Taps/homebrew/homebrew-core
+              git stash -u || echo "No changes to stash"
+              git clean -d -f || echo "No files to clean"
+          fi
+          brew uninstall openssl@1.1 ruby@3.0 || echo "Deprecated formulae not found"
+          brew install openssl@3 ruby || echo "Failed to install replacements"
+          brew doctor || echo "brew doctor warnings"
+          brew config || echo "brew config warnings"
+          brew update || echo "Failed to update Homebrew"
+          brew install libomp qpdf || echo "Failed to install utilities"
+          export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
+          echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
+
       - uses: r-lib/actions/setup-r@v2-branch
         with:
           r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
 
-      # Install system dependencies for Linux
-      - name: Install system dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libomp-dev libharfbuzz-dev libfribidi-dev
+      - uses: r-lib/actions/setup-pandoc@v2-branch
 
-      # Install system dependencies for macOS
-      - name: Install system dependencies (macOS)
-        if: runner.os == 'macOS'
-        run: brew install libomp
-
-      # Install Miniconda for Linux and Windows
-      - name: Install Miniconda (Linux and Windows)
-        if: runner.os != 'macOS'
-        uses: conda-incubator/setup-miniconda@v3
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           python-version: 3.9
           miniconda-version: "latest"
 
-      # Install Miniforge for macOS
-      - name: Install Miniforge (macOS)
-        if: runner.os == 'macOS'
+      - name: Query dependencies
         run: |
-          curl -L -O https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh
-          bash Miniforge3-MacOSX-arm64.sh -b -p $HOME/miniforge
-          echo "$HOME/miniforge/bin" >> $GITHUB_PATH
-
-      # Install R dependencies
-      - name: Install R dependencies
-        run: |
-          install.packages(c("remotes", "glmnet"))
-          remotes::install_deps(dependencies = TRUE)
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
 
-      # Install and test "text" package
-      - name: Install and test "text" package
+      - name: Cache R packages
+        if: runner.os != 'Windows'
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
         run: |
+          while read -r cmd
+          do
+            eval sudo $cmd
+          done < <(Rscript -e 'cat(remotes::system_requirements("ubuntu", "20.04"), sep = "\n")')
+          sudo apt install libharfbuzz-dev
+          sudo apt install libfribidi-dev
+
+      - name: Install dependencies
+        run: |
+          remotes::install_deps(dependencies = TRUE)
+          install.packages("glmnet")
+          remotes::install_cran("rcmdcheck")
+        shell: Rscript {0}
+
+      - name: Fix Conda permissions on macOS
+        if: runner.os == 'macOS'
+        run: sudo chown -R $UID $CONDA
+
+      - name: Installing text and testing it
+        run:  |
           install.packages("devtools")
+          library(devtools)
+          install.packages("glmnet")
           devtools::install_github("oscarkjell/text")
           text::textrpp_install(prompt = FALSE)
           text::textrpp_initialize(textEmbed_test = TRUE)
+        shell: Rscript {0}
+
+      - name: Session info
+        run: |
+          options(width = 100)
+          pkgs <- installed.packages()[, "Package"]
+          sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
 
       # Run R CMD check
@@ -85,10 +122,19 @@ jobs:
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
-      # Session info for debugging
-      - name: Session info
-        run: |
-          options(width = 100)
-          pkgs <- installed.packages()[, "Package"]
-          sessioninfo::session_info(pkgs, include_base = TRUE)
-        shell: Rscript {0}
+      # Debugging step to confirm coverage files are generated
+      - name: List files for debugging
+        run: ls -R
+
+      # Wait to ensure all coverage data is saved
+      - name: Wait for coverage files to be ready
+        run: sleep 5
+
+      # Upload coverage to Codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: ${{ matrix.config.os }}
+          verbose: true
+          files: "path/to/coverage/file"  # Replace with actual coverage file path

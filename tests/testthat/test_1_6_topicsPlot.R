@@ -101,6 +101,20 @@ test_that("topicsPlot WITH test", {
     dtm = dtm, 
     save_dir = save_dir_temp)
   
+  #### Plot most prevalent topics in model ####  
+  
+  plots_prevalence <- topics::topicsPlot(
+    model = model,
+    plot_n_most_prevalent_topics = 5,
+    save_dir = save_dir_temp)
+  
+  testthat::expect_error(topics::topicsPlot(
+    model = model,
+    plot_topics_idx = c("t1"),
+    plot_n_most_prevalent_topics = 5,
+    save_dir = save_dir_temp))
+  
+  #### Plots one-dimensional plot ####
   preds <- topics::topicsPreds(
     model = model, 
     data = dep_wor_data$Deptext, 

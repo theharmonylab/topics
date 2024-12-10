@@ -14,6 +14,7 @@ topicsPlot(
   color_scheme = "default",
   scale_size = FALSE,
   plot_topics_idx = NULL,
+  plot_n_most_prevalent_topics = NULL,
   save_dir,
   figure_format = "svg",
   width = 4,
@@ -100,6 +101,8 @@ For 1-dimension plots of topics, it should contain 6 colours (3 gradient pairs),
 
 \item{plot_topics_idx}{(vector)  The index or indeces of the topics to plot 
 (e.g., look in the model-object for the indices; can for example, be c(1, 3:5) to plot topic t_1, t_3, t_4 and t_5) (optional).}
+
+\item{plot_n_most_prevalent_topics}{(numeric) Plots the most prevalent topics in a given model.}
 
 \item{save_dir}{(string) The directory to save the plots.}
 

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">topics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.30.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.30.5</span>
       </span>
     </div>
 
@@ -166,7 +166,7 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
 <span class="r-in"><span>                 save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Directory created successfully.</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmpBmHVcI/file15e224de470a0/seed_42/dtms.rds</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmppisqoM/file5a32553fd111/seed_42/dtms.rds</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create Dtm and remove the 1 least and 1 most frequent terms.</span></span></span>
 <span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span>,</span></span>
@@ -174,7 +174,7 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
 <span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                 save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmpBmHVcI/file15e224de470a0/seed_42/dtms.rds</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmppisqoM/file5a32553fd111/seed_42/dtms.rds</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create Dtm and remove the 1% least frequent and 1% most frequent terms.</span></span></span>
 <span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span>,</span></span>
@@ -182,13 +182,13 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
 <span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                 save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmpBmHVcI/file15e224de470a0/seed_42/dtms.rds</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmppisqoM/file5a32553fd111/seed_42/dtms.rds</span></span>
 <span class="r-in"><span>                 </span></span>
 <span class="r-in"><span><span class="co"># Load precomputed Dtm from directory</span></span></span>
 <span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>load_dir <span class="op">=</span> <span class="va">save_dir_temp</span>,</span></span>
 <span class="r-in"><span>                 seed <span class="op">=</span> <span class="fl">42</span>,</span></span>
 <span class="r-in"><span>                 save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmpBmHVcI/file15e224de470a0/seed_42/dtms.rds</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmppisqoM/file5a32553fd111/seed_42/dtms.rds</span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

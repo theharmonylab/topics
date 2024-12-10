@@ -837,6 +837,7 @@ colour_settings <- function(
 #' @param scale_size (logical) Whether to scale the size of the words.
 #' @param plot_topics_idx (vector)  The index or indeces of the topics to plot 
 #' (e.g., look in the model-object for the indices; can for example, be c(1, 3:5) to plot topic t_1, t_3, t_4 and t_5) (optional). 
+#' @param plot_n_most_prevalent_topics (numeric) Plots the most prevalent topics in a given model. 
 #' @param save_dir (string) The directory to save the plots.
 #' @param figure_format (string) Set the figure format, e.g., ".svg", or ".png".
 #' @param width (integer) The width of the topic (units = "in"). 
@@ -877,6 +878,7 @@ topicsPlot <- function(
     color_scheme = "default",
     scale_size = FALSE,
     plot_topics_idx = NULL,
+    plot_n_most_prevalent_topics = NULL,
     save_dir,
     figure_format = "svg",
     width = 4, 
@@ -916,7 +918,6 @@ topicsPlot <- function(
       dim = 2
     }
   }
-  
   
   if(is.null(ngrams) & !is.null(ngrams_max)){
     
@@ -981,6 +982,25 @@ topicsPlot <- function(
     test$test <- topicsNumAssign_dim2(test$test, p_alpha, 2)
     colnames(test$test)[c(3,6,7,10)] <- bak1
   }
+  
+  
+  #### Selecting the most prevalence topics ####
+  if(!is.null(plot_n_most_prevalent_topics) & !is.null(plot_topics_idx)){
+    stop("Please note that you cannot set both the plot_n_most_prevalent_topics and the plot_topics_idx parameters.")
+  }
+  
+  if (!is.null(plot_n_most_prevalent_topics)) {
+    
+    plot_topics_idx <- model$summary %>% 
+      arrange(desc(prevalence)) %>% 
+      top_n(plot_n_most_prevalent_topics, prevalence) %>% 
+      select(topic)
+    
+    plot_topics_idx <- plot_topics_idx$topic
+
+    
+  }
+  
   
   
   #### Making the plots ####
