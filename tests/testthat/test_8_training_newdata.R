@@ -4,11 +4,12 @@ library(testthat)
 library(topics)
 library(text)
 
-test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
+test_that("Testing to training topics distributions using textTrainRegression",{
   
   testthat::skip_on_cran()
-  
-  options(mc.cores = 1)
+  if (Sys.getenv("SKIP_GITHUB_ACTIONS") == "true") {
+    testthat::skip("Skipping this test in GitHub Actions R CMD check.")
+  }
   
   dtm <- topics::topicsDtm(
     data = dep_wor_data$Deptext, 

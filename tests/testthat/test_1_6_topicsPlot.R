@@ -69,7 +69,6 @@ test_that("topicsPlot WITHOUT test and preds", {
     dtm = dtm, 
     save_dir = save_dir_temp)
   
-  help(topicsPlot)
   topics::topicsPlot(
     model = model,
     plot_topics_idx = c(1,3),
@@ -106,12 +105,14 @@ test_that("topicsPlot WITH test", {
   plots_prevalence <- topics::topicsPlot(
     model = model,
     plot_n_most_prevalent_topics = 5,
+    figure_format = "png", 
     save_dir = save_dir_temp)
   
   testthat::expect_error(topics::topicsPlot(
     model = model,
     plot_topics_idx = c("t1"),
     plot_n_most_prevalent_topics = 5,
+    figure_format = "png", 
     save_dir = save_dir_temp))
   
   #### Plots one-dimensional plot ####

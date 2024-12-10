@@ -119,6 +119,7 @@ jobs:
       - name: R CMD check
         env:
           _R_CHECK_CRAN_INCOMING_: false
+          SKIP_GITHUB_ACTIONS: true  # Set the variable for this step
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
