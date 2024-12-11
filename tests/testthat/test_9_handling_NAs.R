@@ -34,32 +34,28 @@ test_that("Handling NAs",{
   
   ##### Testing dataset on our functions ####
   
-  save_dir_temp <- tempfile()
-  #save_dir_temp <- "./res_under"
   # Testing with _ 
   data_test <- NA_data
 
   ## 1-Dimension
   dtm <- topics::topicsDtm(
-    data = data_test$Deptext, 
-    save_dir = save_dir_temp)
+    data = data_test$Deptext)
   
   model <- topics::topicsModel(
-    dtm = dtm, 
-    save_dir = save_dir_temp)
+    dtm = dtm)
   
   preds <- topics::topicsPreds(
     model = model, 
-    data = data_test$Deptext, 
-    save_dir = save_dir_temp)
+    data = data_test$Deptext)
   
   test1 <- topics::topicsTest(
     model= model,
     preds = preds,
     data = data_test,
     x_variable = "PHQ9tot",
-    y_variable = "Age",
-    save_dir = save_dir_temp)
+    y_variable = "Age")
+  
+  save_dir_temp <- tempfile()
   
   topics::topicsPlot(
     model = model, 

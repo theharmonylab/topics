@@ -36,11 +36,9 @@ To preprocess the data, run the following command:
 ```{r dtm, eval = TRUE, warning=TRUE, message=TRUE}
 
 library(topics)
-save_dir = tempdir()
 
 dtm <- topicsDtm(
-  data = dep_wor_data$Depword, 
-  save_dir = save_dir)
+  data = dep_wor_data$Depword)
 
 # Check the results from the dtm and refine stopwords and removal rates if necessary
 dtm_evaluation <- topicsDtmEval(
@@ -56,8 +54,7 @@ To train the LDA model, run the following command:
 model <- topicsModel(
   dtm = dtm,
   num_topics = 20,
-  num_iterations = 1000, 
-  save_dir = save_dir)
+  num_iterations = 1000)
 
 ```
 
@@ -67,8 +64,7 @@ To infer the topic term distribution of the documents, run the following command
 
 preds <- topicsPreds(
   model = model,
-  data = dep_wor_data$Depword, 
-  save_dir = save_dir)
+  data = dep_wor_data$Depword)
 
 ```
 
@@ -77,26 +73,28 @@ preds <- topicsPreds(
 To analyze the relationship between the topics and the prediction variable, run the following command:
 ```{r test, eval = TRUE, warning=FALSE, message=FALSE}
 
-#test <- topicsTest(
-#  data = dep_wor_data,
-#  model = model,
-#  preds = preds,
-#  x_variable = "PHQ9tot",
-#  controls = c("Age"),
-#  test_method = "linear_regression", 
-#  save_dir = save_dir)
+test <- topicsTest(
+  data = dep_wor_data,
+  model = model,
+  preds = preds,
+  x_variable = "PHQ9tot",
+  controls = c("Age"),
+  test_method = "linear_regression")
+
 
 ```
 
 **5. Visualization**<br>
 To visualize the significant topics as wordclouds, run the following command:
 ```{r plot, eval = TRUE, warning=FALSE, message=FALSE}
+library(cowplot)
+save_dir = tempdir()
+plot_list <- topicsPlot(
+  model = model,
+  test = test, 
+  save_dir = save_dir,
+  figure_format = "png")
 
-#topicsPlot(
-#  model = model,
-#  test = test, 
-#  save_dir = save_dir,
-#  figure_format = "png")
 
 ```
 

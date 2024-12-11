@@ -32,8 +32,7 @@ test_that("Testing to training topics distributions using textTrainRegression",{
   same_data_preds <- topicsPreds(
     model = model,
     data = dep_wor_data$Deptext,
-    num_iterations = 50,
-    load_dir = NULL
+    num_iterations = 50
   )
   
   colnames(same_data_preds) <- paste0("Dim", 1:20, "_", colnames(same_data_preds)) 
@@ -50,8 +49,7 @@ test_that("Testing to training topics distributions using textTrainRegression",{
     model = model,
     data = dep_wor_data$Worphrase,
     num_iterations = 50,
-    create_new_dtm = FALSE,
-    load_dir = NULL
+    create_new_dtm = FALSE
   )
   colnames(new_data_preds) <- paste0("Dim", 1:20, "_", colnames(new_data_preds)) 
   model_new_data <- textTrainRegression(
@@ -67,8 +65,7 @@ test_that("Testing to training topics distributions using textTrainRegression",{
     model = model,
     data = dep_wor_data$Worphrase,
     num_iterations = 100,
-    create_new_dtm = TRUE,
-    load_dir = NULL
+    create_new_dtm = TRUE
   )
   colnames(new_data_newdtm_preds) <- paste0("Dim", 1:20, "_", colnames(new_data_newdtm_preds)) 
   model_new_data_pewnew <- textTrainRegression(

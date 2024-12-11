@@ -5,8 +5,6 @@ library(topics)
 test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   
   testthat::skip_on_cran()
-  save_dir_temp <- tempfile()
-  #save_dir_temp = "./results3"
   
   # No test (i.e., no dimension) help(topicsGrams)
   ngrams <- topics::topicsGrams(
@@ -14,6 +12,9 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     top_n = 50, 
     n = 3, 
     pmi_threshold = 6)
+  
+  save_dir_temp <- tempfile()
+  save_dir_temp = "./results3"
   
   plots1 <- topics::topicsPlot(
     ngrams = ngrams, 
@@ -35,8 +36,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   test <- topics::topicsTest(
     data = dep_wor_data,
     ngrams = ngrams, 
-    x_variable = "Age", 
-    save_dir = save_dir_temp)
+    x_variable = "Age")
   
   #help(topicsPlot)
   plot2 <- topics::topicsPlot(
@@ -58,16 +58,15 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
 test_that("topicsPlot WITHOUT test and preds", {
   
   testthat::skip_on_cran()
-  save_dir_temp <- tempfile()
-  save_dir_temp <- "./Oscar"
   
   dtm <- topics::topicsDtm(
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
+    data = dep_wor_data$Deptext)
   
   model <- topics::topicsModel(
-    dtm = dtm, 
-    save_dir = save_dir_temp)
+    dtm = dtm)
+  
+  save_dir_temp <- tempfile()
+  save_dir_temp <- "./Oscar"
   
   topics::topicsPlot(
     model = model,
@@ -108,25 +107,21 @@ test_that("topicsPlot WITH test", {
   
   ## 1-Dimension
   dtm <- topics::topicsDtm(
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
+    data = dep_wor_data$Deptext)
   
   model <- topics::topicsModel(
-    dtm = dtm, 
-    save_dir = save_dir_temp)
+    dtm = dtm)
   
   #### Plots one-dimensional plot ####
   preds <- topics::topicsPreds(
     model = model, 
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
+    data = dep_wor_data$Deptext)
   
   test1 <- topics::topicsTest(
     model = model,
     preds = preds,
     data = dep_wor_data,
-    x_variable = "Age", 
-    save_dir = save_dir_temp)
+    x_variable = "Age")
 
   plots3 <- topics::topicsPlot(
     model = model, 
@@ -154,8 +149,7 @@ test_that("topicsPlot WITH test", {
     preds = preds, 
     data = dep_wor_data, 
     x_variable = "PHQ9tot",
-    y_variable = "Age", 
-    save_dir = save_dir_temp
+    y_variable = "Age"
     )
   
   plot4 <- topics::topicsPlot(
@@ -202,25 +196,21 @@ test_that("topicsPlot WITH underscores in names", {
   data_test$Age_test <- data_test$Age
   ## 1-Dimension
   dtm <- topics::topicsDtm(
-    data = data_test$Dep_text, 
-    save_dir = save_dir_temp)
+    data = data_test$Dep_text)
   
   model <- topics::topicsModel(
-    dtm = dtm, 
-    save_dir = save_dir_temp)
+    dtm = dtm)
   
   preds <- topics::topicsPreds(
     model = model, 
-    data = data_test$Dep_text, 
-    save_dir = save_dir_temp)
+    data = data_test$Dep_text)
   
   test1 <- topics::topicsTest(
     model= model,
     preds = preds,
     data = data_test,
     x_variable = "Age_test",
-    y_variable = "Age",
-    save_dir = save_dir_temp)
+    y_variable = "Age")
   
   plot5 <- topics::topicsPlot(
     model = model, 
@@ -245,8 +235,7 @@ test_that("topicsPlot WITH underscores in names", {
     preds = preds, 
     data = data_test, 
     x_variable = "PHQ9tot",
-    y_variable = "Age_test", 
-    save_dir = save_dir_temp
+    y_variable = "Age_test"
   )
   
   plot6 <- topics::topicsPlot(
@@ -290,26 +279,22 @@ test_that("topicsPlot WITH PMI", {
   
   ## 1-Dimension
   dtm <- topics::topicsDtm(
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp, 
+    data = dep_wor_data$Deptext,
     pmi_threshold = 1
     )
   
   model <- topics::topicsModel(
-    dtm = dtm, 
-    save_dir = save_dir_temp)
+    dtm = dtm)
   
   preds <- topics::topicsPreds(
     model = model, 
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
+    data = dep_wor_data$Deptext)
   
   test1 <- topics::topicsTest(
     model= model,
     preds = preds,
     data = dep_wor_data,
-    x_variable = "Age",
-    save_dir = save_dir_temp)
+    x_variable = "Age")
   
   testthat::expect_equal(test1$test$x.z_Age.estimate[1:4], 
                          c(0.012425389,  0.034527241,  0.039768994,  0.007723522), 
