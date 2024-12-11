@@ -81,21 +81,19 @@ test <- topicsTest(
   controls = c("Age"),
   test_method = "linear_regression")
 
-
 ```
 
 **5. Visualization**<br>
 To visualize the significant topics as wordclouds, run the following command:
 ```{r plot, eval = TRUE, warning=FALSE, message=FALSE}
-library(cowplot)
-save_dir = tempdir()
+
 plot_list <- topicsPlot(
   model = model,
-  test = test, 
-  save_dir = save_dir,
+  test = test,
   figure_format = "png")
 
-
+# showing some of the plots
+plot_list$square1
 ```
 
 
@@ -120,6 +118,3 @@ The below list consists of papers analyzing human language in a similar fashion 
 
 
 [DLATK](https://github.com/dlatk/dlatk)
-
-
-
