@@ -95,7 +95,7 @@ topicsScatterLegendNew <- function(
   if (is.character(scatter_popout_dot_size)){
       dot_prevalence_list <- tibble::tibble(index = 1:length(filtered_test$prevalence), prevalence = filtered_test$prevalence)
       popout <- popout %>%
-          mutate(dot_size = 15 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (25 - 15))
+          mutate(dot_size = 15 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (35 - 15))
       scatter_popout_dot_size <- popout$`dot_size`
   }else{scatter_popout_dot_size <- scatter_popout_dot_size}
     
