@@ -16,8 +16,6 @@ topicsDtm(
   removal_rate_least = 0,
   shuffle = TRUE,
   seed = 42L,
-  save_dir = NULL,
-  load_dir = NULL,
   threads = 1
 )
 }
@@ -46,10 +44,6 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
 \item{shuffle}{(boolean) shuffle the data before analyses}
 
 \item{seed}{(integer) the random seed for reproducibility}
-
-\item{save_dir}{(string) the directory to save the results, if NULL, no results are saved.}
-
-\item{load_dir}{(string) the directory to load from.}
 
 \item{threads}{(integer) the number of threads to use}
 }

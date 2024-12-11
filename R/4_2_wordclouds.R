@@ -262,68 +262,73 @@ create_plots <- function(
                           y= y)
         }
         
-        
-        if (!dir.exists(save_dir)) {
+        if (!is.null(save_dir)){
+          if (!dir.exists(save_dir)) {
+            
+            # Create the directory
+            dir.create(save_dir)
+            msg <- "Directory created successfully.\n"
+            message(colourise(msg, "green"))
+          } 
+          if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
+            dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
+          }
           
-          # Create the directory
-          dir.create(save_dir)
-          msg <- "Directory created successfully.\n"
-          message(colourise(msg, "green"))
-        } 
-        if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
-          dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
-        }
-        p_adjusted <- sprintf("%.2e", p_adjusted)
-        if (grid1 == ""){
-          ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
-                                 "/wordclouds/",
-                                 grid1,
-                                 "corvar_", cor_var,"_",
-                                 i, "_r_", 
-                                 estimate, "_p_", 
-                                 p_adjusted,
-                                 ".",
-                                 figure_format),
-                          plot = plot, 
-                          width = width, 
-                          height = height, 
-                          units = "in", 
-                          create.dir = TRUE)
-        } else {
-          if (length(strsplit(cor_var, "__")[[1]]) > 1){
-            p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
-            p_adjusted_y <- sprintf("%.2e", p_adjusted_y)
-            fileMsg <- paste0(
-              "_rx_", estimate_x,
-              "_ry_", estimate_y, 
-              "_px_", p_adjusted_x,
-              "_py_", p_adjusted_y, ".",
-              figure_format
-            )
+          p_adjusted <- sprintf("%.2e", p_adjusted)
+          
+          if (grid1 == ""){
+            ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                                   "/wordclouds/",
+                                   grid1,
+                                   "corvar_", cor_var,"_",
+                                   i, "_r_", 
+                                   estimate, "_p_", 
+                                   p_adjusted,
+                                   ".",
+                                   figure_format),
+                            plot = plot, 
+                            width = width, 
+                            height = height, 
+                            units = "in", 
+                            create.dir = TRUE)
           } else {
             
-            p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
-            fileMsg <- paste0(
-              "_rx_", estimate_x, 
-              "_px_", p_adjusted_x, ".",
-              figure_format
-            )
+            if (length(strsplit(cor_var, "__")[[1]]) > 1){
+              p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
+              p_adjusted_y <- sprintf("%.2e", p_adjusted_y)
+              fileMsg <- paste0(
+                "_rx_", estimate_x,
+                "_ry_", estimate_y, 
+                "_px_", p_adjusted_x,
+                "_py_", p_adjusted_y, ".",
+                figure_format
+              )
+            } else {
+              
+              p_adjusted_x <- sprintf("%.2e", p_adjusted_x)
+              fileMsg <- paste0(
+                "_rx_", estimate_x, 
+                "_px_", p_adjusted_x, ".",
+                figure_format
+              )
+            }
+            
+            if (is.null(popout)){fileHead <- ''} else {
+                if (i %in% popout$topic){fileHead <- '0_scatter_emphasised_'}else{fileHead <- ''}
+            }
+            
+            ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                                   "/wordclouds/", 
+                                   fileHead,
+                                   grid1,
+                                   "corvar_", cor_var,"_",
+                                   i, fileMsg),
+                            plot = plot, 
+                            width = width, 
+                            height = height, 
+                            units = "in", 
+                            create.dir = TRUE)
           }
-          if (is.null(popout)){fileHead <- ''} else {
-              if (i %in% popout$topic){fileHead <- '0_scatter_emphasised_'}else{fileHead <- ''}
-          }
-          
-          ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
-                                 "/wordclouds/", 
-                                 fileHead,
-                                 grid1,
-                                 "corvar_", cor_var,"_",
-                                 i, fileMsg),
-                          plot = plot, 
-                          width = width, 
-                          height = height, 
-                          units = "in", 
-                          create.dir = TRUE)
         }
       }
       plot_list[[i]] <- plot
@@ -342,15 +347,20 @@ create_plots <- function(
     } else {
       max_size <- max_size
     }
-    if (!dir.exists(save_dir)) {
-      # Create the directory
-      dir.create(save_dir)
-      msg <- "Directory created successfully.\n"
-      message(colourise(msg, "green"))
-    } 
-    if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
-      dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
+    
+    
+    if (!is.null(save_dir)){
+      if (!dir.exists(save_dir)) {
+        # Create the directory
+        dir.create(save_dir)
+        msg <- "Directory created successfully.\n"
+        message(colourise(msg, "green"))
+      } 
+      if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
+        dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
+      }
     }
+    
     for (i in paste0('t_', plot_topics_idx)){
       
       plot <- ggplot2::ggplot(
@@ -363,22 +373,27 @@ create_plots <- function(
         ggplot2::theme_minimal() +
         color_negative_cor
     
-      ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
-                             "/wordclouds/",
-                             i, 
-                             ".",
-                             figure_format),
-                      plot = plot, 
-                      width = width, 
-                      height = height, 
-                      units = "in", 
-                      create.dir = TRUE)
+      if (!is.null(save_dir)){
+        ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                               "/wordclouds/",
+                               i, 
+                               ".",
+                               figure_format),
+                        plot = plot, 
+                        width = width, 
+                        height = height, 
+                        units = "in", 
+                        create.dir = TRUE)
+      }
+      
       plot_list[[i]] <- plot
     }
   }
   
   # For N-grams with NO test
   if (is.null(df_list) & is.null(test) & !is.null(ngrams)){
+    
+    if (!is.null(save_dir)){
       if (!dir.exists(save_dir)) {
         # Create the directory
         dir.create(save_dir)
@@ -388,6 +403,8 @@ create_plots <- function(
       if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
         dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
       }
+    }
+    
       plot <- ggplot2::ggplot(ngrams, 
                               ggplot2::aes(label = ngrams, 
                                            size = prop, 
@@ -396,15 +413,18 @@ create_plots <- function(
         ggplot2::theme_minimal() +
         color_positive_cor # ggplot2::scale_color_gradient(low = "yellow", high = "red")
       
-      ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
-                             "/wordclouds/ngrams", 
-                             ".",
-                             figure_format),
-                      plot = plot, 
-                      width = width, 
-                      height = height, 
-                      units = "in", 
-                      create.dir = TRUE)
+      if (!is.null(save_dir)){
+        ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                               "/wordclouds/ngrams", 
+                               ".",
+                               figure_format),
+                        plot = plot, 
+                        width = width, 
+                        height = height, 
+                        units = "in", 
+                        create.dir = TRUE)
+      }
+      
       plot_list <- plot
     } 
   
@@ -425,15 +445,19 @@ create_plots <- function(
         } else {
           test_positive <- test%>% dplyr::filter(estimate > 0)
           test_negative <- test%>% dplyr::filter(estimate < 0)
-          if (!dir.exists(save_dir)) {
-            # Create the directory
-            dir.create(save_dir)
-            msg <- "Directory created successfully.\n"
-            message(colourise(msg, "green"))
-          } 
-          if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
-            dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
+          
+          if (!is.null(save_dir)){
+            if (!dir.exists(save_dir)) {
+              # Create the directory
+              dir.create(save_dir)
+              msg <- "Directory created successfully.\n"
+              message(colourise(msg, "green"))
+            } 
+            if(!dir.exists(paste0(save_dir, "/seed_", seed, "/wordclouds"))){
+              dir.create(paste0(save_dir, "/seed_", seed, "/wordclouds"))
+            }
           }
+          
           # Word cloud with correlation strength mapped to color gradient
           plot1 <- ggplot2::ggplot(test_positive, ggplot2::aes(label = top_terms, 
                                                               size = estimate, 
@@ -444,15 +468,18 @@ create_plots <- function(
             ggplot2::theme_minimal() +
             color_positive_cor
           
-          ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
-                                 "/wordclouds/ngrams_positive", 
-                                 ".",
-                                 figure_format),
-                          plot = plot1, 
-                          width = width, 
-                          height = height, 
-                          units = "in", 
-                          create.dir = TRUE) 
+          if (!is.null(save_dir)){
+            ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                                   "/wordclouds/ngrams_positive", 
+                                   ".",
+                                   figure_format),
+                            plot = plot1, 
+                            width = width, 
+                            height = height, 
+                            units = "in", 
+                            create.dir = TRUE) 
+          }
+          
           # Word cloud with correlation strength mapped to color gradient
           plot2 <- ggplot2::ggplot(test_negative, ggplot2::aes(label = top_terms, 
                                                               size = estimate, 
@@ -463,15 +490,18 @@ create_plots <- function(
             ggplot2::theme_minimal() +
             color_negative_cor
           
-          ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
-                                 "/wordclouds/ngrams_negative", 
-                                 ".",
-                                 figure_format),
-                          plot = plot2, 
-                          width = width, 
-                          height = height, 
-                          units = "in", 
-                          create.dir = TRUE) 
+          if (!is.null(save_dir)){
+            ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                                   "/wordclouds/ngrams_negative", 
+                                   ".",
+                                   figure_format),
+                            plot = plot2, 
+                            width = width, 
+                            height = height, 
+                            units = "in", 
+                            create.dir = TRUE)
+          }
+          
           plot_list[[1]] <- plot1
           plot_list[[2]] <- plot2
           names(plot_list) <- c("positive", "negative")

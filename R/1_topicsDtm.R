@@ -92,8 +92,8 @@ get_removal_columns <- function(
 #' terms with average PMI below the specified threshold (pmi_threshold) are removed from the document-term matrix. 
 #' @param shuffle (boolean) shuffle the data before analyses
 #' @param seed (integer) the random seed for reproducibility
-#' @param save_dir (string) the directory to save the results, if NULL, no results are saved.
-#' @param load_dir (string) the directory to load from.
+# @param save_dir (string) the directory to save the results, if NULL, no results are saved.
+# @param load_dir (string) the directory to load from.
 #' @param occurance_rate (integer) the rate of occurence of a word to be removed
 #' @param threads (integer) the number of threads to use
 #' @return the document term matrix
@@ -146,8 +146,6 @@ topicsDtm <- function(
     removal_rate_least = 0,
     shuffle = TRUE,
     seed = 42L,
-    save_dir = NULL,
-    load_dir = NULL,
     threads = 1){
   
   # Create a named list of settings
@@ -162,20 +160,18 @@ topicsDtm <- function(
     removal_rate_least = removal_rate_least,
     shuffle = shuffle,
     seed = seed,
-    threads = threads,
-    save_dir = save_dir,
-    load_dir = load_dir
+    threads = threads
   )
   
   
   pmi_tibble = NULL
-  if (!is.null(load_dir)){
-    dtms <- readRDS(paste0(load_dir, 
-                            "/seed_",
-                            seed, 
-                            "/dtms.rds"))
-    
-  } else {
+  #if (!is.null(load_dir)){
+  #  dtms <- readRDS(paste0(load_dir, 
+  #                          "/seed_",
+  #                          seed, 
+  #                          "/dtms.rds"))
+  #  
+  #} else {
     
     if (length(data) == 0){
       msg <- "The data provided is empty. Please provide a list of text data."
@@ -329,28 +325,29 @@ topicsDtm <- function(
       settings = settings,
       train_dtm = train_dtm
     )
-  }
+#  }
   
-  if (!is.null(save_dir)){
-    if (!dir.exists(save_dir)) {
-      # Create the directory
-      dir.create(save_dir)
-      
-      msg <- "Directory created successfully.\n"
-      message(
-        colourise(msg, "green"))
-    } 
-    if(!dir.exists(paste0(save_dir, "/seed_", seed))){
-      dir.create(paste0(save_dir, "/seed_", seed))
-    }
-    msg <- paste0("The Dtm, data, and summary are saved in", save_dir,"/seed_", seed,"/dtms.rds")
-    message(colourise(msg, "green"))
-    
-    saveRDS(dtms, paste0(save_dir, "/seed_", seed, "/dtms.rds"))
-  }
+#  if (!is.null(save_dir)){
+#    if (!dir.exists(save_dir)) {
+#      # Create the directory
+#      dir.create(save_dir)
+#      
+#      msg <- "Directory created successfully.\n"
+#      message(
+#        colourise(msg, "green"))
+#    } 
+#    if(!dir.exists(paste0(save_dir, "/seed_", seed))){
+#      dir.create(paste0(save_dir, "/seed_", seed))
+#    }
+#    msg <- paste0("The Dtm, data, and summary are saved in", save_dir,"/seed_", seed,"/dtms.rds")
+#    message(colourise(msg, "green"))
+#    
+#    saveRDS(dtms, paste0(save_dir, "/seed_", seed, "/dtms.rds"))
+#  }
   
   return(dtms)
 }
+
 
 
 #' Summarize and Visualize your Document Term Matrix

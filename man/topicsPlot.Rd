@@ -15,7 +15,7 @@ topicsPlot(
   scale_size = FALSE,
   plot_topics_idx = NULL,
   plot_n_most_prevalent_topics = NULL,
-  save_dir,
+  save_dir = NULL,
   figure_format = "svg",
   width = 6,
   height = 5,

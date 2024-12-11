@@ -9,21 +9,17 @@ library(dplyr)
 test_that("topicsTest performs linear regression correctly", {
   
   testthat::skip_on_cran()
-  save_dir <- tempdir()
   
   dtm <- topics::topicsDtm(
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir)
+    data = dep_wor_data$Deptext)
   
   model <- topics::topicsModel(
-    dtm = dtm, 
-    save_dir = save_dir)
+    dtm = dtm)
   
   #help(topicsPreds)
   preds <- topics::topicsPreds(
     model = model, 
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir)
+    data = dep_wor_data$Deptext)
   
   ############################
   #### linear_regression #####
@@ -35,8 +31,7 @@ test_that("topicsTest performs linear regression correctly", {
     x_variable = "Age",
     y_variable = "PHQ9tot",
     controls = NULL,
-    test_method = "linear_regression", 
-    save_dir = save_dir
+    test_method = "linear_regression"
     )
   result
 
@@ -79,8 +74,7 @@ test_that("topicsTest performs linear regression correctly", {
     x_variable = "Age",
     y_variable = "PHQ9tot",
     controls = c("Gender",  "GAD7tot"), #,
-    test_method = "linear_regression", 
-    save_dir = save_dir
+    test_method = "linear_regression"
   )
   result_ctrl
   
@@ -111,8 +105,7 @@ test_that("topicsTest performs linear regression correctly", {
     data = dep_wor_data,
     x_variable = "Gender",
    # y_variable = "PHQ9tot",
-    test_method = "logistic_regression", 
-   save_dir = save_dir
+    test_method = "logistic_regression"
   )
   result_log
   
@@ -163,33 +156,6 @@ test_that("topicsTest adjusts p-values for multiple comparisons", {
 })
 
 
-test_that("topicsTest saves test results to the specified directory", {
-  
-  testthat::skip_on_cran()
-  save_dir_temp <- tempfile()
-  dtm <- topics::topicsDtm(
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
-  
-  model <- topics::topicsModel(
-    dtm = dtm, 
-    save_dir = save_dir_temp)
-  
-  preds <- topics::topicsPreds(
-    model = model, 
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
-  
-  result <- topics::topicsTest(
-    model = model, 
-    preds = preds, 
-    data = dep_wor_data, 
-    x_variable = "Age", 
-    save_dir = save_dir_temp)
-  
-  testthat::expect_true(file.exists(file.path(save_dir_temp, "seed_42", paste0("test_", result$test_method, "_Age.rds"))))
-  
-  })
 
 
 # this feature is currently not working

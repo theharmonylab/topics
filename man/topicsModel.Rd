@@ -9,8 +9,7 @@ topicsModel(
   num_topics = 20,
   num_top_words = 10,
   num_iterations = 1000,
-  seed = 42,
-  save_dir = NULL
+  seed = 42
 )
 }
 \arguments{
@@ -23,8 +22,6 @@ topicsModel(
 \item{num_iterations}{(integer) The number of iterations to run the model}
 
 \item{seed}{(integer) The seed to set for reproducibility}
-
-\item{save_dir}{(string) The directory to save the model, if NULL, the model will not be saved}
 }
 \value{
 A list of the model, the top terms, the labels, the coherence (experimental), and the prevalence.
@@ -37,15 +34,13 @@ The function to create and train and an LDA model.
 # Create LDA Topic Model 
 save_dir_temp <- tempfile()
 dtm <- topicsDtm(
-data = dep_wor_data$Depphrase, 
-save_dir = save_dir_temp)
+data = dep_wor_data$Depphrase)
 
 model <- topicsModel(
 dtm = dtm, # output of topicsDtm()
 num_topics = 20,
 num_top_words = 10,
 num_iterations = 1000,
-seed = 42,
-save_dir = save_dir_temp)
+seed = 42)
 }
 }

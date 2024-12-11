@@ -14,9 +14,7 @@ topicsTest(
   controls = c(),
   test_method = "default",
   p_adjust_method = "fdr",
-  seed = 42,
-  load_dir = NULL,
-  save_dir = NULL
+  seed = 42
 )
 }
 \arguments{
@@ -43,10 +41,6 @@ selectes logistic regression if the variable only contain 0s and 1s, or "linear_
 (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").}
 
 \item{seed}{(integer) The seed to set for reproducibility}
-
-\item{load_dir}{(string) The directory to load the test from, if NULL, the test will not be loaded}
-
-\item{save_dir}{(string) The directory to save the test, if NULL, the test will not be saved}
 }
 \value{
 A list of the test results, test method, and prediction variable
@@ -58,31 +52,26 @@ regression or t-test.
 \examples{
 \donttest{
 # Test the topic document distribution in respect to a variable
-save_dir_temp <- tempfile()
 
 dtm <- topicsDtm(
-  data = dep_wor_data$Depphrase, 
-  save_dir =  save_dir_temp)
+  data = dep_wor_data$Depphrase)
 
 model <- topicsModel(
   dtm = dtm, # output of topicsDtm()
   num_topics = 20,
   num_top_words = 10,
   num_iterations = 1000,
-  seed = 42,
-  save_dir = save_dir_temp)
+  seed = 42)
                      
 preds <- topicsPreds(
  model = model, # output of topicsModel()
- data = dep_wor_data$Depphrase,
- save_dir = save_dir_temp)
+ data = dep_wor_data$Depphrase)
                      
 test <- topicsTest(
   model = model, # output of topicsModel()
   data=dep_wor_data,
   preds = preds, # output of topicsPreds()
   test_method = "linear_regression",
-  x_variable = "Age",
-  save_dir = save_dir_temp)
+  x_variable = "Age")
 }                 
 }

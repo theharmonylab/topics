@@ -10,7 +10,7 @@ options(mc.cores = 1)
 test_that("topicsDtm creates a DTM correctly with default parameters", {
 
   testthat::skip_on_cran()
-help(topicsDtm)
+
   dtm_result <- topics::topicsDtm(
     data =  dep_wor_data$Deptext, 
     ngram_window = c(1,1), 
@@ -39,7 +39,7 @@ test_that("topicsDtm handles different ngram_window values", {
   result <- topics::topicsDtm(
     data = dep_wor_data$Deptext, 
     ngram_window = c(1, 2), 
-    threads=1)
+    threads = 1)
   
   testthat::expect_true(is.list(result))
   testthat::expect_s4_class(result$train_dtm, "dgCMatrix")
@@ -63,7 +63,6 @@ test_that("topicsDtm removes a specified word", {
 test_that("topicsDtm handles different occurrence rates", {
   
   testthat::skip_on_cran()
-  save_dir_temp <- tempdir()
   
   result <-topics:: topicsDtm(
     data = dep_wor_data$Deptext,
@@ -77,7 +76,6 @@ test_that("topicsDtm handles different occurrence rates", {
 test_that("topicsDtm handles different removal modes", {
   
   testthat::skip_on_cran()
-  save_dir_temp <- tempdir()
  
   result <- topics::topicsDtm(
     data = dep_wor_data$Deptext, 
@@ -122,36 +120,7 @@ test_that("topicsDtm handles different split proportions", {
 #  
 #})
 
-test_that("topicsDtm saves results to the specified directory", {
-  
-  testthat::skip_on_cran()
-  save_dir <- tempdir()
-  
-  result <- topics::topicsDtm(
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir)
-  
-  testthat::expect_true(file.exists(file.path(save_dir, "seed_42", "dtms.rds")))
-  
-})
 
-test_that("topicsDtm loads results from the specified directory", {
-  
-  testthat::skip_on_cran()
-  
-  save_dir_temp <- tempfile()
-  
-  result1 <- topics::topicsDtm(
-    data = dep_wor_data$Deptext, 
-    save_dir = save_dir_temp)
-  
-  result2 <- topics::topicsDtm(
-    load_dir = save_dir_temp, 
-    save_dir = NULL)
-  
-  testthat::expect_equal(result1$train_dtm, result2$train_dtm)
-
-})
 
 test_that("topicsDtm removes least frequent words based on a threshold", {
   
