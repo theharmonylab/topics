@@ -91,7 +91,13 @@ topicsScatterLegendNew <- function(
     # Perform anti_join
     backgr_dots <- filtered_test %>% dplyr::anti_join(popout, by = colnames(filtered_test))
   }
-  
+ 
+  if (is.character(scatter_popout_dot_size)){
+      dot_prevalence_list <- tibble::tibble(index = 1:length(filtered_test$prevalence), prevalence = filtered_test$prevalence)
+      popout <- popout %>%
+      mutate(dot_size = 15 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (25 - 15))
+  }
+    
   # Generate scatter plot
   plot <- generate_scatter_plot(
     popout = popout,
