@@ -36,7 +36,7 @@ test_that("Testing to training topics distributions using textTrainRegression",{
   )
   
   colnames(same_data_preds) <- paste0("Dim", 1:20, "_", colnames(same_data_preds)) 
-  model_same_data <- textTrainRegression(
+  model_same_data <- text::textTrainRegression(
     x = same_data_preds, 
     y = dep_wor_data["PHQ9tot"], 
     multi_cores = FALSE
@@ -52,7 +52,7 @@ test_that("Testing to training topics distributions using textTrainRegression",{
     create_new_dtm = FALSE
   )
   colnames(new_data_preds) <- paste0("Dim", 1:20, "_", colnames(new_data_preds)) 
-  model_new_data <- textTrainRegression(
+  model_new_data <- text::textTrainRegression(
     x = new_data_preds, 
     y = dep_wor_data["PHQ9tot"], 
     multi_cores = FALSE
@@ -68,7 +68,7 @@ test_that("Testing to training topics distributions using textTrainRegression",{
     create_new_dtm = TRUE
   )
   colnames(new_data_newdtm_preds) <- paste0("Dim", 1:20, "_", colnames(new_data_newdtm_preds)) 
-  model_new_data_pewnew <- textTrainRegression(
+  model_new_data_pewnew <- text::textTrainRegression(
     x = new_data_newdtm_preds, 
     y = dep_wor_data["PHQ9tot"], 
     multi_cores = FALSE

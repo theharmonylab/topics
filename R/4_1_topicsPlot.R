@@ -18,7 +18,7 @@
 #' @param label_y_name Label for the y-axis in the scatter plot. Default: "y".
 #' @param save_dir Directory where the scatter legend plot will be saved. Default: "./results".
 #' @param figure_format File format for the saved scatter plot. Examples: "svg", "png", "pdf". Default: "svg".
-#' @param scatter_popout_dot_size Size of the dots for pop-out topics in the scatter legend. Default: 15.
+#' @param scatter_popout_dot_size Size of the dots for pop-out topics in the scatter legend. Set to "prevalence" for dot size changing based on topic prevalence. Default: 15.
 #' @param scatter_bg_dot_size Size of the dots for background topics in the scatter legend. Default: 9.
 #' @param width Width of the saved scatter plot in inches. Default: 10.
 #' @param height Height of the saved scatter plot in inches. Default: 8.
@@ -91,7 +91,13 @@ topicsScatterLegendNew <- function(
     # Perform anti_join
     backgr_dots <- filtered_test %>% dplyr::anti_join(popout, by = colnames(filtered_test))
   }
-  
+ 
+  if (scatter_popout_dot_size == "prevalence"){
+      popout <- popout %>%
+          mutate(dot_size = 15 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (35 - 15))
+      scatter_popout_dot_size <- popout$`dot_size`
+  }else{scatter_popout_dot_size <- scatter_popout_dot_size}
+    
   # Generate scatter plot
   plot <- generate_scatter_plot(
     popout = popout,
