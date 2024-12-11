@@ -11,9 +11,7 @@ topicsPreds(
   sampling_interval = 10,
   burn_in = 10,
   seed = 42,
-  create_new_dtm = FALSE,
-  save_dir = NULL,
-  load_dir = NULL
+  create_new_dtm = FALSE
 )
 }
 \arguments{
@@ -45,10 +43,6 @@ Range: 10 to 1000 (larger datasets or more complex models may require a longer b
 
 \item{create_new_dtm}{(boolean) If applying the model on new data (not used in training), it can help to make a new dtm.
 Currently this is experimental, and using the textmineR::CreateDtm() function rather than the topicsDtm() function, which has more functions.}
-
-\item{save_dir}{(string) The directory to save the model, if NULL, the predictions will not be saved}
-
-\item{load_dir}{(string) The directory to load the model from, if NULL, the predictions will not be loaded}
 }
 \value{
 A tibble of the predictions
@@ -59,22 +53,18 @@ The function to predict the topics of a new document with the trained model.
 \examples{
 \donttest{
 # Predict topics for new data with the trained model
-save_dir_temp <- tempfile()
 
 dtm <- topicsDtm(
-data = dep_wor_data$Depphrase, 
-save_dir = save_dir_temp)
+data = dep_wor_data$Depphrase)
 
 model <- topicsModel(dtm = dtm, # output of topicsDtm()
                      num_topics = 20,
                      num_top_words = 10,
                      num_iterations = 1000,
-                     seed = 42,
-                     save_dir = save_dir_temp)
+                     seed = 42)
                      
 preds <- topicsPreds(
 model = model, # output of topicsModel()
-data = dep_wor_data$Depphrase, 
-save_dir = save_dir_temp)
+data = dep_wor_data$Depphrase)
 }
 }

@@ -109,17 +109,20 @@ topicsScatterLegendNew <- function(
   )
   
   # Save the plot
-  ggplot2::ggsave(paste0(save_dir, "/seed_", seed, 
-                         "/wordclouds/",
-                         "dot_legend_",
-                         "corvar_", cor_var, ".", 
-                         figure_format),
-                  plot = plot, 
-                  width = width, 
-                  height = height, 
-                  units = "in", 
-                  device = figure_format, 
-                  create.dir = TRUE)
+  if (!is.null(save_dir)){
+    ggplot2::ggsave(paste0(save_dir, "/seed_", seed, 
+                           "/wordclouds/",
+                           "dot_legend_",
+                           "corvar_", cor_var, ".", 
+                           figure_format),
+                    plot = plot, 
+                    width = width, 
+                    height = height, 
+                    units = "in", 
+                    device = figure_format, 
+                    create.dir = TRUE)
+  }
+  
   
   #if (!only_two && !only_five){return (popout)}else{ return (NULL) }
   
@@ -522,17 +525,21 @@ topicsGridLegend <- function(
       axis.title.y = ggplot2::element_text(angle = 90, color = titles_color)
     ) +
     ggplot2::coord_fixed()
-  ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
-                         "/wordclouds/",
-                         "grid_legend_",
-                         "corvar_", cor_var,
-                         ".",
-                         figure_format),
-                  plot = legend, 
-                  width = width, 
-                  height = height, 
-                  units = "in", 
-                  create.dir = TRUE)
+  
+  if (!is.null(save_dir)){
+    ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
+                           "/wordclouds/",
+                           "grid_legend_",
+                           "corvar_", cor_var,
+                           ".",
+                           figure_format),
+                    plot = legend, 
+                    width = width, 
+                    height = height, 
+                    units = "in", 
+                    create.dir = TRUE)
+  }
+  
   return(legend)
 }
 
@@ -879,7 +886,7 @@ topicsPlot <- function(
     scale_size = FALSE,
     plot_topics_idx = NULL,
     plot_n_most_prevalent_topics = NULL,
-    save_dir,
+    save_dir = NULL,
     figure_format = "svg",
     width = 6,
     height = 5,
@@ -998,7 +1005,6 @@ topicsPlot <- function(
     
     plot_topics_idx <- plot_topics_idx$topic
 
-    
   }
   
   
@@ -1068,6 +1074,9 @@ topicsPlot <- function(
     if (dim == 1){
       #i=1
       plot_list <- list()
+      plot_list <- vector("list", length = 3)
+      names(plot_list) <- paste0("square", 1:3)
+      
       for (i in 1:3){
         if (! (i %in% test$test$color_categories)){next}
         
@@ -1105,6 +1114,8 @@ topicsPlot <- function(
     
     if (dim == 2){
       plot_list <- list()
+      plot_list <- vector("list", length = 9)
+      names(plot_list) <- paste0("square", 1:9)
       for (k in 1:9){
         if (! (k %in% test$test$color_categories)){next}
         filtered_test <- test

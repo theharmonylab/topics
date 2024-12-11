@@ -243,7 +243,7 @@ get_mallet_model <- function(
 #' @param num_top_words (integer) The number of top words to be displayed
 #' @param num_iterations (integer) The number of iterations to run the model
 #' @param seed (integer) The seed to set for reproducibility
-#' @param save_dir (string) The directory to save the model, if NULL, the model will not be saved
+# @param save_dir (string) The directory to save the model, if NULL, the model will not be saved
 # @param load_dir (string) The directory to load the model from, if NULL, the model will not be loaded
 #' @return A list of the model, the top terms, the labels, the coherence (experimental), and the prevalence.
 #' @examples
@@ -251,16 +251,14 @@ get_mallet_model <- function(
 #' # Create LDA Topic Model 
 #' save_dir_temp <- tempfile()
 #' dtm <- topicsDtm(
-#' data = dep_wor_data$Depphrase, 
-#' save_dir = save_dir_temp)
+#' data = dep_wor_data$Depphrase)
 #' 
 #' model <- topicsModel(
 #' dtm = dtm, # output of topicsDtm()
 #' num_topics = 20,
 #' num_top_words = 10,
 #' num_iterations = 1000,
-#' seed = 42,
-#' save_dir = save_dir_temp)
+#' seed = 42)
 #' }
 #' @export
 topicsModel <- function(
@@ -268,8 +266,7 @@ topicsModel <- function(
     num_topics = 20,
     num_top_words = 10,
     num_iterations = 1000,
-    seed = 42,
-    save_dir = NULL){
+    seed = 42){
   
   set.seed(seed)
   dtm_settings <- dtm$settings
@@ -301,25 +298,25 @@ topicsModel <- function(
     stringsAsFactors = FALSE)
   model$summary[order(model$summary$prevalence, decreasing = TRUE) , ][ 1:10 , ]
   
-  if (!is.null(save_dir)){
-    if (!dir.exists(save_dir)) {
-      # Create the directory
-      dir.create(save_dir)
-      
-      msg <- "Directory created successfully.\n"
-      message(
-        colourise(msg, "green"))
-      
-    }
-    
-    if(!dir.exists(paste0(save_dir, "/seed_", seed))){
-      dir.create(paste0(save_dir, "/seed_", seed))
-    }
-    
-    msg <- paste0("The Model is saved in", save_dir,"/seed_", seed,"/model.rds")
-    message(colourise(msg, "green"))
-    saveRDS(model, paste0(save_dir, "/seed_", seed, "/model.rds"))
-  }
+#  if (!is.null(save_dir)){
+#    if (!dir.exists(save_dir)) {
+#      # Create the directory
+#      dir.create(save_dir)
+#      
+#      msg <- "Directory created successfully.\n"
+#      message(
+#        colourise(msg, "green"))
+#      
+#    }
+#    
+#    if(!dir.exists(paste0(save_dir, "/seed_", seed))){
+#      dir.create(paste0(save_dir, "/seed_", seed))
+#    }
+#    
+#    msg <- paste0("The Model is saved in", save_dir,"/seed_", seed,"/model.rds")
+#    message(colourise(msg, "green"))
+#    saveRDS(model, paste0(save_dir, "/seed_", seed, "/model.rds"))
+#  }
   
   return(model)
 }
@@ -349,29 +346,23 @@ topicsModel <- function(
 #' @param seed (integer) The seed to set for reproducibility.
 #' @param create_new_dtm (boolean) If applying the model on new data (not used in training), it can help to make a new dtm.
 #' Currently this is experimental, and using the textmineR::CreateDtm() function rather than the topicsDtm() function, which has more functions.
-#' @param save_dir (string) The directory to save the model, if NULL, the predictions will not be saved
-#' @param load_dir (string) The directory to load the model from, if NULL, the predictions will not be loaded
 #' @return A tibble of the predictions
 #' @examples
 #' \donttest{
 #' # Predict topics for new data with the trained model
-#' save_dir_temp <- tempfile()
 #' 
 #' dtm <- topicsDtm(
-#' data = dep_wor_data$Depphrase, 
-#' save_dir = save_dir_temp)
+#' data = dep_wor_data$Depphrase)
 #' 
 #' model <- topicsModel(dtm = dtm, # output of topicsDtm()
 #'                      num_topics = 20,
 #'                      num_top_words = 10,
 #'                      num_iterations = 1000,
-#'                      seed = 42,
-#'                      save_dir = save_dir_temp)
+#'                      seed = 42)
 #'                      
 #' preds <- topicsPreds(
 #' model = model, # output of topicsModel()
-#' data = dep_wor_data$Depphrase, 
-#' save_dir = save_dir_temp)
+#' data = dep_wor_data$Depphrase)
 #' }
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>%
@@ -383,21 +374,18 @@ topicsPreds <- function(
     sampling_interval = 10, # aka thinning
     burn_in = 10, 
     seed = 42,
-    create_new_dtm = FALSE,
-    save_dir = NULL,
-    load_dir = NULL){
+    create_new_dtm = FALSE
+    ){
   
   set.seed(seed)
   
-  if (!is.null(load_dir)){
-    preds <- readRDS(paste0(load_dir, "/seed_", seed, "/preds.rds"))
-  } else {
+
     
     if (length(data) == 0){
       msg <- "The data provided is empty. Please provide a list of text data."
       message(colourise(msg, "brown"))
       
-      return(NULL)
+      stop()
     }
     # create an id column for the data
     
@@ -495,24 +483,24 @@ topicsPreds <- function(
     colnames(preds) <- paste("t_", 1:ncol(preds), sep="")
     preds <- preds %>% tibble::tibble()
     
-  }
+#  }
   
-  if (!is.null(save_dir)){
-    if (!dir.exists(save_dir)) {
-      dir.create(save_dir)
-      
-      msg <- "Directory created successfully.\n"
-      message(
-        colourise(msg, "green"))
-      
-    } 
-    if(!dir.exists(paste0(save_dir, "/seed_", seed))){
-      dir.create(paste0(save_dir, "/seed_", seed))
-    }
-    msg <- paste0("Predictions are saved in", save_dir,"/seed_", seed,"/preds.rds")
-    message(colourise(msg, "green"))
-    saveRDS(preds, paste0(save_dir, "/seed_", seed, "/preds.rds"))
-  }
+  #if (!is.null(save_dir)){
+  #  if (!dir.exists(save_dir)) {
+  #    dir.create(save_dir)
+  #    
+  #    msg <- "Directory created successfully.\n"
+  #    message(
+  #      colourise(msg, "green"))
+  #    
+  #  } 
+  #  if(!dir.exists(paste0(save_dir, "/seed_", seed))){
+  #    dir.create(paste0(save_dir, "/seed_", seed))
+  #  }
+  #  msg <- paste0("Predictions are saved in", save_dir,"/seed_", seed,"/preds.rds")
+  #  message(colourise(msg, "green"))
+  #  saveRDS(preds, paste0(save_dir, "/seed_", seed, "/preds.rds"))
+  #}
   
   return(preds)
 }

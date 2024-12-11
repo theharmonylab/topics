@@ -175,99 +175,46 @@ topic_test <- function(
 
 
 
-#' The function to test the LDA model
-#' @param model (list) The trained model
-#' @param data (tibble) The data to test on
-#' @param preds (tibble) The predictions
-#' @param x_y_axis (string) The variable to be predicted (only needed for regression or correlation)
-# @param group_var (string) The variable to group by (only needed for t-test)
-#' @param controls (vector) The control variables
-#' @param test_method (string) The test method to use, either "linear_regression","logistic_regression" 
-#' or mixed (not implemented: "correlation","t-test").
-#' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
-#' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
-#' @param seed (integer) The seed to set for reproducibility
-#' @param load_dir (string) The directory to load the test from, if NULL, the test will not be loaded
-#' @param save_dir (string) The directory to save the test, if NULL, the test will not be saved
-#' @return A list of the test results, test method, and prediction variable
-#' @importFrom dplyr bind_cols
-#' @importFrom readr write_csv
-#' @noRd
-topicsTest1 <- function(
-    model,
-    preds,
-    data,
-    x_y_axis1,
-    controls,
-    test_method,
-    p_adjust_method,
-    seed,
-    load_dir = NULL,
-    save_dir = NULL){
-  
-  
-  if (!is.null(load_dir)){
-    test_path <- paste0(load_dir, "/seed_", seed, "/test.rds")
-    if (!file.exists(test_path)) {
-      msg <- paste0("Test file not found at: ", test_path, ". Exiting function.")
-      message(colourise(msg, "brown"))
-      return(NULL)
-    }
-    test <- readRDS(test_path)
-  } else {
-    
-    test <- topic_test(
-      topic_terms = model$summary,
-      topics_loadings = preds,
-      x_y_axis1 = data[x_y_axis1],
-      controls = data[controls],
-      test_method = test_method,
-      multiple_comparison = p_adjust_method)
-  }
-  
-  if (!is.null(save_dir)){
-    if (!dir.exists(save_dir)) {
-      # Create the directory
-      dir.create(save_dir)
-      
-      msg <- "Directory created successfully.\n"
-      message(
-        colourise(msg, "green"))
-      
-    } else {
-      
-      msg <- "Directory already exists.\n"
-      message(
-        colourise(msg, "green"))
-    }
-    
-    if(!dir.exists(paste0(save_dir, "/seed_", seed))){
-      dir.create(paste0(save_dir, "/seed_", seed))
-    }
-    
-    saveRDS(test, paste0(save_dir, 
-                         "/seed_", 
-                         seed, 
-                         "/test_",
-                         test_method, 
-                         "_", x_y_axis1,".rds"))
-    
-    msg <- paste0("The test object of ", 
-                  x_y_axis1, 
-                  " was saved in: ", 
-                  save_dir,"/seed_", 
-                  seed, "/test_",
-                  test_method, "_", 
-                  x_y_axis1,".rds")
-    
-    message(colourise(msg, "green"))
-  }
-  
-  return(list(test = test, 
-              test_method = test_method, 
-              x_y_axis1 = x_y_axis1))
-}
-
+# #' The function to test the LDA model
+# #' @param model (list) The trained model
+# #' @param data (tibble) The data to test on
+# #' @param preds (tibble) The predictions
+# #' @param x_y_axis (string) The variable to be predicted (only needed for regression or correlation)
+# # @param group_var (string) The variable to group by (only needed for t-test)
+# #' @param controls (vector) The control variables
+# #' @param test_method (string) The test method to use, either "linear_regression","logistic_regression" 
+# #' or mixed (not implemented: "correlation","t-test").
+# #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
+# #' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
+# #' @param seed (integer) The seed to set for reproducibility
+# #' @return A list of the test results, test method, and prediction variable
+# #' @importFrom dplyr bind_cols
+# #' @importFrom readr write_csv
+# #' @noRd
+# topicsTest1 <- function(
+#     model,
+#     preds,
+#     data,
+#     x_y_axis1,
+#     controls,
+#     test_method,
+#     p_adjust_method,
+#     seed
+#     ){
+#     
+#   test <- topic_test(
+#       topic_terms = model$summary,
+#       topics_loadings = preds,
+#       x_y_axis1 = data[x_y_axis1],
+#       controls = data[controls],
+#       test_method = test_method,
+#       multiple_comparison = p_adjust_method)
+#   
+#   return(list(test = test, 
+#               test_method = test_method, 
+#               x_y_axis1 = x_y_axis1))
+# }
+# 
 
 #' Test topics or n-grams
 #' 
@@ -289,38 +236,31 @@ topicsTest1 <- function(
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
 #' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
 #' @param seed (integer) The seed to set for reproducibility
-#' @param load_dir (string) The directory to load the test from, if NULL, the test will not be loaded
-#' @param save_dir (string) The directory to save the test, if NULL, the test will not be saved
 #' @return A list of the test results, test method, and prediction variable
 #' @examples
 #' \donttest{
 #' # Test the topic document distribution in respect to a variable
-#' save_dir_temp <- tempfile()
 #' 
 #' dtm <- topicsDtm(
-#'   data = dep_wor_data$Depphrase, 
-#'   save_dir =  save_dir_temp)
+#'   data = dep_wor_data$Depphrase)
 #' 
 #' model <- topicsModel(
 #'   dtm = dtm, # output of topicsDtm()
 #'   num_topics = 20,
 #'   num_top_words = 10,
 #'   num_iterations = 1000,
-#'   seed = 42,
-#'   save_dir = save_dir_temp)
+#'   seed = 42)
 #'                      
 #' preds <- topicsPreds(
 #'  model = model, # output of topicsModel()
-#'  data = dep_wor_data$Depphrase,
-#'  save_dir = save_dir_temp)
+#'  data = dep_wor_data$Depphrase)
 #'                      
 #' test <- topicsTest(
 #'   model = model, # output of topicsModel()
 #'   data=dep_wor_data,
 #'   preds = preds, # output of topicsPreds()
 #'   test_method = "linear_regression",
-#'   x_variable = "Age",
-#'   save_dir = save_dir_temp)
+#'   x_variable = "Age")
 #' }                 
 #' @importFrom dplyr bind_cols
 #' @importFrom readr write_csv
@@ -335,9 +275,7 @@ topicsTest <- function(
     controls = c(),
     test_method = "default",
     p_adjust_method = "fdr",
-    seed = 42,
-    load_dir = NULL,
-    save_dir = NULL){
+    seed = 42){
   
   
   ##### Getting complete.cases #####
@@ -451,9 +389,9 @@ topicsTest <- function(
   }
   
   #### Load test ####
-  if (!is.null(load_dir)){
-    test <- topicsTest1(load_dir = load_dir)
-  }
+ # if (!is.null(load_dir)){
+ #   test <- topicsTest1(load_dir = load_dir)
+ # }
   
   #### N-grams testing ####
   # (rearranging the data so that it fits the topics pipeline)
@@ -506,27 +444,39 @@ topicsTest <- function(
   # i = 1
   for (i in 1:length(x_y_axis)){
     
-    topic_loading <- topicsTest1(
-      model = model,
-      preds = preds, 
-      data = data,
-      x_y_axis1 = x_y_axis[i],
-      controls = controls,
+   # topic_loading <- topicsTest1(
+   #   model = model,
+   #   preds = preds, 
+   #   data = data,
+   #   x_y_axis1 = x_y_axis[i],
+   #   controls = controls,
+   #   test_method = test_method[i],
+   #   p_adjust_method = p_adjust_method,
+   #   seed = seed
+   # )
+    
+    test <- topic_test(
+      topic_terms = model$summary,
+      topics_loadings = preds,
+      x_y_axis1 = data[x_y_axis[i]],
+      controls = data[controls],
       test_method = test_method[i],
-      p_adjust_method = p_adjust_method,
-      seed = seed,
-      load_dir = load_dir,
-      save_dir = save_dir
-    )
+      multiple_comparison = p_adjust_method)
+    
+    topic_loading <- list(
+      test = test,
+      test_method = test_method[i],
+      x_y_axis1 = x_y_axis[i])
+    
     
     # Sorting output when not using ridge regression
       
-      colnames(topic_loading$test) <- c("topic", "top_terms", "prevalence", "coherence",
+    colnames(topic_loading$test) <- c("topic", "top_terms", "prevalence", "coherence",
                                         paste(pre[i], 
                                               colnames(topic_loading$test)[5:8], 
                                               sep = "."))
       
-      topic_loadings_all[[i]] <- topic_loading
+    topic_loadings_all[[i]] <- topic_loading
     
   }
   
