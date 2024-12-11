@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">topics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.30.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.40.0</span>
       </span>
     </div>
 
@@ -78,8 +78,6 @@
 <span>  removal_rate_least <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  shuffle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">42L</span>,</span>
-<span>  save_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  load_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  threads <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -135,14 +133,6 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
 <dd><p>(integer) the random seed for reproducibility</p></dd>
 
 
-<dt id="arg-save-dir">save_dir<a class="anchor" aria-label="anchor" href="#arg-save-dir"></a></dt>
-<dd><p>(string) the directory to save the results, if NULL, no results are saved.</p></dd>
-
-
-<dt id="arg-load-dir">load_dir<a class="anchor" aria-label="anchor" href="#arg-load-dir"></a></dt>
-<dd><p>(string) the directory to load from.</p></dd>
-
-
 <dt id="arg-threads">threads<a class="anchor" aria-label="anchor" href="#arg-threads"></a></dt>
 <dd><p>(integer) the number of threads to use</p></dd>
 
@@ -164,9 +154,7 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
 <span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">4</span>,</span></span>
 <span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">500</span>,</span></span>
 <span class="r-in"><span>                 save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Directory created successfully.</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmppisqoM/file5a32553fd111/seed_42/dtms.rds</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in topicsDtm(data = dep_wor_data$Depphrase, removal_mode = "frequency",     removal_rate_least = 4, removal_rate_most = 500, save_dir = save_dir_temp):</span> unused argument (save_dir = save_dir_temp)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create Dtm and remove the 1 least and 1 most frequent terms.</span></span></span>
 <span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span>,</span></span>
@@ -174,7 +162,7 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
 <span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                 save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmppisqoM/file5a32553fd111/seed_42/dtms.rds</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in topicsDtm(data = dep_wor_data$Depphrase, removal_mode = "term",     removal_rate_least = 1, removal_rate_most = 1, save_dir = save_dir_temp):</span> unused argument (save_dir = save_dir_temp)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create Dtm and remove the 1% least frequent and 1% most frequent terms.</span></span></span>
 <span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span>,</span></span>
@@ -182,13 +170,13 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
 <span class="r-in"><span>                 removal_rate_least <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                 removal_rate_most <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                 save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmppisqoM/file5a32553fd111/seed_42/dtms.rds</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in topicsDtm(data = dep_wor_data$Depphrase, removal_mode = "percentage",     removal_rate_least = 1, removal_rate_most = 1, save_dir = save_dir_temp):</span> unused argument (save_dir = save_dir_temp)</span>
 <span class="r-in"><span>                 </span></span>
 <span class="r-in"><span><span class="co"># Load precomputed Dtm from directory</span></span></span>
 <span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu">topicsDtm</span><span class="op">(</span>load_dir <span class="op">=</span> <span class="va">save_dir_temp</span>,</span></span>
 <span class="r-in"><span>                 seed <span class="op">=</span> <span class="fl">42</span>,</span></span>
 <span class="r-in"><span>                 save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmppisqoM/file5a32553fd111/seed_42/dtms.rds</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in topicsDtm(load_dir = save_dir_temp, seed = 42, save_dir = save_dir_temp):</span> unused arguments (load_dir = save_dir_temp, save_dir = save_dir_temp)</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

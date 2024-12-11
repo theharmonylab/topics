@@ -18,7 +18,7 @@ regression or t-test."><meta property="og:image" content="https://r-topics.org/r
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">topics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.30.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.40.0</span>
       </span>
     </div>
 
@@ -78,9 +78,7 @@ regression or t-test.</p>
 <span>  controls <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  test_method <span class="op">=</span> <span class="st">"default"</span>,</span>
 <span>  p_adjust_method <span class="op">=</span> <span class="st">"fdr"</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">42</span>,</span>
-<span>  load_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  save_dir <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  seed <span class="op">=</span> <span class="fl">42</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -131,14 +129,6 @@ selectes logistic regression if the variable only contain 0s and 1s, or "linear_
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
 <dd><p>(integer) The seed to set for reproducibility</p></dd>
 
-
-<dt id="arg-load-dir">load_dir<a class="anchor" aria-label="anchor" href="#arg-load-dir"></a></dt>
-<dd><p>(string) The directory to load the test from, if NULL, the test will not be loaded</p></dd>
-
-
-<dt id="arg-save-dir">save_dir<a class="anchor" aria-label="anchor" href="#arg-save-dir"></a></dt>
-<dd><p>(string) The directory to save the test, if NULL, the test will not be saved</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -149,37 +139,27 @@ selectes logistic regression if the variable only contain 0s and 1s, or "linear_
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># Test the topic document distribution in respect to a variable</span></span></span>
-<span class="r-in"><span><span class="va">save_dir_temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="fu"><a href="topicsDtm.html">topicsDtm</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span>, </span></span>
-<span class="r-in"><span>  save_dir <span class="op">=</span>  <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Directory created successfully.</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Dtm, data, and summary are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmppisqoM/file5a321137c4c9/seed_42/dtms.rds</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="topicsModel.html">topicsModel</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  dtm <span class="op">=</span> <span class="va">dtm</span>, <span class="co"># output of topicsDtm()</span></span></span>
 <span class="r-in"><span>  num_topics <span class="op">=</span> <span class="fl">20</span>,</span></span>
 <span class="r-in"><span>  num_top_words <span class="op">=</span> <span class="fl">10</span>,</span></span>
 <span class="r-in"><span>  num_iterations <span class="op">=</span> <span class="fl">1000</span>,</span></span>
-<span class="r-in"><span>  seed <span class="op">=</span> <span class="fl">42</span>,</span></span>
-<span class="r-in"><span>  save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The Model is saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmppisqoM/file5a321137c4c9/seed_42/model.rds</span></span>
+<span class="r-in"><span>  seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span></span></span>
 <span class="r-in"><span>                     </span></span>
 <span class="r-in"><span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="topicsPreds.html">topicsPreds</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span> model <span class="op">=</span> <span class="va">model</span>, <span class="co"># output of topicsModel()</span></span></span>
-<span class="r-in"><span> data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span>,</span></span>
-<span class="r-in"><span> save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Predictions are saved in/var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmppisqoM/file5a321137c4c9/seed_42/preds.rds</span></span>
+<span class="r-in"><span> data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span><span class="op">)</span></span></span>
 <span class="r-in"><span>                     </span></span>
 <span class="r-in"><span><span class="va">test</span> <span class="op">&lt;-</span> <span class="fu">topicsTest</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  model <span class="op">=</span> <span class="va">model</span>, <span class="co"># output of topicsModel()</span></span></span>
 <span class="r-in"><span>  data<span class="op">=</span><span class="va">dep_wor_data</span>,</span></span>
 <span class="r-in"><span>  preds <span class="op">=</span> <span class="va">preds</span>, <span class="co"># output of topicsPreds()</span></span></span>
 <span class="r-in"><span>  test_method <span class="op">=</span> <span class="st">"linear_regression"</span>,</span></span>
-<span class="r-in"><span>  x_variable <span class="op">=</span> <span class="st">"Age"</span>,</span></span>
-<span class="r-in"><span>  save_dir <span class="op">=</span> <span class="va">save_dir_temp</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  x_variable <span class="op">=</span> <span class="st">"Age"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">1: fitting model formula: z_Age ~ z_t_1</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">2: fitting model formula: z_Age ~ z_t_2</span></span>
@@ -220,9 +200,6 @@ selectes logistic regression if the variable only contain 0s and 1s, or "linear_
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">20: fitting model formula: z_Age ~ z_t_20</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">Directory already exists.</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">The test object of Age was saved in: /var/folders/v8/54z3z5z5215527gfb9fzz_7c0000gn/T//RtmppisqoM/file5a321137c4c9/seed_42/test_linear_regression_Age.rds</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">The parameter y_variable is not set! Output 1 dimensional results.</span></span>
 <span class="r-in"><span><span class="co"># }                 </span></span></span>
 </code></pre></div>
