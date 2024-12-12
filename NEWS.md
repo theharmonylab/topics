@@ -1,10 +1,13 @@
 # text (development version)
 
+# topics 0.40.1
+- adding `allowed_word_overlap` in `topicsPlot()` for plotting the most prevalence.
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-# topics 0.30.6
-- removing save_dir and load_dir from all function; only topicsPlot now has the save_dir as an option. 
+# topics 0.40.
+- removing `save_dir` and `load_dir` from all function; only `topicsPlot()` now has the `save_dir` as an option. 
 - size of the dots in distributions can be plotted according to `prevalence`.
+- adding `p_adjust_method` to `topicsPlots()`.
 
 # topics 0.30.5
 - plots are not added as a list (and not only saved to the folder)

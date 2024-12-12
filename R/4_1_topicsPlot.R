@@ -795,9 +795,9 @@ colour_settings <- function(
 #' @param ngrams (list) The output from the the topicsGram() function . Should be NULL if plotting topics.
 #' @param test (list) The test results; if plotting according to dimension(s) include the object from topicsTest() function. 
 #' @param p_alpha (integer) The p-value threshold to use for significance testing.
-# @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
-# see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").
-#' @param ngrams_max (integer) The max number of n-grams to include.
+#' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
+#' see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").
+#' @param ngrams_max (integer) The max number of n-grams to plot
 #' @param ngram_select (character) Method to select ngrams_max including "pmi", "frequency", "proportion", and "correlation". 
 #' @param color_scheme (string 'default' or vector) The color scheme.
 #'  
@@ -847,9 +847,13 @@ colour_settings <- function(
 #'   "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner)
 #'
 #' 
+#' @param topic_duplicate_filter (numeric) A number determining max number of words that can be the same in topics to be plotted. 
+#' This filter remove topics from the distribution and grid legends as well; and they are not part in the 
+#' adjustment for multiple comparison (i.e., the adjusted p-values).   
 #' @param scale_size (logical) Whether to scale the size of the words.
 #' @param plot_topics_idx (vector)  The index or indeces of the topics to plot 
 #' (e.g., look in the model-object for the indices; can for example, be c(1, 3:5) to plot topic t_1, t_3, t_4 and t_5) (optional). 
+#' @param allowed_word_overlap (numeric) A filter for setting the max number of words that can be the same in topics to be plotted.
 #' @param plot_n_most_prevalent_topics (numeric) Plots the most prevalent topics in a given model. 
 #' @param save_dir (string) The directory to save the plots.
 #' @param figure_format (string) Set the figure format, e.g., ".svg", or ".png".
@@ -885,12 +889,14 @@ topicsPlot <- function(
     ngrams = NULL,
     test = NULL,
     p_alpha = 0.05,
-   # p_adjust_method = "none",
+    p_adjust_method = "none",
     ngrams_max = NULL,
     ngram_select = "frequency",
     color_scheme = "default",
+    topic_duplicate_filter = NULL, 
     scale_size = FALSE,
     plot_topics_idx = NULL,
+    allowed_word_overlap = NULL,
     plot_n_most_prevalent_topics = NULL,
     save_dir = NULL,
     figure_format = "svg",
@@ -972,8 +978,25 @@ topicsPlot <- function(
     return (NULL)
   }
   
+  #### Add adjustment of p-values for multiple comparisons ####
+  if (p_adjust_method != "none"){
+    
+    # reset the adjusted p-value with potentially new correction method
+    test$test[[8]]<- p.adjust(p = test$test[[7]],
+                              method = p_adjust_method)
+    
+    if(dim == 2) test$test[[12]]<- p.adjust(p = test$test[[11]],
+                                            method = p_adjust_method)
+    
+  } 
+  if(p_adjust_method != "none"){
+    
+    # set the original p-value as the adjusted for plotting
+    test$test[[8]] <- test$test[[7]]
+    if(dim == 2) test$test[[12]] <- test$test[[11]]
+  }
   
-  ### Setting colour-categories: Selecting elements to plot according to the p_alpha ####
+  #### Setting colour-categories: Selecting elements to plot according to the p_alpha ####
   if (dim == 1) {
     
     # Getting column names
@@ -997,6 +1020,24 @@ topicsPlot <- function(
   }
   
   
+  #### Filtering duplicate topics #### 
+  if (!is.null(topic_duplicate_filter)){
+    
+    # Create loop here that test the duplicity of topics within colour category
+    
+   # test1 <- test$test 
+      
+    #top_terms <-
+    
+    # group_by colour group 
+    
+    # order by (setting for different )
+    
+    # Check for overlaps and selects 
+    
+    
+  }
+  
   #### Selecting the most prevalence topics ####
   if(!is.null(plot_n_most_prevalent_topics) & !is.null(plot_topics_idx)){
     stop("Please note that you cannot set both the plot_n_most_prevalent_topics and the plot_topics_idx parameters.")
@@ -1004,15 +1045,19 @@ topicsPlot <- function(
   
   if (!is.null(plot_n_most_prevalent_topics)) {
     
-    plot_topics_idx <- model$summary %>% 
-      dplyr::arrange(dplyr::desc(prevalence)) %>% 
-      dplyr::top_n(plot_n_most_prevalent_topics, prevalence) %>% 
-      dplyr::select(topic)
-    
-    plot_topics_idx <- plot_topics_idx$topic
+    arranged_topics <- model$summary %>% 
+      dplyr::arrange(dplyr::desc(prevalence))
+    # Create loop here that test the duplicity of topics
+    n_most_prevalent_topics <- select_non_overlapping_texts(
+      arranged_topics, 
+      "top_terms", 
+      n_texts = plot_n_most_prevalent_topics, 
+      allowed_word_overlap = allowed_word_overlap 
+    )
 
+    plot_topics_idx <- n_most_prevalent_topics$topic
+    
   }
-  
   
   
   #### Making the plots ####
@@ -1050,6 +1095,7 @@ topicsPlot <- function(
 
   
   if(is.null(ngrams) & !is.null(test$test)){
+    
     popout1 <- topicsScatterLegendNew(
       bivariate_color_codes = bivariate_color_codes_f,
       filtered_test = test$test,

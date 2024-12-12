@@ -90,6 +90,100 @@ create_topic_words_dfs <- function(
   return(df_list)
 }
 
+
+
+#' Function to select non-overlapping texts
+#'
+#' @param df A tibble or data frame containing the text data.
+#' @param text_column A character string specifying the name of the text column.
+#' @param n_texts A numeric value indicating the number of texts to select (default is 3).
+#' @param allowed_word_overlap A numeric value indicating the maximum number of words allowed to overlap (default is 5).
+#' @return A tibble or data frame containing the selected non-overlapping texts.
+#' @importFrom stringr str_split
+#' @importFrom dplyr filter
+#' @noRd
+select_non_overlapping_texts <- function(
+    df, 
+    text_column, 
+    n_texts = 3, 
+    allowed_word_overlap = 5) {
+  
+  # Function to count word overlap between two texts
+  count_word_overlap <- function(text1, text2) {
+    words1 <- unlist(stringr::str_split(text1, "\\s+"))
+    words2 <- unlist(stringr::str_split(text2, "\\s+"))
+    length(intersect(words1, words2))
+  }
+  
+  # Extract the text data
+  texts <- df[[text_column]]
+  
+  # Initialize with the first text
+  selected_texts <- texts[1]
+  
+  # Loop through each subsequent text
+  for (i in 2:length(texts)) {
+    # Check overlap with all currently selected texts
+    overlap_counts <- sapply(selected_texts, function(selected) {
+      count_word_overlap(selected, texts[i])
+    })
+    
+    # Include the text only if the overlap with all selected texts is less than allowed_word_overlap
+    if (all(overlap_counts < allowed_word_overlap)) {
+      selected_texts <- c(selected_texts, texts[i])
+    }
+    
+    # Stop if we have reached the desired number of texts
+    if (length(selected_texts) >= n_texts) {
+      break
+    }
+  }
+  
+  # Filter the data frame to keep only the selected texts
+  filtered_df <- dplyr::filter(df, !!rlang::sym(text_column) %in% selected_texts)
+  
+  return(filtered_df)
+}
+
+#' Assgning numeric categories for further topic visualization colors.
+#' @param topic_loadings_all (tibble) The tibble from topicsTest1
+#' @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
+#' @param dimNo (numeric) 1 dimension or 2 dimensions
+#' @return A new tibble with the assigned numbers
+#' @importFrom dplyr mutate
+#' @noRd
+topicsNumAssign_dim2 <- function(
+    topic_loadings_all,
+    p_alpha = 0.05, 
+    dimNo = 2){
+  
+  if (dimNo == 1){
+    num1 <- 1:3
+    topic_loadings_all <- topic_loadings_all %>%
+      dplyr::mutate(color_categories = dplyr::case_when(
+        x_plotted < 0 & adjusted_p_values.x < p_alpha ~ num1[1],
+        adjusted_p_values.x > p_alpha ~ num1[2],
+        x_plotted > 0 & adjusted_p_values.x < p_alpha ~ num1[3]
+      ))
+  }else{
+    num1 <- 1:9
+    topic_loadings_all <- topic_loadings_all %>%
+      dplyr::mutate(color_categories = dplyr::case_when(
+        x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[1],
+        adjusted_p_values.x > p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[2],
+        x_plotted > 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[3],
+        x_plotted < 0 & adjusted_p_values.x < p_alpha & adjusted_p_values.y > p_alpha ~ num1[4],
+        adjusted_p_values.x > p_alpha & adjusted_p_values.y > p_alpha ~ num1[5],
+        x_plotted > 0 & adjusted_p_values.x < p_alpha & adjusted_p_values.y > p_alpha ~ num1[6],
+        x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[7],
+        adjusted_p_values.x > p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[8],
+        x_plotted > 0 & adjusted_p_values.x < p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[9]
+      ))
+  }
+  
+  return (topic_loadings_all)
+}
+
 #' This is a private function
 #' @param df_list (list) list of data.frames with topics most frequent words and assigned topic term scores
 #' @param test (data.frame) the test returned from textTopicTest()
@@ -514,43 +608,6 @@ create_plots <- function(
 
 
 
-#' Assgning numeric categories for further topic visualization colors.
-#' @param topic_loadings_all (tibble) The tibble from topicsTest1
-#' @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
-#' @param dimNo (numeric) 1 dimension or 2 dimensions
-#' @return A new tibble with the assigned numbers
-#' @importFrom dplyr mutate
-#' @noRd
-topicsNumAssign_dim2 <- function(
-    topic_loadings_all,
-    p_alpha = 0.05, 
-    dimNo = 2){
-  
-  if (dimNo == 1){
-    num1 <- 1:3
-    topic_loadings_all <- topic_loadings_all %>%
-      dplyr::mutate(color_categories = dplyr::case_when(
-        x_plotted < 0 & adjusted_p_values.x < p_alpha ~ num1[1],
-        adjusted_p_values.x > p_alpha ~ num1[2],
-        x_plotted > 0 & adjusted_p_values.x < p_alpha ~ num1[3]
-      ))
-  }else{
-    num1 <- 1:9
-    topic_loadings_all <- topic_loadings_all %>%
-      dplyr::mutate(color_categories = dplyr::case_when(
-        x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[1],
-        adjusted_p_values.x > p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[2],
-        x_plotted > 0 & adjusted_p_values.x < p_alpha & y_plotted > 0 & adjusted_p_values.y < p_alpha ~ num1[3],
-        x_plotted < 0 & adjusted_p_values.x < p_alpha & adjusted_p_values.y > p_alpha ~ num1[4],
-        adjusted_p_values.x > p_alpha & adjusted_p_values.y > p_alpha ~ num1[5],
-        x_plotted > 0 & adjusted_p_values.x < p_alpha & adjusted_p_values.y > p_alpha ~ num1[6],
-        x_plotted < 0 & adjusted_p_values.x < p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[7],
-        adjusted_p_values.x > p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[8],
-        x_plotted > 0 & adjusted_p_values.x < p_alpha & y_plotted < 0 & adjusted_p_values.y < p_alpha ~ num1[9]
-      ))
-  }
-  
-  return (topic_loadings_all)
-}
+
 
 

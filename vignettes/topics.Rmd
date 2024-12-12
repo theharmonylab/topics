@@ -85,7 +85,7 @@ test <- topicsTest(
 
 **5. Visualization**<br>
 To visualize the significant topics as wordclouds, run the following command:
-```{r plot, eval = TRUE, warning=FALSE, message=FALSE}
+```{r plot_list, eval = TRUE, warning=FALSE, message=FALSE}
 
 plot_list <- topicsPlot(
   model = model,

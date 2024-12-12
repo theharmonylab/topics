@@ -9,11 +9,14 @@ topicsPlot(
   ngrams = NULL,
   test = NULL,
   p_alpha = 0.05,
+  p_adjust_method = "none",
   ngrams_max = NULL,
   ngram_select = "frequency",
   color_scheme = "default",
+  topic_duplicate_filter = NULL,
   scale_size = FALSE,
   plot_topics_idx = NULL,
+  allowed_word_overlap = NULL,
   plot_n_most_prevalent_topics = NULL,
   save_dir = NULL,
   figure_format = "svg",
@@ -46,7 +49,10 @@ topicsPlot(
 
 \item{p_alpha}{(integer) The p-value threshold to use for significance testing.}
 
-\item{ngrams_max}{(integer) The max number of n-grams to include.}
+\item{p_adjust_method}{(character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
+see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").}
+
+\item{ngrams_max}{(integer) The max number of n-grams to plot}
 
 \item{ngram_select}{(character) Method to select ngrams_max including "pmi", "frequency", "proportion", and "correlation".}
 
@@ -97,10 +103,16 @@ For 1-dimension plots of topics, it should contain 6 colours (3 gradient pairs),
   
   "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner)}
 
+\item{topic_duplicate_filter}{(numeric) A number determining max number of words that can be the same in topics to be plotted. 
+This filter remove topics from the distribution and grid legends as well; and they are not part in the 
+adjustment for multiple comparison (i.e., the adjusted p-values).}
+
 \item{scale_size}{(logical) Whether to scale the size of the words.}
 
 \item{plot_topics_idx}{(vector)  The index or indeces of the topics to plot 
 (e.g., look in the model-object for the indices; can for example, be c(1, 3:5) to plot topic t_1, t_3, t_4 and t_5) (optional).}
+
+\item{allowed_word_overlap}{(numeric) A filter for setting the max number of words that can be the same in topics to be plotted.}
 
 \item{plot_n_most_prevalent_topics}{(numeric) Plots the most prevalent topics in a given model.}
 
