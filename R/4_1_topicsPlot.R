@@ -625,7 +625,6 @@ topicsPlot1 <- function(
     cor_var = test$x_y_axis
     test_type = test$test_method
     test = test$test
-    
   }
   
   if (!is.null(model) && is.null(test)){
