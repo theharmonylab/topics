@@ -359,6 +359,7 @@ create_plots <- function(
                target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]])  
            }else{stop('Invalid settings for the parameter "indi_topic_neg_dict".\nConsider use the default option!\n')}
         }
+        if (i=='t_61'){saveRDS(target_topic, './target_topic.rds')}
         
         if (grid1 == ""){ .
           plot <- ggplot2::ggplot(target_topic, 
