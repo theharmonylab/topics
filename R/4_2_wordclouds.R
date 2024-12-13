@@ -184,6 +184,30 @@ topicsNumAssign_dim2 <- function(
   return (topic_loadings_all)
 }
 
+#' A Private function to check the validity of color hex codes for parameter indi_topic_neg_dict.
+#' indi_topic_neg_dict (named vector) the named vector with negative words as elements and color hex codes as names for each word
+#' @noRd
+all_hex <- function(indi_topic_neg_dict) {
+  all(grepl("^#[0-9A-Fa-f]{6}$", indi_topic_neg_dict))
+}
+
+#' Separate words for negative words as a fixed-colour tibble and other words as a gradient-color tibble.
+#' @noRd
+separate_neg_words <- function(df_list_element, indi_topic_neg_dict) {
+  pattern <- paste(names(indi_topic_neg_dict), collapse = "|")
+
+  # Create df_list_ele_fixed with words that match or contain the dictionary keys
+  df_list_ele_fixed <- df_list_element %>%
+    filter(str_detect(Word, pattern)) %>%
+    mutate(FixedColor = indi_topic_neg_dict[str_extract(Word, pattern)])
+
+  # Create df_list_ele_gradient with the remaining words
+  df_list_ele_gradient <- df_list_element %>%
+    filter(!str_detect(Word, pattern))
+
+  return (list(df_list_ele_gradient, df_list_ele_fixed))
+}
+
 #' This is a private function
 #' @param df_list (list) list of data.frames with topics most frequent words and assigned topic term scores
 #' @param test (data.frame) the test returned from textTopicTest()
