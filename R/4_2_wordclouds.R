@@ -388,7 +388,7 @@ create_plots <- function(
           plot <- ggplot2::ggplot(target_topic, 
                                   ggplot2::aes(label = Word, 
                                                size = phi, 
-                                               color = phi)) + #,x=estimate)) +
+                                               color = color)) + #,x=estimate)) +
             ggwordcloud::geom_text_wordcloud() +
             ggplot2::scale_size_area(max_size = max_size) +
             ggplot2::theme_minimal() +
