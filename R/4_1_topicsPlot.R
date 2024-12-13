@@ -581,6 +581,7 @@ topicsPlot1 <- function(
     scale_size = FALSE,
     plot_topics_idx = NULL,
     p_alpha = 0.05,
+    indi_topic_neg_dict = c(not = "#2d00ff", never = "#2d00ff"),    
     save_dir,
     figure_format = "svg",
     width = 10, 
