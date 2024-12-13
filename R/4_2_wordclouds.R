@@ -220,6 +220,9 @@ separate_neg_words <- function(df_list_element, indi_topic_neg_dict) {
 #' @param scale_size (bool) if True, then the size of the topic cloud is scaled by the prevalence of the topic
 #' @param plot_topics_idx (list) if specified, then only the specified topics are plotted
 #' @param p_alpha (float) set threshold which determines which topics are plotted
+#' @param indi_topic_neg_dict (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
+#'  Default words are "not", "never". Words are as vector names. 
+#'  The values of the vector determine the color code to popout. The color values can be different for different words.
 #' @param save_dir (string) save plots in specified directory, if left blank, plots is not saved,
 #' thus save_dir is necessary.
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
@@ -242,6 +245,7 @@ create_plots <- function(
     scale_size = FALSE,
     plot_topics_idx = NULL,
     p_alpha = NULL,
+    indi_topic_neg_dict = c(not = "#2d00ff", never = "#2d00ff"),
     save_dir,
     figure_format = "svg",
     width = 10,
@@ -329,7 +333,13 @@ create_plots <- function(
       
       #
       if (!is.nan(p_adjusted) & p_adjusted < p_alpha){
-        
+
+        # For constant color of negative words. 
+        if (!is.null(indi_topic_neg_dict) && is.vector(indi_topic_neg_dict)){
+           if(is.character(indi_topic_neg_dict) && is.character(names(indi_topic_neg_dict)) && all_hex(indi_topic_neg_dict))){
+               df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]], indi_topic_neg_dict)
+           }else{stop('Invalid settings for the parameter "indi_topic_neg_dict".\nConsider use the default option!\n')}
+        }
         
         #estimate <- test[i,][[grep(estimate_col, colnames(test), value=TRUE)]]# $PHQtot.estimate
         #p_adjusted <- test[i,][[grep("p_adjusted", colnames(test), value=TRUE)]] # $PHQtot.p_adjustedfdr
@@ -346,8 +356,14 @@ create_plots <- function(
           y <- ""
         }
 
+        # Assign color to neg_words in the dictionary object "indi_topic_neg_dict"
+        df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]])
+        df_list_separated[[1]]$color <- color_scheme$palette(df_list_separated[[1]]$phi)
+        colnames(df_list_separated[[2]])[3] <- c('color') 
+        target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]])  
+
         if (grid1 == ""){ .
-          plot <- ggplot2::ggplot(df_list[[as.numeric(sub(".*_", "", i))]], 
+          plot <- ggplot2::ggplot(target_topic, 
                                   ggplot2::aes(label = Word, 
                                                size = phi, 
                                                color = phi)) + #,x=estimate)) +
@@ -367,7 +383,7 @@ create_plots <- function(
             
             x_message = paste0("r_x = ", round(estimate_x,4))                    
           }
-          plot <- ggplot2::ggplot(df_list[[as.numeric(sub(".*_", "", i))]], 
+          plot <- ggplot2::ggplot(target_topic, 
                                   ggplot2::aes(label = Word, 
                                                size = phi, 
                                                color = phi)) + #,x=estimate)) +
