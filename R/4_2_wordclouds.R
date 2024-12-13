@@ -349,7 +349,7 @@ create_plots <- function(
         }
 
         cat(as.character(i))
-        saveRDS(target_topic, './target_topic.rds')
+
         # For constant color of negative words. 
         if (!is.null(indi_topic_neg_dict) && is.vector(indi_topic_neg_dict)){
            if(is.character(indi_topic_neg_dict) && is.character(names(indi_topic_neg_dict)) && all_hex(indi_topic_neg_dict)){
@@ -357,10 +357,11 @@ create_plots <- function(
                df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]], indi_topic_neg_dict)
                df_list_separated[[1]]$color <- color_scheme$palette(df_list_separated[[1]]$phi)
                colnames(df_list_separated[[2]])[3] <- c('color') 
-               target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]])  
+               target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]]) 
+               print(target_topic)
            }else{stop('Invalid settings for the parameter "indi_topic_neg_dict".\nConsider use the default option!\n')}
         }
-        
+        saveRDS(target_topic, './target_topic.rds')        
         
         if (grid1 == ""){ .
           plot <- ggplot2::ggplot(target_topic, 
