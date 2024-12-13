@@ -1020,23 +1020,36 @@ topicsPlot <- function(
   }
   
   
-  #### Filtering duplicate topics #### 
-  if (!is.null(topic_duplicate_filter)){
-    
-    # Create loop here that test the duplicity of topics within colour category
-    
-   # test1 <- test$test 
-      
-    #top_terms <-
-    
-    # group_by colour group 
-    
-    # order by (setting for different )
-    
-    # Check for overlaps and selects 
-    
-    
-  }
+#  #### Filtering duplicate topics #### 
+#  if (!is.null(topic_duplicate_filter)){
+#    
+#    # Create loop here that test the duplicity of topics within colour category
+#    
+#    # test1 <- test$test 
+#    # Apply the function to each color group based on scatter_legend_n
+#    result <- arranged_topics %>%
+#      group_by(color_scheme) %>%
+#      group_modify(~ select_non_overlapping_texts(.x, "top_terms", n_texts = scatter_legend_n[.y$color_scheme[1]], allowed_word_overlap))
+#    
+#    # top_terms <-
+#    scatter_legend_n = c(1, 1, 1, 1, 0, 1, 1, 1, 1)
+#    # group_by colour group 
+#    test$test %>% group_by(color_scheme)
+#    n_most_prevalent_topics <- select_non_overlapping_texts(
+#      arranged_topics, 
+#      "top_terms", 
+#      n_texts = scatter_legend_n[scatter_legend_n], 
+#      allowed_word_overlap = allowed_word_overlap 
+#    )
+#    # order by (setting for different)
+#    # Apply the function to each color group based on scatter_legend_n
+#    result <- arranged_topics %>%
+#      group_by(color_scheme) %>%
+#      group_modify(~ select_non_overlapping_texts(.x, "top_terms", n_texts = scatter_legend_n[.y$color_scheme[1]], allowed_word_overlap))
+#    
+#    # Check for overlaps and selects 
+#    
+#  }
   
   #### Selecting the most prevalence topics ####
   if(!is.null(plot_n_most_prevalent_topics) & !is.null(plot_topics_idx)){

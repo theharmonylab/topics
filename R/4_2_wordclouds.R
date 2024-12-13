@@ -92,13 +92,15 @@ create_topic_words_dfs <- function(
 
 
 
-#' Function to select non-overlapping texts
+#' Function to select non-overlapping texts and count excluded topics
 #'
 #' @param df A tibble or data frame containing the text data.
 #' @param text_column A character string specifying the name of the text column.
 #' @param n_texts A numeric value indicating the number of texts to select (default is 3).
 #' @param allowed_word_overlap A numeric value indicating the maximum number of words allowed to overlap (default is 5).
-#' @return A tibble or data frame containing the selected non-overlapping texts.
+#' @return A list containing:
+#'   - `selected`: A tibble or data frame containing the selected non-overlapping texts.
+#'   - `excluded_count`: The number of topics that were not selected due to overlap.
 #' @importFrom stringr str_split
 #' @importFrom dplyr filter
 #' @noRd
@@ -120,6 +122,7 @@ select_non_overlapping_texts <- function(
   
   # Initialize with the first text
   selected_texts <- texts[1]
+  excluded_count <- 0  # Counter for excluded topics
   
   # Loop through each subsequent text
   for (i in 2:length(texts)) {
@@ -131,6 +134,9 @@ select_non_overlapping_texts <- function(
     # Include the text only if the overlap with all selected texts is less than allowed_word_overlap
     if (all(overlap_counts < allowed_word_overlap)) {
       selected_texts <- c(selected_texts, texts[i])
+    } else {
+      # Increment the excluded count if the text is not selected
+      excluded_count <- excluded_count + 1
     }
     
     # Stop if we have reached the desired number of texts
@@ -140,9 +146,18 @@ select_non_overlapping_texts <- function(
   }
   
   # Filter the data frame to keep only the selected texts
-  filtered_df <- dplyr::filter(df, !!rlang::sym(text_column) %in% selected_texts)
+  filtered_df <- filter(df, !!sym(text_column) %in% selected_texts)
   
+  # Return a list with the filtered data frame and excluded count
+  message(colourise(paste0(
+    excluded_count," topics were excluded due to the `allowed_word_overlap` filter",
+    "blue")))
+
   return(filtered_df)
+  #return(list(
+  #  selected = filtered_df,
+  #  excluded_count = excluded_count
+  #))
 }
 
 #' Assgning numeric categories for further topic visualization colors.

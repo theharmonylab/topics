@@ -93,7 +93,6 @@ test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall retu
   
   testthat::skip_on_cran()
 
-  save_dir_temp <- "./res"
   dtmtest <- topics::topicsDtm(
     data = dep_wor_data$Wortext
   )
@@ -118,15 +117,13 @@ test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall retu
   )
 #  random_sequence <- sample(1:9, size = nrow(tests2D[[3]]$test), replace = TRUE)
 #  tests2D[[3]]$test$color_categories <- random_sequence
-  
-  save_dir_temp <- tempfile()
+
   
   out1 <- topics::topicsPlot(
     model = model,
     test = tests2D,
     p_alpha = 0.99,
-    seed = 3, 
-    save_dir = save_dir_temp, 
+    seed = 3,
     figure_format = "png")
  
   # After save_dir update this is now NULL 
@@ -136,8 +133,7 @@ test_that('Case 3: Setting dimension = 1 or 3 for 2 dimensional plots shall retu
     model = model,
     test = tests2D,
     p_alpha = 0.99,
-    seed = 4, 
-    save_dir = save_dir_temp, 
+    seed = 4,
     figure_format = "png")
   
   # After save_dir update this is now NULL
@@ -172,14 +168,11 @@ test_that('Case 4: Set dimension = 2 for successfully saving the legends.',{
     controls = c('Age','Gender')
   )
   
-  save_dir_temp <- tempfile()
-  
   topics::topicsPlot(
     model = model,
     test = tests2D,
     p_alpha = 0.99,
     seed = 5, 
-    save_dir = save_dir_temp, 
     figure_format = "png")
   
 #  testthat::expect_true(
