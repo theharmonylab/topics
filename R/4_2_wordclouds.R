@@ -355,12 +355,12 @@ create_plots <- function(
            if(is.character(indi_topic_neg_dict) && is.character(names(indi_topic_neg_dict)) && all_hex(indi_topic_neg_dict)){
                # Assign color to neg_words in the dictionary object "indi_topic_neg_dict"
                df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]], indi_topic_neg_dict)
-               df_list_separated[[1]]$phi <- df_list_separated[[1]]$phi^3 / sum(df_list_separated[[1]]$phi^3) 
-               df_list_separated[[1]]$color <- color_scheme$palette(df_list_separated[[1]]$phi)
+               df_list_separated[[1]]$color <- df_list_separated[[1]]$phi^3 / sum(df_list_separated[[1]]$phi^3) 
+               df_list_separated[[1]]$color <- color_scheme$palette(df_list_separated[[1]]$color)
                colnames(df_list_separated[[2]])[3] <- c('color') 
                target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]]) 
            }else{stop('Invalid settings for the parameter "indi_topic_neg_dict".\nConsider use the default option!\n')}
-        }
+        }else{target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]}
         if (i == 't_61'){saveRDS(target_topic, './target_topic.rds')}
                 
         
@@ -394,7 +394,7 @@ create_plots <- function(
             scale_colour_identity() + 
             ggplot2::theme_minimal() +
             #theme(plot.margin = margin(0,0,0,0, "cm")) +
-            color_scheme + 
+            #color_scheme + 
             ggplot2::labs(x = x_message,
                           y= y)
         }
