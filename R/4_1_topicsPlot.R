@@ -559,6 +559,9 @@ topicsGridLegend <- function(
 #' @param scale_size (logical) Whether to scale the size of the words
 #' @param plot_topics_idx (vector) The topics to plot determined by index
 #' @param p_alpha (integer) The p-value threshold to use for significance
+#' @param indi_topic_neg_dict (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
+#'  Default words are "not", "never". Words are as vector names. 
+#'  The values of the vector determine the color code to popout. The color values can be different for different words.
 #' @param save_dir (string) The directory to save the wordclouds
 #' @param figure_format (string) Set the figure format, e.g., svg, or png.
 #' @param width (integer) The width of the topic (units = "in"). 
