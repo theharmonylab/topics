@@ -801,6 +801,9 @@ colour_settings <- function(
 #' @param p_alpha (integer) The p-value threshold to use for significance testing.
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
 #' see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").
+#' @param indi_topic_neg_dict (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
+#'  Default words are "not", "never". Words are as vector names. 
+#'  The values of the vector determine the color code to popout. The color values can be different for different words.
 #' @param ngrams_max (integer) The maximum number of n-grams to plot.
 #' @param ngram_select (character) Method to select ngrams_max, including "pmi", "frequency", "proportion", and "correlation". 
 #' @param color_scheme (string 'default' or vector) The color scheme.
@@ -894,6 +897,7 @@ topicsPlot <- function(
     test = NULL,
     p_alpha = 0.05,
     p_adjust_method = "none",
+    indi_topic_neg_dict = c(not = "#2d00ff", never = "#2d00ff"),
     ngrams_max = NULL,
     ngram_select = "frequency",
     color_scheme = "default",
