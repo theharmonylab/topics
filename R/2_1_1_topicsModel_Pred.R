@@ -238,20 +238,37 @@ get_mallet_model <- function(
 #' Topic modelling
 #' 
 #' The function to create and train and an LDA model.
-#' @param dtm (R_obj) The document term matrix
+#' @param dtm (R_obj) The document term matrix -> output of topicsDtm function
 #' @param num_topics (integer) The number of topics to be created
 #' @param num_top_words (integer) The number of top words to be displayed
 #' @param num_iterations (integer) The number of iterations to run the model
-#' @param seed (integer) The seed to set for reproducibility
+#' @param seed (integer) A seed to set for reproducibility
 # @param save_dir (string) The directory to save the model, if NULL, the model will not be saved
 # @param load_dir (string) The directory to load the model from, if NULL, the model will not be loaded
-#' @return A list of the model, the top terms, the labels, the coherence (experimental), and the prevalence.
+#' @return A named list containing the following elements:
+#' \describe{
+#'   \item{name}{Description}
+#'   \item{instances}{Java object reference: A list of all documents used for topic modelung, in which each document is preprocessed (e.g., tokenized and vectorized). This object is part of the Mallet package's internal structure.}
+#'   \item{inferencer}{Java object reference: This is the topic inferencer, which allows the inference of topic distributions for new, unseen documents based on the trained model.}
+#'   \item{top_terms_mallet}{A data frame containing the top terms of each topic, showing which concepts each topic likely represents. The number of top terms shown here can be adjusted with the argument num_top_words.}
+#'   \item{top_terms}{A data frame containing the top terms of each topic, showing which concepts each topic likely represents. The number of top terms shown here can be adjusted with the argument num_top_words.}
+#'   \item{phi}{A matrix of the topic-word distribution: Each row represents a topic, and each column represents a word from the document term matrix. The values show the probability of a word given a topic P(word|topic).}
+#'   \item{topic_docs}{A matrix of document-topic distribution: Each row represents a document, and each column represents a topic. The values show how the probability of a topic given a document P(topic|document).}
+#'   \item{frequencies}{A data frame of term frequencies. word = every word in the document term matrix, word.freq = the frequency of each word across all documents, doc.freq = the number of documents in which each word appears.}
+#'   \item{vocabulary}{A character vector of all unique terms in the document term matrix.}
+#'   \item{labels}{A list of topic labels. These short labels are the most representative term for each topic, making it easy to identify and understand them.}
+#'   \item{theta}{A data frame of document-topic probabilities: each row represents a document, and each column represents a topic. Similar to topic_docs, this shows the contribution of each topic to each document. Each row sums to 1, representing the document’s composition of topics.}
+#'   \item{prevalence}{A numeric vector showing the overall prevalence (prominence) of each topic in the corpus. The prevalences are expressed as percentages relative to the other topics  and add up to 100%. Higher values indicate topics that are present in more documents.}
+#'   \item{coherence}{A numeric vector showing the coherence of each topic. Coherence scores indicate how semantically consistent and interpretable the topics are. Higher coherence generally indicates better-quality topics.}
+#'   \item{pred_model}{A list containing components of the predictive model, including phi (word-topic probability matrix), theta (document-topic probabilities matrix), alpha (Dirichlet prior of topics), gamma (hyperparameters of word-topic assignments), and data (sparse matrix representing the document term matrix.)}
+#'   \item{dtm_settings}{A list of settings used for preprocessing and building the document term matrix (dtm), including n-gram ranges, stopword removal, frequency thresholds, and random seed settings.}
+#'   \item{summary}{A summary data frame comprising of the topic numbers, labels, coherence scores, prevalence scores, and top terms.}
+#'  }
 #' @examples
 #' \donttest{
 #' # Create LDA Topic Model 
 #' save_dir_temp <- tempfile()
-#' dtm <- topicsDtm(
-#' data = dep_wor_data$Depphrase)
+#' dtm <- topicsDtm(data = dep_wor_data$Depphrase)
 #' 
 #' model <- topicsModel(
 #' dtm = dtm, # output of topicsDtm()
@@ -324,10 +341,10 @@ topicsModel <- function(
 #' Predict topic distributions
 #' 
 #' The function to predict the topics of a new document with the trained model.
-#' @param model (list) The trained model
-#' @param data (tibble) The new data
-#' @param num_iterations (integer) The number of iterations to run the model
-#' @param sampling_interval The number of iterations between consecutive samples collected 
+#' @param model (list) The trained model.
+#' @param data (tibble) The text variable for which you want to infer the topic distribution. This can be the same data as used to create the dtm or new data.
+#' @param num_iterations (integer) The number of iterations to run the model.
+#' @param sampling_interval The number of iterations between consecutive samples collected.
 #' during the Gibbs Sampling process. This technique, known as thinning, helps reduce the 
 #' correlation between consecutive samples and improves the quality of the final estimates 
 #' by ensuring they are more independent.
@@ -335,18 +352,18 @@ topicsModel <- function(
 #' lead to more robust and accurate topic distributions.
 #' Example: If sampling_interval = 10, the algorithm collects a 
 #' sample every 10 iterations (e.g., at iteration 10, 20, 30, etc.).
-#' Typical Values: Default: 10; Range: 5 to 50 (depending on the complexity and size of the data)
+#' Typical Values: Default: 10; Range: 5 to 50 (depending on the complexity and size of the data).
 #' @param burn_in The number of initial iterations discarded during the Gibbs Sampling process. 
 #' These early iterations may not be representative of the final sampling distribution because the model is still stabilizing.
 #' Purpose: The burn_in period allows the model to converge to a more stable state before collecting samples, 
 #' improving the quality of the inferred topic distributions.
 #' Example: If burn_in = 50, the first 50 iterations of the Gibbs Sampling process are discarded,
 #' and sampling begins afterward. Typical Values: Default: 50 to 100 
-#' Range: 10 to 1000 (larger datasets or more complex models may require a longer burn-in period)
-#' @param seed (integer) The seed to set for reproducibility.
+#' Range: 10 to 1000 (larger datasets or more complex models may require a longer burn-in period).
+#' @param seed (integer) A seed to set for reproducibility.
 #' @param create_new_dtm (boolean) If applying the model on new data (not used in training), it can help to make a new dtm.
 #' Currently this is experimental, and using the textmineR::CreateDtm() function rather than the topicsDtm() function, which has more functions.
-#' @return A tibble of the predictions
+#' @return A tibble of the predictions: The rows represent the documents, and the columns represent the topics. The values in the cells indicate the proportion of each topic within the corresponding document.
 #' @examples
 #' \donttest{
 #' # Predict topics for new data with the trained model
@@ -360,9 +377,8 @@ topicsModel <- function(
 #'                      num_iterations = 1000,
 #'                      seed = 42)
 #'                      
-#' preds <- topicsPreds(
-#' model = model, # output of topicsModel()
-#' data = dep_wor_data$Depphrase)
+#' preds <- topicsPreds(model = model, # output of topicsModel()
+#'                      data = dep_wor_data$Depphrase)
 #' }
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>%

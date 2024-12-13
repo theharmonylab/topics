@@ -78,25 +78,25 @@ get_removal_columns <- function(
 
 #' Document Term Matrix
 #' 
-#' The function for creating a document term matrix
-#' @param data (list) the list containing the text data with each entry belonging to a unique id
-#' @param ngram_window (list) the minimum and maximum n-gram length, e.g. c(1,3)
-#' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
-#' @param removalword (string) the word to remove
-#' @param removal_mode (string) the mode of removal -> "none", "frequency", "term" or "percentage", frequency removes all words under a certain frequency or over a certain frequency as indicated by removal_rate_least and removal_rate_most, term removes an absolute amount of terms that are most frequent and least frequent, percentage the amount of terms indicated by removal_rate_least and removal_rate_most relative to the amount of terms in the matrix
-#' @param removal_rate_most (integer) the rate of most frequent words to be removed, functionality depends on removal_mode
-#' @param removal_rate_least (integer) the rate of least frequent words to be removed, functionality depends on removal_mode
+#' This function creates a document term matrix
+#' @param data (list) A list containing the text data with each entry belonging to a unique id
+#' @param ngram_window (list) The minimum and maximum n-gram length, e.g., c(1,3)
+#' @param stopwords (stopwords) The stopwords to remove, e.g., stopwords::stopwords("en", source = "snowball")
+#' @param removalword (string) The word to remove
+#' @param removal_mode (string) Mode of removal -> one of c("none", "frequency", "term", "percentage"). frequency removes all words under a certain frequency or over a certain frequency, as indicated by removal_rate_least and removal_rate_most. term removes an absolute number of terms that are most frequent and least frequent. percentage removes the number of terms indicated by removal_rate_least and removal_rate_most relative to the number of terms in the matrix
+#' @param removal_rate_most (integer) The rate of most frequent words to be removed, functionality depends on removal_mode
+#' @param removal_rate_least (integer) The rate of least frequent words to be removed, functionality depends on removal_mode
 #' @param pmi_threshold (integer; experimental) Pointwise Mutual Information (PMI) measures the association 
 #' between terms by comparing their co-occurrence probability to their individual probabilities, 
 #' highlighting term pairs that occur together more often than expected by chance; in this implementation,
 #' terms with average PMI below the specified threshold (pmi_threshold) are removed from the document-term matrix. 
-#' @param shuffle (boolean) shuffle the data before analyses
-#' @param seed (integer) the random seed for reproducibility
+#' @param shuffle (boolean) Shuffle the data before analyses
+#' @param seed (integer) A seed to set for reproducibility
 # @param save_dir (string) the directory to save the results, if NULL, no results are saved.
 # @param load_dir (string) the directory to load from.
-#' @param occurance_rate (integer) the rate of occurence of a word to be removed
-#' @param threads (integer) the number of threads to use
-#' @return the document term matrix
+#' @param occurance_rate (integer) The rate of occurence of a word to be removed
+#' @param threads (integer) The number of threads to use
+#' @return The document term matrix
 #' @examples
 #' \donttest{
 #' 
@@ -345,7 +345,7 @@ topicsDtm <- function(
 #' Summarize and Visualize your Document Term Matrix
 #' 
 #' This function creates a frequency table of your DTM and generates up to four plots for visualization
-#' @param dtm (R_obj) The document term matrix - output from topicsDtm
+#' @param dtm (R_obj) The document term matrix -> output of topicsDtm function
 #' @importFrom Matrix colSums
 #' @importFrom dplyr %>% select 
 #' @importFrom ggplot2 ggplot margin element_text

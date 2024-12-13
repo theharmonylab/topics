@@ -221,22 +221,21 @@ topic_test <- function(
 #' Statistically test topics or n-grams in relation to one or two other variables using 
 #' regression or t-test.  
 #' @param model (list) A trained model LDA-model from the topicsModel() function.
-#' @param data (tibble) The data containing the variables to be tested.
+#' @param data (tibble) The tibble containing the variables to be tested.
 #' @param preds (tibble) The predictions from the topicsPred() function.
-#' @param ngrams (list) output of the n-gram function
-#' @param x_variable (string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)
-#' @param y_variable (string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)
+#' @param ngrams (list) Output of the n-gram function.
+#' @param x_variable (string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation).
+#' @param y_variable (string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation).
 # @param group_var (string) The variable to group by (only needed for t-test)
-#' @param controls (vector) The control variables (not supported yet)
-#' @param test_method (string) The test method to use. The "default", check wether x_variable and y_variable
-#' only contain 0s and 1 for which it applied logistic regression otherwise it applies linear regression. 
-#' Can also set it to either "linear_regression" or "logistic_regression.  
-#' selectes logistic regression if the variable only contain 0s and 1s, or "linear_regression", or "logistic_regression".
+#' @param controls (vector) The control variables (not supported yet).
+#' @param test_method (string) The test method to use. "default" checks if x_variable and y_variable
+#' only contain 0s and 1s, for which it applies logistic regression; otherwise it applies linear regression. 
+#' Alternatively, the user may manually specify either "linear_regression" or "logistic_regression".  
 # @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
-#' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
+#' (default = "fdr"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "none").
 #' @param seed (integer) The seed to set for reproducibility
-#' @return A list of the test results, test method, and prediction variable
+#' @return A list of the test results, test method, and prediction variable.
 #' @examples
 #' \donttest{
 #' # Test the topic document distribution in respect to a variable
