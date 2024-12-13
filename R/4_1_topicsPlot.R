@@ -649,6 +649,7 @@ topicsPlot1 <- function(
     scale_size = scale_size,
     plot_topics_idx = plot_topics_idx,
     p_alpha = p_alpha,
+    indi_topic_neg_dict = indi_topic_neg_dict,  
     save_dir = save_dir,
     figure_format = figure_format,
     width = width, 
