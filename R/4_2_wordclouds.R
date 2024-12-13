@@ -391,6 +391,7 @@ create_plots <- function(
                                                color = color)) + #,x=estimate)) +
             ggwordcloud::geom_text_wordcloud() +
             ggplot2::scale_size_area(max_size = max_size) +
+            scale_colour_identity() + 
             ggplot2::theme_minimal() +
             #theme(plot.margin = margin(0,0,0,0, "cm")) +
             color_scheme + 
