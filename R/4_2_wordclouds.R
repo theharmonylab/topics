@@ -230,7 +230,6 @@ separate_neg_words <- function(df_list_element, indi_topic_neg_dict) {
 #' @importFrom ggwordcloud geom_text_wordcloud
 #' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient
 #' @importFrom dplyr rename
-#' @noRd
 create_plots <- function(
     df_list = NULL,
     summary = NULL,
