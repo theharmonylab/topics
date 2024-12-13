@@ -333,13 +333,6 @@ create_plots <- function(
       
       #
       if (!is.nan(p_adjusted) & p_adjusted < p_alpha){
-
-        # For constant color of negative words. 
-        if (!is.null(indi_topic_neg_dict) && is.vector(indi_topic_neg_dict)){
-           if(is.character(indi_topic_neg_dict) && is.character(names(indi_topic_neg_dict)) && all_hex(indi_topic_neg_dict)){
-               df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]], indi_topic_neg_dict)
-           }else{stop('Invalid settings for the parameter "indi_topic_neg_dict".\nConsider use the default option!\n')}
-        }
         
         #estimate <- test[i,][[grep(estimate_col, colnames(test), value=TRUE)]]# $PHQtot.estimate
         #p_adjusted <- test[i,][[grep("p_adjusted", colnames(test), value=TRUE)]] # $PHQtot.p_adjustedfdr
@@ -356,12 +349,17 @@ create_plots <- function(
           y <- ""
         }
 
-        # Assign color to neg_words in the dictionary object "indi_topic_neg_dict"
-        df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]])
-        df_list_separated[[1]]$color <- color_scheme$palette(df_list_separated[[1]]$phi)
-        colnames(df_list_separated[[2]])[3] <- c('color') 
-        target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]])  
-
+        # For constant color of negative words. 
+        if (!is.null(indi_topic_neg_dict) && is.vector(indi_topic_neg_dict)){
+           if(is.character(indi_topic_neg_dict) && is.character(names(indi_topic_neg_dict)) && all_hex(indi_topic_neg_dict)){
+               # Assign color to neg_words in the dictionary object "indi_topic_neg_dict"
+               df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]], indi_topic_neg_dict)
+               df_list_separated[[1]]$color <- color_scheme$palette(df_list_separated[[1]]$phi)
+               colnames(df_list_separated[[2]])[3] <- c('color') 
+               target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]])  
+           }else{stop('Invalid settings for the parameter "indi_topic_neg_dict".\nConsider use the default option!\n')}
+        }
+        
         if (grid1 == ""){ .
           plot <- ggplot2::ggplot(target_topic, 
                                   ggplot2::aes(label = Word, 
