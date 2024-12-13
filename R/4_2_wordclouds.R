@@ -336,7 +336,7 @@ create_plots <- function(
 
         # For constant color of negative words. 
         if (!is.null(indi_topic_neg_dict) && is.vector(indi_topic_neg_dict)){
-           if(is.character(indi_topic_neg_dict) && is.character(names(indi_topic_neg_dict)) && all_hex(indi_topic_neg_dict))){
+           if(is.character(indi_topic_neg_dict) && is.character(names(indi_topic_neg_dict)) && all_hex(indi_topic_neg_dict)){
                df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]], indi_topic_neg_dict)
            }else{stop('Invalid settings for the parameter "indi_topic_neg_dict".\nConsider use the default option!\n')}
         }
