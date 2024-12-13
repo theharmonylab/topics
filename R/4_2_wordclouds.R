@@ -230,6 +230,7 @@ separate_neg_words <- function(df_list_element, indi_topic_neg_dict) {
 #' @importFrom ggwordcloud geom_text_wordcloud
 #' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient
 #' @importFrom dplyr rename
+#' @noRd
 create_plots <- function(
     df_list = NULL,
     summary = NULL,
@@ -348,8 +349,6 @@ create_plots <- function(
           y <- ""
         }
 
-        cat(as.character(i))
-
         # For constant color of negative words. 
         if (!is.null(indi_topic_neg_dict) && is.vector(indi_topic_neg_dict)){
            if(is.character(indi_topic_neg_dict) && is.character(names(indi_topic_neg_dict)) && all_hex(indi_topic_neg_dict)){
@@ -361,8 +360,6 @@ create_plots <- function(
                target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]]) 
            }else{stop('Invalid settings for the parameter "indi_topic_neg_dict".\nConsider use the default option!\n')}
         }else{target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]}
-        if (i == 't_61'){saveRDS(target_topic, './target_topic.rds')}
-                
         
         if (grid1 == ""){ .
           plot <- ggplot2::ggplot(target_topic, 
