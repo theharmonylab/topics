@@ -859,8 +859,7 @@ colour_settings <- function(
 #' (Note that the adjustment for multiple comparison is taking place before these are removed; i.e., the adjusted p-values are not affected by this filter).   
 #' @param scale_size (logical) Whether to scale the size of the words.
 #' @param plot_topics_idx (vector)  The index or indices of the topics to plot 
-#' (look in the model-object for the indices). They can, for example, be c(1, 3:5) to plot topic t_1, t_3, t_4 and t_5) (optional). 
-# @param allowed_word_overlap (numeric) A filter for setting the maximum number of identical words in the topics to be plotted.
+#' (look in the model-object for the indices). They can, for example, be c(1, 3:5) to plot topic t_1, t_3, t_4 and t_5) (optional).
 #' @param plot_n_most_prevalent_topics (numeric) Plots the n most prevalent topics in a given model. 
 #' @param save_dir (string) The directory to save the plots.
 #' @param figure_format (string) Set the figure format, e.g., ".svg", or ".png".
@@ -1029,7 +1028,7 @@ topicsPlot <- function(
   
   
   #### Filtering duplicate topics #### 
-  if (!is.null(allowed_word_overlap)){
+  if (!is.null(allowed_word_overlap) & is.null(plot_n_most_prevalent_topics)){
     
     # Remove duplicates within group categories
     arranged_topics <- test$test 
@@ -1051,7 +1050,7 @@ topicsPlot <- function(
         allowed_word_overlap)) %>%
       dplyr::ungroup() %>%
       dplyr::select(-color_categories1) %>%            # Remove the temporary column
-      dplyr::select(all_of(original_col_order))        # Reorder columns to the original order
+      dplyr::select(dplyr::all_of(original_col_order))        # Reorder columns to the original order
       
     
   }

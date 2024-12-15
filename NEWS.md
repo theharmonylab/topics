@@ -13,8 +13,8 @@
 
 # topics 0.30.5
 - plots are not added as a list (and not only saved to the folder)
-- added `scatter_show_axis_values` to the topcisPlot()
-- adding feature to plot the `n_most_prevalent_topics```. 
+- added `scatter_show_axis_values` to the `topcisPlot()`.
+- adding feature to plot the `n_most_prevalent_topics`. 
 
 # topics 0.30.4
 - scaling controls with scale instead of manually resulting in slightly different estimates. (but still same p-value and t-values)

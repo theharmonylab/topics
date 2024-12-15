@@ -14,7 +14,6 @@ topicsPlot(
   ngram_select = "frequency",
   color_scheme = "default",
   highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
-  topic_duplicate_filter = NULL,
   scale_size = FALSE,
   plot_topics_idx = NULL,
   allowed_word_overlap = NULL,
@@ -108,16 +107,14 @@ For 1-dimension plots of topics, it should contain 6 colours (3 gradient pairs),
 The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"); note that it needs
 to be hexa codes, so color naming such as "blue" does not work.}
 
-\item{topic_duplicate_filter}{(numeric) A number determining the maximum number of identical words in the topics to be plotted. 
-This filter removes topics from the distribution and grid legends as well; they are not included in the 
-adjustment for multiple comparison (i.e., the adjusted p-values) either.}
-
 \item{scale_size}{(logical) Whether to scale the size of the words.}
 
 \item{plot_topics_idx}{(vector)  The index or indices of the topics to plot 
 (look in the model-object for the indices). They can, for example, be c(1, 3:5) to plot topic t_1, t_3, t_4 and t_5) (optional).}
 
-\item{allowed_word_overlap}{(numeric) A filter for setting the maximum number of identical words in the topics to be plotted.}
+\item{allowed_word_overlap}{(numeric) A filter function determining the maximum number of identical words in the topics to be plotted. 
+This filter removes topics within each "color group" and also include removing topics from the distribution and grid legends; 
+(Note that the adjustment for multiple comparison is taking place before these are removed; i.e., the adjusted p-values are not affected by this filter).}
 
 \item{plot_n_most_prevalent_topics}{(numeric) Plots the n most prevalent topics in a given model.}
 

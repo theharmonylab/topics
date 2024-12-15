@@ -78,7 +78,7 @@ test_that("topicsPlot WITHOUT test and preds", {
     save_dir = save_dir_temp)
   
   topics$t_1
-  # Check if the wordcloud directory exists
+  # Check if the word cloud directory exists
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_42/wordclouds/t_1.png")))
   
@@ -98,7 +98,7 @@ test_that("topicsPlot WITHOUT test and preds", {
     c("t_t_2",  "t_t_29", "t_t_46", "t_t_36", "t_t_35")
   )
   
-  plots3 <- plots_prevalence <- topics::topicsPlot(
+  plots3 <- topics::topicsPlot(
     model = model,
     plot_n_most_prevalent_topics = 5,
     allowed_word_overlap = 2,

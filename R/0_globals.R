@@ -28,6 +28,8 @@ utils::globalVariables(c(
   # create_plots
   "color",
   
+  "color_categories1",
+  
   # topicsDtmEval
   "nr", "term", "freq",
   
