@@ -852,7 +852,8 @@ colour_settings <- function(
 #'
 #' 
 #' @param highlight_topic_words (named vector) Words to highlight in topics (e.g., negative words). 
-#'  The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff").
+#'  The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"); note that it needs
+#'  to be hexa codes, so color naming such as "blue" does not work.
 #' @param topic_duplicate_filter (numeric) A number determining the maximum number of identical words in the topics to be plotted. 
 #' This filter removes topics from the distribution and grid legends as well; they are not included in the 
 #' adjustment for multiple comparison (i.e., the adjusted p-values) either.   
