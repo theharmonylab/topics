@@ -559,6 +559,9 @@ topicsGridLegend <- function(
 #' @param scale_size (logical) Whether to scale the size of the words
 #' @param plot_topics_idx (vector) The topics to plot determined by index
 #' @param p_alpha (integer) The p-value threshold to use for significance
+#' @param indi_topic_neg_dict (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
+#'  Default words are "not", "never". Words are as vector names. 
+#'  The values of the vector determine the color code to popout. The color values can be different for different words.
 #' @param save_dir (string) The directory to save the wordclouds
 #' @param figure_format (string) Set the figure format, e.g., svg, or png.
 #' @param width (integer) The width of the topic (units = "in"). 
@@ -578,6 +581,7 @@ topicsPlot1 <- function(
     scale_size = FALSE,
     plot_topics_idx = NULL,
     p_alpha = 0.05,
+    indi_topic_neg_dict = c(not = "#2d00ff", never = "#2d00ff"),    
     save_dir,
     figure_format = "svg",
     width = 10, 
@@ -621,7 +625,6 @@ topicsPlot1 <- function(
     cor_var = test$x_y_axis
     test_type = test$test_method
     test = test$test
-    
   }
   
   if (!is.null(model) && is.null(test)){
@@ -646,6 +649,7 @@ topicsPlot1 <- function(
     scale_size = scale_size,
     plot_topics_idx = plot_topics_idx,
     p_alpha = p_alpha,
+    indi_topic_neg_dict = indi_topic_neg_dict,  
     save_dir = save_dir,
     figure_format = figure_format,
     width = width, 
@@ -797,6 +801,9 @@ colour_settings <- function(
 #' @param p_alpha (integer) The p-value threshold to use for significance testing.
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
 #' see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").
+#' @param indi_topic_neg_dict (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
+#'  Default words are "not", "never". Words are as vector names. 
+#'  The values of the vector determine the color code to popout. The color values can be different for different words.
 #' @param ngrams_max (integer) The maximum number of n-grams to plot.
 #' @param ngram_select (character) Method to select ngrams_max, including "pmi", "frequency", "proportion", and "correlation". 
 #' @param color_scheme (string 'default' or vector) The color scheme.
@@ -890,6 +897,7 @@ topicsPlot <- function(
     test = NULL,
     p_alpha = 0.05,
     p_adjust_method = "none",
+    indi_topic_neg_dict = c(not = "#2d00ff", never = "#2d00ff"),
     ngrams_max = NULL,
     ngram_select = "frequency",
     color_scheme = "default",
@@ -1074,6 +1082,7 @@ topicsPlot <- function(
       ngrams = ngrams,
       test = test,
       p_alpha = p_alpha,
+      indi_topic_neg_dict = NULL,
       scale_size = scale_size,
       plot_topics_idx = plot_topics_idx,
       popout = NULL,
@@ -1153,6 +1162,7 @@ topicsPlot <- function(
           scale_size = scale_size,
           plot_topics_idx = plot_topics_idx,
           p_alpha = p_alpha,
+          indi_topic_neg_dict = indi_topic_neg_dict,
           save_dir = save_dir,
           figure_format = figure_format,
           width = width, 
@@ -1189,6 +1199,7 @@ topicsPlot <- function(
           scale_size = scale_size,
           plot_topics_idx = plot_topics_idx,
           p_alpha = p_alpha,
+          indi_topic_neg_dict = indi_topic_neg_dict,
           save_dir = save_dir,
           figure_format = figure_format,
           width = width, 

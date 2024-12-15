@@ -7,7 +7,7 @@
 topicsDtmEval(dtm)
 }
 \arguments{
-\item{dtm}{(R_obj) The document term matrix - output from topicsDtm}
+\item{dtm}{(R_obj) The document term matrix -> output of topicsDtm function}
 }
 \value{
 A named list containing:

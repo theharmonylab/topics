@@ -10,6 +10,7 @@ topicsPlot(
   test = NULL,
   p_alpha = 0.05,
   p_adjust_method = "none",
+  indi_topic_neg_dict = c(not = "#2d00ff", never = "#2d00ff"),
   ngrams_max = NULL,
   ngram_select = "frequency",
   color_scheme = "default",
@@ -41,9 +42,9 @@ topicsPlot(
 )
 }
 \arguments{
-\item{model}{(list) A trained topics model. For examples from topicsModel(). Should be NULL if plotting ngrams.}
+\item{model}{(list) A trained topics model, e.g., from topicsModel(). Should be NULL if plotting ngrams.}
 
-\item{ngrams}{(list) The output from the the topicsGram() function . Should be NULL if plotting topics.}
+\item{ngrams}{(list) The output from the the topicsGram() function. Should be NULL if plotting topics.}
 
 \item{test}{(list) The test results; if plotting according to dimension(s) include the object from topicsTest() function.}
 
@@ -52,9 +53,13 @@ topicsPlot(
 \item{p_adjust_method}{(character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
 see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").}
 
-\item{ngrams_max}{(integer) The max number of n-grams to plot}
+\item{indi_topic_neg_dict}{(named vector) The dictionary to popout negative words to an individual plot for easier reading. 
+Default words are "not", "never". Words are as vector names. 
+The values of the vector determine the color code to popout. The color values can be different for different words.}
 
-\item{ngram_select}{(character) Method to select ngrams_max including "pmi", "frequency", "proportion", and "correlation".}
+\item{ngrams_max}{(integer) The maximum number of n-grams to plot.}
+
+\item{ngram_select}{(character) Method to select ngrams_max, including "pmi", "frequency", "proportion", and "correlation".}
 
 \item{color_scheme}{(string 'default' or vector) The color scheme.
  
@@ -101,20 +106,20 @@ For 1-dimension plots of topics, it should contain 6 colours (3 gradient pairs),
   
   "lightgray", "#EA7467",     # quadrant 8 
   
-  "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner)}
+  "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner).}
 
-\item{topic_duplicate_filter}{(numeric) A number determining max number of words that can be the same in topics to be plotted. 
-This filter remove topics from the distribution and grid legends as well; and they are not part in the 
-adjustment for multiple comparison (i.e., the adjusted p-values).}
+\item{topic_duplicate_filter}{(numeric) A number determining the maximum number of identical words in the topics to be plotted. 
+This filter removes topics from the distribution and grid legends as well; they are not included in the 
+adjustment for multiple comparison (i.e., the adjusted p-values) either.}
 
 \item{scale_size}{(logical) Whether to scale the size of the words.}
 
-\item{plot_topics_idx}{(vector)  The index or indeces of the topics to plot 
-(e.g., look in the model-object for the indices; can for example, be c(1, 3:5) to plot topic t_1, t_3, t_4 and t_5) (optional).}
+\item{plot_topics_idx}{(vector)  The index or indices of the topics to plot 
+(look in the model-object for the indices). They can, for example, be c(1, 3:5) to plot topic t_1, t_3, t_4 and t_5) (optional).}
 
-\item{allowed_word_overlap}{(numeric) A filter for setting the max number of words that can be the same in topics to be plotted.}
+\item{allowed_word_overlap}{(numeric) A filter for setting the maximum number of identical words in the topics to be plotted.}
 
-\item{plot_n_most_prevalent_topics}{(numeric) Plots the most prevalent topics in a given model.}
+\item{plot_n_most_prevalent_topics}{(numeric) Plots the n most prevalent topics in a given model.}
 
 \item{save_dir}{(string) The directory to save the plots.}
 
@@ -124,45 +129,45 @@ adjustment for multiple comparison (i.e., the adjusted p-values).}
 
 \item{height}{(integer) The width of the topic (units = "in").}
 
-\item{max_size}{(integer) The max size of the words.}
+\item{max_size}{(integer) The maximum size of the words.}
 
-\item{seed}{(integer) The seed to set for reproducibility}
+\item{seed}{(integer) The seed to set for reproducibility.}
 
 \item{scatter_legend_dot_size}{(integer) The size of dots in the scatter legend.}
 
 \item{scatter_legend_bg_dot_size}{(integer) The size of background dots in the scatter legend.}
 
-\item{scatter_legend_n}{(numeric or vector) A vector determining the number of dots to emphasis in each quadrant of the scatter legend.
+\item{scatter_legend_n}{(numeric or vector) A vector determining the number of dots to emphasize in each quadrant of the scatter legend.
 For example: c(1,1,1,1,0,1,1,1,1) result in one dot in each quadrant except for the middle quadrant.}
 
-\item{scatter_legend_method}{(string) The method to filter topics to be emphasised in the scatter legend. 
-Can be either "mean", "max_x", or "max_y"}
+\item{scatter_legend_method}{(string) The method to filter topics to be emphasized in the scatter legend; either "mean", "max_x", or "max_y".}
 
-\item{scatter_legend_specified_topics}{(vector) Specify which topic(s) to be emphasised in the scatter legend. 
-For example c("t_1", "t_2"). If set, scatter_legend_method will have no effect.}
+\item{scatter_legend_specified_topics}{(vector) Specify which topic(s) to emphasize in the scatter legend. 
+For example, c("t_1", "t_2"). If set, scatter_legend_method will have no effect.}
 
-\item{scatter_legend_topic_n}{(boolean) Allow showing the topic number or not in the scatter legend}
+\item{scatter_legend_topic_n}{(boolean) If TRUE, the topic numbers are shown in the scatter legend.}
 
-\item{scatter_show_axis_values}{(boolean) Show the estiamte values on the distribution plot axes.}
+\item{scatter_show_axis_values}{(boolean) If TRUE, the estimate values are shown on the distribution plot axes.}
 
-\item{grid_legend_title}{The title of grid topic plot.}
+\item{grid_legend_title}{Title of the grid topic plot.}
 
-\item{grid_legend_title_size}{The size of the title of the plot.}
+\item{grid_legend_title_size}{Title size of the grid topic plot.}
 
-\item{grid_legend_title_color}{The color of the legend title.}
+\item{grid_legend_title_color}{Legend title color of the grid topic plot.}
 
-\item{grid_legend_x_axes_label}{The label of the x axes.}
+\item{grid_legend_x_axes_label}{x-axis label of the grid topic plot.}
 
-\item{grid_legend_y_axes_label}{The label of the y axes.}
+\item{grid_legend_y_axes_label}{y-axis label of the grid topic plot.}
 
-\item{grid_legend_number_color}{The color in the text in the legend.}
+\item{grid_legend_number_color}{Text color in the legend boxes of the grid topic plot.}
 
-\item{grid_legend_number_size}{The color in the text in the legend.}
+\item{grid_legend_number_size}{Text size in the legend boxes.}
 }
 \value{
-The function provide a list of plots (if ther are any significant plots) as well as 
-saves them in the save_dir.
+The function provides a list of topic plots (if there are any significant topics), a legend plot, and a plot showing the topic distribution.
+If save_dir is specified, it saves all plots in this directory. 
+If you want to show all plots irrespective of the topics' significance, set p_alpha = 1.
 }
 \description{
-This function create word clouds and topic fugures
+This function create word clouds and topic figures
 }
