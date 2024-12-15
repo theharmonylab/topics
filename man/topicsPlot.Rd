@@ -13,7 +13,7 @@ topicsPlot(
   ngrams_max = NULL,
   ngram_select = "frequency",
   color_scheme = "default",
-  highlight_topic_words = c(not = "black", never = "black"),
+  highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
   topic_duplicate_filter = NULL,
   scale_size = FALSE,
   plot_topics_idx = NULL,
@@ -105,7 +105,8 @@ For 1-dimension plots of topics, it should contain 6 colours (3 gradient pairs),
   "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner).}
 
 \item{highlight_topic_words}{(named vector) Words to highlight in topics (e.g., negative words). 
-The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff").}
+The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"); note that it needs
+to be hexa codes, so color naming such as "blue" does not work.}
 
 \item{topic_duplicate_filter}{(numeric) A number determining the maximum number of identical words in the topics to be plotted. 
 This filter removes topics from the distribution and grid legends as well; they are not included in the 
