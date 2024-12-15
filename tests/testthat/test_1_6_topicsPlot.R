@@ -123,15 +123,16 @@ test_that("topicsPlot WITHOUT test and preds", {
 test_that("topicsPlot WITH test", {
   
   testthat::skip_on_cran()
-  save_dir_temp <- tempfile()
-  #save_dir_temp = "./results"
   
   ## 1-Dimension
   dtm <- topics::topicsDtm(
     data = dep_wor_data$Deptext)
   
   model <- topics::topicsModel(
-    dtm = dtm)
+    dtm = dtm, 
+    num_topics = 50,
+    num_top_words = 20, 
+    num_iterations = 100)
   
   #### Plots one-dimensional plot ####
   preds <- topics::topicsPreds(
@@ -144,17 +145,46 @@ test_that("topicsPlot WITH test", {
     data = dep_wor_data,
     x_variable = "Age")
 
+  save_dir_temp <- tempdir()
+  
   plots3 <- topics::topicsPlot(
     model = model, 
     test = test1, 
-    p_alpha = 1,
+    p_alpha = .1,
     figure_format = "png",
     seed = 11, 
+    allowed_word_overlap = 3,
     save_dir = save_dir_temp)
   
   plots3$legend
   plots3$distribution
   
+  
+  plots3 <- topics::topicsPlot(
+    model = model, 
+    test = test1, 
+    p_alpha = .1,
+    figure_format = "png",
+    seed = 11, 
+    allowed_word_overlap = 3,
+    save_dir = save_dir_temp)
+  
+  plots3$legend
+  plots3$distribution
+  
+  
+  
+  plots4 <- topics::topicsPlot(
+    model = model, 
+    test = test1, 
+    p_alpha = .5, # see how the colour changes when chaning this. 
+    figure_format = "png",
+    seed = 11, 
+    allowed_word_overlap = 3,
+    save_dir = save_dir_temp)
+  
+  plots4$legend
+  plots4$distribution
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_11/wordclouds/dot_legend_corvar_Age.png")))
@@ -164,7 +194,6 @@ test_that("topicsPlot WITH test", {
   
   
   ## 2-Dimension  
-  
   test2 <- topics::topicsTest(
     model = model, 
     preds = preds, 

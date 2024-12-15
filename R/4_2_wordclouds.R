@@ -146,12 +146,26 @@ select_non_overlapping_texts <- function(
   }
   
   # Filter the data frame to keep only the selected texts
-  filtered_df <- filter(df, !!sym(text_column) %in% selected_texts)
+  #filtered_df <- filter(df, !!rlang::sym(text_column) %in% selected_texts)
+  filtered_df <- df[df[[text_column]] %in% selected_texts, ]
   
-  # Return a list with the filtered data frame and excluded count
-  message(colourise(paste0(
-    excluded_count," topics were excluded due to the `allowed_word_overlap` filter",
-    "blue")))
+  if(!is.null(filtered_df$color_categories1[[1]])){
+    
+    colour_category_number <- unique(filtered_df$color_categories1)
+    # Return a list with the filtered data frame and excluded count
+    message(colourise(paste0(
+      excluded_count," topic(s) were excluded in color_category ", 
+      colour_category_number, " due to the `allowed_word_overlap` filter. "
+      ), "blue"))
+    
+  } else {
+    
+    message(colourise(paste0(
+      excluded_count," topics were excluded due to the `allowed_word_overlap` filter. ",
+      "blue")))
+    
+  }
+  
 
   return(filtered_df)
   #return(list(

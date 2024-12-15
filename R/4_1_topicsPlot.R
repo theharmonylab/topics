@@ -215,7 +215,7 @@ determine_popout_topics <- function(
     stop("Invalid `way_popout_topics`. Supported values are 'max_y', 'max_x', or 'mean'.")
   }
   
-  # Process each category based on the popout criteria
+  # Process each category based on the pop out criteria
   filtered_test %>%
     filter(color_categories %in% names(valid_map)) %>%
     group_by(color_categories) %>%
@@ -854,13 +854,13 @@ colour_settings <- function(
 #' @param highlight_topic_words (named vector) Words to highlight in topics (e.g., negative words). 
 #'  The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"); note that it needs
 #'  to be hexa codes, so color naming such as "blue" does not work.
-#' @param topic_duplicate_filter (numeric) A number determining the maximum number of identical words in the topics to be plotted. 
-#' This filter removes topics from the distribution and grid legends as well; they are not included in the 
-#' adjustment for multiple comparison (i.e., the adjusted p-values) either.   
+#' @param allowed_word_overlap (numeric) A filter function determining the maximum number of identical words in the topics to be plotted. 
+#' This filter removes topics within each "color group" and also include removing topics from the distribution and grid legends; 
+#' (Note that the adjustment for multiple comparison is taking place before these are removed; i.e., the adjusted p-values are not affected by this filter).   
 #' @param scale_size (logical) Whether to scale the size of the words.
 #' @param plot_topics_idx (vector)  The index or indices of the topics to plot 
 #' (look in the model-object for the indices). They can, for example, be c(1, 3:5) to plot topic t_1, t_3, t_4 and t_5) (optional). 
-#' @param allowed_word_overlap (numeric) A filter for setting the maximum number of identical words in the topics to be plotted.
+# @param allowed_word_overlap (numeric) A filter for setting the maximum number of identical words in the topics to be plotted.
 #' @param plot_n_most_prevalent_topics (numeric) Plots the n most prevalent topics in a given model. 
 #' @param save_dir (string) The directory to save the plots.
 #' @param figure_format (string) Set the figure format, e.g., ".svg", or ".png".
@@ -902,7 +902,6 @@ topicsPlot <- function(
     ngram_select = "frequency",
     color_scheme = "default",
     highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
-    topic_duplicate_filter = NULL,
     scale_size = FALSE,
     plot_topics_idx = NULL,
     allowed_word_overlap = NULL,
@@ -1029,36 +1028,33 @@ topicsPlot <- function(
   }
   
   
-#  #### Filtering duplicate topics #### 
-#  if (!is.null(topic_duplicate_filter)){
-#    
-#    # Create loop here that test the duplicity of topics within colour category
-#    
-#    # test1 <- test$test 
-#    # Apply the function to each color group based on scatter_legend_n
-#    result <- arranged_topics %>%
-#      group_by(color_scheme) %>%
-#      group_modify(~ select_non_overlapping_texts(.x, "top_terms", n_texts = scatter_legend_n[.y$color_scheme[1]], allowed_word_overlap))
-#    
-#    # top_terms <-
-#    scatter_legend_n = c(1, 1, 1, 1, 0, 1, 1, 1, 1)
-#    # group_by colour group 
-#    test$test %>% group_by(color_scheme)
-#    n_most_prevalent_topics <- select_non_overlapping_texts(
-#      arranged_topics, 
-#      "top_terms", 
-#      n_texts = scatter_legend_n[scatter_legend_n], 
-#      allowed_word_overlap = allowed_word_overlap 
-#    )
-#    # order by (setting for different)
-#    # Apply the function to each color group based on scatter_legend_n
-#    result <- arranged_topics %>%
-#      group_by(color_scheme) %>%
-#      group_modify(~ select_non_overlapping_texts(.x, "top_terms", n_texts = scatter_legend_n[.y$color_scheme[1]], allowed_word_overlap))
-#    
-#    # Check for overlaps and selects 
-#    
-#  }
+  #### Filtering duplicate topics #### 
+  if (!is.null(allowed_word_overlap)){
+    
+    # Remove duplicates within group categories
+    arranged_topics <- test$test 
+    max_n_texts <- nrow(test$test )
+
+    # Apply the function to each color group based on scatter_legend_n
+    #df = arranged_topics
+    
+    # Store the original column names
+    original_col_order <- names(arranged_topics)
+    
+    test$test <- arranged_topics %>%
+      dplyr::mutate(color_categories1 = color_categories) %>%
+      dplyr::group_by(color_categories) %>%
+      dplyr::group_modify(~ select_non_overlapping_texts(
+        df = .x, 
+        text_column = "top_terms", 
+        n_texts = max_n_texts, 
+        allowed_word_overlap)) %>%
+      dplyr::ungroup() %>%
+      dplyr::select(-color_categories1) %>%            # Remove the temporary column
+      dplyr::select(all_of(original_col_order))        # Reorder columns to the original order
+      
+    
+  }
   
   #### Selecting the most prevalence topics ####
   if(!is.null(plot_n_most_prevalent_topics) & !is.null(plot_topics_idx)){
@@ -1069,15 +1065,17 @@ topicsPlot <- function(
     
     arranged_topics <- model$summary %>% 
       dplyr::arrange(dplyr::desc(prevalence))
-    # Create loop here that test the duplicity of topics
-    n_most_prevalent_topics <- select_non_overlapping_texts(
-      arranged_topics, 
-      "top_terms", 
-      n_texts = plot_n_most_prevalent_topics, 
-      allowed_word_overlap = allowed_word_overlap 
-    )
-
-    plot_topics_idx <- n_most_prevalent_topics$topic
+    
+    #if(!is.null(allowed_word_overlap)){
+    arranged_topics <- select_non_overlapping_texts(
+        arranged_topics, 
+        "top_terms", 
+        n_texts = plot_n_most_prevalent_topics, 
+        allowed_word_overlap = allowed_word_overlap 
+      )
+   # }
+    
+    plot_topics_idx <- arranged_topics$topic
     
   }
   
