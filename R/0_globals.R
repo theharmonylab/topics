@@ -25,6 +25,9 @@ utils::globalVariables(c(
   # General
   "msg2",
   
+  # create_plots
+  "color",
+  
   # topicsDtmEval
   "nr", "term", "freq",
   

@@ -24,7 +24,46 @@ topicsModel(
 \item{seed}{(integer) A seed to set for reproducibility}
 }
 \value{
-
+A named list containing the following elements:
+\describe{
+  \item{name}{Description}
+  \item{instances}{Java object reference: A list of all documents used for topic modeling, 
+  in which each document is preprocessed (e.g., tokenized and vectorized). This object is part of 
+  the Mallet package's internal structure.}
+  \item{inferencer}{Java object reference: This is the topic inferencer, which allows the inference 
+  of topic distributions for new, unseen documents based on the trained model.}
+  \item{top_terms_mallet}{A data frame containing the top terms of each topic, showing which concepts
+   each topic likely represents. The number of top terms shown here can be adjusted with the argument
+    num_top_words.}
+  \item{top_terms}{A data frame containing the top terms of each topic, showing which concepts each 
+  topic likely represents. The number of top terms shown here can be adjusted with the argument 
+  num_top_words.}
+  \item{phi}{A matrix of the topic-word distribution: Each row represents a topic, and each column 
+  represents a word from the document term matrix. The values show the probability of a word given a 
+  topic P(word|topic).}
+  \item{topic_docs}{A matrix of document-topic distribution: Each row represents a document, and each 
+  column represents a topic. The values show the probability of a topic given a document, P(topic|document).}
+  \item{frequencies}{A data frame of term frequencies. word = every word in the document term matrix, 
+  word.freq = the frequency of each word across all documents, doc.freq = the number of documents in which each word appears.}
+  \item{vocabulary}{A character vector of all unique terms in the document term matrix.}
+  \item{labels}{A list of topic labels. These short labels are the most representative term for each topic, 
+  making it easy to identify and understand them.}
+  \item{theta}{A data frame of document-topic probabilities: each row represents a document, and each column
+   represents a topic. Similar to topic_docs, this shows the contribution of each topic to each document. 
+   Each row sums to 1, representing the document’s composition of topics.}
+  \item{prevalence}{A numeric vector showing the overall prevalence (prominence) of each topic in the corpus.
+   The prevalences are expressed as percentages relative to the other topics  and add up to 100%. 
+   Higher values indicate topics that are present in more documents.}
+  \item{coherence}{A numeric vector showing the coherence of each topic. Coherence scores indicate how
+   semantically consistent and interpretable the topics are. Higher coherence generally indicates 
+   better-quality topics.}
+  \item{pred_model}{A list containing components of the predictive model, including phi
+   (word-topic probability matrix), theta (document-topic probabilities matrix), alpha (Dirichlet prior of topics), 
+   gamma (hyperparameters of word-topic assignments), and data (sparse matrix representing the document term matrix.)}
+  \item{dtm_settings}{A list of settings used for preprocessing and building the document term matrix (dtm), 
+  including n-gram ranges, stopword removal, frequency thresholds, and random seed settings.}
+  \item{summary}{A summary data frame comprising of the topic numbers, labels, coherence scores, prevalence scores, and top terms.}
+ }
 }
 \description{
 The function to create and train and an LDA model.

@@ -1,4 +1,4 @@
-#' A private function renames the columns of a model with the vocabulary
+#' Rename the columns of a model with the vocabulary
 #' @param model (list) the model to be modified
 #' @param col (string) the column to be modified
 #' @param vocabulary (list) the vocabulary to be used
@@ -199,28 +199,38 @@ topicsNumAssign_dim2 <- function(
   return (topic_loadings_all)
 }
 
-#' A Private function to check the validity of color hex codes for parameter indi_topic_neg_dict.
-#' indi_topic_neg_dict (named vector) the named vector with negative words as elements and color hex codes as names for each word
+#' A Private function to check the validity of color hex codes for parameter highlight_topic_words.
+#' highlight_topic_words (named vector) the named vector with negative words as elements and color hex codes as names for each word
 #' @noRd
-all_hex <- function(indi_topic_neg_dict) {
-  all(grepl("^#[0-9A-Fa-f]{6}$", indi_topic_neg_dict))
+all_hex <- function(highlight_topic_words) {
+  all(grepl("^#[0-9A-Fa-f]{6}$", highlight_topic_words))
 }
 
 #' Separate words for negative words as a fixed-colour tibble and other words as a gradient-color tibble.
 #' @noRd
-separate_neg_words <- function(df_list_element, indi_topic_neg_dict) {
-  pattern <- paste(names(indi_topic_neg_dict), collapse = "|")
+separate_neg_words <- function(
+    df_list_element, 
+    highlight_topic_words) {
+  
+  pattern <- paste(names(highlight_topic_words), 
+                   collapse = "|")
 
   # Create df_list_ele_fixed with words that match or contain the dictionary keys
   df_list_ele_fixed <- df_list_element %>%
-    filter(str_detect(Word, pattern)) %>%
-    mutate(FixedColor = indi_topic_neg_dict[str_extract(Word, pattern)])
+    dplyr::filter(stringr::str_detect(Word, pattern)) %>%
+    dplyr::mutate(FixedColor = highlight_topic_words[stringr::str_extract(
+      Word, 
+      pattern)])
 
   # Create df_list_ele_gradient with the remaining words
   df_list_ele_gradient <- df_list_element %>%
-    filter(!str_detect(Word, pattern))
+    dplyr::filter(!stringr::str_detect(
+      Word,
+      pattern))
 
-  return (list(df_list_ele_gradient, df_list_ele_fixed))
+  return (list(
+    df_list_ele_gradient, 
+    df_list_ele_fixed))
 }
 
 #' This is a private function
@@ -235,7 +245,7 @@ separate_neg_words <- function(df_list_element, indi_topic_neg_dict) {
 #' @param scale_size (bool) if True, then the size of the topic cloud is scaled by the prevalence of the topic
 #' @param plot_topics_idx (list) if specified, then only the specified topics are plotted
 #' @param p_alpha (float) set threshold which determines which topics are plotted
-#' @param indi_topic_neg_dict (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
+#' @param highlight_topic_words (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
 #'  Default words are "not", "never". Words are as vector names. 
 #'  The values of the vector determine the color code to popout. The color values can be different for different words.
 #' @param save_dir (string) save plots in specified directory, if left blank, plots is not saved,
@@ -243,7 +253,7 @@ separate_neg_words <- function(df_list_element, indi_topic_neg_dict) {
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
 #' @param seed (int) seed is needed for saving the plots in the correct directory
 #' @importFrom ggwordcloud geom_text_wordcloud
-#' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient
+#' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient scale_colour_identity
 #' @importFrom dplyr rename
 #' @noRd
 create_plots <- function(
@@ -260,7 +270,7 @@ create_plots <- function(
     scale_size = FALSE,
     plot_topics_idx = NULL,
     p_alpha = NULL,
-    indi_topic_neg_dict = c(not = "#2d00ff", never = "#2d00ff"),
+    highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
     save_dir,
     figure_format = "svg",
     width = 10,
@@ -365,15 +375,15 @@ create_plots <- function(
         }
 
         # For constant color of negative words. 
-        if (!is.null(indi_topic_neg_dict) && is.vector(indi_topic_neg_dict)){
-           if(is.character(indi_topic_neg_dict) && is.character(names(indi_topic_neg_dict)) && all_hex(indi_topic_neg_dict)){
-               # Assign color to neg_words in the dictionary object "indi_topic_neg_dict"
-               df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]], indi_topic_neg_dict)
+        if (!is.null(highlight_topic_words) && is.vector(highlight_topic_words)){
+           if(is.character(highlight_topic_words) && is.character(names(highlight_topic_words)) && all_hex(highlight_topic_words)){
+               # Assign color to neg_words in the dictionary object "highlight_topic_words"
+               df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]], highlight_topic_words)
                df_list_separated[[1]]$color <- df_list_separated[[1]]$phi^3 / sum(df_list_separated[[1]]$phi^3) 
                df_list_separated[[1]]$color <- color_scheme$palette(df_list_separated[[1]]$color)
                colnames(df_list_separated[[2]])[3] <- c('color') 
                target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]]) 
-           }else{stop('Invalid settings for the parameter "indi_topic_neg_dict".\nConsider use the default option!\n')}
+           }else{stop('Invalid settings for the parameter "highlight_topic_words".\nConsider use the default option!\n')}
         }else{target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]}
         
         if (grid1 == ""){ .
@@ -403,7 +413,7 @@ create_plots <- function(
                                                color = color)) + #,x=estimate)) +
             ggwordcloud::geom_text_wordcloud() +
             ggplot2::scale_size_area(max_size = max_size) +
-            scale_colour_identity() + 
+            ggplot2::scale_colour_identity() + 
             ggplot2::theme_minimal() +
             #theme(plot.margin = margin(0,0,0,0, "cm")) +
             #color_scheme + 

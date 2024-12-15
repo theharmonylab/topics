@@ -3,6 +3,7 @@
 # topics 0.40.1
 - adding `allowed_word_overlap` in `topicsPlot()` for plotting the most prevalence.
 - improving help texts
+- `highlight_topic_words` parameter to add different colours for a word list. 
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 # topics 0.40.

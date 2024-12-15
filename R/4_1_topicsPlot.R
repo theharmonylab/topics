@@ -559,7 +559,7 @@ topicsGridLegend <- function(
 #' @param scale_size (logical) Whether to scale the size of the words
 #' @param plot_topics_idx (vector) The topics to plot determined by index
 #' @param p_alpha (integer) The p-value threshold to use for significance
-#' @param indi_topic_neg_dict (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
+#' @param highlight_topic_words (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
 #'  Default words are "not", "never". Words are as vector names. 
 #'  The values of the vector determine the color code to popout. The color values can be different for different words.
 #' @param save_dir (string) The directory to save the wordclouds
@@ -581,7 +581,7 @@ topicsPlot1 <- function(
     scale_size = FALSE,
     plot_topics_idx = NULL,
     p_alpha = 0.05,
-    indi_topic_neg_dict = c(not = "#2d00ff", never = "#2d00ff"),    
+    highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),    
     save_dir,
     figure_format = "svg",
     width = 10, 
@@ -649,7 +649,7 @@ topicsPlot1 <- function(
     scale_size = scale_size,
     plot_topics_idx = plot_topics_idx,
     p_alpha = p_alpha,
-    indi_topic_neg_dict = indi_topic_neg_dict,  
+    highlight_topic_words = highlight_topic_words,  
     save_dir = save_dir,
     figure_format = figure_format,
     width = width, 
@@ -801,9 +801,6 @@ colour_settings <- function(
 #' @param p_alpha (integer) The p-value threshold to use for significance testing.
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
 #' see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").
-#' @param indi_topic_neg_dict (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
-#'  Default words are "not", "never". Words are as vector names. 
-#'  The values of the vector determine the color code to popout. The color values can be different for different words.
 #' @param ngrams_max (integer) The maximum number of n-grams to plot.
 #' @param ngram_select (character) Method to select ngrams_max, including "pmi", "frequency", "proportion", and "correlation". 
 #' @param color_scheme (string 'default' or vector) The color scheme.
@@ -854,6 +851,8 @@ colour_settings <- function(
 #'   "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner).
 #'
 #' 
+#' @param highlight_topic_words (named vector) Words to highlight in topics (e.g., negative words). 
+#'  The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff").
 #' @param topic_duplicate_filter (numeric) A number determining the maximum number of identical words in the topics to be plotted. 
 #' This filter removes topics from the distribution and grid legends as well; they are not included in the 
 #' adjustment for multiple comparison (i.e., the adjusted p-values) either.   
@@ -890,6 +889,7 @@ colour_settings <- function(
 #' @importFrom dplyr filter arrange desc top_n select
 #' @importFrom ggplot2 scale_color_gradient
 #' @importFrom tibble as_tibble
+#' @importFrom stats p.adjust
 #' @export
 topicsPlot <- function(
     model = NULL,
@@ -897,11 +897,11 @@ topicsPlot <- function(
     test = NULL,
     p_alpha = 0.05,
     p_adjust_method = "none",
-    indi_topic_neg_dict = c(not = "#2d00ff", never = "#2d00ff"),
     ngrams_max = NULL,
     ngram_select = "frequency",
     color_scheme = "default",
-    topic_duplicate_filter = NULL, 
+    highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
+    topic_duplicate_filter = NULL,
     scale_size = FALSE,
     plot_topics_idx = NULL,
     allowed_word_overlap = NULL,
@@ -990,10 +990,10 @@ topicsPlot <- function(
   if (p_adjust_method != "none"){
     
     # reset the adjusted p-value with potentially new correction method
-    test$test[[8]]<- p.adjust(p = test$test[[7]],
+    test$test[[8]]<- stats::p.adjust(p = test$test[[7]],
                               method = p_adjust_method)
     
-    if(dim == 2) test$test[[12]]<- p.adjust(p = test$test[[11]],
+    if(dim == 2) test$test[[12]]<- stats::p.adjust(p = test$test[[11]],
                                             method = p_adjust_method)
     
   } 
@@ -1095,7 +1095,7 @@ topicsPlot <- function(
       ngrams = ngrams,
       test = test,
       p_alpha = p_alpha,
-      indi_topic_neg_dict = NULL,
+      highlight_topic_words = NULL,
       scale_size = scale_size,
       plot_topics_idx = plot_topics_idx,
       popout = NULL,
@@ -1175,7 +1175,7 @@ topicsPlot <- function(
           scale_size = scale_size,
           plot_topics_idx = plot_topics_idx,
           p_alpha = p_alpha,
-          indi_topic_neg_dict = indi_topic_neg_dict,
+          highlight_topic_words = highlight_topic_words,
           save_dir = save_dir,
           figure_format = figure_format,
           width = width, 
@@ -1212,7 +1212,7 @@ topicsPlot <- function(
           scale_size = scale_size,
           plot_topics_idx = plot_topics_idx,
           p_alpha = p_alpha,
-          indi_topic_neg_dict = indi_topic_neg_dict,
+          highlight_topic_words = highlight_topic_words,
           save_dir = save_dir,
           figure_format = figure_format,
           width = width, 

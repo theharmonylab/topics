@@ -10,10 +10,10 @@ topicsPlot(
   test = NULL,
   p_alpha = 0.05,
   p_adjust_method = "none",
-  indi_topic_neg_dict = c(not = "#2d00ff", never = "#2d00ff"),
   ngrams_max = NULL,
   ngram_select = "frequency",
   color_scheme = "default",
+  highlight_topic_words = c(not = "black", never = "black"),
   topic_duplicate_filter = NULL,
   scale_size = FALSE,
   plot_topics_idx = NULL,
@@ -52,10 +52,6 @@ topicsPlot(
 
 \item{p_adjust_method}{(character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
 see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").}
-
-\item{indi_topic_neg_dict}{(named vector) The dictionary to popout negative words to an individual plot for easier reading. 
-Default words are "not", "never". Words are as vector names. 
-The values of the vector determine the color code to popout. The color values can be different for different words.}
 
 \item{ngrams_max}{(integer) The maximum number of n-grams to plot.}
 
@@ -107,6 +103,9 @@ For 1-dimension plots of topics, it should contain 6 colours (3 gradient pairs),
   "lightgray", "#EA7467",     # quadrant 8 
   
   "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner).}
+
+\item{highlight_topic_words}{(named vector) Words to highlight in topics (e.g., negative words). 
+The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff").}
 
 \item{topic_duplicate_filter}{(numeric) A number determining the maximum number of identical words in the topics to be plotted. 
 This filter removes topics from the distribution and grid legends as well; they are not included in the 
