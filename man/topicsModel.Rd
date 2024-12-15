@@ -13,7 +13,7 @@ topicsModel(
 )
 }
 \arguments{
-\item{dtm}{(R_obj) The document term matrix}
+\item{dtm}{(R_obj) The document term matrix -> output of topicsDtm function}
 
 \item{num_topics}{(integer) The number of topics to be created}
 
@@ -21,10 +21,10 @@ topicsModel(
 
 \item{num_iterations}{(integer) The number of iterations to run the model}
 
-\item{seed}{(integer) The seed to set for reproducibility}
+\item{seed}{(integer) A seed to set for reproducibility}
 }
 \value{
-A list of the model, the top terms, the labels, the coherence (experimental), and the prevalence.
+
 }
 \description{
 The function to create and train and an LDA model.
@@ -33,8 +33,7 @@ The function to create and train and an LDA model.
 \donttest{
 # Create LDA Topic Model 
 save_dir_temp <- tempfile()
-dtm <- topicsDtm(
-data = dep_wor_data$Depphrase)
+dtm <- topicsDtm(data = dep_wor_data$Depphrase)
 
 model <- topicsModel(
 dtm = dtm, # output of topicsDtm()

@@ -199,6 +199,30 @@ topicsNumAssign_dim2 <- function(
   return (topic_loadings_all)
 }
 
+#' A Private function to check the validity of color hex codes for parameter indi_topic_neg_dict.
+#' indi_topic_neg_dict (named vector) the named vector with negative words as elements and color hex codes as names for each word
+#' @noRd
+all_hex <- function(indi_topic_neg_dict) {
+  all(grepl("^#[0-9A-Fa-f]{6}$", indi_topic_neg_dict))
+}
+
+#' Separate words for negative words as a fixed-colour tibble and other words as a gradient-color tibble.
+#' @noRd
+separate_neg_words <- function(df_list_element, indi_topic_neg_dict) {
+  pattern <- paste(names(indi_topic_neg_dict), collapse = "|")
+
+  # Create df_list_ele_fixed with words that match or contain the dictionary keys
+  df_list_ele_fixed <- df_list_element %>%
+    filter(str_detect(Word, pattern)) %>%
+    mutate(FixedColor = indi_topic_neg_dict[str_extract(Word, pattern)])
+
+  # Create df_list_ele_gradient with the remaining words
+  df_list_ele_gradient <- df_list_element %>%
+    filter(!str_detect(Word, pattern))
+
+  return (list(df_list_ele_gradient, df_list_ele_fixed))
+}
+
 #' This is a private function
 #' @param df_list (list) list of data.frames with topics most frequent words and assigned topic term scores
 #' @param test (data.frame) the test returned from textTopicTest()
@@ -211,6 +235,9 @@ topicsNumAssign_dim2 <- function(
 #' @param scale_size (bool) if True, then the size of the topic cloud is scaled by the prevalence of the topic
 #' @param plot_topics_idx (list) if specified, then only the specified topics are plotted
 #' @param p_alpha (float) set threshold which determines which topics are plotted
+#' @param indi_topic_neg_dict (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
+#'  Default words are "not", "never". Words are as vector names. 
+#'  The values of the vector determine the color code to popout. The color values can be different for different words.
 #' @param save_dir (string) save plots in specified directory, if left blank, plots is not saved,
 #' thus save_dir is necessary.
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
@@ -233,6 +260,7 @@ create_plots <- function(
     scale_size = FALSE,
     plot_topics_idx = NULL,
     p_alpha = NULL,
+    indi_topic_neg_dict = c(not = "#2d00ff", never = "#2d00ff"),
     save_dir,
     figure_format = "svg",
     width = 10,
@@ -321,7 +349,6 @@ create_plots <- function(
       #
       if (!is.nan(p_adjusted) & p_adjusted < p_alpha){
         
-        
         #estimate <- test[i,][[grep(estimate_col, colnames(test), value=TRUE)]]# $PHQtot.estimate
         #p_adjusted <- test[i,][[grep("p_adjusted", colnames(test), value=TRUE)]] # $PHQtot.p_adjustedfdr
         if (estimate < 0){
@@ -337,8 +364,20 @@ create_plots <- function(
           y <- ""
         }
 
+        # For constant color of negative words. 
+        if (!is.null(indi_topic_neg_dict) && is.vector(indi_topic_neg_dict)){
+           if(is.character(indi_topic_neg_dict) && is.character(names(indi_topic_neg_dict)) && all_hex(indi_topic_neg_dict)){
+               # Assign color to neg_words in the dictionary object "indi_topic_neg_dict"
+               df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]], indi_topic_neg_dict)
+               df_list_separated[[1]]$color <- df_list_separated[[1]]$phi^3 / sum(df_list_separated[[1]]$phi^3) 
+               df_list_separated[[1]]$color <- color_scheme$palette(df_list_separated[[1]]$color)
+               colnames(df_list_separated[[2]])[3] <- c('color') 
+               target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]]) 
+           }else{stop('Invalid settings for the parameter "indi_topic_neg_dict".\nConsider use the default option!\n')}
+        }else{target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]}
+        
         if (grid1 == ""){ .
-          plot <- ggplot2::ggplot(df_list[[as.numeric(sub(".*_", "", i))]], 
+          plot <- ggplot2::ggplot(target_topic, 
                                   ggplot2::aes(label = Word, 
                                                size = phi, 
                                                color = phi)) + #,x=estimate)) +
@@ -358,15 +397,16 @@ create_plots <- function(
             
             x_message = paste0("r_x = ", round(estimate_x,4))                    
           }
-          plot <- ggplot2::ggplot(df_list[[as.numeric(sub(".*_", "", i))]], 
+          plot <- ggplot2::ggplot(target_topic, 
                                   ggplot2::aes(label = Word, 
                                                size = phi, 
-                                               color = phi)) + #,x=estimate)) +
+                                               color = color)) + #,x=estimate)) +
             ggwordcloud::geom_text_wordcloud() +
             ggplot2::scale_size_area(max_size = max_size) +
+            scale_colour_identity() + 
             ggplot2::theme_minimal() +
             #theme(plot.margin = margin(0,0,0,0, "cm")) +
-            color_scheme + 
+            #color_scheme + 
             ggplot2::labs(x = x_message,
                           y= y)
         }

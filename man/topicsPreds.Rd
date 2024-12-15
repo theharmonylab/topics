@@ -15,13 +15,13 @@ topicsPreds(
 )
 }
 \arguments{
-\item{model}{(list) The trained model}
+\item{model}{(list) The trained model.}
 
-\item{data}{(tibble) The new data}
+\item{data}{(tibble) The text variable for which you want to infer the topic distribution. This can be the same data as used to create the dtm or new data.}
 
-\item{num_iterations}{(integer) The number of iterations to run the model}
+\item{num_iterations}{(integer) The number of iterations to run the model.}
 
-\item{sampling_interval}{The number of iterations between consecutive samples collected 
+\item{sampling_interval}{The number of iterations between consecutive samples collected.
 during the Gibbs Sampling process. This technique, known as thinning, helps reduce the 
 correlation between consecutive samples and improves the quality of the final estimates 
 by ensuring they are more independent.
@@ -29,7 +29,7 @@ Purpose: By specifying a sampling_interval, you avoid collecting highly correlat
 lead to more robust and accurate topic distributions.
 Example: If sampling_interval = 10, the algorithm collects a 
 sample every 10 iterations (e.g., at iteration 10, 20, 30, etc.).
-Typical Values: Default: 10; Range: 5 to 50 (depending on the complexity and size of the data)}
+Typical Values: Default: 10; Range: 5 to 50 (depending on the complexity and size of the data).}
 
 \item{burn_in}{The number of initial iterations discarded during the Gibbs Sampling process. 
 These early iterations may not be representative of the final sampling distribution because the model is still stabilizing.
@@ -37,15 +37,15 @@ Purpose: The burn_in period allows the model to converge to a more stable state 
 improving the quality of the inferred topic distributions.
 Example: If burn_in = 50, the first 50 iterations of the Gibbs Sampling process are discarded,
 and sampling begins afterward. Typical Values: Default: 50 to 100 
-Range: 10 to 1000 (larger datasets or more complex models may require a longer burn-in period)}
+Range: 10 to 1000 (larger datasets or more complex models may require a longer burn-in period).}
 
-\item{seed}{(integer) The seed to set for reproducibility.}
+\item{seed}{(integer) A seed to set for reproducibility.}
 
 \item{create_new_dtm}{(boolean) If applying the model on new data (not used in training), it can help to make a new dtm.
 Currently this is experimental, and using the textmineR::CreateDtm() function rather than the topicsDtm() function, which has more functions.}
 }
 \value{
-A tibble of the predictions
+A tibble of the predictions: The rows represent the documents, and the columns represent the topics. The values in the cells indicate the proportion of each topic within the corresponding document.
 }
 \description{
 The function to predict the topics of a new document with the trained model.
@@ -63,8 +63,7 @@ model <- topicsModel(dtm = dtm, # output of topicsDtm()
                      num_iterations = 1000,
                      seed = 42)
                      
-preds <- topicsPreds(
-model = model, # output of topicsModel()
-data = dep_wor_data$Depphrase)
+preds <- topicsPreds(model = model, # output of topicsModel()
+                     data = dep_wor_data$Depphrase)
 }
 }

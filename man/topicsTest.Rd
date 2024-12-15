@@ -18,32 +18,31 @@ topicsTest(
 )
 }
 \arguments{
-\item{data}{(tibble) The data containing the variables to be tested.}
+\item{data}{(tibble) The tibble containing the variables to be tested.}
 
 \item{model}{(list) A trained model LDA-model from the topicsModel() function.}
 
 \item{preds}{(tibble) The predictions from the topicsPred() function.}
 
-\item{ngrams}{(list) output of the n-gram function}
+\item{ngrams}{(list) Output of the n-gram function.}
 
-\item{x_variable}{(string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)}
+\item{x_variable}{(string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation).}
 
-\item{y_variable}{(string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)}
+\item{y_variable}{(string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation).}
 
-\item{controls}{(vector) The control variables (not supported yet)}
+\item{controls}{(vector) The control variables (not supported yet).}
 
-\item{test_method}{(string) The test method to use. The "default", check wether x_variable and y_variable
-only contain 0s and 1 for which it applied logistic regression otherwise it applies linear regression. 
-Can also set it to either "linear_regression" or "logistic_regression.  
-selectes logistic regression if the variable only contain 0s and 1s, or "linear_regression", or "logistic_regression".}
+\item{test_method}{(string) The test method to use. "default" checks if x_variable and y_variable
+only contain 0s and 1s, for which it applies logistic regression; otherwise it applies linear regression. 
+Alternatively, the user may manually specify either "linear_regression" or "logistic_regression".}
 
 \item{p_adjust_method}{(character) Method to adjust/correct p-values for multiple comparisons
-(default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").}
+(default = "fdr"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "none").}
 
 \item{seed}{(integer) The seed to set for reproducibility}
 }
 \value{
-A list of the test results, test method, and prediction variable
+A list of the test results, test method, and prediction variable.
 }
 \description{
 Statistically test topics or n-grams in relation to one or two other variables using 
