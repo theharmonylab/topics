@@ -86,7 +86,7 @@ topicsScatterLegendNew <- function(
     
     # Convert `color_categories` in `popout` back to integer
     popout <- popout %>%
-      mutate(color_categories = as.character(color_categories))
+      mutate(color_categories = as.integer(color_categories))
     
     # Perform anti_join
     backgr_dots <- filtered_test %>% dplyr::anti_join(popout, by = colnames(filtered_test))
