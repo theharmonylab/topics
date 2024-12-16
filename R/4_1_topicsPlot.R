@@ -82,7 +82,7 @@ topicsScatterLegendNew <- function(
     # Generating scatter plot based on specified popout criteria.\n
   } else {
     popout <- determine_popout_topics(
-      filtered_test, num_popout, way_popout_topics, y_column, x_column, color_categories)
+      filtered_test, num_popout, way_popout_topics, y_column, x_column)
     
     # Convert `color_categories` in `popout` back to integer
     popout <- popout %>%
