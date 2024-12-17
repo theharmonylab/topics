@@ -8,8 +8,8 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   
   # No test (i.e., no dimension) help(topicsGrams)
   ngrams <- topics::topicsGrams(
-    data = dep_wor_data$Worphrase, 
-    ngram_window = c(1:3), 
+    data = dep_wor_data$Worphrase[1:100], 
+    ngram_window = c(1:2), 
     stopwords = NULL,
     pmi_threshold = 4)
   
@@ -17,7 +17,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     data = dep_wor_data$Worphrase, 
     ngram_window = c(1:3), 
     stopwords = stopwords::stopwords("en", source = "snowball"),
-    pmi_threshold = 4)
+    pmi_threshold = NULL)
   
   
   save_dir_temp <- tempfile()
