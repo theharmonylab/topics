@@ -979,6 +979,8 @@ topicsPlot <- function(
   bivariate_color_codes   <- codes[[1]]
   bivariate_color_codes_b <- codes[[2]]
   bivariate_color_codes_f <- codes[[3]]
+
+  bivariate_color_codes_f <- as.character(seq(1:length(bivariate_color_codes_f))) # The names of the color vector prevent the wrong ordering of colors in scatter plot.
   
   #### Controlling parameter settings and giving instructions #####
   if (!is.vector(scatter_legend_n) || !is.numeric(scatter_legend_n)){
