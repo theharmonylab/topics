@@ -56,6 +56,7 @@ topicsScatterLegendNew <- function(
   # Check for only significant or non-significant topics
   contains_category <- function(cat) {
     filtered_test %>%
+      dplyr::ungroup() %>%
       dplyr::summarise(contains_only = all(color_categories %in% cat)) %>%
       dplyr::pull(contains_only)
   }
