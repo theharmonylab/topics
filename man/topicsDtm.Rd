@@ -45,7 +45,7 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
 
 \item{seed}{(integer) A seed to set for reproducibility}
 
-\item{threads}{(integer) The number of threads to use}
+\item{threads}{(integer) The number of threads to use; also called cpu in (CreateDtm).}
 }
 \value{
 The document term matrix

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">topics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.40.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.40.2</span>
       </span>
     </div>
 
@@ -61,15 +61,32 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.30.6" id="topics-0306">topics 0.30.6<a class="anchor" aria-label="anchor" href="#topics-0306"></a></h2>
-<ul><li>removing save_dir and load_dir from all function; only topicsPlot now has the save_dir as an option.</li>
+<h2 class="page-header" data-toc-text="0.40.2" id="topics-0402">topics 0.40.2<a class="anchor" aria-label="anchor" href="#topics-0402"></a></h2>
+<ul><li>changed some behaviours in <code><a href="../reference/topicsGrams.html">topicsGrams()</a></code>, including removing <code>top_n</code> and treating n-grams type differently.</li>
+<li>added <code>stopwords</code> function to <code><a href="../reference/topicsGrams.html">topicsGrams()</a></code>.</li>
+<li>fixed the <code>pmi</code> calculation.</li>
+<li>fixed the <code>ngrams_max</code> parameter in `topicsPlot()```.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.40.1" id="topics-0401">topics 0.40.1<a class="anchor" aria-label="anchor" href="#topics-0401"></a></h2>
+<ul><li>adding <code>allowed_word_overlap</code> in <code><a href="../reference/topicsPlot.html">topicsPlot()</a></code> for plotting the most prevalence.</li>
+<li>improving help texts</li>
+<li>
+<code>highlight_topic_words</code> parameter to add different colours for a word list.</li>
+<li>added <code>stopwords</code> removal for <code>topicsGram()</code>.</li>
+<li>added <code>ngrams_max</code> functionality to <code><a href="../reference/topicsPlot.html">topicsPlot()</a></code>.</li>
+</ul><!-- README.md is generated from README.Rmd. Please edit that file --></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.40" id="topics-040">topics 0.40.<a class="anchor" aria-label="anchor" href="#topics-040"></a></h2>
+<ul><li>removing <code>save_dir</code> and <code>load_dir</code> from all function; only <code><a href="../reference/topicsPlot.html">topicsPlot()</a></code> now has the <code>save_dir</code> as an option.</li>
 <li>size of the dots in distributions can be plotted according to <code>prevalence</code>.</li>
+<li>adding <code>p_adjust_method</code> to <code>topicsPlots()</code>.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.30.5" id="topics-0305">topics 0.30.5<a class="anchor" aria-label="anchor" href="#topics-0305"></a></h2>
 <ul><li>plots are not added as a list (and not only saved to the folder)</li>
-<li>added <code>scatter_show_axis_values</code> to the topcisPlot()</li>
-<li>adding feature to plot the `n_most_prevalent_topics```.</li>
+<li>added <code>scatter_show_axis_values</code> to the <code>topcisPlot()</code>.</li>
+<li>adding feature to plot the <code>n_most_prevalent_topics</code>.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.30.4" id="topics-0304">topics 0.30.4<a class="anchor" aria-label="anchor" href="#topics-0304"></a></h2>

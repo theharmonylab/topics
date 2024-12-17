@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">topics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.40.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.40.2</span>
       </span>
     </div>
 
@@ -82,19 +82,19 @@
 
 
 <dl><dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
-<dd><p>(list) The trained model</p></dd>
+<dd><p>(list) The trained model.</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>(tibble) The new data</p></dd>
+<dd><p>(tibble) The text variable for which you want to infer the topic distribution. This can be the same data as used to create the dtm or new data.</p></dd>
 
 
 <dt id="arg-num-iterations">num_iterations<a class="anchor" aria-label="anchor" href="#arg-num-iterations"></a></dt>
-<dd><p>(integer) The number of iterations to run the model</p></dd>
+<dd><p>(integer) The number of iterations to run the model.</p></dd>
 
 
 <dt id="arg-sampling-interval">sampling_interval<a class="anchor" aria-label="anchor" href="#arg-sampling-interval"></a></dt>
-<dd><p>The number of iterations between consecutive samples collected
+<dd><p>The number of iterations between consecutive samples collected.
 during the Gibbs Sampling process. This technique, known as thinning, helps reduce the
 correlation between consecutive samples and improves the quality of the final estimates
 by ensuring they are more independent.
@@ -102,7 +102,7 @@ Purpose: By specifying a sampling_interval, you avoid collecting highly correlat
 lead to more robust and accurate topic distributions.
 Example: If sampling_interval = 10, the algorithm collects a
 sample every 10 iterations (e.g., at iteration 10, 20, 30, etc.).
-Typical Values: Default: 10; Range: 5 to 50 (depending on the complexity and size of the data)</p></dd>
+Typical Values: Default: 10; Range: 5 to 50 (depending on the complexity and size of the data).</p></dd>
 
 
 <dt id="arg-burn-in">burn_in<a class="anchor" aria-label="anchor" href="#arg-burn-in"></a></dt>
@@ -112,11 +112,11 @@ Purpose: The burn_in period allows the model to converge to a more stable state 
 improving the quality of the inferred topic distributions.
 Example: If burn_in = 50, the first 50 iterations of the Gibbs Sampling process are discarded,
 and sampling begins afterward. Typical Values: Default: 50 to 100
-Range: 10 to 1000 (larger datasets or more complex models may require a longer burn-in period)</p></dd>
+Range: 10 to 1000 (larger datasets or more complex models may require a longer burn-in period).</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>(integer) The seed to set for reproducibility.</p></dd>
+<dd><p>(integer) A seed to set for reproducibility.</p></dd>
 
 
 <dt id="arg-create-new-dtm">create_new_dtm<a class="anchor" aria-label="anchor" href="#arg-create-new-dtm"></a></dt>
@@ -126,7 +126,7 @@ Currently this is experimental, and using the textmineR::CreateDtm() function ra
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A tibble of the predictions</p>
+    <p>A tibble of the predictions: The rows represent the documents, and the columns represent the topics. The values in the cells indicate the proportion of each topic within the corresponding document.</p>
     </div>
 
     <div id="ref-examples">
@@ -143,9 +143,8 @@ Currently this is experimental, and using the textmineR::CreateDtm() function ra
 <span class="r-in"><span>                     num_iterations <span class="op">=</span> <span class="fl">1000</span>,</span></span>
 <span class="r-in"><span>                     seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span></span></span>
 <span class="r-in"><span>                     </span></span>
-<span class="r-in"><span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu">topicsPreds</span><span class="op">(</span></span></span>
-<span class="r-in"><span>model <span class="op">=</span> <span class="va">model</span>, <span class="co"># output of topicsModel()</span></span></span>
-<span class="r-in"><span>data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu">topicsPreds</span><span class="op">(</span>model <span class="op">=</span> <span class="va">model</span>, <span class="co"># output of topicsModel()</span></span></span>
+<span class="r-in"><span>                     data <span class="op">=</span> <span class="va">dep_wor_data</span><span class="op">$</span><span class="va">Depphrase</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

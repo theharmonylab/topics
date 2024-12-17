@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">topics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.40.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.40.2</span>
       </span>
     </div>
 
@@ -70,7 +70,6 @@
 <span>  <span class="va">data</span>,</span>
 <span>  ngram_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span>,</span>
 <span>  stopwords <span class="op">=</span> <span class="fu">stopwords</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/stopwords/man/stopwords.html" class="external-link">stopwords</a></span><span class="op">(</span><span class="st">"en"</span>, source <span class="op">=</span> <span class="st">"snowball"</span><span class="op">)</span>,</span>
-<span>  top_n <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pmi_threshold <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -89,10 +88,6 @@
 
 <dt id="arg-stopwords">stopwords<a class="anchor" aria-label="anchor" href="#arg-stopwords"></a></dt>
 <dd><p>(stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")</p></dd>
-
-
-<dt id="arg-top-n">top_n<a class="anchor" aria-label="anchor" href="#arg-top-n"></a></dt>
-<dd><p>(integer) The number of most occuring ngrams to included in the output for every ngram type</p></dd>
 
 
 <dt id="arg-pmi-threshold">pmi_threshold<a class="anchor" aria-label="anchor" href="#arg-pmi-threshold"></a></dt>

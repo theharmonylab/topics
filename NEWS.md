@@ -1,9 +1,18 @@
 # text (development version)
 
+# topics 0.40.2
+- changed some behaviours in `topicsGrams()`, including removing `top_n` and treating 
+n-grams type differently.
+- added `stopwords` function to `topicsGrams()`. 
+- fixed the `pmi` calculation. 
+- fixed the `ngrams_max` parameter in `topicsPlot()```.
+
 # topics 0.40.1
 - adding `allowed_word_overlap` in `topicsPlot()` for plotting the most prevalence.
 - improving help texts
 - `highlight_topic_words` parameter to add different colours for a word list. 
+- added `stopwords` removal for `topicsGram()`.
+- added `ngrams_max` functionality to `topicsPlot()`.
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 # topics 0.40.
