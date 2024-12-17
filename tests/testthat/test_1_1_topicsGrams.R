@@ -10,7 +10,6 @@ test_that("topicsGrams with default parameters", {
   
   ngrams <- topics::topicsGrams(
     data = data, 
-    top_n = 2, 
     ngram_window = c(1,3))
   
   testthat::expect_true(is.list(ngrams))
@@ -25,7 +24,6 @@ test_that("topicsGrams with default parameters", {
   
   ngrams <- topics::topicsGrams(
     data = data, 
-    top_n = 10, 
     ngram_window = c(1,3), 
     pmi_threshold = 3)
   

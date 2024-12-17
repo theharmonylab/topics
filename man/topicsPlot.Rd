@@ -10,8 +10,8 @@ topicsPlot(
   test = NULL,
   p_alpha = 0.05,
   p_adjust_method = "none",
-  ngrams_max = NULL,
-  ngram_select = "frequency",
+  ngrams_max = 30,
+  ngram_select = "prevalence",
   color_scheme = "default",
   highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
   scale_size = FALSE,
@@ -43,7 +43,9 @@ topicsPlot(
 \arguments{
 \item{model}{(list) A trained topics model, e.g., from topicsModel(). Should be NULL if plotting ngrams.}
 
-\item{ngrams}{(list) The output from the the topicsGram() function. Should be NULL if plotting topics.}
+\item{ngrams}{(list) The output from the the topicsGram() function. Should be NULL if plotting topics.
+Note 1: it is not possible to plot tags like <place>; so the < are replaced with underscore. 
+Note 2: it is not possible to plot dash - alone, it is replaced with `_-_`.}
 
 \item{test}{(list) The test results; if plotting according to dimension(s) include the object from topicsTest() function.}
 
@@ -54,7 +56,8 @@ see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").}
 
 \item{ngrams_max}{(integer) The maximum number of n-grams to plot.}
 
-\item{ngram_select}{(character) Method to select ngrams_max, including "pmi", "frequency", "proportion", and "correlation".}
+\item{ngram_select}{(character) Method to select ngrams_max, when using both ngram and test use "prevalence" or "estimate"; 
+if you only use ngrams use "pmi", "frequency", or "proportion".}
 
 \item{color_scheme}{(string 'default' or vector) The color scheme.
  

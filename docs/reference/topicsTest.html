@@ -18,7 +18,7 @@ regression or t-test."><meta property="og:image" content="https://r-topics.org/r
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">topics</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.40.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.40.2</span>
       </span>
     </div>
 
@@ -87,7 +87,7 @@ regression or t-test.</p>
 
 
 <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>(tibble) The data containing the variables to be tested.</p></dd>
+<dd><p>(tibble) The tibble containing the variables to be tested.</p></dd>
 
 
 <dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
@@ -99,31 +99,30 @@ regression or t-test.</p>
 
 
 <dt id="arg-ngrams">ngrams<a class="anchor" aria-label="anchor" href="#arg-ngrams"></a></dt>
-<dd><p>(list) output of the n-gram function</p></dd>
+<dd><p>(list) Output of the n-gram function.</p></dd>
 
 
 <dt id="arg-x-variable">x_variable<a class="anchor" aria-label="anchor" href="#arg-x-variable"></a></dt>
-<dd><p>(string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation)</p></dd>
+<dd><p>(string) The x variable name to be predicted, and to be plotted (only needed for regression or correlation).</p></dd>
 
 
 <dt id="arg-y-variable">y_variable<a class="anchor" aria-label="anchor" href="#arg-y-variable"></a></dt>
-<dd><p>(string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation)</p></dd>
+<dd><p>(string) The y variable name to be predicted, and to be plotted (only needed for regression or correlation).</p></dd>
 
 
 <dt id="arg-controls">controls<a class="anchor" aria-label="anchor" href="#arg-controls"></a></dt>
-<dd><p>(vector) The control variables (not supported yet)</p></dd>
+<dd><p>(vector) The control variables (not supported yet).</p></dd>
 
 
 <dt id="arg-test-method">test_method<a class="anchor" aria-label="anchor" href="#arg-test-method"></a></dt>
-<dd><p>(string) The test method to use. The "default", check wether x_variable and y_variable
-only contain 0s and 1 for which it applied logistic regression otherwise it applies linear regression.
-Can also set it to either "linear_regression" or "logistic_regression.
-selectes logistic regression if the variable only contain 0s and 1s, or "linear_regression", or "logistic_regression".</p></dd>
+<dd><p>(string) The test method to use. "default" checks if x_variable and y_variable
+only contain 0s and 1s, for which it applies logistic regression; otherwise it applies linear regression.
+Alternatively, the user may manually specify either "linear_regression" or "logistic_regression".</p></dd>
 
 
 <dt id="arg-p-adjust-method">p_adjust_method<a class="anchor" aria-label="anchor" href="#arg-p-adjust-method"></a></dt>
 <dd><p>(character) Method to adjust/correct p-values for multiple comparisons
-(default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").</p></dd>
+(default = "fdr"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "none").</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
@@ -132,7 +131,7 @@ selectes logistic regression if the variable only contain 0s and 1s, or "linear_
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of the test results, test method, and prediction variable</p>
+    <p>A list of the test results, test method, and prediction variable.</p>
     </div>
 
     <div id="ref-examples">

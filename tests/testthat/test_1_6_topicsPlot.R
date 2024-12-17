@@ -9,27 +9,34 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   # No test (i.e., no dimension) help(topicsGrams)
   ngrams <- topics::topicsGrams(
     data = dep_wor_data$Worphrase, 
-    top_n = 50, 
-    n = 3, 
-    pmi_threshold = 6)
+    ngram_window = c(1:3), 
+    stopwords = NULL,
+    pmi_threshold = 4)
+  
+  ngrams_stop <- topicsGrams(
+    data = dep_wor_data$Worphrase, 
+    ngram_window = c(1:3), 
+    stopwords = stopwords::stopwords("en", source = "snowball"),
+    pmi_threshold = 4)
+  
   
   save_dir_temp <- tempfile()
-  save_dir_temp = "./results3"
+  #save_dir_temp = "./results3"
   
   plots1 <- topics::topicsPlot(
     ngrams = ngrams, 
+    ngrams_max = 40,
+    ngram_select = "proportion",
     figure_format = "png", 
     save_dir = save_dir_temp)
-  
+
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_42/wordclouds/ngrams.png")))
   
   
   # With test (i.e., 1 dimenstion = two plots)
   ngrams <- topics::topicsGrams(
-    data = dep_wor_data$Worphrase, 
-    top_n = 10, 
-    n=3, 
+    data = dep_wor_data$Worphrase,
     pmi_threshold = 3)
   
   # help(topicsTest)
@@ -38,14 +45,18 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     ngrams = ngrams, 
     x_variable = "Age")
   
-  #help(topicsPlot)
+  # help(topicsPlot)
   plot2 <- topics::topicsPlot(
     ngrams = ngrams, 
     test = test,
+    ngrams_max = 10,
+    ngram_select = "prevalence",
     figure_format = "png", 
     p_alpha = 1, 
     save_dir = save_dir_temp)
-  
+
+  plot2$positive
+  plot2$negative
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_42/wordclouds/ngrams_negative.png")))
   

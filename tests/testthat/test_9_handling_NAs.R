@@ -32,6 +32,10 @@ test_that("Handling NAs",{
   NA_data[row_to_na, ] <- NA
   
   
+  # Introducing rows with few words
+  NA_data$Deptext[[2]] <- "hello"
+  NA_data$Deptext[[3]] <- "hello you"
+  NA_data$Deptext[[4]] <- "hello how are"
   ##### Testing dataset on our functions ####
   
   # Testing with _ 

@@ -590,7 +590,7 @@ topicsPlot1 <- function(
     seed = 42){
   
   df_list = NULL
-  
+
   if (!is.null(model)){
     
     # if model$model_type == "bert_topic" (i.e., a maller model return null on model$model_type)
@@ -797,12 +797,15 @@ colour_settings <- function(
 #' This function create word clouds and topic figures
 #' @param model (list) A trained topics model, e.g., from topicsModel(). Should be NULL if plotting ngrams.
 #' @param ngrams (list) The output from the the topicsGram() function. Should be NULL if plotting topics.
+#' Note 1: it is not possible to plot tags like <place>; so the < are replaced with underscore. 
+#' Note 2: it is not possible to plot dash - alone, it is replaced with `_-_`.
 #' @param test (list) The test results; if plotting according to dimension(s) include the object from topicsTest() function. 
 #' @param p_alpha (integer) The p-value threshold to use for significance testing.
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons (default = "none"; 
 #' see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").
 #' @param ngrams_max (integer) The maximum number of n-grams to plot.
-#' @param ngram_select (character) Method to select ngrams_max, including "pmi", "frequency", "proportion", and "correlation". 
+#' @param ngram_select (character) Method to select ngrams_max, when using both ngram and test use "prevalence" or "estimate"; 
+#' if you only use ngrams use "pmi", "frequency", or "proportion". 
 #' @param color_scheme (string 'default' or vector) The color scheme.
 #'  
 #' For plots not including a test, the color_scheme should in clude 2 colours (1 gradient pair), such as:
@@ -897,8 +900,8 @@ topicsPlot <- function(
     test = NULL,
     p_alpha = 0.05,
     p_adjust_method = "none",
-    ngrams_max = NULL,
-    ngram_select = "frequency",
+    ngrams_max = 30,
+    ngram_select = "prevalence",
     color_scheme = "default",
     highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
     scale_size = FALSE,
@@ -943,27 +946,6 @@ topicsPlot <- function(
     if(ncol(test$test) == 12) {
       dim = 2
     }
-  }
-  
-  if(is.null(ngrams) & !is.null(ngrams_max)){
-    
-    if (!ngram_select %in% c("pmi", "frequency", "proportion")){
-      stop("ngram_select incorrect -- correlation and t-statistics has not been implemented yet")
-    }
-    
-    ngrams$ngrams <- ngrams$ngrams %>% 
-      dplyr::arrange(
-        if (ngram_select == "pmi") {
-          dplyr::desc(pmi)
-        } else if (ngram_select == "frequency") {
-          dplyr::desc(freq)
-        } else if (ngram_select == "proportion") {
-          dplyr::desc(prop)
-        } else {
-          stop("Invalid value for ngram_select")
-        }
-      ) %>%
-      dplyr::slice_head(n = ngrams_max)  
   }
   
   #### Setting colors ####
@@ -1050,9 +1032,7 @@ topicsPlot <- function(
         allowed_word_overlap)) %>%
       dplyr::ungroup() %>%
       dplyr::select(-color_categories1) %>%            # Remove the temporary column
-      dplyr::select(dplyr::all_of(original_col_order))        # Reorder columns to the original order
-      
-    
+      dplyr::select(dplyr::all_of(original_col_order)) # Reorder columns to the original order
   }
   
   #### Selecting the most prevalence topics ####
@@ -1078,6 +1058,79 @@ topicsPlot <- function(
     
   }
   
+  
+  #### NGRAM filtering and fixing tags (e.g., <place>) in ngrams because of error when plotting #### 
+  
+  if(!is.null(ngrams) & !is.null(ngrams_max)){
+    
+    if(is.null(test)){
+      if (!ngram_select %in% c("pmi", "frequency", "proportion")){
+        stop("ngram_select incorrect -- can only select pmi, frequency, or proportion when not including a test.")
+      }
+      
+      ngrams$ngrams <- ngrams$ngrams %>% 
+        dplyr::arrange(
+          if (ngram_select == "pmi") {
+            dplyr::desc(pmi)
+          } else if (ngram_select == "frequency") {
+            dplyr::desc(freq)
+          } else if (ngram_select == "proportion") {
+            dplyr::desc(prop)
+          } else {
+            stop("Invalid value for ngram_select")
+          }
+        ) %>%
+        dplyr::slice_head(n = ngrams_max)
+      
+      ngrams$ngrams$ngrams <- gsub("<", "_", ngrams$ngrams$ngrams)
+      ngrams$ngrams$ngrams <- gsub(">", "_", ngrams$ngrams$ngrams)
+      ngrams$ngrams$ngrams <- gsub("-", "_-_", ngrams$ngrams$ngrams)
+    }
+    if(!is.null(test)){
+      
+      if (!ngram_select %in% c("prevalence", "estimate")){
+        stop("ngram_select incorrect -- when using ngram and test use one of prevalence or estimate")
+      }
+      
+      # merge frequency
+      # get the name of the column to arrange after colnames(test$test)
+      beta_column <- names(test$test)[grepl("_beta$", names(test$test))][1]
+    
+      # Filter and arrange by positive beta scores
+      positive_ngrams <- test$test %>%
+        dplyr::filter(.data[[beta_column]] > 0) %>%
+        {
+          if (ngram_select == "estimate") {
+            dplyr::arrange(., dplyr::desc(.data[[beta_column]]))
+          } else if (ngram_select == "prevalence") {
+            dplyr::arrange(., dplyr::desc(prevalence))
+          } else {
+            stop("Invalid value for ngram_select")
+          }
+        } %>%
+        dplyr::slice_head(n = ngrams_max)
+      
+      negative_ngrams <- test$test %>%
+        dplyr::filter(.data[[beta_column]] < 0) %>%
+        {
+          if (ngram_select == "estimate") {
+            dplyr::arrange(., dplyr::desc(.data[[beta_column]]))
+          } else if (ngram_select == "prevalence") {
+            dplyr::arrange(., dplyr::desc(prevalence))
+          } else {
+            stop("Invalid value for ngram_select")
+          }
+        } %>%
+        dplyr::slice_head(n = ngrams_max)
+      
+      # Combine the positive and negative n-grams
+      test$test <- dplyr::bind_rows(positive_ngrams, negative_ngrams)
+
+      test$test$top_terms <- gsub("<", "_",   test$test$top_terms)
+      test$test$top_terms <- gsub(">", "_",   test$test$top_terms)
+      test$test$top_terms <- gsub("-", "_-_", test$test$top_terms)
+    }
+  }
   
   #### Making the plots ####
   #### Plotting topics from model without at test | ####

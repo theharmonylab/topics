@@ -76,6 +76,81 @@ get_removal_columns <- function(
 }
 
 
+#' @param train_dtm A document-term matrix (DTM) containing n-grams.
+#' @param unigram_dtm A document-term matrix containing unigrams (single words).
+#' @param pmi_threshold The PMI threshold for filtering n-grams (default is 0).
+#' @noRd
+filter_by_pmi <- function(
+    train_dtm, 
+    unigram_dtm, 
+    pmi_threshold = 0) {
+  
+  # Compute total number of terms in the train_dtm
+  total_terms <- sum(train_dtm)
+  
+  # Compute joint probabilities of the n-grams
+  ngram_probs <- Matrix::colSums(train_dtm) / total_terms
+  
+  # Split n-grams into their components
+  ngram_components <- strsplit(colnames(train_dtm), "_")
+  
+  # Compute marginal probabilities for each component in the n-grams
+  component_probs <- sapply(ngram_components, function(component) {
+    # Compute probabilities for all components of the n-gram
+    probs <- sapply(component, function(word) {
+      if (word %in% colnames(unigram_dtm)) {
+        word_index <- which(colnames(unigram_dtm) == word)
+        prob <- Matrix::colSums(unigram_dtm[, word_index, drop = FALSE]) / sum(unigram_dtm)
+        return(prob)
+      } else {
+        return(1e-10)  # Small value for unmatched words
+      }
+    })
+    # Multiply probabilities for all components to get the joint marginal probability
+    return(prod(probs))
+  })
+  
+  # Function to compute PMI for a single n-gram
+  compute_pmi <- function(joint_prob, marg_prob) {
+    # Avoid division by very small probabilities
+    safe_marg_prob <- max(marg_prob, 1e-10)
+    # Compute PMI
+    pmi <- log2(joint_prob / safe_marg_prob)
+    return(pmi)
+  }
+  
+  # Apply the PMI computation across all n-grams
+  values <- mapply(compute_pmi, ngram_probs, component_probs)
+  
+  # Assign names to the PMI values based on the n-grams
+  names(values) <- colnames(train_dtm)
+  
+  # Convert values into a tibble
+  pmi_tibble <- tibble(
+    n_gram = names(values),  # Use the names of 'values' as the word column
+    pmi_value = values       # Use the PMI values as the value column
+  )
+  
+  # Identify unigrams (terms without underscores)
+  unigram_indices <- grep("^[^_]+$", colnames(train_dtm))
+  
+  # Identify n-grams with PMI values above the threshold
+  pmi_indices <- which(values >= pmi_threshold)
+  
+  # Combine unigrams and filtered n-grams
+  selected_indices <- union(unigram_indices, pmi_indices)
+  
+  # Filter the DTM to keep only the selected terms
+  filtered_dtm <- train_dtm[, selected_indices, drop = FALSE]
+  
+  return(list(
+    filtered_dtm = filtered_dtm,
+    pmi_tibble = pmi_tibble
+  ))
+}
+
+
+
 #' Document Term Matrix
 #' 
 #' This function creates a document term matrix
@@ -95,7 +170,7 @@ get_removal_columns <- function(
 # @param save_dir (string) the directory to save the results, if NULL, no results are saved.
 # @param load_dir (string) the directory to load from.
 #' @param occurance_rate (integer) The rate of occurence of a word to be removed
-#' @param threads (integer) The number of threads to use
+#' @param threads (integer) The number of threads to use; also called cpu in (CreateDtm).
 #' @return The document term matrix
 #' @examples
 #' \donttest{
@@ -127,7 +202,7 @@ get_removal_columns <- function(
 #' @importFrom tibble as_tibble
 #' @export
 topicsDtm <- function(
-    data, #
+    data, 
     ngram_window = c(1,3),
     stopwords = stopwords::stopwords("en", source = "snowball"),
     removalword = "",
@@ -157,51 +232,58 @@ topicsDtm <- function(
   
   
   pmi_tibble = NULL
-  #if (!is.null(load_dir)){
-  #  dtms <- readRDS(paste0(load_dir, 
-  #                          "/seed_",
-  #                          seed, 
-  #                          "/dtms.rds"))
-  #  
-  #} else {
-    
-    if (length(data) == 0){
+  
+  if (length(data) == 0){
       msg <- "The data provided is empty. Please provide a list of text data."
       message(colourise(msg, "brown"))
       
       return(NULL)
-    }
-    
-    set.seed(seed)
-    id_col <- "id"
-    data_col <- "text"
-    
-    if (is.data.frame(data)){
-      data <- data[,1]
-    }
-    
-    text_cols <- data.frame(text = data)
-    text_cols[[id_col]] <- 1:nrow(text_cols) # create unique ID
-    text_cols <- as_tibble(text_cols)
-    text_cols <- text_cols[complete.cases(text_cols), ] # remove missing rows
-    
-    if(shuffle){
-      text_cols = text_cols[sample(1:nrow(text_cols)), ] # shuffle
-      split_index <- round(nrow(text_cols) * 1) 
-      train <- text_cols[1:split_index, ]
-    } else {
-      train <- text_cols 
-    }
-    
-    if (removalword != ""){
-      train[[data_col]] <- gsub(paste0("\\b", removalword, "\\b"), "", train[[data_col]]) 
-    }
-    
-    # Create Trigram DTM
-    train_dtm <- textmineR::CreateDtm(
+  }
+  
+  set.seed(seed)
+  id_col <- "id"
+  data_col <- "text"
+  
+  if (is.data.frame(data)){
+    data <- data[,1]
+  }
+  
+  text_cols <- data.frame(text = data)
+  text_cols[[id_col]] <- 1:nrow(text_cols) # create unique ID
+  text_cols <- as_tibble(text_cols)
+  text_cols <- text_cols[complete.cases(text_cols), ] # remove missing rows
+  
+  if(shuffle){
+    text_cols = text_cols[sample(1:nrow(text_cols)), ] # shuffle
+    split_index <- round(nrow(text_cols) * 1) 
+    train <- text_cols[1:split_index, ]
+  } else {
+    train <- text_cols 
+  }
+  
+  if (removalword != ""){
+    train[[data_col]] <- gsub(paste0("\\b", removalword, "\\b"), "", train[[data_col]]) 
+  }
+  
+  # Create Trigram DTM
+  train_dtm <- textmineR::CreateDtm(
+    doc_vec = train[["text"]], 
+    doc_names = train[["id"]], 
+    ngram_window = ngram_window, 
+    stopword_vec = stopwords, 
+    lower = TRUE, 
+    remove_punctuation = TRUE, 
+    remove_numbers = TRUE, 
+    verbose = FALSE, 
+    cpus = threads
+  )
+  
+  # Create Unigram DTM if necessary for PMI
+  if (!is.null(pmi_threshold)) {
+    unigram_dtm <- textmineR::CreateDtm(
       doc_vec = train[["text"]], 
       doc_names = train[["id"]], 
-      ngram_window = ngram_window, 
+      ngram_window = c(1, 1), # Unigrams only
       stopword_vec = stopwords, 
       lower = TRUE, 
       remove_punctuation = TRUE, 
@@ -209,133 +291,61 @@ topicsDtm <- function(
       verbose = FALSE, 
       cpus = threads
     )
-    
-    # Create Unigram DTM if necessary for PMI
-    if (!is.null(pmi_threshold)) {
-      unigram_dtm <- textmineR::CreateDtm(
-        doc_vec = train[["text"]], 
-        doc_names = train[["id"]], 
-        ngram_window = c(1, 1), # Unigrams only
-        stopword_vec = stopwords, 
-        lower = TRUE, 
-        remove_punctuation = TRUE, 
-        remove_numbers = TRUE, 
-        verbose = FALSE, 
-        cpus = threads
-      )
-    }
-    
-    # Apply Occurrence Filtering
-    if (occurance_rate > 0){
-      removal_frequency <- round(nrow(train) * occurance_rate) - 1
-      train_dtm <- train_dtm[, Matrix::colSums(train_dtm) > removal_frequency]
-    }
-    
-    # Removal by Frequency or Custom Modes
-    if (removal_mode != "frequency"){
-      if (removal_rate_least > 0){
-        removal_columns <- get_removal_columns(train_dtm, removal_rate_least, "least", removal_mode)
-        if (removal_rate_most > 0){
-          removal_columns_most <- get_removal_columns(train_dtm, removal_rate_most, "most", removal_mode)
-          removal_columns <- c(removal_columns, removal_columns_most)
-        }
-        train_dtm <- train_dtm[, -removal_columns, drop = FALSE]
-      } else if (removal_rate_most > 0){
-        removal_columns <- get_removal_columns(train_dtm, removal_rate_most, "most", removal_mode)
-        train_dtm <- train_dtm[, -removal_columns, drop = FALSE]
-      }
-    } else if (removal_mode == "frequency"){
-      if (!is.null(removal_rate_least)){
-        train_dtm <- train_dtm[, Matrix::colSums(train_dtm) > removal_rate_least]
-      }
-      if (!is.null(removal_rate_most)){
-        train_dtm <- train_dtm[, Matrix::colSums(train_dtm) < removal_rate_most]
-      }
-    }
-    
-    # PMI Filter
-    train_dtm_null <- train_dtm
-    if (!is.null(pmi_threshold)) {
-      total_terms <- sum(train_dtm)
-      ngram_probs <- Matrix::colSums(train_dtm) / total_terms
-      ngram_components <- strsplit(colnames(train_dtm), "_")
-      
-      # Compute marginal probabilities
-      component_probs <- sapply(ngram_components, function(component) {
-        # Compute probabilities for all components of the n-gram
-        probs <- sapply(component, function(word) {
-          if (word %in% colnames(unigram_dtm)) {
-            word_index <- which(colnames(unigram_dtm) == word)
-            prob <- Matrix::colSums(unigram_dtm[, word_index, drop = FALSE]) / sum(unigram_dtm)
-            return(prob)
-          } else {
-            return(1e-10)  # Small value for unmatched words
-          }
-        })
-        # Multiply probabilities for all components
-        return(prod(probs))
-      })
-      
-      # Initialize a function to compute PMI for a single n-gram
-      compute_pmi <- function(joint_prob, marg_prob) {
-        # Avoid division by very small probabilities
-        safe_marg_prob <- max(marg_prob, 1e-10)
-        # Compute PMI
-        pmi <- log2(joint_prob / safe_marg_prob)
-        return(pmi)
-      }
-      
-      # Apply the PMI computation across all n-grams
-      values <- mapply(compute_pmi, ngram_probs, component_probs)
-      
-      # Handle invalid values
-      # values[is.infinite(values) | is.nan(values) | values < 0] <- 0
-      names(values) <- colnames(train_dtm)
-
-      # Convert values into a tibble
-      pmi_tibble <- tibble(
-        n_gram = names(values),  # Use the names of 'values' as the word column
-        pmi_value = values         # Use the PMI values as the value column
-      )
-      
-      # Identify unigrams (terms without underscores)
-      unigram_indices <- grep("^[^_]+$", colnames(train_dtm))
-      
-      # Apply PMI filtering only to n-grams (terms with underscores)
-      pmi_indices <- which(values >= pmi_threshold)
-      
-      # Combine unigrams and filtered n-grams
-      selected_indices <- union(unigram_indices, pmi_indices)
-      
-      # Filter the DTM
-      train_dtm <- train_dtm[, selected_indices, drop = FALSE]
-      
-      }
-
-    dtms <- list(
-      n_grams_pmi = if (!is.null(pmi_tibble)) pmi_tibble else "No pmi_threshold was used",
-      settings = settings,
-      train_dtm = train_dtm
-    )
-#  }
+  }
   
-#  if (!is.null(save_dir)){
-#    if (!dir.exists(save_dir)) {
-#      # Create the directory
-#      dir.create(save_dir)
-#      
-#      msg <- "Directory created successfully.\n"
-#      message(
-#        colourise(msg, "green"))
-#    } 
-#    if(!dir.exists(paste0(save_dir, "/seed_", seed))){
-#      dir.create(paste0(save_dir, "/seed_", seed))
-#    }
-#    msg <- paste0("The Dtm, data, and summary are saved in", save_dir,"/seed_", seed,"/dtms.rds")
-#    message(colourise(msg, "green"))
-#    
-#    saveRDS(dtms, paste0(save_dir, "/seed_", seed, "/dtms.rds"))
-#  }
+  # Apply Occurrence Filtering
+  if (occurance_rate > 0){
+    removal_frequency <- round(nrow(train) * occurance_rate) - 1
+    train_dtm <- train_dtm[, Matrix::colSums(train_dtm) > removal_frequency]
+  }
+  
+  # Removal by Frequency or Custom Modes
+  if (removal_mode != "frequency"){
+    if (removal_rate_least > 0){
+      removal_columns <- get_removal_columns(train_dtm, removal_rate_least, "least", removal_mode)
+      if (removal_rate_most > 0){
+        removal_columns_most <- get_removal_columns(train_dtm, removal_rate_most, "most", removal_mode)
+        removal_columns <- c(removal_columns, removal_columns_most)
+      }
+      train_dtm <- train_dtm[, -removal_columns, drop = FALSE]
+    } else if (removal_rate_most > 0){
+      removal_columns <- get_removal_columns(train_dtm, removal_rate_most, "most", removal_mode)
+      train_dtm <- train_dtm[, -removal_columns, drop = FALSE]
+    }
+  } else if (removal_mode == "frequency"){
+    if (!is.null(removal_rate_least)){
+      train_dtm <- train_dtm[, Matrix::colSums(train_dtm) > removal_rate_least]
+    }
+    if (!is.null(removal_rate_most)){
+      train_dtm <- train_dtm[, Matrix::colSums(train_dtm) < removal_rate_most]
+    }
+  }
+  
+  # PMI Filter
+  train_dtm_null <- train_dtm
+  
+  if (!is.null(pmi_threshold)) {
+    
+    # Assuming train_dtm and unigram_dtm are already created
+    result <- filter_by_pmi(
+      train_dtm = train_dtm, 
+      unigram_dtm = unigram_dtm, 
+      pmi_threshold = pmi_threshold)
+    
+    # Access the filtered DTM
+    filtered_dtm <- result$filtered_dtm
+    
+    # Access the PMI tibble
+    pmi_tibble <- result$pmi_tibble
+  } else {
+    filtered_dtm <- train_dtm
+  }
+
+  dtms <- list(
+    n_grams_pmi = if (!is.null(pmi_tibble)) pmi_tibble else "No pmi_threshold was used",
+    settings = settings,
+    train_dtm = filtered_dtm #train_dtm
+  )
   
   return(dtms)
 }
