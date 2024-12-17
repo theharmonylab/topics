@@ -98,7 +98,7 @@ topicsScatterLegendNew <- function(
       scatter_popout_dot_size <- popout$`dot_size`
   }else{scatter_popout_dot_size <- scatter_popout_dot_size}
 
-  if (y_axes_1 == 1 && length(bivariate_color_codes) == 9){bivariate_color_codes <- bivariate_color_codes[4:6]}
+  #if (y_axes_1 == 1 && length(bivariate_color_codes) == 9){bivariate_color_codes <- bivariate_color_codes[4:6]}
     
   # Generate scatter plot
   plot <- generate_scatter_plot(
