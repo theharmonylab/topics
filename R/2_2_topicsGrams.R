@@ -173,6 +173,8 @@ topicsGrams <- function(
   ngrams$coherence <- NA  # Placeholder for coherence; to make the data frame look the same as the dtm output
   
   # Get the stats for unigrams
+  data <- data[data != ""]
+  data <- na.omit(data)
   single_grams <- ngram::ngram(data, n = 1, sep = " ")
   single_grams <- ngram::get.phrasetable(single_grams)
   colnames(single_grams) <- c("ngrams", "freq", "prevalence")
@@ -188,31 +190,61 @@ topicsGrams <- function(
     pmi_threshold = pmi_threshold)
   
   #### Calculate the relative frequency per user ####
-  freq_per_user <- list()
-  # create unique integer for each row
-  data <- tibble::as_tibble(data)
-  data <- data %>% dplyr::mutate(row_id = row_number())
-  freq_per_user$usertexts <- data$row_id
   
-  # Calculate the relative frequency per user
-  for (i in 1:nrow(ngrams$filtered_ngrams)) {
-    temp <- c()
-    
-    # Escape special regex characters in the n-gram
+  # Pre-escape the special characters in all n-grams
+  ngrams$filtered_ngrams <- ngrams$filtered_ngrams %>%
+    mutate(ngrams_escaped = str_replace_all(ngrams, "([.\\^$*+?()\\[\\]{}|])", "\\\\\\1"))
+  
+  # Convert all sentences to lowercase once
+  #data$value_lower <- tolower(data$value)
+  
+  # Initialize an empty list to store results
+  freq_per_user <- list()
+  
+  # Vectorized calculation of relative frequencies
+  length_i <- nrow(ngrams$filtered_ngrams)
+  for (i in 1:length_i) {
     gram <- as.character(ngrams$filtered_ngrams$ngrams[i])
-    gram_escaped <- stringr::str_replace_all(gram, "([.\\^$*+?()\\[\\]{}|])", "\\\\\\1")
+    gram_escaped <- ngrams$filtered_ngrams$ngrams_escaped[i]
+    frequency <- ngrams$filtered_ngrams$freq[i]
     
-    for (j in 1:length(data$value)) {
-      sentence <- as.character(tolower(data$value[j]))
-      ngram_count <- stringr::str_count(sentence, gram_escaped)
-      frequency <- ngrams$filtered_ngrams$freq[i]
-      relative_frequency <- ngram_count / frequency
-      temp <- c(temp, relative_frequency)
-    }
+    # Vectorized counting of n-gram occurrences in all sentences
+    ngram_counts <- str_count(data, gram_escaped)
     
-    freq_per_user[[paste(unlist(strsplit(gram, " ")), collapse = "_")]] <- temp
+    # Calculate relative frequencies
+    relative_frequencies <- ngram_counts / frequency
+    
+    # Store the result with a clean name for the n-gram
+    col_name <- paste(unlist(strsplit(gram, " ")), collapse = "_")
+    freq_per_user[[col_name]] <- relative_frequencies
+    #print(paste0(i, "/", length_i))
   }
-  freq_per_user_tbl <- tibble::as_tibble(freq_per_user)
+  freq_per_user_tbl <- tibble::as_tibble(freq_per_user, .name_repair = "minimal")
+  #############
+# #  freq_per_user <- list()
+# #  # create unique integer for each row
+# #  data <- tibble::as_tibble(data)
+# #  data <- data %>% dplyr::mutate(row_id = row_number())
+# #  freq_per_user$usertexts <- data$row_id
+# #  
+# #  for (i in 1:nrow(ngrams$filtered_ngrams)) {
+# #    temp <- c()
+# #    
+# #    # Escape special regex characters in the n-gram
+# #    gram <- as.character(ngrams$filtered_ngrams$ngrams[i])
+# #    gram_escaped <- stringr::str_replace_all(gram, "([.\\^$*+?()\\[\\]{}|])", "\\\\\\1")
+# #    
+# #    for (j in 1:length(data$value)) {
+# #      sentence <- as.character(tolower(data$value[j]))
+# #      ngram_count <- stringr::str_count(sentence, gram_escaped)
+# #      frequency <- ngrams$filtered_ngrams$freq[i]
+# #      relative_frequency <- ngram_count / frequency
+# #      temp <- c(temp, relative_frequency)
+# #    }
+# #    
+# #    freq_per_user[[paste(unlist(strsplit(gram, " ")), collapse = "_")]] <- temp
+# #  }
+# #  freq_per_user_tbl <- tibble::as_tibble(freq_per_user)
   
   #### change the ngrams to a single string with "_" as connector ####
   ngrams$filtered_ngrams$ngrams <- sapply(ngrams$filtered_ngrams$ngrams, function(x) paste(unlist(strsplit(x, " ")), collapse = "_"))
