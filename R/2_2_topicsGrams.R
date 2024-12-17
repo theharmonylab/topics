@@ -27,7 +27,7 @@ remove_stopwords <- function(
 filter_ngrams_by_pmi <- function(
     ngram_tibble, 
     unigram_tibble, 
-    pmi_threshold = 0) {
+    pmi_threshold) {
   
   # Compute total number of terms in the n-gram and unigram tibbles
   total_ngram_terms <- sum(ngram_tibble$freq)
@@ -77,25 +77,36 @@ filter_ngrams_by_pmi <- function(
         log2(joint_prob / pmax(component_prob, 1e-10))  # Compute PMI for n-grams
     )
   # Set the pmi of unigrams to the threshold value since pmi value make no sence for unigrams
-  ngram_tibble <- ngram_tibble %>%
-    dplyr::mutate(pmi = dplyr::if_else(n_gram_type == 1, 
-                               as.numeric(pmi_threshold), pmi))
   
-  #hist(ngram_tibble$pmi)
+  if(!is.null(pmi_threshold)){
+    ngram_tibble <- ngram_tibble %>%
+      dplyr::mutate(pmi = dplyr::if_else(n_gram_type == 1, 
+                                         as.numeric(pmi_threshold), pmi))
+    # Filter n-grams with PMI values above or equal to the threshold
+    filtered_ngrams <- ngram_tibble %>%
+      dplyr::filter(pmi >= pmi_threshold) %>%
+      dplyr::mutate(ngrams = stringr::str_squish(ngrams)) %>%
+      tibble::as_tibble()
+  }
   
-  # Filter n-grams with PMI values above or equal to the threshold
-  filtered_ngrams <- ngram_tibble %>%
-    dplyr::filter(pmi >= pmi_threshold) %>%
-    dplyr::mutate(ngrams = stringr::str_squish(ngrams)) %>%
-    tibble::as_tibble()
+  if(is.null(pmi_threshold)){
+    ngram_tibble <- ngram_tibble %>%
+      dplyr::mutate(pmi = dplyr::if_else(n_gram_type == 1, 
+                                         NA, pmi))
+    # Filter n-grams with PMI values above or equal to the threshold
+    filtered_ngrams <- ngram_tibble %>%
+      dplyr::mutate(ngrams = stringr::str_squish(ngrams)) %>%
+      tibble::as_tibble()
+  }
   
   # Compute the stats
   initial_count = table(ngram_tibble$n_gram_type)
   final_count = table(filtered_ngrams$n_gram_type)
+  
   stats <-  tibble::tibble(
     ngram_type = unique(ngram_tibble$n_gram_type),
     initial_count = initial_count,
-    removed = initial_count - final_count,
+    pmi_removed = initial_count - final_count,
     final_count = final_count
   )
   
