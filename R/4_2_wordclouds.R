@@ -398,7 +398,10 @@ create_plots <- function(
                colnames(df_list_separated[[2]])[3] <- c('color') 
                target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]]) 
            }else{stop('Invalid settings for the parameter "highlight_topic_words".\nConsider use the default option!\n')}
-        }else{target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]}
+        }else{
+            target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]
+            target_topic$color <- target_topic$phi
+        }
         
         if (grid1 == ""){ .
           plot <- ggplot2::ggplot(target_topic, 
