@@ -146,6 +146,9 @@ topicsGrams <- function(
   data <- tolower(data)
   data <- gsub("[()].$?", "", data)
   data <- sapply(data, remove_stopwords, stopwords)
+  data <- data[data != ""]
+  data <- na.omit(data)
+  
   
   # Initialize an empty list for storing n-grams
   ngrams <- list()
@@ -183,8 +186,6 @@ topicsGrams <- function(
   ngrams$coherence <- NA  # Placeholder for coherence; to make the data frame look the same as the dtm output
   
   # Get the stats for unigrams
-  data <- data[data != ""]
-  data <- na.omit(data)
   single_grams <- ngram::ngram(data, n = 1, sep = " ")
   single_grams <- ngram::get.phrasetable(single_grams)
   colnames(single_grams) <- c("ngrams", "freq", "prevalence")
@@ -209,7 +210,7 @@ topicsGrams <- function(
   # Initialize an empty list to store results
   freq_per_user <- list()
   
-  # Vectorized calculation of relative frequencies
+  # Calculation of relative frequencies
   length_i <- nrow(ngrams$filtered_ngrams)
   for (i in 1:length_i) {
     
@@ -217,7 +218,7 @@ topicsGrams <- function(
     gram_escaped <- ngrams$filtered_ngrams$ngrams_escaped[i]
     frequency <- ngrams$filtered_ngrams$freq[i]
     
-    # Vectorized counting of n-gram occurrences in all sentences
+    # Counting of n-gram occurrences in all sentences
     ngram_counts <- stringr::str_count(data, gram_escaped)
     
     # Calculate relative frequencies
