@@ -47,3 +47,24 @@ test_that("topicsGrams with default parameters", {
   testthat::expect_true(is_tibble(ngrams$ngrams))
   testthat::expect_true(is_tibble(ngrams$freq_per_user))
 })
+
+
+
+test_that("topicsGrams with selection parameters", {
+  
+  testthat::skip_on_cran()
+  
+  ngrams <- topics::topicsGrams(
+    data = dep_wor_data$Worphrase[1:100], 
+    ngram_window = c(1,2),
+    stopwords::stopwords("en", source = "snowball"),
+    pmi_threshold = 1, 
+    top_frequent = 100
+    )
+  
+  testthat::expect_true(is.list(ngrams))
+  testthat::expect_true(is_tibble(ngrams$ngrams))
+  testthat::expect_true(is_tibble(ngrams$freq_per_user))
+})
+
+

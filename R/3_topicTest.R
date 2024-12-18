@@ -69,8 +69,14 @@ topic_test <- function(
     #preds[is.na(preds)] <- 0
     if (any(is.na(preds))) {
       message("There are NA values in the predictions (preds).")
-      message("No all NAs are set to 0 - this need to be updated.")
-     # preds[is.na(preds)] <- 0
+      
+      #preds[is.na(preds)]
+      
+      #which(is.na(preds), arr.ind = TRUE)
+      #rows_with_na <- which(apply(preds, 1, anyNA))
+      
+      message("Note that all NAs are set to 0.")
+      #preds[is.na(preds)] <- 0
     } 
     
     
@@ -355,6 +361,9 @@ topicsTest <- function(
     total_n <- nrow(ngrams)
     colnames(freq_per_user) <- paste0("t_", 1:total_n)
     preds <- freq_per_user
+    
+    
+    # 
     
     model$summary <- list(topic = paste0("t_", 1:total_n),
                           top_terms = ngrams$ngrams, 
