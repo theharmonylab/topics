@@ -174,48 +174,6 @@ topic_test <- function(
 }
 
 
-
-# #' The function to test the LDA model
-# #' @param model (list) The trained model
-# #' @param data (tibble) The data to test on
-# #' @param preds (tibble) The predictions
-# #' @param x_y_axis (string) The variable to be predicted (only needed for regression or correlation)
-# # @param group_var (string) The variable to group by (only needed for t-test)
-# #' @param controls (vector) The control variables
-# #' @param test_method (string) The test method to use, either "linear_regression","logistic_regression" 
-# #' or mixed (not implemented: "correlation","t-test").
-# #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
-# #' (default = "none"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "fdr").
-# #' @param seed (integer) The seed to set for reproducibility
-# #' @return A list of the test results, test method, and prediction variable
-# #' @importFrom dplyr bind_cols
-# #' @importFrom readr write_csv
-# #' @noRd
-# topicsTest1 <- function(
-#     model,
-#     preds,
-#     data,
-#     x_y_axis1,
-#     controls,
-#     test_method,
-#     p_adjust_method,
-#     seed
-#     ){
-#     
-#   test <- topic_test(
-#       topic_terms = model$summary,
-#       topics_loadings = preds,
-#       x_y_axis1 = data[x_y_axis1],
-#       controls = data[controls],
-#       test_method = test_method,
-#       multiple_comparison = p_adjust_method)
-#   
-#   return(list(test = test, 
-#               test_method = test_method, 
-#               x_y_axis1 = x_y_axis1))
-# }
-# 
-
 #' Test topics or n-grams
 #' 
 #' Statistically test topics or n-grams in relation to one or two other variables using 
@@ -387,21 +345,18 @@ topicsTest <- function(
     }
   }
   
-  #### Load test ####
- # if (!is.null(load_dir)){
- #   test <- topicsTest1(load_dir = load_dir)
- # }
-  
   #### N-grams testing ####
   # (rearranging the data so that it fits the topics pipeline)
   if (!is.null(ngrams)){
     
-    freq_per_user <- tibble(ngrams$freq_per_user[,2:ncol(ngrams$freq_per_user)])
+    #freq_per_user <- tibble(ngrams$freq_per_user[,2:ncol(ngrams$freq_per_user)])
+    freq_per_user <- ngrams$freq_per_user
     ngrams <- ngrams$ngrams
-    colnames(freq_per_user) <- paste0("t_", 1:ncol(freq_per_user))
+    total_n <- nrow(ngrams)
+    colnames(freq_per_user) <- paste0("t_", 1:total_n)
     preds <- freq_per_user
     
-    model$summary <- list(topic = paste0("t_", 1:ncol(freq_per_user)),
+    model$summary <- list(topic = paste0("t_", 1:total_n),
                           top_terms = ngrams$ngrams, 
                           prevalence = ngrams$prevalence, 
                           coherence = ngrams$coherence, 
@@ -443,17 +398,6 @@ topicsTest <- function(
   # i = 1
   for (i in 1:length(x_y_axis)){
     
-   # topic_loading <- topicsTest1(
-   #   model = model,
-   #   preds = preds, 
-   #   data = data,
-   #   x_y_axis1 = x_y_axis[i],
-   #   controls = controls,
-   #   test_method = test_method[i],
-   #   p_adjust_method = p_adjust_method,
-   #   seed = seed
-   # )
-    
     test <- topic_test(
       topic_terms = model$summary,
       topics_loadings = preds,
@@ -493,8 +437,6 @@ topicsTest <- function(
     
   } else {
     
- #   if (test_method == "linear_regression" | test_method == "logistic_regression"){
-      
       msg <- "The parameter y_variable is not set! Output 1 dimensional results."
       message(colourise(msg, "blue"))
       
@@ -504,7 +446,6 @@ topicsTest <- function(
       topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
       topic_loadings_all[[3]]$x_y_axis <- topic_loadings_all[[1]]$x_y_axis
       
-  #  } 
   }
   
   topic_loadings_all <- topic_loadings_all[[length(topic_loadings_all)]]
