@@ -87,6 +87,8 @@ topicsScatterLegendNew <- function(
     # Convert `color_categories` in `popout` back to integer
     popout <- popout %>%
       mutate(color_categories = as.integer(color_categories))
+    filtered_test <- filtered_test %>%
+      mutate(color_categories = as.integer(color_categories))
     
     # Perform anti_join
     backgr_dots <- filtered_test %>% dplyr::anti_join(popout, by = colnames(filtered_test))
@@ -959,6 +961,10 @@ topicsPlot <- function(
   bivariate_color_codes   <- codes[[1]]
   bivariate_color_codes_b <- codes[[2]]
   bivariate_color_codes_f <- codes[[3]]
+
+  if (!is.null(bivariate_color_codes_f)){
+      names(bivariate_color_codes_f) <- as.character(seq(1:length(bivariate_color_codes_f))) # The names of the color vector prevent the wrong ordering of colors in scatter plot.
+  }
   
   #### Controlling parameter settings and giving instructions #####
   if (!is.vector(scatter_legend_n) || !is.numeric(scatter_legend_n)){
