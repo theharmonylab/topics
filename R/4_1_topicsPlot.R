@@ -905,7 +905,7 @@ topicsPlot <- function(
     ngrams_max = 30,
     ngram_select = "prevalence",
     color_scheme = "default",
-    highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
+    highlight_topic_words = NULL,
     scale_size = FALSE,
     plot_topics_idx = NULL,
     allowed_word_overlap = NULL,
