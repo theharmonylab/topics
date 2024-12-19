@@ -48,6 +48,7 @@ Suggests:
     knitr,
     rmarkdown,
     testthat,
-    covr
+    covr,
+    vdiffr
 VignetteBuilder: knitr
 Depends: R (>= 4.00)

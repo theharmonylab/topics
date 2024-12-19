@@ -1,5 +1,6 @@
 
 library(testthat)
+library(vdiffr)
 library(topics)
 
 test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
@@ -13,28 +14,28 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     stopwords = NULL,
     pmi_threshold = NULL)
   
-  ngrams_stop <- topicsGrams(
-    data = dep_wor_data$Worphrase[1:100], 
-    ngram_window = c(1:3), 
-    stopwords = stopwords::stopwords("en", source = "snowball"),
-    pmi_threshold = 8)
-  
-  
   save_dir_temp <- tempfile()
   #save_dir_temp = "./results3"
   
-  plots1 <- topics::topicsPlot(
-    ngrams = ngrams, 
-    ngrams_max = 40,
-    ngram_select = "proportion",
-    figure_format = "png", 
-    save_dir = save_dir_temp)
-
+  # Create a plot function
+  ngram <- function() {
+    topics::topicsPlot(
+      ngrams = ngrams, 
+      ngrams_max = 40,
+      ngram_select = "proportion",
+      figure_format = "png", 
+      save_dir = save_dir_temp)
+  }
+  
+  # If it fails you should review changes <-  if they are intentionally you accept them: 
+  # vdiffr::manage_cases()
+  expect_doppelganger("1_ngram", ngram())
+  
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_42/wordclouds/ngrams.png")))
   
   
-  # With test (i.e., 1 dimenstion = two plots)
+  # With test (i.e., 1 dimension = two plots)
   ngrams <- topics::topicsGrams(
     data = dep_wor_data$Worphrase,
     pmi_threshold = 3)
@@ -45,8 +46,9 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     ngrams = ngrams, 
     x_variable = "Age")
   
-  # help(topicsPlot)
-  plot2 <- topics::topicsPlot(
+  
+  
+  pl <- topics::topicsPlot(
     ngrams = ngrams, 
     test = test,
     ngrams_max = 10,
@@ -54,12 +56,19 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     figure_format = "png", 
     p_alpha = 1, 
     save_dir = save_dir_temp)
-
-  plot2$positive
-  plot2$negative
+  
+  ngram_negative <- function() {
+    pl$negative
+  }
+  expect_doppelganger("2_ngram_negative", ngram_negative())
+  
+  ngram_positive <- function() {
+    pl$positive
+  }
+  expect_doppelganger("3_ngram_positive", ngram_positive())
+  
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_42/wordclouds/ngrams_negative.png")))
-  
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_42/wordclouds/ngrams_positive.png")))
   
@@ -82,13 +91,22 @@ test_that("topicsPlot WITHOUT test and preds", {
   
   save_dir_temp <- tempfile()
   
-  topics <- topics::topicsPlot(
+  topics_1 <- topics::topicsPlot(
     model = model,
     plot_topics_idx = c(1,3),
     figure_format = "png", 
     save_dir = save_dir_temp)
   
-  topics$t_1
+  topics_t1 <- function() {
+    topics_1$t1
+  }
+  expect_doppelganger("topics_t1", topics_t1())
+  
+  topics_t3 <- function() {
+    topics_1$t3
+  }
+  expect_doppelganger("topics_t3", topics_t1())
+  
   # Check if the word cloud directory exists
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_42/wordclouds/t_1.png")))
@@ -98,18 +116,24 @@ test_that("topicsPlot WITHOUT test and preds", {
   
   #### Plot most prevalent topics in model ####  
   
-  plots2 <- plots_prevalence <- topics::topicsPlot(
+  topics2 <- topics::topicsPlot(
     model = model,
     plot_n_most_prevalent_topics = 5,
     figure_format = "png", 
     save_dir = save_dir_temp)
   
   testthat::expect_equal(
-    names(plots2), 
+    names(topics2), 
     c("t_t_2",  "t_t_29", "t_t_46", "t_t_36", "t_t_35")
   )
   
-  plots3 <- topics::topicsPlot(
+  topics2_t_t_2 <- function() {
+    topics2$t1
+  }
+  expect_doppelganger("topics2_t_t_2", topics2_t_t_2())
+  
+  
+  topics3 <- topics::topicsPlot(
     model = model,
     plot_n_most_prevalent_topics = 5,
     allowed_word_overlap = 2,
@@ -117,9 +141,15 @@ test_that("topicsPlot WITHOUT test and preds", {
     save_dir = save_dir_temp)
   
   testthat::expect_equal(
-    names(plots3), 
+    names(topics3), 
     c("t_t_2", "t_t_46", "t_t_31", "t_t_18", "t_t_19")
   )
+  
+  topics3_t3 <- function() {
+    topics3$t3
+  }
+  expect_doppelganger("topics3_t3", topics3_t3())
+  
   
   testthat::expect_error(topics::topicsPlot(
     model = model,
@@ -158,7 +188,7 @@ test_that("topicsPlot WITH test", {
 
   save_dir_temp <- tempdir()
   
-  plots3 <- topics::topicsPlot(
+  topics4 <- topics::topicsPlot(
     model = model, 
     test = test1, 
     p_alpha = .1,
@@ -167,35 +197,34 @@ test_that("topicsPlot WITH test", {
     allowed_word_overlap = 3,
     save_dir = save_dir_temp)
   
-  plots3$legend
-  plots3$distribution
+  topics4$legend
+  topics4$distribution
+
+  topics4_legend <- function() {
+    topics4$legend
+  }
+  expect_doppelganger("topics4_legend", topics4_legend())
   
+  topics4_distribution <- function() {
+    topics4$distribution
+  }
+  expect_doppelganger("topics4_distribution", topics4_distribution())
   
-  plots3 <- topics::topicsPlot(
-    model = model, 
-    test = test1, 
-    p_alpha = .1,
-    figure_format = "png",
-    seed = 11, 
-    allowed_word_overlap = 3,
-    save_dir = save_dir_temp)
+  topics4square1t_48 <- function() {
+    topics4$square1$t_48
+  }
+  expect_doppelganger("topics4square1t_48", topics4square1t_48())
   
-  plots3$legend
-  plots3$distribution
+#  topics4square2t_1 <- function() {
+#    topics4$square2$t_1
+#  }
+#  expect_doppelganger("topics4square2t_1", topics4square2t_1())
   
+  topics4square3t_34 <- function() {
+    topics4$square3$t_34
+  }
+  expect_doppelganger("topics4square2t_1", topics4square3t_34())
   
-  
-  plots4 <- topics::topicsPlot(
-    model = model, 
-    test = test1, 
-    p_alpha = .5, # see how the colour changes when chaning this. 
-    figure_format = "png",
-    seed = 11, 
-    allowed_word_overlap = 3,
-    save_dir = save_dir_temp)
-  
-  plots4$legend
-  plots4$distribution
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_11/wordclouds/dot_legend_corvar_Age.png")))
@@ -203,8 +232,10 @@ test_that("topicsPlot WITH test", {
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_11/wordclouds/grid_legend_corvar_Age.png")))
   
+  ###########################
+  #### 2-Dimension  #########
+  ###########################
   
-  ## 2-Dimension  
   test2 <- topics::topicsTest(
     model = model, 
     preds = preds, 
@@ -213,10 +244,10 @@ test_that("topicsPlot WITH test", {
     y_variable = "Age"
     )
   
-  plot4 <- topics::topicsPlot(
+  topics5 <- topics::topicsPlot(
     model = model, 
     test = test2, 
-    p_alpha = 1, 
+    p_alpha = 0.5, 
     color_scheme =  c(
       "yellow", "#398CF9",  # quadrant 1 (upper left corner)
       "yellow", "#60A1F7",  # quadrant 2 
@@ -232,14 +263,141 @@ test_that("topicsPlot WITH test", {
     save_dir = save_dir_temp
     )
   
-  plot4$legend
-  plot4$distribution
+
+  # Legend
+  topics5legend <- function() {
+    topics5$legend
+  }
+  expect_doppelganger("topics5legend", topics5legend())
+  
+  # Distribution
+  topics5distribution <- function() {
+    topics5$distribution
+  }
+  expect_doppelganger("topics5distribution", topics5distribution())
+  
+  # Square 1
+  topics5square1 <- function() {
+    topics5$square1$t_6
+  }
+  expect_doppelganger("topics5square1", topics5square1())
+  
+  # Square 2
+  topics5square2 <- function() {
+    topics5$square2$t_34
+  }
+  expect_doppelganger("topics5square2", topics5square2())
+  
+#  # Square 3
+#  topics5square3 <- function() {
+#    topics5$square3$t_1
+#  }
+#  expect_doppelganger("topics5square3", topics5square3())
+  
+  # Square 4
+  topics5square4 <- function() {
+    topics5$square4$t_2
+  }
+  expect_doppelganger("topics5square4", topics5square4())
+  
+#  # Square 5
+#  topics5square5 <- function() {
+#    topics5$square5
+#  }
+#  expect_doppelganger("topics5square5", topics5square5())
+  
+  # Square 6
+  topics5square6 <- function() {
+    topics5$square6$t_7
+  }
+  expect_doppelganger("topics5square6", topics5square6())
+  
+#  # Square 7
+#  topics5square7 <- function() {
+#    topics5$square7
+#  }
+#  expect_doppelganger("topics5square7", topics5square7())
+#  
+#  # Square 8
+#  topics5square8 <- function() {
+#    topics5$square8
+#  }
+#  expect_doppelganger("topics5square8", topics5square8())
+  
+  # Square 9
+  topics5square9 <- function() {
+    topics5$square9$t_23
+  }
+  expect_doppelganger("topics5square9", topics5square9())
+  
+  
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_12/wordclouds/dot_legend_corvar_PHQ9tot__Age.png")))
   
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_12/wordclouds/grid_legend_corvar_PHQ9tot__Age.png")))
+  
+  
+  #### Setting specific topics to plot ######
+  topics_specific <- topics::topicsPlot(
+    model = model,
+    test = test2,
+    p_alpha = 0.99,
+    scatter_legend_specified_topics = c('t_1', 't_2'),
+    seed = 8, 
+    save_dir = save_dir_temp, 
+    figure_format = "png")
+  
+  # Checking legend
+  topics_specific_t1 <- function() {
+    topics_specific$distribution
+  }
+  expect_doppelganger("topics_specific_t1", topics_specific_t1())
+  
+  
+  ##### Using Control Variables 
+  
+  tests2D <- topics::topicsTest(
+    model = model,
+    preds = preds,
+    data =  dep_wor_data,
+    x_variable = 'PHQ9tot',
+    y_variable = 'GAD7tot',
+    controls = c('Age','Gender')
+  )
+  
+  #random_sequence <- sample(1:9, size = nrow(tests2D[[3]]$test), replace = TRUE)
+  #tests2D[[3]]$test$color_categories <- random_sequence
+  
+  # Why do we get a warning here
+  plots_controlled <- topics::topicsPlot(
+    model = model,
+    test = tests2D,
+    p_alpha = 0.99,
+    seed = 1,
+    figure_format = "png",
+    save_dir = save_dir_temp
+  )
+  
+  # Checking legend
+  plots_controlled_distribution <- function() {
+    plots_controlled$distribution
+  }
+  expect_doppelganger("plots_controlled_distribution", plots_controlled_distribution())
+  
+  # Checking legend
+  plots_controlled_legend <- function() {
+    plots_controlled$legend
+  }
+  expect_doppelganger("plots_controlled_legend", plots_controlled_legend())
+  
+  # Checking legend
+  plots_controlled_square1t_3 <- function() {
+    plots_controlled$square1$t_3
+  }
+  expect_doppelganger("plots_controlled_square1t_3", plots_controlled_square1t_3())
+  
   
 })
 

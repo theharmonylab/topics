@@ -931,8 +931,10 @@ topicsPlot <- function(
     grid_legend_number_color = 'black',
     grid_legend_number_size = 5){
   
-  #### Setting the number of dimensions to plot ####
   
+  set.seed(seed)
+  
+  #### Setting the number of dimensions to plot ####
   # If no test is provide set dim to 0 
   if(is.null(test)){
     dim = 0
