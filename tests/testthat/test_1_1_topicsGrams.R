@@ -10,7 +10,8 @@ test_that("topicsGrams with default parameters", {
     data = dep_wor_data$Worphrase, 
     ngram_window = c(1,3),
     stopwords = stopwords::stopwords("en", source = "snowball"),
-    pmi_threshold = 0)
+    pmi_threshold = 0, 
+    top_frequent = NULL)
   
   testthat::expect_true(is.list(ngrams))
   testthat::expect_true(is_tibble(ngrams$ngrams))
