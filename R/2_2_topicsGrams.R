@@ -144,10 +144,11 @@ topicsGrams <- function(
     top_frequent = 200) {
   
   # Preprocess the data
-  data_cleaned <- tolower(data)
-  data_cleaned <- gsub("[()].$?", "", data_cleaned)
-  data_cleaned <- sapply(data_cleaned, remove_stopwords, stopwords)
-  data_cleaned <- data_cleaned[data_cleaned != ""]
+  data <- tolower(data)
+  data <- gsub("[()].$?", "", data)
+  data <- sapply(data, remove_stopwords, stopwords)
+  
+  data_cleaned <- data[data != ""]
   data_cleaned <- na.omit(data_cleaned)
   
   
@@ -241,7 +242,7 @@ topicsGrams <- function(
     
   }
   freq_per_user_tbl <- tibble::as_tibble(freq_per_user, .name_repair = "minimal")
-
+  
   #### change the ngrams to a single string with "_" as connector ####
   ngrams$filtered_ngrams$ngrams <- sapply(ngrams$filtered_ngrams$ngrams, function(x) paste(unlist(strsplit(x, " ")), collapse = "_"))
   
