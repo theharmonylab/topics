@@ -127,27 +127,29 @@ filter_ngrams_by_pmi <- function(
 #' @param data (tibble) The data
 #' @param ngram_window (list) the minimum and maximum n-gram length, e.g. c(1,3)
 #' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
-# @param top_n (integer) The number of most occuring ngrams to included in the output for every ngram type
+#' @param top_frequent (integer) The number of most frequently occuring ngrams to included in the output.
 #' @param pmi_threshold (integer) The pmi threshold, if it shall not be used set to 0
 #' @return A list containing tibble of the ngrams with the frequency and probability and 
 #' a tibble containing the relative frequency of the ngrams for each user
 #' @importFrom ngram ngram get.ngrams get.phrasetable
 #' @importFrom tibble as_tibble tibble
 #' @importFrom stringr str_count str_replace_all str_trim
-#' @importFrom dplyr mutate filter 
+#' @importFrom dplyr mutate filter  slice_head
 #' @export
 topicsGrams <- function(
     data, 
     ngram_window = c(1, 3),
     stopwords = stopwords::stopwords("en", source = "snowball"), 
-    pmi_threshold = 0) {
+    pmi_threshold = 0, 
+    top_frequent = 200) {
   
   # Preprocess the data
   data <- tolower(data)
   data <- gsub("[()].$?", "", data)
   data <- sapply(data, remove_stopwords, stopwords)
-  data <- data[data != ""]
-  data <- na.omit(data)
+  
+  data_cleaned <- data[data != ""]
+  data_cleaned <- na.omit(data_cleaned)
   
   
   # Initialize an empty list for storing n-grams
@@ -157,7 +159,7 @@ topicsGrams <- function(
   # Loop through n-gram sizes and generate n-grams
   for (i in seq_along(ngram_window)) {
     
-    filtered_data <- data[sapply(strsplit(data, "\\s+"), length) >= ngram_window[i]]
+    filtered_data <- data_cleaned[sapply(strsplit(data_cleaned, "\\s+"), length) >= ngram_window[i]]
     
     if (length(filtered_data) > 0) {
       
@@ -186,7 +188,7 @@ topicsGrams <- function(
   ngrams$coherence <- NA  # Placeholder for coherence; to make the data frame look the same as the dtm output
   
   # Get the stats for unigrams
-  single_grams <- ngram::ngram(data, n = 1, sep = " ")
+  single_grams <- ngram::ngram(data_cleaned, n = 1, sep = " ")
   single_grams <- ngram::get.phrasetable(single_grams)
   colnames(single_grams) <- c("ngrams", "freq", "prevalence")
   
@@ -199,6 +201,15 @@ topicsGrams <- function(
     ngram_tibble = ngrams, 
     unigram_tibble = single_grams, 
     pmi_threshold = pmi_threshold)
+  
+  
+  # Select the top most frequent n-grams (to limit testing too many in topicsTest)
+  if (!is.null(top_frequent)){
+    
+    ngrams$filtered_ngrams <- ngrams$filtered_ngrams %>% 
+      dplyr::slice_head(n=top_frequent)
+  }
+  
   
   #### Calculate the relative frequency per user ####
   
@@ -231,7 +242,7 @@ topicsGrams <- function(
     
   }
   freq_per_user_tbl <- tibble::as_tibble(freq_per_user, .name_repair = "minimal")
-
+  
   #### change the ngrams to a single string with "_" as connector ####
   ngrams$filtered_ngrams$ngrams <- sapply(ngrams$filtered_ngrams$ngrams, function(x) paste(unlist(strsplit(x, " ")), collapse = "_"))
   

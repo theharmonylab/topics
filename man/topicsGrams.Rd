@@ -8,7 +8,8 @@ topicsGrams(
   data,
   ngram_window = c(1, 3),
   stopwords = stopwords::stopwords("en", source = "snowball"),
-  pmi_threshold = 0
+  pmi_threshold = 0,
+  top_frequent = 200
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ topicsGrams(
 \item{stopwords}{(stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")}
 
 \item{pmi_threshold}{(integer) The pmi threshold, if it shall not be used set to 0}
+
+\item{top_frequent}{(integer) The number of most frequently occuring ngrams to included in the output.}
 }
 \value{
 A list containing tibble of the ngrams with the frequency and probability and 
