@@ -1130,7 +1130,7 @@ topicsPlot <- function(
         ) %>%
         dplyr::slice_head(n = ngrams_max)
       
-      ngrams <- clean_characters_for_plotting(ngrams)
+      ngrams <- clean_characters_for_plotting_grams(ngrams)
     }
     if(!is.null(test)){
       
