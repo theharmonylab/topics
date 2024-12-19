@@ -355,7 +355,7 @@ plot <- plot +
   ) +
   ggplot2::scale_y_continuous(
     expand = ggplot2::expansion(mult = c(0, 0)),    # Remove y-axis padding
-    limits = c(-0.05, 0.05)                           # Set tight y-axis limits
+    limits = c(-0.8, 0.8)                           # Set tight y-axis limits
   )
 
   
