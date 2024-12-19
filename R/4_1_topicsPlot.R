@@ -312,52 +312,25 @@ generate_scatter_plot <- function(
   plot <- ggplot2::ggplot()
   
   # Add background points only if background is not empty
-if (nrow(background) > 0) {
+  if (nrow(background) > 0) {
+    plot <- plot +
+      ggplot2::geom_point(data = background, bg_aes, size = bg_size, alpha = 0.3)
+  }
+  
+  # Add popout points
   plot <- plot +
-    ggplot2::geom_point(
-      data = background, 
-      mapping = bg_aes, 
-      size = bg_size, 
-      alpha = 0.3
+    ggplot2::geom_point(data = popout, 
+                        popout_aes, 
+                        size = popout_size, 
+                        alpha = 0.8) +
+    ggplot2::scale_color_manual(values = bivariate_color_codes) +
+    ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(
+      axis.text = if (scatter_show_axis_values) ggplot2::element_text(size = 12) else ggplot2::element_blank(),
+      axis.ticks = if (scatter_show_axis_values) ggplot2::element_line() else ggplot2::element_blank(),
+      legend.position = "none"
     )
-}
-
-# Add popout points with minimal y-jitter if needed
-plot <- plot +
-  ggplot2::geom_point(
-    data = popout, 
-    mapping = popout_aes, 
-    size = popout_size, 
-    alpha = 0.8,
-    position = ggplot2::position_jitter(height = 0.05) # Adjust height as needed
-  ) +
-  ggplot2::scale_color_manual(values = bivariate_color_codes) +
-  ggplot2::labs(
-    x = label_x_name, 
-    y = NULL,         # Remove y-axis label
-    color = ''
-  ) +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    axis.text.x = if (!is.null(y_col)) 
-                    ggplot2::element_text(size = 12) 
-                  else 
-                    ggplot2::element_blank(),
-    axis.ticks.x = if (!is.null(y_col)) 
-                     ggplot2::element_line() 
-                   else 
-                     ggplot2::element_blank(),
-    axis.text.y = ggplot2::element_blank(),         # Hide y-axis text
-    axis.ticks.y = ggplot2::element_blank(),        # Hide y-axis ticks
-    axis.line.y = ggplot2::element_blank(),         # Remove y-axis line
-    legend.position = "none",
-    plot.margin = ggplot2::unit(c(0.5, 0.5, 0.5, 0.5), "cm") # Adjust as needed
-  ) +
-  ggplot2::scale_y_continuous(
-    expand = ggplot2::expansion(mult = c(0, 0)),    # Remove y-axis padding
-    limits = c(-0.8, 0.8)                           # Set tight y-axis limits
-  )
-
   
   
   # Add topic numbers if enabled
