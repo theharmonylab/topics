@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' data-engine-version='2.0' width='720.00pt' height='576.00pt' viewBox='0 0 720.00 576.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA='>
+    <rect x='0.00' y='0.00' width='720.00' height='576.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+</g>
+<defs>
+  <clipPath id='cpNS40OHw3MTQuNTJ8MjIuNzh8NTcwLjUy'>
+    <rect x='5.48' y='22.78' width='709.04' height='547.74' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNS40OHw3MTQuNTJ8MjIuNzh8NTcwLjUy)'>
+<text x='207.19' y='317.95' style='font-size: 88.65px; fill: #8B0000; font-family: sans;' textLength='305.63px' lengthAdjust='spacingAndGlyphs'>anxious</text>
+<text x='206.78' y='397.31' style='font-size: 105.22px; fill: #B35A46; font-family: sans;' textLength='345.01px' lengthAdjust='spacingAndGlyphs'>worried</text>
+<text x='195.47' y='261.37' style='font-size: 88.44px; fill: #D9AEA3; font-family: sans;' textLength='265.52px' lengthAdjust='spacingAndGlyphs'>scared</text>
+<text x='-310.16' y='387.16' style='font-size: 376.64px; fill: #DCB6AD; font-family: sans;' textLength='1340.32px' lengthAdjust='spacingAndGlyphs'>nervous</text>
+<text x='320.01' y='336.42' style='font-size: 119.81px; fill: #E5D2CD; font-family: sans;' textLength='33.28px' lengthAdjust='spacingAndGlyphs'>.</text>
+<text x='110.24' y='203.15' style='font-size: 185.29px; fill: #E5D2CD; font-family: sans;' textLength='587.23px' lengthAdjust='spacingAndGlyphs'>anxiety</text>
+<text x='-426.93' y='396.69' style='font-size: 416.30px; fill: #E6D6D2; font-family: sans;' textLength='1573.86px' lengthAdjust='spacingAndGlyphs'>stressed</text>
+<text x='523.52' y='306.81' style='font-size: 103.60px; fill: #E7DDDB; font-family: sans;' textLength='178.53px' lengthAdjust='spacingAndGlyphs'>fear</text>
+<text x='122.90' y='279.06' style='font-size: 28.45px; fill: #E9E6E5; font-family: sans;' textLength='74.31px' lengthAdjust='spacingAndGlyphs'>family</text>
+<text x='-93.54' y='394.63' style='font-size: 407.72px; fill: #EAEAEA; font-family: sans;' textLength='907.09px' lengthAdjust='spacingAndGlyphs'>edge</text>
+</g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<text x='5.48' y='14.56' style='font-size: 13.20px; font-family: sans;' textLength='109.36px' lengthAdjust='spacingAndGlyphs'>2_ngram_negative</text>
+</g>
+</svg>

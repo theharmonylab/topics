@@ -135,6 +135,7 @@ filter_ngrams_by_pmi <- function(
 #' @importFrom tibble as_tibble tibble
 #' @importFrom stringr str_count str_replace_all str_trim
 #' @importFrom dplyr mutate filter  slice_head
+#' @importFrom stats na.omit
 #' @export
 topicsGrams <- function(
     data, 
@@ -149,7 +150,7 @@ topicsGrams <- function(
   data <- sapply(data, remove_stopwords, stopwords)
   
   data_cleaned <- data[data != ""]
-  data_cleaned <- na.omit(data_cleaned)
+  data_cleaned <- stats::na.omit(data_cleaned)
   
   
   # Initialize an empty list for storing n-grams

@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' data-engine-version='2.0' width='720.00pt' height='576.00pt' viewBox='0 0 720.00 576.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA='>
+    <rect x='0.00' y='0.00' width='720.00' height='576.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+</g>
+<defs>
+  <clipPath id='cpNS40OHw3MTQuNTJ8MjIuNzh8NTcwLjUy'>
+    <rect x='5.48' y='22.78' width='709.04' height='547.74' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNS40OHw3MTQuNTJ8MjIuNzh8NTcwLjUy)'>
+<text x='293.55' y='303.49' style='font-size: 28.45px; fill: #006400; font-family: sans;' textLength='132.90px' lengthAdjust='spacingAndGlyphs'>concerned</text>
+<text x='340.04' y='283.95' style='font-size: 13.83px; fill: #337627; font-family: sans;' textLength='35.37px' lengthAdjust='spacingAndGlyphs'>future</text>
+<text x='299.74' y='322.27' style='font-size: 17.82px; fill: #538845; font-family: sans;' textLength='52.51px' lengthAdjust='spacingAndGlyphs'>feeling</text>
+<text x='299.93' y='279.29' style='font-size: 16.57px; fill: #629154; font-family: sans;' textLength='35.00px' lengthAdjust='spacingAndGlyphs'>calm</text>
+<text x='358.91' y='328.67' style='font-size: 19.82px; fill: #779F6B; font-family: sans;' textLength='54.02px' lengthAdjust='spacingAndGlyphs'>happy</text>
+<text x='359.41' y='271.81' style='font-size: 21.38px; fill: #8DAD82; font-family: sans;' textLength='52.27px' lengthAdjust='spacingAndGlyphs'>worry</text>
+<text x='352.49' y='251.48' style='font-size: 12.57px; fill: #C6D2C1; font-family: sans;' textLength='48.24px' lengthAdjust='spacingAndGlyphs'>thoughts</text>
+<text x='258.65' y='257.87' style='font-size: 23.73px; fill: #C6D2C1; font-family: sans;' textLength='77.82px' lengthAdjust='spacingAndGlyphs'>relaxed</text>
+<text x='262.17' y='283.73' style='font-size: 9.19px; fill: #E3E5E2; font-family: sans;' textLength='25.54px' lengthAdjust='spacingAndGlyphs'>fearful</text>
+<text x='229.50' y='309.03' style='font-size: 20.94px; fill: #EAEAEA; font-family: sans;' textLength='50.07px' lengthAdjust='spacingAndGlyphs'>panic</text>
+</g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+<text x='5.48' y='14.56' style='font-size: 13.20px; font-family: sans;' textLength='104.21px' lengthAdjust='spacingAndGlyphs'>3_ngram_positive</text>
+</g>
+</svg>

@@ -123,7 +123,6 @@ test_that("topicsTest performs linear regression correctly", {
   # Or could make it so that is is using logistic when it is a dichotomouse factor, 
   # otherwise it uses linear regression. 
   
-  
 })
 
 test_that("topicsTest adjusts p-values for multiple comparisons", {
@@ -154,47 +153,3 @@ test_that("topicsTest adjusts p-values for multiple comparisons", {
   testthat::expect_true(any(grepl("Age.p", names(result$test))))
   
 })
-
-
-
-
-# this feature is currently not working
-#test_that("topicsTest loads test results from the specified directory", {
-#  testthat::skip_on_cran()
-# data <- dep_wor_data
-#  dtm <- topicsDtm(data = data$Deptext)
-#  model <- topicsModel(dtm = dtm)
-#  preds <- topicsPreds(model = model, data = data$Deptext)
-#  
-#
-#  # Generate and save test results
-#  topicsTest(model, preds, data, x_variable = "hilstotal")
-#  
-#  # Load test results
-#  result <- topicsTest(load_dir = "./results")
-#  result
-#  
-#  testthat::expect_true(is.list(result))
-#  testthat::expect_equal(result$test_methodtopicsTest performs logistic regression correctly, "linear_regression")
-#  testthat::expect_true("hilstotal.estimate" %in% names(result$test))
-#  testthat::expect_true("hilstotal.t" %in% names(result$test))
-#  testthat::expect_true("hilstotal.p" %in% names(result$test))
-#})
-
-
-
-
-#test_that("topicsTest performs ridge regression correctly", {
-#  testthat::skip_on_cran()
-# dtm <- topicsDtm(data = data$Deptext)
-#  model <- topicsModel(dtm = dtm)
-#  preds <- topicsPreds(model = model, data = data$Deptext)
-#  
-#  result <- topicsTest(model = model, preds = preds, data = data, x_variable = "Age", test_method = "ridge_regression")
-#  result
-#  expect_true(is.list(result))
-#  expect_equal(result$test_method, "ridge_regression")
-#  expect_true(any(grepl("estimate", names(result$test))))
-#  expect_true(any(grepl("statistic", names(result$test))))
-#  expect_true(any(grepl("p.value", names(result$test))))
-#})
