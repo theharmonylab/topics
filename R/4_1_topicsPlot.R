@@ -792,6 +792,46 @@ colour_settings <- function(
 }
 
 
+#' General function to clean characters in a specified column
+#'
+#' @param data  
+#' @param column  
+#' @return default colors or specified user colours in the right order and structure.
+#' @noRd
+clean_characters <- function(
+    data, 
+    column) {
+  
+  # Replace "<" and ">" with "_"
+  data[[column]] <- gsub("[<>]", "_", data[[column]])
+  
+  # Replace "-" with "_-_"
+  data[[column]] <- gsub("-", "_-_", data[[column]])
+  
+  # Replace digits 0-9 with "_digit_"
+  data[[column]] <- gsub("([0-9])", "_\\1_", data[[column]])
+  
+  # Special case: Replace "0" with "_10_"
+  data[[column]] <- gsub("_0_", "_10_", data[[column]])
+  
+  return(data)
+}
+
+# Wrapper function for cleaning 'ngrams$ngrams$ngrams'
+clean_characters_for_plotting_grams <- function(ngrams) {
+  
+  ngrams$ngrams <- clean_characters(ngrams$ngrams, "ngrams")
+  
+  return(ngrams)
+}
+
+# Wrapper function for cleaning 'test$test$top_terms'
+clean_characters_for_plotting_test <- function(test) {
+  
+  test$test <- clean_characters(test$test, "top_terms")
+  
+  return(test)
+}
 
 
 #' Plot word clouds
@@ -1090,9 +1130,7 @@ topicsPlot <- function(
         ) %>%
         dplyr::slice_head(n = ngrams_max)
       
-      ngrams$ngrams$ngrams <- gsub("<", "_", ngrams$ngrams$ngrams)
-      ngrams$ngrams$ngrams <- gsub(">", "_", ngrams$ngrams$ngrams)
-      ngrams$ngrams$ngrams <- gsub("-", "_-_", ngrams$ngrams$ngrams)
+      ngrams <- clean_characters_for_plotting(ngrams)
     }
     if(!is.null(test)){
       
@@ -1130,13 +1168,11 @@ topicsPlot <- function(
           }
         } %>%
         dplyr::slice_head(n = ngrams_max)
-      
+      negative_ngrams[34,]
       # Combine the positive and negative n-grams
       test$test <- dplyr::bind_rows(positive_ngrams, negative_ngrams)
 
-      test$test$top_terms <- gsub("<", "_",   test$test$top_terms)
-      test$test$top_terms <- gsub(">", "_",   test$test$top_terms)
-      test$test$top_terms <- gsub("-", "_-_", test$test$top_terms)
+      test <- clean_characters_for_plotting_test(test)
     }
   }
   
