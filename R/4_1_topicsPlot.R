@@ -338,12 +338,12 @@ plot <- plot +
   ) +
   ggplot2::theme_minimal() +
   ggplot2::theme(
-    axis.text.x = if (scatter_show_axis_values) 
+    axis.text.x = if (!in.null(y_col)) 
                     ggplot2::element_text(size = 12) 
                   else 
                     ggplot2::element_blank(),
     axis.text.y = ggplot2::element_blank(),        # Hide y-axis text
-    axis.ticks.x = if (scatter_show_axis_values) 
+    axis.ticks.x = if (!in.null(y_col)) 
                      ggplot2::element_line() 
                    else 
                      ggplot2::element_blank(),
