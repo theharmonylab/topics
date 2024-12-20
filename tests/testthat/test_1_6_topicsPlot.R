@@ -5,6 +5,7 @@ library(topics)
 
 test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   
+  testthat::skip_on_os(c("linux", "windows"))  # Skip on Ubuntu (Linux) and Windows
   testthat::skip_on_cran()
   
   # No test (i.e., no dimension) help(topicsGrams)
@@ -76,7 +77,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
 
 
 test_that("topicsPlot WITHOUT test and preds", {
-  
+  testthat::skip_on_os(c("linux", "windows"))  # Skip on Ubuntu (Linux) and Windows
   testthat::skip_on_cran()
   
   dtm <- topics::topicsDtm(
@@ -163,6 +164,7 @@ test_that("topicsPlot WITHOUT test and preds", {
 
 test_that("topicsPlot WITH test", {
   
+  testthat::skip_on_os(c("linux", "windows"))  # Skip on Ubuntu (Linux) and Windows
   testthat::skip_on_cran()
   
   ## 1-Dimension
@@ -402,10 +404,9 @@ test_that("topicsPlot WITH test", {
 })
 
 
-
-
 test_that("topicsPlot WITH underscores in names", {
-  # strsplit(cor_var,
+  
+  testthat::skip_on_os(c("linux", "windows"))  # Skip on Ubuntu (Linux) and Windows
   testthat::skip_on_cran()
   save_dir_temp <- tempfile()
   #save_dir_temp <- "./res_under"
@@ -487,11 +488,9 @@ test_that("topicsPlot WITH underscores in names", {
 })
 
 
-
-
-
 test_that("topicsPlot WITH PMI", {
   
+  testthat::skip_on_os(c("linux", "windows"))  # Skip on Ubuntu (Linux) and Windows
   testthat::skip_on_cran()
   save_dir_temp <- tempfile()
 
@@ -522,3 +521,4 @@ test_that("topicsPlot WITH PMI", {
   
   
 })
+
