@@ -265,6 +265,8 @@ generate_scatter_plot <- function(
     scatter_show_axis_values
 ) {
   
+  #cat(paste0('#######################\n\n','y_col: ', y_col, '\n#######################\n'))
+  
   # Define aesthetics for popout and background points
   # Ensure y_col is valid and resolve y_aesthetic
   y_aesthetic <- if (!is.null(y_col) && y_col != "") ggplot2::sym(y_col) else 1
@@ -314,24 +316,24 @@ generate_scatter_plot <- function(
   # Add background points only if background is not empty
   if (nrow(background) > 0) {
     plot <- plot +
-      ggplot2::geom_point(data = background, bg_aes, size = bg_size, alpha = 0.3)
+      ggplot2::geom_point(data = background, 
+                          bg_aes,
+                          position = ggplot2::position_nudge(y = 0), # Small offset from x-axis
+                          size = bg_size, alpha = 0.3) 
   }
+  
+  #cat(paste0('\n###########  test code 1 END!!!!! ##############\n'))
   
   # Add popout points
   plot <- plot +
-    ggplot2::geom_point(data = popout, 
+    ggplot2::geom_point(data = popout,
                         popout_aes, 
+                        position = ggplot2::position_nudge(y = 0), # Small offset from x-axis
                         size = popout_size, 
                         alpha = 0.8) +
     ggplot2::scale_color_manual(values = bivariate_color_codes) +
     ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(
-      axis.text = if (scatter_show_axis_values) ggplot2::element_text(size = 12) else ggplot2::element_blank(),
-      axis.ticks = if (scatter_show_axis_values) ggplot2::element_line() else ggplot2::element_blank(),
-      legend.position = "none"
-    )
-  
+    ggplot2::theme_minimal()
   
   # Add topic numbers if enabled
   if (allow_topic_num_legend) {
@@ -346,7 +348,66 @@ generate_scatter_plot <- function(
       vjust = 0.5
     )
   }
+  #cat(paste0('\n###########  test code 1.5 END!!!!! ##############\n'))
   
+  # 1. Determine maximum absolute x-value
+  x_values <- c(popout[[x_col]], background[[x_col]])
+  max_abs_x <- max(abs(x_values))
+  
+  # 2. Create symmetrical breaks
+  # Find a suitable interval for the breaks. We'll try to get around 5 breaks.
+  n_breaks <- 5
+  interval <- max_abs_x/(n_breaks/2)
+  # round interval to nearest 0.1
+  interval <- plyr::round_any(interval, 0.1)
+  
+  breaks <- seq(-ceiling(max_abs_x/interval)*interval, ceiling(max_abs_x/interval)*interval, by = interval)
+  
+  # 3. Set symmetrical x-axis limits AND explicit breaks
+  plot <- plot + ggplot2::scale_x_continuous(limits = c(-max_abs_x, max_abs_x), breaks = breaks)
+  
+  # x axis title aligned to 0
+  gb <- ggplot2::ggplot_build(plot)
+  x_range <- gb$layout$panel_scales_x[[1]]$range$range
+  desired_x <- 0.0 # Place the title at x=0.0
+  hjust_value <- (desired_x - x_range[1]) / (x_range[2] - x_range[1])
+  plot <- plot + ggplot2::theme(
+    # Then apply this hjust_value and move x axis downward
+    axis.title.x = ggplot2::element_text(hjust = hjust_value,
+                                         margin = margin(t = 10.6, unit = "pt")
+    ),
+    axis.text.x = ggplot2::element_text(margin = margin(t = 10.3, unit = "pt"), size = 12),
+    legend.position = "none"
+  )
+  
+  if (is.null(y_col)){
+    plot <- plot + 
+      ggplot2::theme(
+        # Remove all y-axis elements
+        axis.title.y = ggplot2::element_blank(),
+        axis.text.y = ggplot2::element_blank(),
+        axis.ticks.y = ggplot2::element_blank(),
+        axis.line.y = ggplot2::element_blank(),
+        axis.ticks.length.y = ggplot2::unit(0, "pt"), # Remove tick marks
+        panel.spacing.y= ggplot2::unit(0, "lines"),
+        panel.border = ggplot2::element_blank(),
+        panel.grid.major.y = ggplot2::element_blank(),
+        panel.grid.minor.y = ggplot2::element_blank(),
+        aspect.ratio = 1/20,
+        # Other settings
+        plot.margin = ggplot2::margin(0.5, 0.5, 1, 0.5, "cm"), 
+      ) 
+  }else{
+    plot <- plot +
+      ggplot2::theme(
+        axis.ticks.x = ggplot2::element_line(),
+        plot.margin = ggplot2::margin(0.5, 0.5, 0.5, 0.5, "cm")
+      )
+  }
+  
+  plot <- plot + ggplot2::coord_cartesian(clip = "off") # Prevent clipping
+  #saveRDS(plot, './2dplot.rds')
+  #cat(paste0('\n###########  test code 2 END!!!!! ##############\n'))
   return(plot)
 }
 
@@ -792,46 +853,6 @@ colour_settings <- function(
 }
 
 
-#' General function to clean characters in a specified column
-#'
-#' @param data  
-#' @param column  
-#' @return default colors or specified user colours in the right order and structure.
-#' @noRd
-clean_characters <- function(
-    data, 
-    column) {
-  
-  # Replace "<" and ">" with "_"
-  data[[column]] <- gsub("[<>]", "_", data[[column]])
-  
-  # Replace "-" with "_-_"
-  data[[column]] <- gsub("-", "_-_", data[[column]])
-  
-  # Replace digits 0-9 with "_digit_"
-  data[[column]] <- gsub("([0-9])", "_\\1_", data[[column]])
-  
-  # Special case: Replace "0" with "_10_"
-  data[[column]] <- gsub("_0_", "_10_", data[[column]])
-  
-  return(data)
-}
-
-# Wrapper function for cleaning 'ngrams$ngrams$ngrams'
-clean_characters_for_plotting_grams <- function(ngrams) {
-  
-  ngrams$ngrams <- clean_characters(ngrams$ngrams, "ngrams")
-  
-  return(ngrams)
-}
-
-# Wrapper function for cleaning 'test$test$top_terms'
-clean_characters_for_plotting_test <- function(test) {
-  
-  test$test <- clean_characters(test$test, "top_terms")
-  
-  return(test)
-}
 
 
 #' Plot word clouds
@@ -1130,7 +1151,9 @@ topicsPlot <- function(
         ) %>%
         dplyr::slice_head(n = ngrams_max)
       
-      ngrams <- clean_characters_for_plotting_grams(ngrams)
+      ngrams$ngrams$ngrams <- gsub("<", "_", ngrams$ngrams$ngrams)
+      ngrams$ngrams$ngrams <- gsub(">", "_", ngrams$ngrams$ngrams)
+      ngrams$ngrams$ngrams <- gsub("-", "_-_", ngrams$ngrams$ngrams)
     }
     if(!is.null(test)){
       
@@ -1168,11 +1191,13 @@ topicsPlot <- function(
           }
         } %>%
         dplyr::slice_head(n = ngrams_max)
-      negative_ngrams[34,]
+      
       # Combine the positive and negative n-grams
       test$test <- dplyr::bind_rows(positive_ngrams, negative_ngrams)
 
-      test <- clean_characters_for_plotting_test(test)
+      test$test$top_terms <- gsub("<", "_",   test$test$top_terms)
+      test$test$top_terms <- gsub(">", "_",   test$test$top_terms)
+      test$test$top_terms <- gsub("-", "_-_", test$test$top_terms)
     }
   }
   
