@@ -382,14 +382,6 @@ generate_scatter_plot <- function(
       plot <- plot + ggplot2::scale_y_continuous(limits = c(-max_abs_y, max_abs_y), breaks = breaks_y)
   }
   
-  # x axis title aligned to 0
-  gb <- ggplot2::ggplot_build(plot)
-  x_range <- gb$layout$panel_scales_x[[1]]$range$range
-  desired_x <- 0.0 # Place the title at x=0.0
-  hjust_value <- (desired_x - x_range[1]) / (x_range[2] - x_range[1])
-
-  
-  
   if (is.null(y_col)){
     plot <- plot + 
       ggplot2::theme(
