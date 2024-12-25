@@ -268,15 +268,19 @@ generate_scatter_plot <- function(
   #cat(paste0('#######################\n\n','y_col: ', y_col, '\n#######################\n'))
   
   # Define aesthetics for popout and background points
-  # Ensure y_col is valid and resolve y_aesthetic
-  y_aesthetic <- if (!is.null(y_col) && y_col != "") ggplot2::sym(y_col) else 1
-  
-  # Create aes with defined y aesthetic
-  popout_aes <- ggplot2::aes(
-    x = !!ggplot2::sym(x_col),
-    y = y_aesthetic,
-    color = as.factor(.data[[color_col]])
-  )
+  popout_aes <- if (is.null(y_col)) {
+    ggplot2::aes(
+      x = !!ggplot2::sym(x_col),
+      y = 1,
+      color = as.factor(.data[[color_col]])
+    )
+  } else {
+    ggplot2::aes(
+      x = !!ggplot2::sym(x_col),
+      y = !!ggplot2::sym(y_col),
+      color = as.factor(.data[[color_col]])
+    )
+  }
   
   # Resolve y aesthetic value
   y_value <- if (is.null(y_col)) 1 else ggplot2::sym(y_col)
@@ -350,39 +354,51 @@ generate_scatter_plot <- function(
   }
   #cat(paste0('\n###########  test code 1.5 END!!!!! ##############\n'))
   
-  # 1. Determine maximum absolute x-value
+  # Determine maximum absolute x-value
   x_values <- c(popout[[x_col]], background[[x_col]])
   max_abs_x <- max(abs(x_values))
+  if (!is.null(y_col)){
+    y_values <- c(popout[[y_col]], background[[y_col]])
+    max_abs_y <- max(abs(y_values))
+  }
   
-  # 2. Create symmetrical breaks
+  # Create symmetrical breaks
   # Find a suitable interval for the breaks. We'll try to get around 5 breaks.
   n_breaks <- 5
   interval <- max_abs_x/(n_breaks/2)
   # round interval to nearest 0.1
   interval <- plyr::round_any(interval, 0.1)
+  breaks_x <- seq(-ceiling(max_abs_x/interval)*interval, ceiling(max_abs_x/interval)*interval, by = interval)
+  if (!is.null(y_col)){
+    interval <- max_abs_y/(n_breaks/2)
+    # round interval to nearest 0.1
+    interval <- plyr::round_any(interval, 0.1)
+    breaks_y <- seq(-ceiling(max_abs_y/interval)*interval, ceiling(max_abs_y/interval)*interval, by = interval)
+  }
   
-  breaks <- seq(-ceiling(max_abs_x/interval)*interval, ceiling(max_abs_x/interval)*interval, by = interval)
-  
-  # 3. Set symmetrical x-axis limits AND explicit breaks
-  plot <- plot + ggplot2::scale_x_continuous(limits = c(-max_abs_x, max_abs_x), breaks = breaks)
+  # 3. Set symmetrical x/y-axis limits AND explicit breaks
+  plot <- plot + ggplot2::scale_x_continuous(limits = c(-max_abs_x, max_abs_x), breaks = breaks_x)
+  if (!is.null(y_col)){
+      plot <- plot + ggplot2::scale_y_continuous(limits = c(-max_abs_y, max_abs_y), breaks = breaks_y)
+  }
   
   # x axis title aligned to 0
   gb <- ggplot2::ggplot_build(plot)
   x_range <- gb$layout$panel_scales_x[[1]]$range$range
   desired_x <- 0.0 # Place the title at x=0.0
   hjust_value <- (desired_x - x_range[1]) / (x_range[2] - x_range[1])
-  plot <- plot + ggplot2::theme(
-    # Then apply this hjust_value and move x axis downward
-    axis.title.x = ggplot2::element_text(hjust = hjust_value,
-                                         margin = margin(t = 10.6, unit = "pt")
-    ),
-    axis.text.x = ggplot2::element_text(margin = margin(t = 10.3, unit = "pt"), size = 12),
-    legend.position = "none"
-  )
+
+  
   
   if (is.null(y_col)){
     plot <- plot + 
       ggplot2::theme(
+        # Then apply this hjust_value and move x axis downward
+        axis.title.x = ggplot2::element_text(hjust = 0.5,
+                                             margin = margin(t = 21.3, unit = "pt")
+        ),
+        axis.text.x = ggplot2::element_text(margin = margin(t = 21, unit = "pt"), size = 12),
+        legend.position = "none",
         # Remove all y-axis elements
         axis.title.y = ggplot2::element_blank(),
         axis.text.y = ggplot2::element_blank(),
@@ -395,11 +411,18 @@ generate_scatter_plot <- function(
         panel.grid.minor.y = ggplot2::element_blank(),
         aspect.ratio = 1/20,
         # Other settings
-        plot.margin = ggplot2::margin(0.5, 0.5, 1, 0.5, "cm"), 
+        plot.margin = ggplot2::margin(0.5, 0.5, 1, 0.5, "cm") 
       ) 
   }else{
     plot <- plot +
       ggplot2::theme(
+        # Then apply this hjust_value and move x axis downward
+        axis.title.x = ggplot2::element_text(hjust = 0.5,
+                                             margin = margin(t = 10.6, unit = "pt")
+        ),
+        axis.text.x = ggplot2::element_text(margin = margin(t = 10.3, unit = "pt"), size = 12),
+        legend.position = "none",
+        # Other settings
         axis.ticks.x = ggplot2::element_line(),
         plot.margin = ggplot2::margin(0.5, 0.5, 0.5, 0.5, "cm")
       )
