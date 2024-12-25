@@ -416,6 +416,7 @@ generate_scatter_plot <- function(
         legend.position = "none",
         # Other settings
         axis.ticks.x = ggplot2::element_line(),
+        axis.text.y = ggplot2::element_text(size = 12),
         plot.margin = ggplot2::margin(0.5, 0.5, 0.5, 0.5, "cm")
       )
   }
