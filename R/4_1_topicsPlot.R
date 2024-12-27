@@ -98,7 +98,13 @@ topicsScatterLegendNew <- function(
       popout <- popout %>%
           mutate(dot_size = 15 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (35 - 15))
       scatter_popout_dot_size <- popout$`dot_size`
-  }else{scatter_popout_dot_size <- scatter_popout_dot_size}
+      backgr_dots <- backgr_dots %>%
+        mutate(dot_size = 15 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (35 - 15))
+      scatter_bg_dot_size <- backgr_dots$`dot_size`
+  }else{
+    scatter_popout_dot_size <- scatter_popout_dot_size
+    scatter_bg_dot_size <- scatter_bg_dot_size
+  }
     
   # Generate scatter plot
   plot <- generate_scatter_plot(
@@ -1386,3 +1392,44 @@ topicsPlot <- function(
   return(plot_list)
 }
 
+
+#' General function to clean characters in a specified column
+#'
+#' @param data  
+#' @param column  
+#' @return default colors or specified user colours in the right order and structure.
+#' @noRd
+clean_characters <- function(
+    data, 
+    column) {
+  
+  # Replace "<" and ">" with "_"
+  data[[column]] <- gsub("[<>]", "_", data[[column]])
+  
+  # Replace "-" with "_-_"
+  data[[column]] <- gsub("-", "_-_", data[[column]])
+  
+  # Replace digits 0-9 with "_digit_"
+  data[[column]] <- gsub("([0-9])", "_\\1_", data[[column]])
+  
+  # Special case: Replace "0" with "_10_"
+  data[[column]] <- gsub("_0_", "_10_", data[[column]])
+  
+  return(data)
+}
+
+# Wrapper function for cleaning 'ngrams$ngrams$ngrams'
+clean_characters_for_plotting_grams <- function(ngrams) {
+  
+  ngrams$ngrams <- clean_characters(ngrams$ngrams, "ngrams")
+  
+  return(ngrams)
+}
+
+# Wrapper function for cleaning 'test$test$top_terms'
+clean_characters_for_plotting_test <- function(test) {
+  
+  test$test <- clean_characters(test$test, "top_terms")
+  
+  return(test)
+}
