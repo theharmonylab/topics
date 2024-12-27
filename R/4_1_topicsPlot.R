@@ -101,6 +101,7 @@ topicsScatterLegendNew <- function(
       backgr_dots <- backgr_dots %>%
         mutate(dot_size = 15 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (35 - 15))
       scatter_bg_dot_size <- backgr_dots$`dot_size`
+      popout$`alpha_prevalence` <- 0
   }else{
     scatter_popout_dot_size <- scatter_popout_dot_size
     scatter_bg_dot_size <- scatter_bg_dot_size
@@ -334,13 +335,17 @@ generate_scatter_plot <- function(
   
   #cat(paste0('\n###########  test code 1 END!!!!! ##############\n'))
   
+  # alpha based on prevalence
+  contain_prevalence_col <- grep('alpha_prevalence',names(popout))
+  if (length(contain_prevalence_col) != 0){popout_alpha <- 1}else{popout_alpha <- 0.8}
+  
   # Add popout points
   plot <- plot +
     ggplot2::geom_point(data = popout,
                         popout_aes, 
                         position = ggplot2::position_nudge(y = 0), # Small offset from x-axis
                         size = popout_size, 
-                        alpha = 0.8) +
+                        alpha = popout_alpha) +
     ggplot2::scale_color_manual(values = bivariate_color_codes) +
     ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
     ggplot2::theme_minimal()
