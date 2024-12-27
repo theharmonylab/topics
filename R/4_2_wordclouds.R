@@ -359,9 +359,8 @@ create_plots <- function(
       
   
       if (scale_size==TRUE){
-        prevalence <- summary[paste0("t_",i),]$prevalence
+        prevalence <- summary[paste0("t_",plot_topics_idx),]$prevalence
       }
-      
       
       # this will ensure that all topics are plotted
       if (is.null(p_alpha) ){
@@ -370,8 +369,8 @@ create_plots <- function(
         }
       }
       
-      #
-      if (!is.nan(p_adjusted) & p_adjusted < p_alpha){
+
+      if ((!is.nan(p_adjusted) && p_adjusted < p_alpha) || (grid_pos %in% c(2, 5) && any(grepl(paste0("t_",plot_topics_idx), popout$topic))) ){
         
         #estimate <- test[i,][[grep(estimate_col, colnames(test), value=TRUE)]]# $PHQtot.estimate
         #p_adjusted <- test[i,][[grep("p_adjusted", colnames(test), value=TRUE)]] # $PHQtot.p_adjustedfdr
@@ -688,10 +687,3 @@ create_plots <- function(
   return(plot_list)
   
 }
-
-
-
-
-
-
-
