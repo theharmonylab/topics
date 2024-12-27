@@ -14,8 +14,9 @@ home:
     href: https://stackoverflow.com/
 
 template:
+  package: tidytemplate
+  bootstrap: 5
   opengraph:
-  
     image:
       src: man/figures/logo.png
       alt: "text analyzes using huggingface transformers"
