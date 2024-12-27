@@ -15,6 +15,7 @@ home:
 
 template:
   opengraph:
+  
     image:
       src: man/figures/logo.png
       alt: "text analyzes using huggingface transformers"
