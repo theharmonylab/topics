@@ -363,7 +363,6 @@ generate_scatter_plot <- function(
       vjust = 0.5
     )
   }
-  #cat(paste0('\n###########  test code 1.5 END!!!!! ##############\n'))
   
   # Determine maximum absolute x-value
   x_values <- c(popout[[x_col]], background[[x_col]])
@@ -434,7 +433,6 @@ generate_scatter_plot <- function(
   
   plot <- plot + ggplot2::coord_cartesian(clip = "off") # Prevent clipping
   #saveRDS(plot, './2dplot.rds')
-  #cat(paste0('\n###########  test code 2 END!!!!! ##############\n'))
   return(plot)
 }
 
