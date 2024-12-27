@@ -272,8 +272,6 @@ generate_scatter_plot <- function(
     scatter_show_axis_values
 ) {
   
-  #cat(paste0('#######################\n\n','y_col: ', y_col, '\n#######################\n'))
-  
   # Define aesthetics for popout and background points
   popout_aes <- if (is.null(y_col)) {
     ggplot2::aes(
@@ -332,8 +330,6 @@ generate_scatter_plot <- function(
                           position = ggplot2::position_nudge(y = 0), # Small offset from x-axis
                           size = bg_size, alpha = 0.3) 
   }
-  
-  #cat(paste0('\n###########  test code 1 END!!!!! ##############\n'))
   
   # alpha based on prevalence
   contain_prevalence_col <- grep('alpha_prevalence',names(popout))
@@ -432,7 +428,6 @@ generate_scatter_plot <- function(
   }
   
   plot <- plot + ggplot2::coord_cartesian(clip = "off") # Prevent clipping
-  #saveRDS(plot, './2dplot.rds')
   return(plot)
 }
 
@@ -1285,7 +1280,6 @@ topicsPlot <- function(
     )
     popout <- popout1$popout
   }
-  
   
   
   if (!is.null(model) & !is.null(test)){
