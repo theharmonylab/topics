@@ -1,29 +1,16 @@
 
 url: https://r-topics.org
 
-development:
-#  mode: release
-#   mode: auto
-   mode: default
-#   mode: unreleased
-home:
-  title: topics
-  description: Analyses of Text using LDA topics and Differential Language Analysis.
-  links:
-  - text: Ask a question about topics using the r-topics tag
-    href: https://stackoverflow.com/
-
 template:
   package: tidytemplate
   bootstrap: 5
-  opengraph:
-    image:
-      src: man/figures/logo.png
-      alt: "text analyzes using huggingface transformers"
-#    twitter:
-#      creator: "@leonackermann"
-#      site: "@rstudio"
-#      card: summary_large_image
+
+  includes:
+    in_header: |
+      <script defer data-domain="r-topics.org" src="https://plausible.io/js/plausible.js"></script>
+
+development:
+  mode: auto
 
 authors:
   Leon Ackermann:
@@ -34,9 +21,12 @@ authors:
     href: https://oscarkjell.se/
 
 
-#twitter:
-#  icon: "fab fa-twitter fa-lg"
-#  href: http://twitter.com/OscarKjell
+home:
+  title: topics
+  description: Analyses of Text using LDA topics and Differential Language Analysis.
+  links:
+  - text: Ask a question about topics using the r-topics tag
+    href: https://stackoverflow.com/
 
 reference:
 - title: Transform text to ngrams
