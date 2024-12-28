@@ -1,25 +1,20 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<!-- -->
-
-# topics <a href="https://r-topics.org"><img src="man/figures/logo.png" align="right" height="138" alt="topics website" /></a>
-
 <!-- badges: start -->
 
 [![DOI](https://zenodo.org/badge/785738351.svg)](https://zenodo.org/doi/10.5281/zenodo.11165377)
 [![Github build
 status](https://github.com/theharmonylab/topics/workflows/R-CMD-check/badge.svg)](https://github.com/theharmonylab/topics/actions)
-[![Project Status: Active – The project has reached a stable, usable
-state and is being actively
-developed](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Project Status:
+Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing-1)
 [![codecov](https://codecov.io/gh/theharmonylab/topics/graph/badge.svg?token=7ZTWBNIVCX)](https://app.codecov.io/gh/theharmonylab/topics/)
 [![CRAN
 Downloads](https://cranlogs.r-pkg.org/badges/grand-total/topics)](https://CRAN.R-project.org/package=topics)
+<!-- badges: end -->
 
-<!--
-&#10;<!-- badges: end -->
+# topics <a href="https://r-topics.org"><img src="man/figures/logo.png" align="right" height="138" alt="topics website" /></a>
 
 ## Overview
 

@@ -17,7 +17,7 @@ template:
       </div>
 
 development:
-  mode: auto
+  mode: release
 
 authors:
   Leon Ackermann:
@@ -31,9 +31,13 @@ authors:
 home:
   title: topics
   description: Analyses of Text using LDA topics and Differential Language Analysis.
+  sidebar:
+  - title: Badges
+    badges: true
   links:
   - text: Ask a question about topics using the r-topics tag
     href: https://stackoverflow.com/
+    
 
 reference:
 - title: Transform text to ngrams
