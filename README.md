@@ -1,42 +1,40 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<!-- -->
-
-<img src="man/figures/logo.png" align="right" alt="" width="150" />
-
 <!-- badges: start -->
 
 [![DOI](https://zenodo.org/badge/785738351.svg)](https://zenodo.org/doi/10.5281/zenodo.11165377)
 [![Github build
 status](https://github.com/theharmonylab/topics/workflows/R-CMD-check/badge.svg)](https://github.com/theharmonylab/topics/actions)
-[![Project Status: Active – The project has reached a stable, usable
-state and is being actively
-developed](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Project Status:
+Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing-1)
 [![codecov](https://codecov.io/gh/theharmonylab/topics/graph/badge.svg?token=7ZTWBNIVCX)](https://app.codecov.io/gh/theharmonylab/topics/)
 [![CRAN
 Downloads](https://cranlogs.r-pkg.org/badges/grand-total/topics)](https://CRAN.R-project.org/package=topics)
+<!-- badges: end -->
 
-<!--
-&#10;<!-- badges: end -->
+# topics <a href="https://r-topics.org"><img src="man/figures/logo.png" align="right" height="138" alt="topics website" /></a>
+
+## Overview
 
 An R-package for analyzing natural language implementing Differential
 Language Analysis using words, phrases and topics. The `topics` package
 is part of the *R Language Analysis Suite*, including `talk`, `text` and
 `topics`.
 
-[`talk`](https://www.r-talk.org/) transforms voice recordings into text,
-audio features, or embeddings.<br> <br>
-[`text`](https://www.r-text.org/) provides many language tasks such as
-converting digital text into word embeddings.<br> <br> `talk` and `text`
-offer access to Large Language Models from Hugging Face.<br> <br>
-[`topics`](https://www.r-topics.org/) visualizes language patterns into
-words, phrases or topics to generate psychological insights. <br> The
-`topics` package supports the `text` package in analysing and
-visualizing topics from BERTtopics.<br> <br>
+- [`talk`](https://www.r-talk.org/) transforms voice recordings into
+  text, audio features, or embeddings.<br> <br>
+- [`text`](https://www.r-text.org/) provides many language tasks such as
+  converting digital text into word embeddings.<br> <br> `talk` and
+  `text` offer access to Large Language Models from Hugging Face.<br>
+  <br>
+- [`topics`](https://www.r-topics.org/) visualizes language patterns
+  into words, phrases or topics to generate psychological insights. <br>
+  The `topics` package supports the `text` package in analysing and
+  visualizing topics from BERTtopics.<br> <br>
 
-<img src="man/figures/text_topics.svg" style="width:50.0%" />
+<img src="man/figures/talk_text_topics.svg" style="width:50.0%" />
 
 <br> When using the `topics` package, please cite:
 
