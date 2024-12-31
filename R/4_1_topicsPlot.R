@@ -378,7 +378,7 @@ generate_scatter_plot <- function(
   if (!is.null(y_col)){
     interval <- max_abs_y/(n_breaks/2)
     # round interval to nearest 0.1
-    interval <- plyr::round_any(interval, 0.1)
+    interval <- round(interval, digits = 1)
     breaks_y <- seq(-ceiling(max_abs_y/interval)*interval, ceiling(max_abs_y/interval)*interval, by = interval)
   }
   
