@@ -372,13 +372,9 @@ generate_scatter_plot <- function(
   # Find a suitable interval for the breaks. We'll try to get around 5 breaks.
   n_breaks <- 5
   interval <- max_abs_x/(n_breaks/2)
-  # round interval to nearest 0.1
-  interval <- round(interval, digits = 1)
   breaks_x <- seq(-ceiling(max_abs_x/interval)*interval, ceiling(max_abs_x/interval)*interval, by = interval)
   if (!is.null(y_col)){
     interval <- max_abs_y/(n_breaks/2)
-    # round interval to nearest 0.1
-    interval <- round(interval, digits = 1)
     breaks_y <- seq(-ceiling(max_abs_y/interval)*interval, ceiling(max_abs_y/interval)*interval, by = interval)
   }
   
