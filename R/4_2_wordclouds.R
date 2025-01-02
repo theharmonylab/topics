@@ -370,7 +370,7 @@ create_plots <- function(
       }
       
 
-      if ((!is.nan(p_adjusted) && p_adjusted < p_alpha) || (grid_pos %in% c(2, 5) && any(grepl(paste0("t_",plot_topics_idx), popout$topic))) ){
+      if ((!is.nan(p_adjusted) && p_adjusted < p_alpha) || (grid_pos %in% c(2, 5) && any(sapply(paste0("t_", plot_topics_idx), grepl, x = popout$topic)) ){
         
         #estimate <- test[i,][[grep(estimate_col, colnames(test), value=TRUE)]]# $PHQtot.estimate
         #p_adjusted <- test[i,][[grep("p_adjusted", colnames(test), value=TRUE)]] # $PHQtot.p_adjustedfdr
