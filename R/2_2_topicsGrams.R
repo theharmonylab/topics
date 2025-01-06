@@ -8,6 +8,7 @@ add_missing_rows <- function(input_tibble, value_list) {
   # Identify the missing values (those not present in the first column of the tibble)
   input_tibble <- as_tibble(as.data.frame.table(input_tibble))
   input_tibble$Var1 <- as.integer(as.character(input_tibble$Var1))
+  
   missing_values <- setdiff(value_list, input_tibble[[1]])
   
   # Create a tibble for the missing values with 0 in the second column
@@ -20,10 +21,11 @@ add_missing_rows <- function(input_tibble, value_list) {
   output_tibble <- dplyr::bind_rows(input_tibble, missing_tibble)
   
   # Convert the tibble to a table
-  output_table <- table(output_tibble$Var1, dnn = "Var1")
+  #output_table <- table(output_tibble$Var1, dnn = "Var1")
+  output_table <- table(rep(output_tibble$Var1, output_tibble$Freq))
   
   # Set the frequency counts manually using names
-  output_table[as.integer(output_tibble$Var1)] <- output_tibble$Freq
+  #output_table[as.integer(output_tibble$Var1)] <- output_tibble$Freq
 
   # Return the combined tibble
   return(output_table)
