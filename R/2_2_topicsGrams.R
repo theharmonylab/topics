@@ -1,3 +1,73 @@
+# Function to filter ngrams based on different modes
+#' @param ngrams (tibble) A tibble with n_grams and freq columns representing n-grams and their frequencies.
+#' @param removal_mode (character) The mode of filtering. Choose from 'term', 'frequency', or 'proportion'.
+#' @param removal_rate_most (numeric) The number of terms to remove from the top or the maximum frequency.
+#' @param removal_rate_least (numeric) The number of terms to remove from the bottom or the minimum frequency.
+#' @importFrom dplyr arrange filter
+#' @noRd
+filter_ngrams <- function(
+    ngrams, 
+    removal_mode, 
+    removal_rate_most = NULL, 
+    removal_rate_least = NULL) {
+  if (removal_mode == "term") {
+    
+    ngrams_filtered <- ngrams %>%
+      dplyr::arrange(desc(freq)) 
+    # 1. Remove top n and bottom m terms based on frequency
+    if (!is.null(removal_rate_most)){
+      ngrams_filtered <- ngrams_filtered[-(1:removal_rate_most), ]
+    }
+    if (!is.null(removal_rate_least)){
+      ngrams_filtered <- ngrams_filtered[-((nrow(ngrams_filtered) - removal_rate_least + 1):nrow(ngrams_filtered)), ]
+    }
+  } else if (removal_mode == "frequency") {
+    # 2. Remove words with frequency over n and under m
+    if (is.null(removal_rate_most)){
+      removal_rate_most <- max(ngrams$freq)
+    }
+    if (is.null(removal_rate_least)){
+      removal_rate_least <- 0
+    }
+    ngrams_filtered <- ngrams %>%
+        dplyr::filter(freq <= removal_rate_most & freq >= removal_rate_least)
+    
+    
+  } else if (removal_mode == "percentage") {
+    # 3. Remove terms that occur in more than n% and less than m% of the time
+    if (is.null(removal_rate_most)){
+      removal_rate_most <- 0
+    } 
+    if (is.null(removal_rate_least)){
+      removal_rate_least <- 1
+    } 
+    removal_rate_most <- nrow(ngrams) * removal_rate_most
+    removal_rate_least <- nrow(ngrams) - nrow(ngrams) * removal_rate_least
+    # take all rows from removal_rate_least to removal_rate_most
+    ngrams_filtered <- ngrams[removal_rate_least:removal_rate_most, ]
+
+    #ngrams_filtered <- ngrams %>%
+    #    dplyr::filter(prop <= removal_rate_most & prop >= removal_rate_least)
+
+    
+  } else {
+    stop("Invalid mode. Choose 'term', 'frequency', or 'proportion'.")
+  }
+  # Compute the stats
+  initial_count = table(ngrams$n_gram_type)
+  final_count = table(ngrams_filtered$n_gram_type)
+  
+  stats <-  tibble::tibble(
+    ngram_type = unique(ngrams$n_gram_type),
+    removal_mode_removed = initial_count - final_count
+  )
+  
+  return(list(
+    ngrams_filtered = ngrams_filtered, 
+    stats = stats))
+}
+
+
 
 # Function to remove stopwords from a single row of text
 #' @param text The data to be be cleaned from stopwords
@@ -14,7 +84,6 @@ remove_stopwords <- function(
   
   return(cleaned_text)
 }
-
 
 #' @param ngram_tibble: A tibble with n_grams and freq columns representing n-grams and their frequencies.
 #' @param unigram_tibble: A tibble with n_grams and freq columns representing unigrams and their frequencies.
@@ -105,13 +174,13 @@ filter_ngrams_by_pmi <- function(
   
   stats <-  tibble::tibble(
     ngram_type = unique(ngram_tibble$n_gram_type),
-    initial_count = initial_count,
-    pmi_removed = initial_count - final_count,
-    final_count = final_count
+    #initial_count = initial_count,
+    pmi_removed = initial_count - final_count
+    #final_count = final_count
   )
   
   filtered_ngrams <- filtered_ngrams %>% 
-    dplyr::select(-c(component_prob, n_gram_type, joint_prob)) 
+    dplyr::select(-c(component_prob, joint_prob)) 
   
   # Return the result as a list
   return(list(
@@ -127,6 +196,10 @@ filter_ngrams_by_pmi <- function(
 #' @param data (tibble) The data
 #' @param ngram_window (list) the minimum and maximum n-gram length, e.g. c(1,3)
 #' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
+#' @param occurance_rate (numerical) The occurance rate (0-1) removes words that occur less then in (occurance_rate)*(number of documents). Example: If the training dataset has 1000 documents and the occurrence rate is set to 0.05, the code will remove terms that appear in less than 49 documents. 
+#' @param removal_mode (character) The mode of removal, either "term", frequency" or "percentage"
+#' @param removal_rate_most (numeric) The rate of most frequent ngrams to remove
+#' @param removal_rate_least (numeric) The rate of least frequent ngrams to remove
 #' @param top_frequent (integer) The number of most frequently occuring ngrams to included in the output.
 #' @param pmi_threshold (integer) The pmi threshold, if it shall not be used set to 0
 #' @return A list containing tibble of the ngrams with the frequency and probability and 
@@ -141,6 +214,10 @@ topicsGrams <- function(
     data, 
     ngram_window = c(1, 3),
     stopwords = stopwords::stopwords("en", source = "snowball"), 
+    occurance_rate = 0,
+    removal_mode = "frequency",
+    removal_rate_most = NULL,
+    removal_rate_least = NULL,
     pmi_threshold = 0, 
     top_frequent = 200) {
   
@@ -182,11 +259,39 @@ topicsGrams <- function(
   
   # Combine all n-grams into a single tibble
   ngrams <- do.call(rbind, ngrams)
+  
 
   # Compute prevalence
   total <- sum(ngrams$freq)
   ngrams$prevalence <- ngrams$freq / total
   ngrams$coherence <- NA  # Placeholder for coherence; to make the data frame look the same as the dtm output
+  
+  # Get number of documents for each ngram
+  # doc_count <- docs_per_ngram(ngrams, data_cleaned)
+  # Create a data frame with ngrams and their sums
+  # docs_per_ngram <- data.frame(
+  #   ngrams = names(doc_count),
+  #   docs = as.integer(doc_count)
+  # )
+  # ngrams <- merge(ngrams, doc_count, by = "ngrams")
+  # if (occurance_rate > 0){
+  #   removal_frequency <- round(nrow(ngrams) * occurance_rate) - 1
+  #   ngrams <- ngrams %>%
+  #     dplyr::filter(docs >= removal_frequency)
+  # }
+  initial_count <- table(ngrams$n_gram_type)
+
+  ngrams <- filter_ngrams(ngrams = ngrams,
+                          removal_mode = removal_mode,
+                          removal_rate_most = removal_rate_most,
+                          removal_rate_least = removal_rate_least)
+  filter_stats <- ngrams$stats
+  ngrams <- ngrams$ngrams_filtered
+  
+  # Recompute prevalence after filtering
+  total <- sum(ngrams$freq)
+  ngrams$prevalence <- ngrams$freq / total
+  
   
   # Get the stats for unigrams
   single_grams <- ngram::ngram(data_cleaned, n = 1, sep = " ")
@@ -203,13 +308,9 @@ topicsGrams <- function(
     unigram_tibble = single_grams, 
     pmi_threshold = pmi_threshold)
   
+  pmi_stats <- ngrams$stats  
   
-  # Select the top most frequent n-grams (to limit testing too many in topicsTest)
-  if (!is.null(top_frequent)){
-    
-    ngrams$filtered_ngrams <- ngrams$filtered_ngrams %>% 
-      dplyr::slice_head(n=top_frequent)
-  }
+  
   
   
   #### Calculate the relative frequency per user ####
@@ -243,6 +344,58 @@ topicsGrams <- function(
     
   }
   freq_per_user_tbl <- tibble::as_tibble(freq_per_user, .name_repair = "minimal")
+  
+  # Calculate the number of documents where each n-gram occurs
+  num_docs <- colSums(freq_per_user_tbl != 0)
+
+  # Create a new data frame with the non-zero counts
+  result_df <- tibble::tibble(
+    ngrams_escaped = ngrams$filtered_ngrams$ngrams_escaped,
+    num_docs = num_docs
+  )
+
+  ngrams$filtered_ngrams <- merge(ngrams$filtered_ngrams, result_df, by = "ngrams_escaped")
+  
+  # Filter n-grams based on their occurance in the documents
+  occurance_before <- table(ngrams$filtered_ngrams$n_gram_type)
+  if (occurance_rate > 0){
+    removal_frequency <- round(length(data) * occurance_rate)-1
+    ngrams$filtered_ngrams <- ngrams$filtered_ngrams %>%
+      dplyr::filter(num_docs >= removal_frequency)
+  }
+  occurance_after <- table(ngrams$filtered_ngrams$n_gram_type)
+  
+  # Calculate the stats for the n-grams
+  occurance_stats <-  tibble::tibble(
+    ngram_type = unique(ngrams$filtered_ngrams$n_gram_type),
+    occurance_removed = occurance_before - occurance_after,
+  )
+
+  final_count <- initial_count - occurance_stats$occurance_removed - filter_stats$removal_mode_removed - pmi_stats$pmi_removed
+  
+
+  stats <- merge(pmi_stats, filter_stats, by = "ngram_type")
+  ngrams$stats <- merge(stats, occurance_stats, by = "ngram_type")
+  ngrams$stats$initial_count <- initial_count
+  ngrams$stats$final_count <- final_count
+  
+  
+  ngrams$stats <- ngrams$stats[, c("ngram_type", "initial_count", "pmi_removed", "removal_mode_removed", "occurance_removed", "final_count")]
+  
+  
+  # sort the ngrams by frequency
+  ngrams$filtered_ngrams <- ngrams$filtered_ngrams %>% 
+    dplyr::arrange(desc(freq))
+  
+  # Select the top most frequent n-grams (to limit testing too many in topicsTest)
+  if (!is.null(top_frequent)){
+   
+    ngrams$filtered_ngrams <- ngrams$filtered_ngrams %>% 
+      dplyr::slice_head(n=top_frequent)
+  }
+  
+  ngrams$filtered_ngrams <- ngrams$filtered_ngrams %>% 
+    dplyr::select(-c(n_gram_type)) 
   
   #### change the ngrams to a single string with "_" as connector ####
   ngrams$filtered_ngrams$ngrams <- sapply(ngrams$filtered_ngrams$ngrams, function(x) paste(unlist(strsplit(x, " ")), collapse = "_"))

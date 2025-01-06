@@ -169,7 +169,7 @@ filter_by_pmi <- function(
 #' @param seed (integer) A seed to set for reproducibility
 # @param save_dir (string) the directory to save the results, if NULL, no results are saved.
 # @param load_dir (string) the directory to load from.
-#' @param occurance_rate (integer) The rate of occurence of a word to be removed
+#' @param occurance_rate (numerical) The occurance rate (0-1) removes words that occur less then in (occurance_rate)*(number of documents). Example: If the training dataset has 1000 documents and the occurrence rate is set to 0.05, the code will remove terms that appear in less than 49 documents. 
 #' @param threads (integer) The number of threads to use; also called cpu in (CreateDtm).
 #' @return The document term matrix
 #' @examples
@@ -188,11 +188,11 @@ filter_by_pmi <- function(
 #'                  removal_rate_least = 1,
 #'                  removal_rate_most = 1)
 #' 
-#' # Create Dtm and remove the 1% least frequent and 1% most frequent terms.
+#' # Create Dtm and remove the 1% least frequent and 1% most frequent terms. The percentage values are scaled to values between 0 and 1.
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 #'                  removal_mode = "percentage",
-#'                  removal_rate_least = 1,
-#'                  removal_rate_most = 1)
+#'                  removal_rate_least = 0.01,
+#'                  removal_rate_most = 0.01)
 #'
 #' }
 #' @importFrom textmineR CreateDtm 
@@ -208,7 +208,7 @@ topicsDtm <- function(
     removalword = "",
     pmi_threshold = NULL, 
     occurance_rate = 0,
-    removal_mode = "none",
+    removal_mode = "percentage",
     removal_rate_most = 0,
     removal_rate_least = 0,
     shuffle = TRUE,
@@ -263,6 +263,10 @@ topicsDtm <- function(
   
   if (removalword != ""){
     train[[data_col]] <- gsub(paste0("\\b", removalword, "\\b"), "", train[[data_col]]) 
+  }
+  
+  if (length(ngram_window) == 1){
+    ngram_window <- c(ngram_window, ngram_window)
   }
   
   # Create Trigram DTM

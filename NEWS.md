@@ -1,5 +1,11 @@
 # text (development version)
 
+# topics 0.40.3
+- added `occurance_rate` to `topicsGrams()`
+- added `removal_mode`, `removal_rate_most` and `removal_rate_least` to `topicsGrams()`
+- `ngram_window = c(1)` now supported by `topicsDtm()`
+- legend added to `topicsPlot()` with ngrams
+
 # topics 0.40.2
 - changed some behaviours in `topicsGrams()`, including removing `top_n` and treating 
 n-grams type differently.

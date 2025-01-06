@@ -68,4 +68,74 @@ test_that("topicsGrams with selection parameters", {
   testthat::expect_true(is_tibble(ngrams$freq_per_user))
 })
 
+test_that("topicsGrams with occurance rate", {
+  
+  testthat::skip_on_cran()
+  
+  ngrams <- topics::topicsGrams(
+    data = dep_wor_data$Worphrase[1:100], 
+    ngram_window = c(1,3),
+    stopwords = NULL,
+    pmi_threshold = NULL,
+    occurance_rate = 0.05)
+  
+  testthat::expect_true(is.list(ngrams))
+  testthat::expect_true(is_tibble(ngrams$ngrams))
+  testthat::expect_true(is_tibble(ngrams$freq_per_user))
+})
+
+test_that("topicsGrams with removal mode: term", {
+  
+  testthat::skip_on_cran()
+  
+  ngrams <- topics::topicsGrams(
+    data = dep_wor_data$Worphrase[1:100], 
+    ngram_window = c(1,3),
+    stopwords = NULL,
+    pmi_threshold = NULL,
+    removal_mode = "term",
+    removal_rate_most = 1,
+    removal_rate_least = 1)
+  
+  testthat::expect_true(is.list(ngrams))
+  testthat::expect_true(is_tibble(ngrams$ngrams))
+  testthat::expect_true(is_tibble(ngrams$freq_per_user))
+})
+
+test_that("topicsGrams with removal mode: frequency", {
+  
+  testthat::skip_on_cran()
+  
+  ngrams <- topics::topicsGrams(
+    data = dep_wor_data$Worphrase[1:100], 
+    ngram_window = c(1,3),
+    stopwords = NULL,
+    pmi_threshold = NULL,
+    removal_mode = "frequency",
+    removal_rate_most = 30,
+    removal_rate_least = 1)
+  
+  testthat::expect_true(is.list(ngrams))
+  testthat::expect_true(is_tibble(ngrams$ngrams))
+  testthat::expect_true(is_tibble(ngrams$freq_per_user))
+})
+
+test_that("topicsGrams with removal mode: percentage", {
+  
+  testthat::skip_on_cran()
+  
+  ngrams <- topics::topicsGrams(
+    data = dep_wor_data$Worphrase[1:100], 
+    ngram_window = c(1,3),
+    stopwords = NULL,
+    pmi_threshold = NULL,
+    removal_mode = "percentage",
+    removal_rate_most = 0.01,
+    removal_rate_least = 0.01)
+  
+  testthat::expect_true(is.list(ngrams))
+  testthat::expect_true(is_tibble(ngrams$ngrams))
+  testthat::expect_true(is_tibble(ngrams$freq_per_user))
+})
+
 
