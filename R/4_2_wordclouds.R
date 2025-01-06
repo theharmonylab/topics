@@ -657,9 +657,9 @@ create_plots <- function(
           # Word cloud with correlation strength mapped to color gradient
           plot2 <- ggplot2::ggplot(test_negative, 
                                    ggplot2::aes(label = top_terms,
-                                                size = abs(estimate),
-                                                color = prop)) +
-            ggwordcloud::geom_text_wordcloud() +
+                                                size = prop,
+                                                color = abs(estimate))) +
+            ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
             ggplot2::scale_size_area(max_size = max_size) +  # Adjust max size
             #scale_color_gradient(low = "grey", high = "red") +  # Blue for low, red for high correlation strength
             ggplot2::theme_minimal() +

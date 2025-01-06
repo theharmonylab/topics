@@ -1,3 +1,34 @@
+# Function to add missing rows to a stats tibble in case one ngram is removed completely
+#' @param input_tibble (tibble) A stats tibble with n_grams type column and the number of removed ngrams
+#' @param value_list (character) A list of all ngram types
+#' @importFrom dplyr bind_rows
+#' @importFrom data.table :=
+#' @noRd
+add_missing_rows <- function(input_tibble, value_list) {
+  # Identify the missing values (those not present in the first column of the tibble)
+  input_tibble <- as_tibble(as.data.frame.table(input_tibble))
+  input_tibble$Var1 <- as.integer(as.character(input_tibble$Var1))
+  missing_values <- setdiff(value_list, input_tibble[[1]])
+  
+  # Create a tibble for the missing values with 0 in the second column
+  missing_tibble <- tibble::tibble(
+    !!colnames(input_tibble)[1] := missing_values,
+    !!colnames(input_tibble)[2] := 0
+  )
+  
+  # Combine the original tibble with the missing rows
+  output_tibble <- dplyr::bind_rows(input_tibble, missing_tibble)
+  
+  # Convert the tibble to a table
+  output_table <- table(output_tibble$Var1, dnn = "Var1")
+  
+  # Set the frequency counts manually using names
+  output_table[as.integer(output_tibble$Var1)] <- output_tibble$Freq
+
+  # Return the combined tibble
+  return(output_table)
+}
+
 # Function to filter ngrams based on different modes
 #' @param ngrams (tibble) A tibble with n_grams and freq columns representing n-grams and their frequencies.
 #' @param removal_mode (character) The mode of filtering. Choose from 'term', 'frequency', or 'proportion'.
@@ -196,7 +227,7 @@ filter_ngrams_by_pmi <- function(
 #' @param data (tibble) The data
 #' @param ngram_window (list) the minimum and maximum n-gram length, e.g. c(1,3)
 #' @param stopwords (stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")
-#' @param occurance_rate (numerical) The occurance rate (0-1) removes words that occur less then in (occurance_rate)*(number of documents). Example: If the training dataset has 1000 documents and the occurrence rate is set to 0.05, the code will remove terms that appear in less than 49 documents. 
+#' @param occurance_rate (numerical) The occurance rate (0-1) removes words that occur less then in (occurance_rate)*(number of documents). Example: If the training dataset has 1000 documents and the occurrence rate is set to 0.05, the code will remove terms that appear in less than 50 documents. 
 #' @param removal_mode (character) The mode of removal, either "term", frequency" or "percentage"
 #' @param removal_rate_most (numeric) The rate of most frequent ngrams to remove
 #' @param removal_rate_least (numeric) The rate of least frequent ngrams to remove
@@ -207,7 +238,7 @@ filter_ngrams_by_pmi <- function(
 #' @importFrom ngram ngram get.ngrams get.phrasetable
 #' @importFrom tibble as_tibble tibble
 #' @importFrom stringr str_count str_replace_all str_trim
-#' @importFrom dplyr mutate filter  slice_head
+#' @importFrom dplyr mutate filter  slice_head all_of
 #' @importFrom stats na.omit
 #' @export
 topicsGrams <- function(
@@ -259,6 +290,7 @@ topicsGrams <- function(
   
   # Combine all n-grams into a single tibble
   ngrams <- do.call(rbind, ngrams)
+  ngram_types <- ngrams$n_gram_type
   
 
   # Compute prevalence
@@ -288,10 +320,6 @@ topicsGrams <- function(
   filter_stats <- ngrams$stats
   ngrams <- ngrams$ngrams_filtered
   
-  # Recompute prevalence after filtering
-  total <- sum(ngrams$freq)
-  ngrams$prevalence <- ngrams$freq / total
-  
   
   # Get the stats for unigrams
   single_grams <- ngram::ngram(data_cleaned, n = 1, sep = " ")
@@ -308,10 +336,7 @@ topicsGrams <- function(
     unigram_tibble = single_grams, 
     pmi_threshold = pmi_threshold)
   
-  pmi_stats <- ngrams$stats  
-  
-  
-  
+  pmi_stats <- ngrams$stats
   
   #### Calculate the relative frequency per user ####
   
@@ -358,16 +383,19 @@ topicsGrams <- function(
   
   # Filter n-grams based on their occurance in the documents
   occurance_before <- table(ngrams$filtered_ngrams$n_gram_type)
+  occurance_before <- add_missing_rows(occurance_before, ngram_window)
   if (occurance_rate > 0){
     removal_frequency <- round(length(data) * occurance_rate)-1
     ngrams$filtered_ngrams <- ngrams$filtered_ngrams %>%
       dplyr::filter(num_docs >= removal_frequency)
   }
   occurance_after <- table(ngrams$filtered_ngrams$n_gram_type)
+  occurance_after <- add_missing_rows(occurance_after, ngram_window)
   
+
   # Calculate the stats for the n-grams
   occurance_stats <-  tibble::tibble(
-    ngram_type = unique(ngrams$filtered_ngrams$n_gram_type),
+    ngram_type = unique(ngram_types),
     occurance_removed = occurance_before - occurance_after,
   )
 
@@ -378,8 +406,6 @@ topicsGrams <- function(
   ngrams$stats <- merge(stats, occurance_stats, by = "ngram_type")
   ngrams$stats$initial_count <- initial_count
   ngrams$stats$final_count <- final_count
-  
-  
   ngrams$stats <- ngrams$stats[, c("ngram_type", "initial_count", "pmi_removed", "removal_mode_removed", "occurance_removed", "final_count")]
   
   
@@ -395,10 +421,18 @@ topicsGrams <- function(
   }
   
   ngrams$filtered_ngrams <- ngrams$filtered_ngrams %>% 
-    dplyr::select(-c(n_gram_type)) 
+    dplyr::select(-c(n_gram_type))
   
   #### change the ngrams to a single string with "_" as connector ####
   ngrams$filtered_ngrams$ngrams <- sapply(ngrams$filtered_ngrams$ngrams, function(x) paste(unlist(strsplit(x, " ")), collapse = "_"))
+  
+  # Recompute prevalence after filtering
+  total <- sum(ngrams$filtered_ngrams$freq)
+  ngrams$filtered_ngrams$prevalence <- ngrams$filtered_ngrams$freq / total
+  
+  # Filter the columns of freq_per_user_tbl to only include the filtered n-grams
+  freq_per_user_tbl <- freq_per_user_tbl %>%
+    select(dplyr::all_of(ngrams$filtered_ngrams$ngrams))
   
   #### Structure output ####
   res <- list(

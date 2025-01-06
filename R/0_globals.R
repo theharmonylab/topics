@@ -34,8 +34,9 @@ utils::globalVariables(c(
   "nr", "term", "freq",
   
   # topicsGrams
-  "n", "component_prob", "joint_prob", "n_gram_type", "ngrams", "pmi_value",
+  "n", "component_prob", "joint_prob", "n_gram_type", "ngrams", "pmi_value", ":=",
   
   # topicsPlot
   "pmi"
+  
 ))

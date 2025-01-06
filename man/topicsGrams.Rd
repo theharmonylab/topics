@@ -23,7 +23,7 @@ topicsGrams(
 
 \item{stopwords}{(stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")}
 
-\item{occurance_rate}{(numerical) The occurance rate (0-1) removes words that occur less then in (occurance_rate)*(number of documents). Example: If the training dataset has 1000 documents and the occurrence rate is set to 0.05, the code will remove terms that appear in less than 49 documents.}
+\item{occurance_rate}{(numerical) The occurance rate (0-1) removes words that occur less then in (occurance_rate)*(number of documents). Example: If the training dataset has 1000 documents and the occurrence rate is set to 0.05, the code will remove terms that appear in less than 50 documents.}
 
 \item{removal_mode}{(character) The mode of removal, either "term", frequency" or "percentage"}
 
