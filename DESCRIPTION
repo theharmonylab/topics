@@ -40,7 +40,8 @@ Imports:
     stringr,
     rlang,
     tidyr, 
-    purrr
+    purrr,
+    data.table
 RoxygenNote: 7.3.2
 Suggests: 
     text,

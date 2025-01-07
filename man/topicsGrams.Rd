@@ -8,6 +8,10 @@ topicsGrams(
   data,
   ngram_window = c(1, 3),
   stopwords = stopwords::stopwords("en", source = "snowball"),
+  occurance_rate = 0,
+  removal_mode = "frequency",
+  removal_rate_most = NULL,
+  removal_rate_least = NULL,
   pmi_threshold = 0,
   top_frequent = 200
 )
@@ -18,6 +22,14 @@ topicsGrams(
 \item{ngram_window}{(list) the minimum and maximum n-gram length, e.g. c(1,3)}
 
 \item{stopwords}{(stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")}
+
+\item{occurance_rate}{(numerical) The occurance rate (0-1) removes words that occur less then in (occurance_rate)*(number of documents). Example: If the training dataset has 1000 documents and the occurrence rate is set to 0.05, the code will remove terms that appear in less than 50 documents.}
+
+\item{removal_mode}{(character) The mode of removal, either "term", frequency" or "percentage"}
+
+\item{removal_rate_most}{(numeric) The rate of most frequent ngrams to remove}
+
+\item{removal_rate_least}{(numeric) The rate of least frequent ngrams to remove}
 
 \item{pmi_threshold}{(integer) The pmi threshold, if it shall not be used set to 0}
 

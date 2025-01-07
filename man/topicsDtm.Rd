@@ -11,7 +11,7 @@ topicsDtm(
   removalword = "",
   pmi_threshold = NULL,
   occurance_rate = 0,
-  removal_mode = "none",
+  removal_mode = "percentage",
   removal_rate_most = 0,
   removal_rate_least = 0,
   shuffle = TRUE,
@@ -33,7 +33,7 @@ between terms by comparing their co-occurrence probability to their individual p
 highlighting term pairs that occur together more often than expected by chance; in this implementation,
 terms with average PMI below the specified threshold (pmi_threshold) are removed from the document-term matrix.}
 
-\item{occurance_rate}{(integer) The rate of occurence of a word to be removed}
+\item{occurance_rate}{(numerical) The occurance rate (0-1) removes words that occur less then in (occurance_rate)*(number of documents). Example: If the training dataset has 1000 documents and the occurrence rate is set to 0.05, the code will remove terms that appear in less than 49 documents.}
 
 \item{removal_mode}{(string) Mode of removal -> one of c("none", "frequency", "term", "percentage"). frequency removes all words under a certain frequency or over a certain frequency, as indicated by removal_rate_least and removal_rate_most. term removes an absolute number of terms that are most frequent and least frequent. percentage removes the number of terms indicated by removal_rate_least and removal_rate_most relative to the number of terms in the matrix}
 
@@ -69,11 +69,11 @@ dtm <- topicsDtm(data = dep_wor_data$Depphrase,
                  removal_rate_least = 1,
                  removal_rate_most = 1)
 
-# Create Dtm and remove the 1\% least frequent and 1\% most frequent terms.
+# Create Dtm and remove the 1\% least frequent and 1\% most frequent terms. The percentage values are scaled to values between 0 and 1.
 dtm <- topicsDtm(data = dep_wor_data$Depphrase,
                  removal_mode = "percentage",
-                 removal_rate_least = 1,
-                 removal_rate_most = 1)
+                 removal_rate_least = 0.01,
+                 removal_rate_most = 0.01)
 
 }
 }
