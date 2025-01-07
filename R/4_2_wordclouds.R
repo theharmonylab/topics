@@ -284,7 +284,7 @@ create_plots <- function(
     scale_size = FALSE,
     plot_topics_idx = NULL,
     p_alpha = NULL,
-    highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
+    highlight_topic_words = NULL,
     save_dir,
     figure_format = "svg",
     width = 10,
@@ -359,9 +359,8 @@ create_plots <- function(
       
   
       if (scale_size==TRUE){
-        prevalence <- summary[paste0("t_",i),]$prevalence
+        prevalence <- summary[paste0("t_",plot_topics_idx),]$prevalence
       }
-      
       
       # this will ensure that all topics are plotted
       if (is.null(p_alpha) ){
@@ -370,8 +369,8 @@ create_plots <- function(
         }
       }
       
-      #
-      if (!is.nan(p_adjusted) & p_adjusted < p_alpha){
+
+      if ((!is.nan(p_adjusted) && p_adjusted < p_alpha) || (grid_pos %in% c(2, 5) && any(sapply(paste0("t_", plot_topics_idx), grepl, x = popout$topic))) ){
         
         #estimate <- test[i,][[grep(estimate_col, colnames(test), value=TRUE)]]# $PHQtot.estimate
         #p_adjusted <- test[i,][[grep("p_adjusted", colnames(test), value=TRUE)]] # $PHQtot.p_adjustedfdr
@@ -398,7 +397,10 @@ create_plots <- function(
                colnames(df_list_separated[[2]])[3] <- c('color') 
                target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]]) 
            }else{stop('Invalid settings for the parameter "highlight_topic_words".\nConsider use the default option!\n')}
-        }else{target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]}
+        }else{
+            target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]
+            target_topic$color <- target_topic$phi
+        }
         
         if (grid1 == ""){ .
           plot <- ggplot2::ggplot(target_topic, 
@@ -685,10 +687,3 @@ create_plots <- function(
   return(plot_list)
   
 }
-
-
-
-
-
-
-
