@@ -98,14 +98,7 @@ topicsScatterLegendNew <- function(
       popout <- popout %>%
           mutate(dot_size = 15 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (35 - 15))
       scatter_popout_dot_size <- popout$`dot_size`
-      backgr_dots <- backgr_dots %>%
-        mutate(dot_size = 15 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (35 - 15))
-      scatter_bg_dot_size <- backgr_dots$`dot_size`
-      popout$`alpha_prevalence` <- 0
-  }else{
-    scatter_popout_dot_size <- scatter_popout_dot_size
-    scatter_bg_dot_size <- scatter_bg_dot_size
-  }
+  }else{scatter_popout_dot_size <- scatter_popout_dot_size}
     
   # Generate scatter plot
   plot <- generate_scatter_plot(
@@ -273,19 +266,15 @@ generate_scatter_plot <- function(
 ) {
   
   # Define aesthetics for popout and background points
-  popout_aes <- if (is.null(y_col)) {
-    ggplot2::aes(
-      x = !!ggplot2::sym(x_col),
-      y = 1,
-      color = as.factor(.data[[color_col]])
-    )
-  } else {
-    ggplot2::aes(
-      x = !!ggplot2::sym(x_col),
-      y = !!ggplot2::sym(y_col),
-      color = as.factor(.data[[color_col]])
-    )
-  }
+  # Ensure y_col is valid and resolve y_aesthetic
+  y_aesthetic <- if (!is.null(y_col) && y_col != "") ggplot2::sym(y_col) else 1
+  
+  # Create aes with defined y aesthetic
+  popout_aes <- ggplot2::aes(
+    x = !!ggplot2::sym(x_col),
+    y = y_aesthetic,
+    color = as.factor(.data[[color_col]])
+  )
   
   # Resolve y aesthetic value
   y_value <- if (is.null(y_col)) 1 else ggplot2::sym(y_col)
@@ -325,26 +314,24 @@ generate_scatter_plot <- function(
   # Add background points only if background is not empty
   if (nrow(background) > 0) {
     plot <- plot +
-      ggplot2::geom_point(data = background, 
-                          bg_aes,
-                          position = ggplot2::position_nudge(y = 0), # Small offset from x-axis
-                          size = bg_size, alpha = 0.3) 
+      ggplot2::geom_point(data = background, bg_aes, size = bg_size, alpha = 0.3)
   }
-  
-  # alpha based on prevalence
-  contain_prevalence_col <- grep('alpha_prevalence',names(popout))
-  if (length(contain_prevalence_col) != 0){popout_alpha <- 1}else{popout_alpha <- 0.8}
   
   # Add popout points
   plot <- plot +
-    ggplot2::geom_point(data = popout,
+    ggplot2::geom_point(data = popout, 
                         popout_aes, 
-                        position = ggplot2::position_nudge(y = 0), # Small offset from x-axis
                         size = popout_size, 
-                        alpha = popout_alpha) +
+                        alpha = 0.8) +
     ggplot2::scale_color_manual(values = bivariate_color_codes) +
     ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
-    ggplot2::theme_minimal()
+    ggplot2::theme_minimal() +
+    ggplot2::theme(
+      axis.text = if (scatter_show_axis_values) ggplot2::element_text(size = 12) else ggplot2::element_blank(),
+      axis.ticks = if (scatter_show_axis_values) ggplot2::element_line() else ggplot2::element_blank(),
+      legend.position = "none"
+    )
+  
   
   # Add topic numbers if enabled
   if (allow_topic_num_legend) {
@@ -360,70 +347,6 @@ generate_scatter_plot <- function(
     )
   }
   
-  # Determine maximum absolute x-value
-  x_values <- c(popout[[x_col]], background[[x_col]])
-  max_abs_x <- max(abs(x_values))
-  if (!is.null(y_col)){
-    y_values <- c(popout[[y_col]], background[[y_col]])
-    max_abs_y <- max(abs(y_values))
-  }
-  
-  # Create symmetrical breaks
-  # Find a suitable interval for the breaks. We'll try to get around 5 breaks.
-  n_breaks <- 5
-  interval <- max_abs_x/(n_breaks/2)
-  breaks_x <- seq(-ceiling(max_abs_x/interval)*interval, ceiling(max_abs_x/interval)*interval, by = interval)
-  if (!is.null(y_col)){
-    interval <- max_abs_y/(n_breaks/2)
-    breaks_y <- seq(-ceiling(max_abs_y/interval)*interval, ceiling(max_abs_y/interval)*interval, by = interval)
-  }
-  
-  # 3. Set symmetrical x/y-axis limits AND explicit breaks
-  plot <- plot + ggplot2::scale_x_continuous(limits = c(-max_abs_x, max_abs_x), breaks = breaks_x)
-  if (!is.null(y_col)){
-      plot <- plot + ggplot2::scale_y_continuous(limits = c(-max_abs_y, max_abs_y), breaks = breaks_y)
-  }
-  
-  if (is.null(y_col)){
-    plot <- plot + 
-      ggplot2::theme(
-        # Then apply this hjust_value and move x axis downward
-        axis.title.x = ggplot2::element_text(hjust = 0.5,
-                                             margin = margin(t = 21.3, unit = "pt")
-        ),
-        axis.text.x = ggplot2::element_text(margin = margin(t = 21, unit = "pt"), size = 12),
-        legend.position = "none",
-        # Remove all y-axis elements
-        axis.title.y = ggplot2::element_blank(),
-        axis.text.y = ggplot2::element_blank(),
-        axis.ticks.y = ggplot2::element_blank(),
-        axis.line.y = ggplot2::element_blank(),
-        axis.ticks.length.y = ggplot2::unit(0, "pt"), # Remove tick marks
-        panel.spacing.y= ggplot2::unit(0, "lines"),
-        panel.border = ggplot2::element_blank(),
-        panel.grid.major.y = ggplot2::element_blank(),
-        panel.grid.minor.y = ggplot2::element_blank(),
-        aspect.ratio = 1/20,
-        # Other settings
-        plot.margin = ggplot2::margin(0.5, 0.5, 1, 0.5, "cm") 
-      ) 
-  }else{
-    plot <- plot +
-      ggplot2::theme(
-        # Then apply this hjust_value and move x axis downward
-        axis.title.x = ggplot2::element_text(hjust = 0.5,
-                                             margin = margin(t = 10.6, unit = "pt")
-        ),
-        axis.text.x = ggplot2::element_text(margin = margin(t = 10.3, unit = "pt"), size = 12),
-        legend.position = "none",
-        # Other settings
-        axis.ticks.x = ggplot2::element_line(),
-        axis.text.y = ggplot2::element_text(size = 12),
-        plot.margin = ggplot2::margin(0.5, 0.5, 0.5, 0.5, "cm")
-      )
-  }
-  
-  plot <- plot + ggplot2::coord_cartesian(clip = "off") # Prevent clipping
   return(plot)
 }
 
@@ -660,7 +583,7 @@ topicsPlot1 <- function(
     scale_size = FALSE,
     plot_topics_idx = NULL,
     p_alpha = 0.05,
-    highlight_topic_words = NULL,    
+    highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),    
     save_dir,
     figure_format = "svg",
     width = 10, 
@@ -869,6 +792,46 @@ colour_settings <- function(
 }
 
 
+#' General function to clean characters in a specified column
+#'
+#' @param data  
+#' @param column  
+#' @return default colors or specified user colours in the right order and structure.
+#' @noRd
+clean_characters <- function(
+    data, 
+    column) {
+  
+  # Replace "<" and ">" with "_"
+  data[[column]] <- gsub("[<>]", "_", data[[column]])
+  
+  # Replace "-" with "_-_"
+  data[[column]] <- gsub("-", "_-_", data[[column]])
+  
+  # Replace digits 0-9 with "_digit_"
+  data[[column]] <- gsub("([0-9])", "_\\1_", data[[column]])
+  
+  # Special case: Replace "0" with "_10_"
+  data[[column]] <- gsub("_0_", "_10_", data[[column]])
+  
+  return(data)
+}
+
+# Wrapper function for cleaning 'ngrams$ngrams$ngrams'
+clean_characters_for_plotting_grams <- function(ngrams) {
+  
+  ngrams$ngrams <- clean_characters(ngrams$ngrams, "ngrams")
+  
+  return(ngrams)
+}
+
+# Wrapper function for cleaning 'test$test$top_terms'
+clean_characters_for_plotting_test <- function(test) {
+  
+  test$test <- clean_characters(test$test, "top_terms")
+  
+  return(test)
+}
 
 
 #' Plot word clouds
@@ -982,7 +945,7 @@ topicsPlot <- function(
     ngrams_max = 30,
     ngram_select = "prevalence",
     color_scheme = "default",
-    highlight_topic_words = NULL,
+    highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
     scale_size = FALSE,
     plot_topics_idx = NULL,
     allowed_word_overlap = NULL,
@@ -1167,9 +1130,7 @@ topicsPlot <- function(
         ) %>%
         dplyr::slice_head(n = ngrams_max)
       
-      ngrams$ngrams$ngrams <- gsub("<", "_", ngrams$ngrams$ngrams)
-      ngrams$ngrams$ngrams <- gsub(">", "_", ngrams$ngrams$ngrams)
-      ngrams$ngrams$ngrams <- gsub("-", "_-_", ngrams$ngrams$ngrams)
+      ngrams <- clean_characters_for_plotting_grams(ngrams)
     }
     if(!is.null(test)){
       
@@ -1207,13 +1168,11 @@ topicsPlot <- function(
           }
         } %>%
         dplyr::slice_head(n = ngrams_max)
-      
+      negative_ngrams[34,]
       # Combine the positive and negative n-grams
       test$test <- dplyr::bind_rows(positive_ngrams, negative_ngrams)
 
-      test$test$top_terms <- gsub("<", "_",   test$test$top_terms)
-      test$test$top_terms <- gsub(">", "_",   test$test$top_terms)
-      test$test$top_terms <- gsub("-", "_-_", test$test$top_terms)
+      test <- clean_characters_for_plotting_test(test)
     }
   }
   
@@ -1276,6 +1235,7 @@ topicsPlot <- function(
     )
     popout <- popout1$popout
   }
+  
   
   
   if (!is.null(model) & !is.null(test)){
@@ -1385,44 +1345,3 @@ topicsPlot <- function(
   return(plot_list)
 }
 
-
-#' General function to clean characters in a specified column
-#'
-#' @param data  
-#' @param column  
-#' @return default colors or specified user colours in the right order and structure.
-#' @noRd
-clean_characters <- function(
-    data, 
-    column) {
-  
-  # Replace "<" and ">" with "_"
-  data[[column]] <- gsub("[<>]", "_", data[[column]])
-  
-  # Replace "-" with "_-_"
-  data[[column]] <- gsub("-", "_-_", data[[column]])
-  
-  # Replace digits 0-9 with "_digit_"
-  data[[column]] <- gsub("([0-9])", "_\\1_", data[[column]])
-  
-  # Special case: Replace "0" with "_10_"
-  data[[column]] <- gsub("_0_", "_10_", data[[column]])
-  
-  return(data)
-}
-
-# Wrapper function for cleaning 'ngrams$ngrams$ngrams'
-clean_characters_for_plotting_grams <- function(ngrams) {
-  
-  ngrams$ngrams <- clean_characters(ngrams$ngrams, "ngrams")
-  
-  return(ngrams)
-}
-
-# Wrapper function for cleaning 'test$test$top_terms'
-clean_characters_for_plotting_test <- function(test) {
-  
-  test$test <- clean_characters(test$test, "top_terms")
-  
-  return(test)
-}
