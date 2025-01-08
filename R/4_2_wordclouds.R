@@ -421,18 +421,30 @@ create_plots <- function(
             
             x_message = paste0("r_x = ", round(estimate_x,4))                    
           }
-          plot <- ggplot2::ggplot(target_topic, 
-                                  ggplot2::aes(label = Word, 
-                                               size = phi, 
-                                               color = color)) + #,x=estimate)) +
-            ggwordcloud::geom_text_wordcloud() +
-            ggplot2::scale_size_area(max_size = max_size) +
-            ggplot2::scale_colour_identity() + 
-            ggplot2::theme_minimal() +
-            #theme(plot.margin = margin(0,0,0,0, "cm")) +
-            #color_scheme + 
-            ggplot2::labs(x = x_message,
-                          y= y)
+          if (!is.null(highlight_topic_words) && is.vector(highlight_topic_words)){
+            plot <- ggplot2::ggplot(target_topic, 
+                                    ggplot2::aes(label = Word, 
+                                                 size = phi, 
+                                                 color = color))  # +,x=estimate)) +
+          }else{
+            plot <- ggplot2::ggplot(target_topic, 
+                                    ggplot2::aes(label = Word, 
+                                                 size = phi, 
+                                                 color = phi))
+          }
+          
+          plot <- plot + ggwordcloud::geom_text_wordcloud() + 
+            ggplot2::scale_size_area(max_size = max_size)
+          
+          if (!is.null(highlight_topic_words) && is.vector(highlight_topic_words)){
+            plot <- plot + ggplot2::scale_colour_identity() + 
+              ggplot2::theme_minimal() 
+          }else{
+            plot <- plot + ggplot2::theme_minimal() +
+              #theme(plot.margin = margin(0,0,0,0, "cm")) +
+              color_scheme
+          }
+          plot <- plot + ggplot2::labs(x = x_message, y = y)
         }
         
         if (!is.null(save_dir)){
@@ -685,10 +697,3 @@ create_plots <- function(
   return(plot_list)
   
 }
-
-
-
-
-
-
-
