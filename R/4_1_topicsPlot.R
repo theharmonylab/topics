@@ -965,7 +965,7 @@ clean_characters_for_plotting_test <- function(test) {
 #' 
 #' @param highlight_topic_words (named vector) Words to highlight in topics (e.g., negative words). 
 #'  The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"); note that it needs
-#'  to be hexa codes, so color naming such as "blue" does not work.
+#'  to be hexa codes, so color naming such as "blue" does not work. The default value is NULL.
 #' @param allowed_word_overlap (numeric) A filter function determining the maximum number of identical words in the topics to be plotted. 
 #' This filter removes topics within each "color group" and also include removing topics from the distribution and grid legends; 
 #' (Note that the adjustment for multiple comparison is taking place before these are removed; i.e., the adjusted p-values are not affected by this filter).   
@@ -1012,7 +1012,7 @@ topicsPlot <- function(
     ngrams_max = 30,
     ngram_select = "prevalence",
     color_scheme = "default",
-    highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
+    highlight_topic_words = NULL,
     scale_size = FALSE,
     plot_topics_idx = NULL,
     allowed_word_overlap = NULL,
@@ -1411,4 +1411,3 @@ topicsPlot <- function(
   }
   return(plot_list)
 }
-
