@@ -5,6 +5,11 @@
 - added `removal_mode`, `removal_rate_most` and `removal_rate_least` to `topicsGrams()`
 - `ngram_window = c(1)` now supported by `topicsDtm()`
 - legend added to `topicsPlot()` with ngrams
+- The `size` in the dot legend will be based on `prevalence` if scatter_legend_dot_size = "prevalence". And the popouts are not transparent.
+- Fix the issues of tick and label of the x-axis in 1-dim dot legend.
+- Able to save the pop-out grey topics in the target folder.
+- Fix the bugs of rounding in `generate_scatter_plot`.
+- The default value of `highlight_topic_words` is set to `NULL` in the `topicsPlot()` function.
 
 # topics 0.40.2
 - changed some behaviours in `topicsGrams()`, including removing `top_n` and treating 
