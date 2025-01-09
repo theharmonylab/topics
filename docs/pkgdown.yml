@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   extended_installation_guide: extended_installation_guide.html
   topics: topics.html
-last_built: 2025-01-07T15:01Z
+last_built: 2025-01-09T18:08Z
 urls:
   reference: https://r-topics.org/reference
   article: https://r-topics.org/articles
