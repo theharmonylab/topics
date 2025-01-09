@@ -347,6 +347,73 @@ generate_scatter_plot <- function(
     )
   }
   
+  # Determine maximum absolute x-value
+  x_values <- c(popout[[x_col]], background[[x_col]])
+  max_abs_x <- max(abs(x_values))
+  if (!is.null(y_col)){
+    y_values <- c(popout[[y_col]], background[[y_col]])
+    max_abs_y <- max(abs(y_values))
+  }
+  
+  # Create symmetrical breaks
+  # Find a suitable interval for the breaks. We'll try to get around 5 breaks.
+  n_breaks <- 5
+  interval <- max_abs_x/(n_breaks/2)
+  breaks_x <- seq(-ceiling(max_abs_x/interval)*interval, ceiling(max_abs_x/interval)*interval, by = interval)
+  if (!is.null(y_col)){
+    interval <- max_abs_y/(n_breaks/2)
+    breaks_y <- seq(-ceiling(max_abs_y/interval)*interval, ceiling(max_abs_y/interval)*interval, by = interval)
+  }
+  
+  # 3. Set symmetrical x/y-axis limits AND explicit breaks
+  plot <- plot + ggplot2::scale_x_continuous(limits = c(-max_abs_x, max_abs_x), breaks = breaks_x,
+                                             labels = function(x) sprintf("%.2f", x))
+  if (!is.null(y_col)){
+    plot <- plot + ggplot2::scale_y_continuous(limits = c(-max_abs_y, max_abs_y), breaks = breaks_y,
+                                               labels = function(x) sprintf("%.2f", x))
+  }
+  
+  if (is.null(y_col)){
+    plot <- plot + 
+      ggplot2::theme(
+        # Then apply this hjust_value and move x axis downward
+        axis.title.x = ggplot2::element_text(hjust = 0.5,
+                                             margin = margin(t = 21.3, unit = "pt")
+        ),
+        axis.text.x = ggplot2::element_text(margin = margin(t = 21, unit = "pt"), size = 12),
+        legend.position = "none",
+        # Remove all y-axis elements
+        axis.title.y = ggplot2::element_blank(),
+        axis.text.y = ggplot2::element_blank(),
+        axis.ticks.y = ggplot2::element_blank(),
+        axis.line.y = ggplot2::element_blank(),
+        axis.ticks.length.y = ggplot2::unit(0, "pt"), # Remove tick marks
+        panel.spacing.y= ggplot2::unit(0, "lines"),
+        panel.border = ggplot2::element_blank(),
+        panel.grid.major.y = ggplot2::element_blank(),
+        panel.grid.minor.y = ggplot2::element_blank(),
+        aspect.ratio = 1/20,
+        # Other settings
+        plot.margin = ggplot2::margin(0.5, 0.5, 1, 0.5, "cm") 
+      ) 
+  }else{
+    plot <- plot +
+      ggplot2::theme(
+        # Then apply this hjust_value and move x axis downward
+        axis.title.x = ggplot2::element_text(hjust = 0.5,
+                                             margin = margin(t = 10.6, unit = "pt")
+        ),
+        axis.text.x = ggplot2::element_text(margin = margin(t = 10.3, unit = "pt"), size = 12),
+        legend.position = "none",
+        # Other settings
+        axis.ticks.x = ggplot2::element_line(),
+        axis.text.y = ggplot2::element_text(size = 12),
+        plot.margin = ggplot2::margin(0.5, 0.5, 0.5, 0.5, "cm")
+      )
+  }
+  
+  plot <- plot + ggplot2::coord_cartesian(clip = "off") # Prevent clipping
+  
   return(plot)
 }
 
@@ -898,7 +965,7 @@ clean_characters_for_plotting_test <- function(test) {
 #' 
 #' @param highlight_topic_words (named vector) Words to highlight in topics (e.g., negative words). 
 #'  The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"); note that it needs
-#'  to be hexa codes, so color naming such as "blue" does not work.
+#'  to be hexa codes, so color naming such as "blue" does not work. The default value is NULL.
 #' @param allowed_word_overlap (numeric) A filter function determining the maximum number of identical words in the topics to be plotted. 
 #' This filter removes topics within each "color group" and also include removing topics from the distribution and grid legends; 
 #' (Note that the adjustment for multiple comparison is taking place before these are removed; i.e., the adjusted p-values are not affected by this filter).   
@@ -945,7 +1012,7 @@ topicsPlot <- function(
     ngrams_max = 30,
     ngram_select = "prevalence",
     color_scheme = "default",
-    highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
+    highlight_topic_words = NULL,
     scale_size = FALSE,
     plot_topics_idx = NULL,
     allowed_word_overlap = NULL,
@@ -1344,4 +1411,3 @@ topicsPlot <- function(
   }
   return(plot_list)
 }
-
