@@ -62,7 +62,9 @@ reference:
 - title: Example Data
   contents:
     - dep_wor_data
-
+- title: Help functions
+  contents:
+    - topicsScatterLegend
 
 articles:
 - title: Set-up

@@ -19,7 +19,7 @@ utils::globalVariables(c(
   # topicsTest
   "binomial", 
   
-  # topicsScatterLegendNew
+  # topicsScatterLegend
   "contains_only", 
   
   # General

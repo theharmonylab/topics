@@ -1,6 +1,7 @@
 
 
-#### topicsScatterLegendNew ####
+#'  Plot a distribution plot
+#'  
 #' @param bivariate_color_codes A vector of color codes specifying colors for 
 #' different categories in the scatter plot. 
 #' Default: c("#398CF9", "#60A1F7", "#5dc688", "#e07f6a", "#EAEAEA", "#40DD52", "#FF0000", "#EA7467", "#85DB8E").
@@ -26,8 +27,8 @@
 #' @importFrom ggplot2 ggplot geom_point scale_color_manual labs theme_minimal theme element_blank
 #' @importFrom rlang sym !!
 #' @importFrom dplyr pull select filter mutate anti_join summarise pull group_by group_modify ungroup
-#' @noRd
-topicsScatterLegendNew <- function(
+#' @export
+topicsScatterLegend <- function(
     bivariate_color_codes,
     filtered_test, 
     num_popout = 1, 
@@ -46,7 +47,7 @@ topicsScatterLegendNew <- function(
     width = 10, 
     height = 8, 
     seed = 42
-) {
+    ) {
   
   # Determine x, y, and color columns
   x_column <- names(filtered_test)[5]
@@ -82,7 +83,7 @@ topicsScatterLegendNew <- function(
     # Generating scatter plot based on specified popout criteria.\n
   } else {
     popout <- determine_popout_topics(
-      filtered_test, num_popout, way_popout_topics, y_column, x_column)
+      filtered_test, num_popout, way_popout_topics, y_col =  y_column, x_col = x_column)
     
     # Convert `color_categories` in `popout` back to integer
     popout <- popout %>%
@@ -218,10 +219,25 @@ determine_popout_topics <- function(
   }
   
   # Process each category based on the pop out criteria
+##  filtered_test %>%
+##    dplyr::filter(color_categories %in% names(valid_map)) %>%
+##    dplyr::group_by(color_categories) %>%
+##    dplyr::group_modify(~ {
+##      category <- .y$color_categories
+##      n_pop <- valid_map[[as.character(category)]]
+##      if (n_pop > 0) {
+##        .x %>%
+##          dplyr::slice_head(n = n_pop) # Select top `n_pop` rows
+##      } else {
+##        .x[0, ] # Return an empty tibble
+##      }
+##    }) %>%
+##    dplyr::ungroup()
+  
   filtered_test %>%
-    filter(color_categories %in% names(valid_map)) %>%
-    group_by(color_categories) %>%
-    group_modify(~ {
+    dplyr::filter(color_categories %in% names(valid_map)) %>%
+    dplyr::group_by(color_categories) %>%
+    dplyr::group_modify(~ {
       category <- .y$color_categories
       n_pop <- valid_map[[category]]
       if (n_pop > 0) {
@@ -1280,7 +1296,7 @@ topicsPlot <- function(
   
   if(is.null(ngrams) & !is.null(test$test)){
     
-    popout1 <- topicsScatterLegendNew(
+    popout1 <- topicsScatterLegend(
       bivariate_color_codes = bivariate_color_codes_f,
       filtered_test = test$test,
       num_popout = scatter_legend_n,
