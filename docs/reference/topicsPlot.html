@@ -52,7 +52,7 @@
 <span>  ngrams_max <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>  ngram_select <span class="op">=</span> <span class="st">"prevalence"</span>,</span>
 <span>  color_scheme <span class="op">=</span> <span class="st">"default"</span>,</span>
-<span>  highlight_topic_words <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>not <span class="op">=</span> <span class="st">"#2d00ff"</span>, never <span class="op">=</span> <span class="st">"#2d00ff"</span><span class="op">)</span>,</span>
+<span>  highlight_topic_words <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scale_size <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  plot_topics_idx <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  allowed_word_overlap <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -149,7 +149,7 @@ if you only use ngrams use "pmi", "frequency", or "proportion".</p></dd>
 <dt id="arg-highlight-topic-words">highlight_topic_words<a class="anchor" aria-label="anchor" href="#arg-highlight-topic-words"></a></dt>
 <dd><p>(named vector) Words to highlight in topics (e.g., negative words).
 The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"); note that it needs
-to be hexa codes, so color naming such as "blue" does not work.</p></dd>
+to be hexa codes, so color naming such as "blue" does not work. The default value is NULL.</p></dd>
 
 
 <dt id="arg-scale-size">scale_size<a class="anchor" aria-label="anchor" href="#arg-scale-size"></a></dt>
