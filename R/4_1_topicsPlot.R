@@ -87,14 +87,14 @@ topicsScatterLegend <- function(
     popout <- determine_popout_topics(
       filtered_test, num_popout, way_popout_topics, y_col =  y_column, x_col = x_column)
     
-    # Add the most prevalent topics
-    if (!is.null(most_prevalent_topics))popout <- bind_rows(popout, filtered_test %>% filter(topic %in% most_prevalent_topics))
-    
     # Convert `color_categories` in `popout` back to integer
     popout <- popout %>%
       mutate(color_categories = as.integer(color_categories))
     filtered_test <- filtered_test %>%
       mutate(color_categories = as.integer(color_categories))
+    
+    # Add the most prevalent topics
+    if (!is.null(most_prevalent_topics))popout <- bind_rows(popout, filtered_test %>% filter(topic %in% most_prevalent_topics))
     
     # Perform anti_join
     backgr_dots <- filtered_test %>% dplyr::anti_join(popout, by = colnames(filtered_test))
