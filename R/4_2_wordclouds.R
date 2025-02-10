@@ -500,8 +500,11 @@ create_plots <- function(
               )
             }
             
-            if (is.null(popout)){fileHead <- ''} else {
-                if (i %in% popout$topic){fileHead <- '0_scatter_emphasised_'}else{fileHead <- ''}
+            if (is.null(popout)){fileHead <- ''} else if(i %in% most_prevalent_topics){
+              fileHead <- '0_scatterlegend_prevalence_emphasised_'
+            }else if (i %in% popout$topic){
+              fileHead <- '0_scatterlegend_pvalue_emphasised_'}else{
+                fileHead <- ''
             }
             
             ggplot2::ggsave(paste0(save_dir,"/seed_", seed, 
