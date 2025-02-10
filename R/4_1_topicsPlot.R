@@ -88,7 +88,7 @@ topicsScatterLegend <- function(
       filtered_test, num_popout, way_popout_topics, y_col =  y_column, x_col = x_column)
     
     # Add the most prevalent topics
-    if (!is.null(most_prevalent_topics))popout <- filtered_test %>% filter(topic %in% most_prevalent_topics)
+    if (!is.null(most_prevalent_topics))popout <- bind_rows(popout, filtered_test %>% filter(topic %in% most_prevalent_topics))
     
     # Convert `color_categories` in `popout` back to integer
     popout <- popout %>%
@@ -1437,5 +1437,5 @@ topicsPlot <- function(
     msg <- "The grid plot legends are saved in the save_dir."
     message(colourise(msg, "green"))
   }
-  return(list(plot_list,arranged_topics))
+  return(plot_list)
 }
