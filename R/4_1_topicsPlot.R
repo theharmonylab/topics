@@ -1193,9 +1193,10 @@ topicsPlot <- function(
       )
    # }
     
+    plot_topics_idx <- arranged_topics$topic
     most_prevalent_topics <- arranged_topics$topic
     
-  }
+  }else{most_prevalent_topics <- NULL}
   
   
   #### NGRAM filtering and fixing tags (e.g., <place>) in ngrams because of error when plotting #### 
