@@ -265,6 +265,7 @@ separate_neg_words <- function(
 #' @param save_dir (string) save plots in specified directory, if left blank, plots is not saved,
 #' thus save_dir is necessary.
 #' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
+#' @param most_prevalent_topics (vector) String vectors of most prevalent topics to popout.
 #' @param seed (int) seed is needed for saving the plots in the correct directory
 #' @importFrom ggwordcloud geom_text_wordcloud
 #' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient scale_colour_identity
@@ -290,6 +291,7 @@ create_plots <- function(
     width = 10,
     height = 8,
     max_size = 10,
+    most_prevalent_topics = NULL,
     seed = 42){
   
   plot_list <- list()
@@ -371,7 +373,7 @@ create_plots <- function(
       }
       
       #
-      if (!is.nan(p_adjusted) & p_adjusted < p_alpha){
+      if ((!is.nan(p_adjusted) & p_adjusted < p_alpha) || i %in% most_prevalent_topics){
         
         #estimate <- test[i,][[grep(estimate_col, colnames(test), value=TRUE)]]# $PHQtot.estimate
         #p_adjusted <- test[i,][[grep("p_adjusted", colnames(test), value=TRUE)]] # $PHQtot.p_adjustedfdr
