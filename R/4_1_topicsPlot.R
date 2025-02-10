@@ -23,6 +23,7 @@
 #' @param scatter_bg_dot_size Size of the dots for background topics in the scatter legend. Default: 9.
 #' @param width Width of the saved scatter plot in inches. Default: 10.
 #' @param height Height of the saved scatter plot in inches. Default: 8.
+#' @param most_prevalent_topics String vectors of most prevalent topics to popout.
 #' @param seed Seed for reproducibility, ensuring consistent plot generation. Default: 42.
 #' @importFrom ggplot2 ggplot geom_point scale_color_manual labs theme_minimal theme element_blank
 #' @importFrom rlang sym !!
@@ -46,6 +47,7 @@ topicsScatterLegend <- function(
     scatter_bg_dot_size = 9, 
     width = 10, 
     height = 8, 
+    most_prevalent_topics = NULL,
     seed = 42
     ) {
   
@@ -84,6 +86,9 @@ topicsScatterLegend <- function(
   } else {
     popout <- determine_popout_topics(
       filtered_test, num_popout, way_popout_topics, y_col =  y_column, x_col = x_column)
+    
+    # Add the most prevalent topics
+    if (!is.null(most_prevalent_topics))popout <- filtered_test %>% filter(topic %in% most_prevalent_topics)
     
     # Convert `color_categories` in `popout` back to integer
     popout <- popout %>%
@@ -652,6 +657,7 @@ topicsGridLegend <- function(
 #' @param width (integer) The width of the topic (units = "in"). 
 #' @param height (integer) The width of the topic (units = "in").
 #' @param max_size (integer) The max size of the words.
+#' @param most_prevalent_topics (vector) String vectors of most prevalent topics to popout.
 #' @param seed (integer) The seed to set for reproducibility
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @noRd
@@ -672,6 +678,7 @@ topicsPlot1 <- function(
     width = 10, 
     height = 8,
     max_size = 10, 
+    most_prevalent_topics = NULL,
     seed = 42){
   
   df_list = NULL
@@ -740,6 +747,7 @@ topicsPlot1 <- function(
     width = width, 
     height = height,
     max_size = max_size,
+    most_prevalent_topics = most_prevalent_topics,
     seed = seed)
   
   return(plot)
@@ -995,7 +1003,7 @@ clean_characters_for_plotting_test <- function(test) {
 #' @param height (integer) The width of the topic (units = "in").
 #' @param max_size (integer) The maximum size of the words.
 #' @param seed (integer) The seed to set for reproducibility.
-#' @param scatter_legend_dot_size (integer) The size of dots in the scatter legend.
+#' @param scatter_legend_dot_size (integer) The size of dots in the scatter legend. If set to "prevalence", the size will change accordingly.
 #' @param scatter_legend_bg_dot_size (integer) The size of background dots in the scatter legend.
 #' @param scatter_legend_n (numeric or vector) A vector determining the number of dots to emphasize in each quadrant of the scatter legend.
 #' For example: c(1,1,1,1,0,1,1,1,1) result in one dot in each quadrant except for the middle quadrant. 
@@ -1185,7 +1193,7 @@ topicsPlot <- function(
       )
    # }
     
-    plot_topics_idx <- arranged_topics$topic
+    most_prevalent_topics <- arranged_topics$topic
     
   }
   
@@ -1286,6 +1294,7 @@ topicsPlot <- function(
       width = width, 
       height = height,
       max_size = max_size, 
+      most_prevalent_topics,
       seed = seed
     )
   }
@@ -1314,6 +1323,7 @@ topicsPlot <- function(
       figure_format = figure_format,
       # width = 10, 
       # height = 8,
+      most_prevalent_topics = most_prevalent_topics,
       seed = seed
     )
     popout <- popout1$popout
@@ -1359,6 +1369,7 @@ topicsPlot <- function(
           width = width, 
           height = height,
           max_size = max_size, 
+          most_prevalent_topics = most_prevalent_topics,
           seed = seed
         )
         plot_list[[i]] <- plot
@@ -1396,6 +1407,7 @@ topicsPlot <- function(
           width = width, 
           height = height,
           max_size = max_size, 
+          most_prevalent_topics = most_prevalent_topics,
           seed = seed
         )
         plot_list[[k]] <- plot
@@ -1425,5 +1437,5 @@ topicsPlot <- function(
     msg <- "The grid plot legends are saved in the save_dir."
     message(colourise(msg, "green"))
   }
-  return(plot_list)
+  return(list(plot_list,arranged_topics))
 }
