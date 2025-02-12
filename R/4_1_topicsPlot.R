@@ -267,100 +267,6 @@ determine_popout_topics <- function(
     dplyr::ungroup()
 }
 
-
-# determine_popout_topics <- function(
-#     filtered_test, 
-#     num_popout, 
-#     way_popout_topics, 
-#     y_col = NULL, 
-#     x_col) {
-#   # Ensure `color_categories` exists
-#   if (!"color_categories" %in% colnames(filtered_test)) {
-#     stop("The `filtered_test` dataset must include a `color_categories` column.")
-#   }
-#   
-#   # Convert `color_categories` to character for consistent comparison
-#   filtered_test <- filtered_test %>%
-#     mutate(color_categories = as.character(color_categories))
-#   
-#   # Check for NA or unexpected values
-#   if (any(is.na(filtered_test$color_categories))) {
-#     stop("The `color_categories` column contains missing (NA) values.")
-#   }
-#   
-#   # Ensure `num_popout` has the correct number of values
-#   if (!(length(num_popout) %in% c(3, 9))) {
-#     stop("`num_popout` must have exactly 3 or 9 values.")
-#   }
-#   
-#   # Map `num_popout` to corresponding categories
-#   legend_map_num_pop <- if (length(num_popout) == 9) {
-#     setNames(as.integer(num_popout), as.character(1:9))
-#   } else {
-#     setNames(as.integer(num_popout), as.character(1:3))
-#   }
-#   
-#   # Filter for categories present in `filtered_test`
-#   existing_categories <- unique(filtered_test$color_categories)
-#   valid_map <- legend_map_num_pop[names(legend_map_num_pop) %in% existing_categories]
-#   
-#   if (length(valid_map) == 0) {
-#     stop("No valid `color_categories` in `filtered_test` match `num_popout` mapping.")
-#   }
-#   
-#   # Helper function to select rows based on `way_popout_topics`
-#   select_rows <- function(data, n_pop) {
-#     if (way_popout_topics == "max_y" && !is.null(y_col)) {
-#       return(dplyr::slice_max(data, order_by = abs(!!ggplot2::sym(y_col)), n = n_pop, with_ties = FALSE))
-#     }
-#     if (way_popout_topics == "max_x") {
-#       return(dplyr::slice_max(data, order_by = abs(!!ggplot2::sym(x_col)), n = n_pop, with_ties = FALSE))
-#     }
-#     if (way_popout_topics == "mean") {
-#       if (!is.null(y_col)) {
-#         data <- data %>%
-#           mutate(mean_value = rowMeans(cbind(abs(!!ggplot2::sym(x_col)), abs(!!ggplot2::sym(y_col)))))
-#       } else {
-#         data <- data %>%
-#           mutate(mean_value = abs(!!ggplot2::sym(x_col)))
-#       }
-#       return(dplyr::slice_max(data, order_by = mean_value, n = n_pop, with_ties = FALSE))
-#     }
-#     stop("Invalid `way_popout_topics`. Supported values are 'max_y', 'max_x', or 'mean'.")
-#   }
-#   
-#   # Process each category based on the pop out criteria
-#   #  filtered_test %>%
-#   #    dplyr::filter(color_categories %in% names(valid_map)) %>%
-#   #    dplyr::group_by(color_categories) %>%
-#   #    dplyr::group_modify(~ {
-#   #      category <- .y$color_categories
-#   #      n_pop <- valid_map[[as.character(category)]]
-#   #      if (n_pop > 0) {
-#   #        .x %>%
-#   #          dplyr::slice_head(n = n_pop) # Select top `n_pop` rows
-#   #      } else {
-#   #        .x[0, ] # Return an empty tibble
-#   #      }
-#   #    }) %>%
-#   #    dplyr::ungroup()
-#   
-#   filtered_test %>%
-#     dplyr::filter(color_categories %in% names(valid_map)) %>%
-#     dplyr::group_by(color_categories) %>%
-#     dplyr::group_modify(~ {
-#       category <- .y$color_categories
-#       n_pop <- valid_map[[category]]
-#       if (n_pop > 0) {
-#         select_rows(.x, n_pop)
-#       } else {
-#         .x[0, ]  # Return empty tibble for categories with 0 `n_pop`
-#       }
-#     }) %>%
-#     ungroup()
-# }
-
-
 #' @param popout A data frame containing the data points to be highlighted ("pop-out") in the scatter plot.
 #' @param background A data frame containing the background data points for the scatter plot.
 #'                   Can be empty if no background points are needed.
@@ -1106,7 +1012,7 @@ clean_characters_for_plotting_test <- function(test) {
 #' @param height (integer) The width of the topic (units = "in").
 #' @param max_size (integer) The maximum size of the words.
 #' @param seed (integer) The seed to set for reproducibility.
-#' @param scatter_legend_dot_size (integer) The size of dots in the scatter legend.
+#' @param scatter_legend_dot_size (integer) The size of dots in the scatter legend. If set to "prevalence", the size will change accordingly.
 #' @param scatter_legend_bg_dot_size (integer) The size of background dots in the scatter legend.
 #' @param scatter_legend_n (numeric or vector) A vector determining the number of dots to emphasize in each quadrant of the scatter legend.
 #' For example: c(1,1,1,1,0,1,1,1,1) result in one dot in each quadrant except for the middle quadrant. 
