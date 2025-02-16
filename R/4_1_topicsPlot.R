@@ -347,7 +347,7 @@ generate_scatter_plot <- function(
   # Add background points only if background is not empty
   if (nrow(background) > 0) {
     plot <- plot +
-      ggplot2::geom_point(data = background, bg_aes, size = bg_size, alpha = 0.3)
+      ggplot2::geom_point(data = background, bg_aes, size = bg_size, alpha = 0.2)
   }
   
   # Add popout points
@@ -355,7 +355,7 @@ generate_scatter_plot <- function(
     ggplot2::geom_point(data = popout, 
                         popout_aes, 
                         size = popout_size, 
-                        alpha = 0.8) +
+                        alpha = 1.0) +
     ggplot2::scale_color_manual(values = bivariate_color_codes) +
     ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
     ggplot2::theme_minimal() +
