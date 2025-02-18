@@ -133,7 +133,7 @@ This filter removes topics within each "color group" and also include removing t
 
 \item{seed}{(integer) The seed to set for reproducibility.}
 
-\item{scatter_legend_dot_size}{(integer) The size of dots in the scatter legend.}
+\item{scatter_legend_dot_size}{(integer) The size of dots in the scatter legend. If set to "prevalence", the size will change accordingly.}
 
 \item{scatter_legend_bg_dot_size}{(integer) The size of background dots in the scatter legend.}
 

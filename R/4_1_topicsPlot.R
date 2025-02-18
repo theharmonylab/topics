@@ -97,7 +97,7 @@ topicsScatterLegend <- function(
  
   if (scatter_popout_dot_size == "prevalence"){
       popout <- popout %>%
-          mutate(dot_size = 15 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (35 - 15))
+          mutate(dot_size = 13 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (23 - 13))
       scatter_popout_dot_size <- popout$`dot_size`
   }else{scatter_popout_dot_size <- scatter_popout_dot_size}
     
@@ -162,7 +162,8 @@ determine_popout_topics <- function(
     num_popout, 
     way_popout_topics, 
     y_col = NULL, 
-    x_col) {
+    x_col
+) {
   # Ensure `color_categories` exists
   if (!"color_categories" %in% colnames(filtered_test)) {
     stop("The `filtered_test` dataset must include a `color_categories` column.")
@@ -170,19 +171,19 @@ determine_popout_topics <- function(
   
   # Convert `color_categories` to character for consistent comparison
   filtered_test <- filtered_test %>%
-    mutate(color_categories = as.character(color_categories))
+    dplyr::mutate(color_categories = as.character(color_categories))
   
   # Check for NA or unexpected values
   if (any(is.na(filtered_test$color_categories))) {
     stop("The `color_categories` column contains missing (NA) values.")
   }
   
-  # Ensure `num_popout` has the correct number of values
+  # Ensure `num_popout` has the correct number of values (either 3 or 9)
   if (!(length(num_popout) %in% c(3, 9))) {
     stop("`num_popout` must have exactly 3 or 9 values.")
   }
   
-  # Map `num_popout` to corresponding categories
+  # Map `num_popout` to corresponding categories (names will be "1", "2", etc.)
   legend_map_num_pop <- if (length(num_popout) == 9) {
     setNames(as.integer(num_popout), as.character(1:9))
   } else {
@@ -197,7 +198,7 @@ determine_popout_topics <- function(
     stop("No valid `color_categories` in `filtered_test` match `num_popout` mapping.")
   }
   
-  # Helper function to select rows based on `way_popout_topics`
+  # Define helper function for max-based selection (existing behavior)
   select_rows <- function(data, n_pop) {
     if (way_popout_topics == "max_y" && !is.null(y_col)) {
       return(dplyr::slice_max(data, order_by = abs(!!ggplot2::sym(y_col)), n = n_pop, with_ties = FALSE))
@@ -208,32 +209,43 @@ determine_popout_topics <- function(
     if (way_popout_topics == "mean") {
       if (!is.null(y_col)) {
         data <- data %>%
-          mutate(mean_value = rowMeans(cbind(abs(!!ggplot2::sym(x_col)), abs(!!ggplot2::sym(y_col)))))
+          dplyr::mutate(mean_value = rowMeans(cbind(abs(!!ggplot2::sym(x_col)), abs(!!ggplot2::sym(y_col)))))
       } else {
         data <- data %>%
-          mutate(mean_value = abs(!!ggplot2::sym(x_col)))
+          dplyr::mutate(mean_value = abs(!!ggplot2::sym(x_col)))
       }
       return(dplyr::slice_max(data, order_by = mean_value, n = n_pop, with_ties = FALSE))
     }
     stop("Invalid `way_popout_topics`. Supported values are 'max_y', 'max_x', or 'mean'.")
   }
   
-  # Process each category based on the pop out criteria
-##  filtered_test %>%
-##    dplyr::filter(color_categories %in% names(valid_map)) %>%
-##    dplyr::group_by(color_categories) %>%
-##    dplyr::group_modify(~ {
-##      category <- .y$color_categories
-##      n_pop <- valid_map[[as.character(category)]]
-##      if (n_pop > 0) {
-##        .x %>%
-##          dplyr::slice_head(n = n_pop) # Select top `n_pop` rows
-##      } else {
-##        .x[0, ] # Return an empty tibble
-##      }
-##    }) %>%
-##    dplyr::ungroup()
+  # Define helper function for min-based selection (rows closest to 0)
+  select_rows_min <- function(data, n_pop) {
+    if (way_popout_topics == "max_y" && !is.null(y_col)) {
+      return(dplyr::slice_min(data, order_by = abs(!!ggplot2::sym(y_col)), n = n_pop, with_ties = FALSE))
+    }
+    if (way_popout_topics == "max_x") {
+      return(dplyr::slice_min(data, order_by = abs(!!ggplot2::sym(x_col)), n = n_pop, with_ties = FALSE))
+    }
+    if (way_popout_topics == "mean") {
+      if (!is.null(y_col)) {
+        data <- data %>%
+          dplyr::mutate(mean_value = rowMeans(cbind(abs(!!ggplot2::sym(x_col)), abs(!!ggplot2::sym(y_col)))))
+      } else {
+        data <- data %>%
+          dplyr::mutate(mean_value = abs(!!ggplot2::sym(x_col)))
+      }
+      return(dplyr::slice_min(data, order_by = mean_value, n = n_pop, with_ties = FALSE))
+    }
+    stop("Invalid `way_popout_topics`. Supported values are 'max_y', 'max_x', or 'mean'.")
+  }
   
+  # Determine which color category should use the min-based selection:
+  # - For a 9-element vector, the popout category is "5".
+  # - For a 3-element vector, the popout category is "2".
+  popout_category <- if (length(num_popout) == 9) "5" else "2"
+  
+  # Process each category using group_modify:
   filtered_test %>%
     dplyr::filter(color_categories %in% names(valid_map)) %>%
     dplyr::group_by(color_categories) %>%
@@ -241,14 +253,19 @@ determine_popout_topics <- function(
       category <- .y$color_categories
       n_pop <- valid_map[[category]]
       if (n_pop > 0) {
-        select_rows(.x, n_pop)
+        if (category == popout_category) {
+          # For the designated popout group (only category "5" or "2"), use min-based selection.
+          select_rows_min(.x, n_pop)
+        } else {
+          # For all other groups, use the existing max-based selection.
+          select_rows(.x, n_pop)
+        }
       } else {
-        .x[0, ]  # Return empty tibble for categories with 0 `n_pop`
+        .x[0, ]  # Return an empty tibble for groups with 0 in the mapping.
       }
     }) %>%
-    ungroup()
+    dplyr::ungroup()
 }
-
 
 #' @param popout A data frame containing the data points to be highlighted ("pop-out") in the scatter plot.
 #' @param background A data frame containing the background data points for the scatter plot.
@@ -330,7 +347,7 @@ generate_scatter_plot <- function(
   # Add background points only if background is not empty
   if (nrow(background) > 0) {
     plot <- plot +
-      ggplot2::geom_point(data = background, bg_aes, size = bg_size, alpha = 0.3)
+      ggplot2::geom_point(data = background, bg_aes, size = bg_size, alpha = 0.2)
   }
   
   # Add popout points
@@ -338,7 +355,7 @@ generate_scatter_plot <- function(
     ggplot2::geom_point(data = popout, 
                         popout_aes, 
                         size = popout_size, 
-                        alpha = 0.8) +
+                        alpha = 1.0) +
     ggplot2::scale_color_manual(values = bivariate_color_codes) +
     ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
     ggplot2::theme_minimal() +
@@ -995,7 +1012,7 @@ clean_characters_for_plotting_test <- function(test) {
 #' @param height (integer) The width of the topic (units = "in").
 #' @param max_size (integer) The maximum size of the words.
 #' @param seed (integer) The seed to set for reproducibility.
-#' @param scatter_legend_dot_size (integer) The size of dots in the scatter legend.
+#' @param scatter_legend_dot_size (integer) The size of dots in the scatter legend. If set to "prevalence", the size will change accordingly.
 #' @param scatter_legend_bg_dot_size (integer) The size of background dots in the scatter legend.
 #' @param scatter_legend_n (numeric or vector) A vector determining the number of dots to emphasize in each quadrant of the scatter legend.
 #' For example: c(1,1,1,1,0,1,1,1,1) result in one dot in each quadrant except for the middle quadrant. 
