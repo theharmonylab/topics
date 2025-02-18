@@ -197,7 +197,8 @@ test_that("topicsPlot WITH test", {
     figure_format = "png",
     seed = 11, 
     allowed_word_overlap = 3,
-    save_dir = save_dir_temp)
+    save_dir = save_dir_temp, 
+    grid_legend_number_color = "white")
   
   topics4$legend
   topics4$distribution
