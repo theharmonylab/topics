@@ -36,7 +36,7 @@ topicsPlot(
   grid_legend_title_color = "black",
   grid_legend_x_axes_label = "legend_x_axes_label",
   grid_legend_y_axes_label = "legend_y_axes_label",
-  grid_legend_number_color = "black",
+  grid_legend_number_color = "white",
   grid_legend_number_size = 15
 )
 }
