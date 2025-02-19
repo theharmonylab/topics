@@ -435,8 +435,8 @@ topicsTest <- function(
   if (!is.null(y_variable)){
     # create the x.y.word.category
     topic_loadings_all[[3]] <- list()
-    topic_loadings_all[[3]]$test <- dplyr::left_join(topic_loadings_all[[1]][[1]][,1:8], 
-                                                     topic_loadings_all[[2]][[1]][,1:8],
+    topic_loadings_all[[3]]$test <- dplyr::left_join(topic_loadings_all[[1]][[1]],#[,1:8], 
+                                                     topic_loadings_all[[2]][[1]],#[,1:8],
                                                      by = c("topic", "top_terms", 
                                                             "prevalence", "coherence"))
     
@@ -451,7 +451,7 @@ topicsTest <- function(
       
       topic_loadings_all[[2]] <- list()
       topic_loadings_all[[3]] <- list()
-      topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]][,1:8]
+      topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]]#[,1:8]
       topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
       topic_loadings_all[[3]]$x_y_axis <- topic_loadings_all[[1]]$x_y_axis
       
