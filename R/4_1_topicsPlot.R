@@ -97,7 +97,7 @@ topicsScatterLegend <- function(
  
   if (scatter_popout_dot_size == "prevalence"){
       popout <- popout %>%
-        dplyr::mutate(dot_size = 13 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (23 - 13))
+        dplyr::mutate(dot_size = 9 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (15 - 9))
       scatter_popout_dot_size <- popout$`dot_size`
   }else{scatter_popout_dot_size <- scatter_popout_dot_size}
     
