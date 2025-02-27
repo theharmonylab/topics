@@ -311,7 +311,7 @@ create_plots <- function(
     for (i in paste0('t_', plot_topics_idx)){ 
       #for (i in 1:length(df_list)){
       #view(df_list[[i]])
-      if (test_type == "linear_regression"){
+      if (test_type == "linear_regression" | test_type == "logistic_regression"){
         if (grid1 == ""){
           colNo.estimate <- grep(paste0(cor_var, '.estimate'),colnames(test))
           colNo.p_adjusted <- grep(paste0(cor_var, '.p_adjusted'),colnames(test))
@@ -335,11 +335,10 @@ create_plots <- function(
       } else if (test_type == "t-test"){
         estimate_col <- "cohens d" # probably doesn't work yet
         
-      } else if (test_type == "logistic_regression"){
-        estimate_col <- "estimate"
-        p_adjusted_col <- "p_adjusted"
-        
-      }
+      } #else if (test_type == "logistic_regression"){
+        #estimate_col <- "estimate"
+        #p_adjusted_col <- "p_adjusted"
+      #}
       if (grid1 == ""){
         estimate <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[estimate_col]] # $PHQtot.estimate
         p_adjusted <- dplyr::filter(tibble::as_tibble(test,.name_repair='minimal'), topic==i)[[p_adjusted_col]] # $PHQtot.p_adjustedfdr

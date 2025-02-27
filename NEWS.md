@@ -1,6 +1,7 @@
 # text (development version)
 
 # topics 0.40.5
+- Fixing bug when plotting test based on `logistic_regression`. 
 
 # topics 0.40.3 - 0.40.4 
 - added `occurance_rate` to `topicsGrams()`

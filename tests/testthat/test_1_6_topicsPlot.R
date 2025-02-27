@@ -177,7 +177,7 @@ test_that("topicsPlot WITH test", {
     num_top_words = 20, 
     num_iterations = 100)
   
-  #### Plots one-dimensional plot ####
+  #### Plots one-dimensional regression type plot ####
   preds <- topics::topicsPreds(
     model = model, 
     data = dep_wor_data$Deptext)
@@ -234,6 +234,47 @@ test_that("topicsPlot WITH test", {
   
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_11/wordclouds/grid_legend_corvar_Age.png")))
+  
+  
+  
+  #### Plots one-dimensional LOGISTIC regression type plot ####
+  preds <- topics::topicsPreds(
+    model = model, 
+    data = dep_wor_data$Deptext)
+  
+  test1 <- topics::topicsTest(
+    model = model,
+    preds = preds,
+    data = dep_wor_data,
+    x_variable = "Gender")
+  
+  save_dir_temp <- tempdir()
+  
+  topics4_Logistic <- topicsPlot(
+    model = model, 
+    test = test1, 
+    p_alpha = .1,
+    figure_format = "png",
+    seed = 11)
+  
+  topics4_Logistic$legend
+  topics4_Logistic$distribution
+  
+  topics4_legend_Logistic <- function() {
+    topics4_Logistic$legend
+  }
+  expect_doppelganger("topics4_legend_Logistic", topics4_legend_Logistic())
+  
+  topics4_distribution_Logistic <- function() {
+    topics4_Logistic$distribution
+  }
+  expect_doppelganger("topics4_distribution_Logistic", topics4_distribution_Logistic())
+  
+#  topics4square2t_1 <- function() {
+#    topics4_Logistic$square2$t_1
+#  }
+#  expect_doppelganger("topics4square2t_1", topics4square2t_1())
+  
   
   ###########################
   #### 2-Dimension  #########

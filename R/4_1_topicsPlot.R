@@ -87,9 +87,9 @@ topicsScatterLegend <- function(
     
     # Convert `color_categories` in `popout` back to integer
     popout <- popout %>%
-      mutate(color_categories = as.integer(color_categories))
+      dplyr::mutate(color_categories = as.integer(color_categories))
     filtered_test <- filtered_test %>%
-      mutate(color_categories = as.integer(color_categories))
+      dplyr::mutate(color_categories = as.integer(color_categories))
     
     # Perform anti_join
     backgr_dots <- filtered_test %>% dplyr::anti_join(popout, by = colnames(filtered_test))
@@ -97,7 +97,7 @@ topicsScatterLegend <- function(
  
   if (scatter_popout_dot_size == "prevalence"){
       popout <- popout %>%
-          mutate(dot_size = 13 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (23 - 13))
+        dplyr::mutate(dot_size = 13 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (23 - 13))
       scatter_popout_dot_size <- popout$`dot_size`
   }else{scatter_popout_dot_size <- scatter_popout_dot_size}
     
@@ -411,9 +411,9 @@ generate_scatter_plot <- function(
       ggplot2::theme(
         # Then apply this hjust_value and move x axis downward
         axis.title.x = ggplot2::element_text(hjust = 0.5,
-                                             margin = margin(t = 21.3, unit = "pt")
+                                             margin = ggplot2::margin(t = 21.3, unit = "pt")
         ),
-        axis.text.x = ggplot2::element_text(margin = margin(t = 21, unit = "pt"), size = 12),
+        axis.text.x = ggplot2::element_text(margin = ggplot2::margin(t = 21, unit = "pt"), size = 12),
         legend.position = "none",
         # Remove all y-axis elements
         axis.title.y = ggplot2::element_blank(),
@@ -434,9 +434,9 @@ generate_scatter_plot <- function(
       ggplot2::theme(
         # Then apply this hjust_value and move x axis downward
         axis.title.x = ggplot2::element_text(hjust = 0.5,
-                                             margin = margin(t = 10.6, unit = "pt")
+                                             margin = ggplot2::margin(t = 10.6, unit = "pt")
         ),
-        axis.text.x = ggplot2::element_text(margin = margin(t = 10.3, unit = "pt"), size = 12),
+        axis.text.x = ggplot2::element_text(margin = ggplot2::margin(t = 10.3, unit = "pt"), size = 12),
         legend.position = "none",
         # Other settings
         axis.ticks.x = ggplot2::element_line(),
@@ -1054,11 +1054,11 @@ topicsPlot <- function(
     figure_format = "svg",
     width = 6,
     height = 5,
-    max_size = 10, 
+    max_size = 10,
     seed = 42,
     scatter_legend_dot_size = 15,
     scatter_legend_bg_dot_size = 9,
-    scatter_legend_n = c(1,1,1,1,0,1,1,1,1), 
+    scatter_legend_n = c(1,1,1,1,0,1,1,1,1),
     scatter_legend_method = c("mean"),
     scatter_legend_specified_topics = NULL,
     scatter_legend_topic_n = FALSE,
