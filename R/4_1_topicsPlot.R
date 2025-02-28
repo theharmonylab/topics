@@ -1447,5 +1447,5 @@ topicsPlot <- function(
     msg <- "The grid plot legends are saved in the save_dir."
     message(colourise(msg, "green"))
   }
-  return(list(plot_list, popout1))
+  return(plot_list)
 }
