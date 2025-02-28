@@ -360,7 +360,7 @@ generate_scatter_plot <- function(
     ggplot2::geom_point(data = popout, 
                         popout_aes, 
                         size = popout_size, 
-                        alpha = 1.0) +
+                        alpha = 0.8) +
     ggplot2::scale_color_manual(values = bivariate_color_codes) +
     ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
     ggplot2::theme_minimal() +
