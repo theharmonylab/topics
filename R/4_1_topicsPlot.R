@@ -97,8 +97,13 @@ topicsScatterLegend <- function(
  
   if (scatter_popout_dot_size == "prevalence"){
       popout <- popout %>%
-        dplyr::mutate(dot_size = 2 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (10 - 2))
+        dplyr::mutate(dot_size = 3 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (8 - 3))
       scatter_popout_dot_size <- popout$`dot_size`
+      
+      backgr_dots <- backgr_dots %>%
+        dplyr::mutate(bg_dot_size = 2 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (6 - 2))
+      scatter_bg_dot_size <- backgr_dots$`bg_dot_size`
+      
   }else{scatter_popout_dot_size <- scatter_popout_dot_size}
     
   # Generate scatter plot
@@ -1329,8 +1334,8 @@ topicsPlot <- function(
       scatter_show_axis_values = scatter_show_axis_values,
       save_dir = save_dir,
       figure_format = figure_format,
-      # width = 10, 
-      # height = 8,
+      width = 15,
+      height = 15*9/16,
       seed = seed
     )
     popout <- popout1$popout
