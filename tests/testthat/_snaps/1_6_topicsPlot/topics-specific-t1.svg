@@ -88,8 +88,8 @@
 <circle cx='498.07' cy='483.61' r='9.96' style='stroke-width: 0.71; stroke: #85DB8E; stroke-opacity: 0.20; fill: #85DB8E; fill-opacity: 0.20;' />
 <circle cx='359.46' cy='211.63' r='9.96' style='stroke-width: 0.71; stroke: #398CF9; stroke-opacity: 0.20; fill: #398CF9; fill-opacity: 0.20;' />
 <circle cx='396.10' cy='302.33' r='9.96' style='stroke-width: 0.71; stroke: #85DB8E; stroke-opacity: 0.20; fill: #85DB8E; fill-opacity: 0.20;' />
-<circle cx='413.18' cy='264.50' r='16.36' style='stroke-width: 0.71; stroke: #5DC688; fill: #5DC688;' />
-<circle cx='179.33' cy='330.16' r='16.36' style='stroke-width: 0.71; stroke: #FF0000; fill: #FF0000;' />
+<circle cx='413.18' cy='264.50' r='16.36' style='stroke-width: 0.71; stroke: #5DC688; stroke-opacity: 0.80; fill: #5DC688; fill-opacity: 0.80;' />
+<circle cx='179.33' cy='330.16' r='16.36' style='stroke-width: 0.71; stroke: #FF0000; stroke-opacity: 0.80; fill: #FF0000; fill-opacity: 0.80;' />
 <text x='54.12' y='455.49' text-anchor='end' style='font-size: 12.00px; fill: #4D4D4D; font-family: sans;' textLength='27.35px' lengthAdjust='spacingAndGlyphs'>-0.12</text>
 <text x='54.12' y='367.10' text-anchor='end' style='font-size: 12.00px; fill: #4D4D4D; font-family: sans;' textLength='27.35px' lengthAdjust='spacingAndGlyphs'>-0.06</text>
 <text x='54.12' y='278.70' text-anchor='end' style='font-size: 12.00px; fill: #4D4D4D; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.00</text>
