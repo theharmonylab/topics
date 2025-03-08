@@ -26,6 +26,8 @@ topicsPlot(
   seed = 42,
   scatter_legend_dot_size = 15,
   scatter_legend_bg_dot_size = 9,
+  scatter_legend_dots_alpha = 0.8,
+  scatter_legend_bg_dots_alpha = 0.2,
   scatter_legend_n = c(1, 1, 1, 1, 0, 1, 1, 1, 1),
   scatter_legend_method = c("mean"),
   scatter_legend_specified_topics = NULL,
@@ -136,6 +138,10 @@ This filter removes topics within each "color group" and also include removing t
 \item{scatter_legend_dot_size}{(integer) The size of dots in the scatter legend. If set to "prevalence", the size will change accordingly.}
 
 \item{scatter_legend_bg_dot_size}{(integer) The size of background dots in the scatter legend.}
+
+\item{scatter_legend_dots_alpha}{(numeric) The transparency alphe level of the dots.}
+
+\item{scatter_legend_bg_dots_alpha}{(numeric) The transparency alphe level of the background dots.}
 
 \item{scatter_legend_n}{(numeric or vector) A vector determining the number of dots to emphasize in each quadrant of the scatter legend.
 For example: c(1,1,1,1,0,1,1,1,1) result in one dot in each quadrant except for the middle quadrant.}

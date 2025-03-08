@@ -194,14 +194,17 @@ test_that("topicsPlot WITH test", {
     model = model, 
     test = test1, 
     p_alpha = .1,
+    scatter_legend_dots_alpha = 0.3, 
+    scatter_legend_bg_dots_alpha = 0.1,
     figure_format = "png",
     seed = 11, 
     allowed_word_overlap = 3,
     save_dir = save_dir_temp, 
     grid_legend_number_color = "white")
   
-  topics4$legend
   topics4$distribution
+  topics4$legend
+  
 
   topics4_legend <- function() {
     topics4$legend

@@ -20,6 +20,8 @@ topicsScatterLegend(
   figure_format = "svg",
   scatter_popout_dot_size = 15,
   scatter_bg_dot_size = 9,
+  scatter_legend_dots_alpha = 0.8,
+  scatter_legend_bg_dots_alpha = 0.2,
   width = 10,
   height = 8,
   seed = 42
@@ -59,6 +61,10 @@ Can be a single integer (applies to all categories) or a vector for specific cat
 \item{scatter_popout_dot_size}{Size of the dots for pop-out topics in the scatter legend. Set to "prevalence" for dot size changing based on topic prevalence. Default: 15.}
 
 \item{scatter_bg_dot_size}{Size of the dots for background topics in the scatter legend. Default: 9.}
+
+\item{scatter_legend_dots_alpha}{The transparency of the dots}
+
+\item{scatter_legend_bg_dots_alpha}{The transparency of the dots}
 
 \item{width}{Width of the saved scatter plot in inches. Default: 10.}
 
