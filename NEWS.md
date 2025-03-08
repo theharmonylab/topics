@@ -1,5 +1,9 @@
 # text (development version)
 
+# topics 0.40.6
+- addting `scatter_legend_dots_alpha` and `scatter_legend_bg_dots_alpha` parameters for the `topicsPlot()` function. 
+- adding setting for having the dot sizes according to their prevalence. 
+
 # topics 0.40.5
 - Fixing bug when plotting test based on `logistic_regression`. 
 
