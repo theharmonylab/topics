@@ -100,22 +100,38 @@ topicsScatterLegend <- function(
   }
  
 #  if (scatter_popout_dot_size == "prevalence"){
-      popout <- popout %>%
-        dplyr::mutate(
-          dot_size = scatter_popout_dot_size[[1]] + 
-            (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * 
-            (scatter_popout_dot_size[[2]] - scatter_popout_dot_size[[1]])
-          )
-      scatter_popout_dot_size <- popout$`dot_size`
-      
-      backgr_dots <- backgr_dots %>%
-        dplyr::mutate(
-          bg_dot_size = scatter_bg_dot_size[[1]] + 
-            (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * 
-            (scatter_bg_dot_size[[2]] - scatter_bg_dot_size[[1]])
-          )
-      
-      scatter_bg_dot_size <- backgr_dots$`bg_dot_size`
+  if (max(popout$prevalence) == min(popout$prevalence)) {
+    # If all prevalence values are the same, assign the midpoint size to all rows
+    popout <- popout %>%
+      dplyr::mutate(dot_size = mean(scatter_popout_dot_size))
+  } else {
+    # If prevalence varies, apply the normal scaling
+    popout <- popout %>%
+      dplyr::mutate(
+        dot_size = scatter_popout_dot_size[[1]] + 
+          (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * 
+          (scatter_popout_dot_size[[2]] - scatter_popout_dot_size[[1]])
+      )
+  }
+  
+  # Update scatter_popout_dot_size after mutation
+  scatter_popout_dot_size <- popout$dot_size      
+
+  if (max(backgr_dots$prevalence) == min(backgr_dots$prevalence)) {
+    # If all prevalence values are the same, assign the midpoint size to all rows
+    backgr_dots <- backgr_dots %>%
+      dplyr::mutate(bg_dot_size = mean(scatter_bg_dot_size))
+  } else {
+    # If prevalence varies, apply the normal scaling
+    backgr_dots <- backgr_dots %>%
+      dplyr::mutate(
+        bg_dot_size = scatter_bg_dot_size[[1]] + 
+          (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * 
+          (scatter_bg_dot_size[[2]] - scatter_bg_dot_size[[1]])
+      )
+  }
+  
+  scatter_bg_dot_size <- backgr_dots$`bg_dot_size`
       
 #  }else{scatter_popout_dot_size <- scatter_popout_dot_size}
     
