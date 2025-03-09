@@ -1,10 +1,10 @@
-pandoc: 3.1.1
+pandoc: '3.2'
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   extended_installation_guide: extended_installation_guide.html
   topics: topics.html
-last_built: 2025-02-26T21:37Z
+last_built: 2025-03-09T17:24Z
 urls:
   reference: https://r-topics.org/reference
   article: https://r-topics.org/articles

@@ -1,7 +1,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^\.github$
-^\_pkgdown\.yml$
-^docs(/|$)
-^codecov\.yml$
+^README$
 ^README\.Rmd$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
+^\.travis\.yml$
+^codecov\.yml$
