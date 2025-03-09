@@ -188,7 +188,8 @@ filter_by_pmi <- function(
 #'                  removal_rate_least = 1,
 #'                  removal_rate_most = 1)
 #' 
-#' # Create Dtm and remove the 1% least frequent and 1% most frequent terms. The percentage values are scaled to values between 0 and 1.
+#' # Create Dtm and remove the 1% least frequent and 1% most frequent terms. 
+#' # The percentage values are scaled to values between 0 and 1.
 #' dtm <- topicsDtm(data = dep_wor_data$Depphrase,
 #'                  removal_mode = "percentage",
 #'                  removal_rate_least = 0.01,
