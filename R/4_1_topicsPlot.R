@@ -44,8 +44,8 @@ topicsScatterLegend <- function(
     label_y_name = "y", 
     save_dir, 
     figure_format = "svg",
-    scatter_popout_dot_size = 15, 
-    scatter_bg_dot_size = 9,
+    scatter_popout_dot_size = c(1, 5), 
+    scatter_bg_dot_size = c(1, 5),
     scatter_legend_dots_alpha = 0.8,
     scatter_legend_bg_dots_alpha = 0.2, 
     width = 10, 
@@ -99,16 +99,25 @@ topicsScatterLegend <- function(
     backgr_dots <- filtered_test %>% dplyr::anti_join(popout, by = colnames(filtered_test))
   }
  
-  if (scatter_popout_dot_size == "prevalence"){
+#  if (scatter_popout_dot_size == "prevalence"){
       popout <- popout %>%
-        dplyr::mutate(dot_size = 3 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (8 - 3))
+        dplyr::mutate(
+          dot_size = scatter_popout_dot_size[[1]] + 
+            (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * 
+            (scatter_popout_dot_size[[2]] - scatter_popout_dot_size[[1]])
+          )
       scatter_popout_dot_size <- popout$`dot_size`
       
       backgr_dots <- backgr_dots %>%
-        dplyr::mutate(bg_dot_size = 2 + (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * (6 - 2))
+        dplyr::mutate(
+          bg_dot_size = scatter_bg_dot_size[[1]] + 
+            (prevalence - min(prevalence)) / (max(prevalence) - min(prevalence)) * 
+            (scatter_bg_dot_size[[2]] - scatter_bg_dot_size[[1]])
+          )
+      
       scatter_bg_dot_size <- backgr_dots$`bg_dot_size`
       
-  }else{scatter_popout_dot_size <- scatter_popout_dot_size}
+#  }else{scatter_popout_dot_size <- scatter_popout_dot_size}
     
   # Generate scatter plot
   plot <- generate_scatter_plot(
@@ -1077,8 +1086,8 @@ topicsPlot <- function(
     height = 5,
     max_size = 10,
     seed = 42,
-    scatter_legend_dot_size = 15,
-    scatter_legend_bg_dot_size = 9,
+    scatter_legend_dot_size = c(3,8),
+    scatter_legend_bg_dot_size = c(1,3),
     scatter_legend_dots_alpha = 0.8, 
     scatter_legend_bg_dots_alpha = 0.2,
     scatter_legend_n = c(1,1,1,1,0,1,1,1,1),
