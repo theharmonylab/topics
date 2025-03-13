@@ -411,7 +411,7 @@ create_plots <- function(
           plot <- ggplot2::ggplot(target_topic, 
                                   ggplot2::aes(label = Word, 
                                                size = phi, 
-                                               color = color_scheme$palette(phi))) + #,x=estimate)) +
+                                               color = phi)) + #,x=estimate)) +
             ggwordcloud::geom_text_wordcloud_area(eccentricity = 1) +
             ggplot2::scale_size_area(max_size = max_size) +
             ggplot2::theme_minimal() +
@@ -439,7 +439,7 @@ create_plots <- function(
             plot <- ggplot2::ggplot(target_topic, 
                                     ggplot2::aes(label = Word, 
                                                  size = phi, 
-                                                 color = color_scheme$palette(phi)))
+                                                 color = phi))
           }
           
           plot <- plot + ggwordcloud::geom_text_wordcloud_area(eccentricity = 1) + 
