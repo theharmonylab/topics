@@ -558,7 +558,7 @@ create_plots <- function(
         df_list[[as.numeric(sub(".*_", "", i))]],
         ggplot2::aes(label = Word,
                      size = phi,
-                     label_content = label_content,
+                     #label_content = label_content,
                      color = phi)) +
         ggwordcloud::geom_text_wordcloud() +
         ggplot2::scale_size_area(max_size = max_size) +
