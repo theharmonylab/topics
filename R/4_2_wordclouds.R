@@ -430,8 +430,8 @@ create_plots <- function(
           if (!is.null(highlight_topic_words) && is.vector(highlight_topic_words)){
             plot <- ggplot2::ggplot(target_topic, 
                                     ggplot2::aes(label = Word, 
-                                                 size = phi, 
-                                                 color = color_scheme$palette(phi),
+                                                 size = phi_adj, 
+                                                 color = color_scheme$palette(phi_adj),
                                                  label_content = label_content
                                                  ))  # +,x=estimate)) +
           }else{
