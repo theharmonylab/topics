@@ -392,16 +392,19 @@ create_plots <- function(
            if(is.character(highlight_topic_words) && is.vector(highlight_topic_words)){
                # Assign color to neg_words in the dictionary object "highlight_topic_words"
                df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]], highlight_topic_words)
-               df_list_separated[[1]] <- mutate(df_list_separated[[1]], source = "negDic") 
+               df_list_separated[[2]] <- dplyr::mutate(df_list_separated[[2]], source = "negDic") 
                #df_list_separated[[1]]$color <- df_list_separated[[1]]$phi^3 / sum(df_list_separated[[1]]$phi^3) 
                #df_list_separated[[1]]$color <- color_scheme$palette(df_list_separated[[1]]$color)
                colnames(df_list_separated[[2]])[3] <- c('color') 
-               df_list_separated[[2]] <- mutate(df_list_separated[[2]], source = "notNegDic")
+               df_list_separated[[1]] <- dplyr::mutate(df_list_separated[[1]], source = "notNegDic")
                target_topic <- dplyr::bind_rows(df_list_separated[[1]],df_list_separated[[2]]) 
+               saveRDS(df_list,'~/Downloads/df_list.rds')
+               saveRDS(df_list_separated,'~/Downloads/df_list_separated.rds')
+               saveRDS(target_topic,'~/Downloads/target_topic.rds')
                target_topic <- target_topic %>%
-                 mutate(label_content = if_else(source == "negDic",
-                                                sprintf("<b><i>%s</i></b>", word),
-                                                word))
+                 dplyr::mutate(label_content = if_else(source == "negDic",
+                                                sprintf("<b><i>%s</i></b>", Word),
+                                                Word))
            }else{stop('Invalid settings for the parameter "highlight_topic_words".\nConsider use the default option!\n')}
         }else{target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]}
         
