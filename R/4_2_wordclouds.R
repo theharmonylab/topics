@@ -402,6 +402,7 @@ create_plots <- function(
                  dplyr::mutate(label_content = if_else(source == "negDic",
                                                 sprintf("<b><i>%s</i></b>", Word),
                                                 Word))
+               target_topic$phi_adj <- target_topic$phi^3 / sum(target_topic$phi^3)
            }else{stop('Invalid settings for the parameter "highlight_topic_words".\nConsider use the default option!\n')}
         }else{target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]}
         
