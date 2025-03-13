@@ -398,9 +398,6 @@ create_plots <- function(
                colnames(df_list_separated[[2]])[3] <- c('color') 
                df_list_separated[[1]] <- dplyr::mutate(df_list_separated[[1]], source = "notNegDic")
                target_topic <- dplyr::bind_rows(df_list_separated[[1]],df_list_separated[[2]]) 
-               saveRDS(df_list,'~/Downloads/df_list.rds')
-               saveRDS(df_list_separated,'~/Downloads/df_list_separated.rds')
-               saveRDS(target_topic,'~/Downloads/target_topic.rds')
                target_topic <- target_topic %>%
                  dplyr::mutate(label_content = if_else(source == "negDic",
                                                 sprintf("<b><i>%s</i></b>", Word),
