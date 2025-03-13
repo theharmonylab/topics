@@ -259,8 +259,8 @@ separate_neg_words <- function(
 #' @param scale_size (bool) if True, then the size of the topic cloud is scaled by the prevalence of the topic
 #' @param plot_topics_idx (list) if specified, then only the specified topics are plotted
 #' @param p_alpha (float) set threshold which determines which topics are plotted
-#' @param highlight_topic_words (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
-#'  Default words are "not", "never". Words are as vector names. 
+#' @param highlight_topic_words (str vector) The dictionary to popout negative words to an individual plot for easier reading. 
+#'  Default words are "not", "never". 
 #'  The values of the vector determine the color code to popout. The color values can be different for different words.
 #' @param save_dir (string) save plots in specified directory, if left blank, plots is not saved,
 #' thus save_dir is necessary.
@@ -284,7 +284,7 @@ create_plots <- function(
     scale_size = FALSE,
     plot_topics_idx = NULL,
     p_alpha = NULL,
-    highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),
+    highlight_topic_words = c("not", "never"),
     save_dir,
     figure_format = "svg",
     width = 10,
@@ -387,15 +387,21 @@ create_plots <- function(
           y <- ""
         }
 
-        # For constant color of negative words. 
+        # For constant bold and itatlic format of negative words. 
         if (!is.null(highlight_topic_words) && is.vector(highlight_topic_words)){
-           if(is.character(highlight_topic_words) && is.character(names(highlight_topic_words)) && all_hex(highlight_topic_words)){
+           if(is.character(highlight_topic_words) && is.vector(highlight_topic_words)){
                # Assign color to neg_words in the dictionary object "highlight_topic_words"
                df_list_separated <- separate_neg_words(df_list[[as.numeric(sub(".*_", "", i))]], highlight_topic_words)
-               df_list_separated[[1]]$color <- df_list_separated[[1]]$phi^3 / sum(df_list_separated[[1]]$phi^3) 
-               df_list_separated[[1]]$color <- color_scheme$palette(df_list_separated[[1]]$color)
+               df_list_separated[[1]] <- mutate(df_list_separated[[1]], source = "negDic") 
+               #df_list_separated[[1]]$color <- df_list_separated[[1]]$phi^3 / sum(df_list_separated[[1]]$phi^3) 
+               #df_list_separated[[1]]$color <- color_scheme$palette(df_list_separated[[1]]$color)
                colnames(df_list_separated[[2]])[3] <- c('color') 
-               target_topic <- rbind(df_list_separated[[1]],df_list_separated[[2]]) 
+               df_list_separated[[2]] <- mutate(df_list_separated[[2]], source = "notNegDic")
+               target_topic <- dplyr::bind_rows(df_list_separated[[1]],df_list_separated[[2]]) 
+               target_topic <- target_topic %>%
+                 mutate(label_content = if_else(source == "negDic",
+                                                sprintf("<b><i>%s</i></b>", word),
+                                                word))
            }else{stop('Invalid settings for the parameter "highlight_topic_words".\nConsider use the default option!\n')}
         }else{target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]}
         
@@ -424,6 +430,7 @@ create_plots <- function(
             plot <- ggplot2::ggplot(target_topic, 
                                     ggplot2::aes(label = Word, 
                                                  size = phi, 
+                                                 label_content = label_content,
                                                  color = color))  # +,x=estimate)) +
           }else{
             plot <- ggplot2::ggplot(target_topic, 
@@ -551,6 +558,7 @@ create_plots <- function(
         df_list[[as.numeric(sub(".*_", "", i))]],
         ggplot2::aes(label = Word,
                      size = phi,
+                     label_content = label_content,
                      color = phi)) +
         ggwordcloud::geom_text_wordcloud() +
         ggplot2::scale_size_area(max_size = max_size) +
