@@ -402,7 +402,8 @@ create_plots <- function(
               dplyr::mutate(label_content = if_else(source == "negDic",
                                                     sprintf("<b><i>%s</i></b>", Word),
                                                     Word))
-            target_topic$phi_adj <- target_topic$phi^1.1 / sum(target_topic$phi^1.1) # Make the differences of size and color more obvious.
+            target_topic$phi_ori <- target_topic$phi
+            target_topic$phi <- target_topic$phi^1.1 / sum(target_topic$phi^1.1) # Make the differences of size and color more obvious.
           }else{stop('Invalid settings for the parameter "highlight_topic_words".\nConsider use the default option!\n')}
         }else{target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]}
         
@@ -410,7 +411,7 @@ create_plots <- function(
           plot <- ggplot2::ggplot(target_topic, 
                                   ggplot2::aes(label = Word, 
                                                size = phi, 
-                                               color = phi)) + #,x=estimate)) +
+                                               color = color_scheme$palette(phi))) + #,x=estimate)) +
             ggwordcloud::geom_text_wordcloud_area(eccentricity = 1) +
             ggplot2::scale_size_area(max_size = max_size) +
             ggplot2::theme_minimal() +
@@ -430,15 +431,15 @@ create_plots <- function(
           if (!is.null(highlight_topic_words) && is.vector(highlight_topic_words)){
             plot <- ggplot2::ggplot(target_topic, 
                                     ggplot2::aes(label = Word, 
-                                                 size = phi_adj, 
-                                                 color = color_scheme$palette(phi_adj),
+                                                 size = phi, 
+                                                 color = color_scheme$palette(phi),
                                                  label_content = label_content
                                     ))  # +,x=estimate)) +
           }else{
             plot <- ggplot2::ggplot(target_topic, 
                                     ggplot2::aes(label = Word, 
                                                  size = phi, 
-                                                 color = phi))
+                                                 color = color_scheme$palette(phi)))
           }
           
           plot <- plot + ggwordcloud::geom_text_wordcloud_area(eccentricity = 1) + 
