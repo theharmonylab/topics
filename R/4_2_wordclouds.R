@@ -441,7 +441,7 @@ create_plots <- function(
                                                  color = phi))
           }
           
-          plot <- plot + geom_text_wordcloud_area(eccentricity = 1) + 
+          plot <- plot + ggwordcloud::geom_text_wordcloud_area(eccentricity = 1) + 
             ggplot2::scale_size_area(max_size = max_size)
           
           if (!is.null(highlight_topic_words) && is.vector(highlight_topic_words)){
