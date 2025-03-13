@@ -402,7 +402,7 @@ create_plots <- function(
               dplyr::mutate(label_content = if_else(source == "negDic",
                                                     sprintf("<b><i>%s</i></b>", Word),
                                                     Word))
-            target_topic$phi_adj <- target_topic$phi^1.5 / sum(target_topic$phi^1.5) # Make the differences of size and color more obvious.
+            target_topic$phi_adj <- target_topic$phi^1.1 / sum(target_topic$phi^1.1) # Make the differences of size and color more obvious.
           }else{stop('Invalid settings for the parameter "highlight_topic_words".\nConsider use the default option!\n')}
         }else{target_topic <- df_list[[as.numeric(sub(".*_", "", i))]]}
         
