@@ -433,8 +433,9 @@ create_plots <- function(
             plot <- ggplot2::ggplot(target_topic, 
                                     ggplot2::aes(label = Word, 
                                                  size = phi, 
-                                                 label_content = label_content,
-                                                 color = color))  # +,x=estimate)) +
+                                                 color = color_scheme$palette(target_topic$phi),
+                                                 label_content = source
+                                                 ))  # +,x=estimate)) +
           }else{
             plot <- ggplot2::ggplot(target_topic, 
                                     ggplot2::aes(label = Word, 
