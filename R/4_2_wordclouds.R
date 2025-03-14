@@ -412,7 +412,7 @@ create_plots <- function(
                                   ggplot2::aes(label = Word, 
                                                size = phi, 
                                                color = phi)) + #,x=estimate)) +
-            ggwordcloud::geom_text_wordcloud_area(eccentricity = 1) +
+            ggwordcloud::geom_text_wordcloud() +
             ggplot2::scale_size_area(max_size = max_size) +
             ggplot2::theme_minimal() +
             #theme(plot.margin = margin(0,0,0,0, "cm")) +
@@ -442,7 +442,7 @@ create_plots <- function(
                                                  color = phi))
           }
           
-          plot <- plot + ggwordcloud::geom_text_wordcloud_area(eccentricity = 1) + 
+          plot <- plot + ggwordcloud::geom_text_wordcloud() + 
             ggplot2::scale_size_area(max_size = max_size)
           
           if (!is.null(highlight_topic_words) && is.vector(highlight_topic_words)){
@@ -623,7 +623,7 @@ create_plots <- function(
     plot_list <- plot
   } 
   
-  # For N-gram with test  
+  # For N-gram with test
   if (is.null(df_list) & !is.null(test) & !is.null(ngrams)){
     
     ngrams <- ngrams %>% dplyr::rename(top_terms = ngrams)
