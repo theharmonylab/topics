@@ -108,9 +108,7 @@ For 1-dimension plots of topics, it should contain 6 colours (3 gradient pairs),
   
   "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner).}
 
-\item{highlight_topic_words}{(named vector) Words to highlight in topics (e.g., negative words). 
-The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"); note that it needs
-to be hexa codes, so color naming such as "blue" does not work. The default value is NULL.}
+\item{highlight_topic_words}{(str vector) Words to highlight in topics (e.g., negative words). Format: highlight_topic_words = c("not", "never"). The default value is NULL.}
 
 \item{scale_size}{(logical) Whether to scale the size of the words.}
 

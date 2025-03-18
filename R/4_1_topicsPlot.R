@@ -703,9 +703,8 @@ topicsGridLegend <- function(
 #' @param scatter_legend_bg_dots_alpha The transparency of the dots
 #' @param plot_topics_idx (vector) The topics to plot determined by index
 #' @param p_alpha (integer) The p-value threshold to use for significance
-#' @param highlight_topic_words (named vector) The dictionary to popout negative words to an individual plot for easier reading. 
-#'  Default words are "not", "never". Words are as vector names. 
-#'  The values of the vector determine the color code to popout. The color values can be different for different words.
+#' @param highlight_topic_words (str vector) The dictionary to popout negative words to an individual plot for easier reading. 
+#'  Default words are "not", "never". Individual words are elements in the vector. 
 #' @param save_dir (string) The directory to save the wordclouds
 #' @param figure_format (string) Set the figure format, e.g., svg, or png.
 #' @param width (integer) The width of the topic (units = "in"). 
@@ -727,7 +726,7 @@ topicsPlot1 <- function(
     scatter_legend_bg_dots_alpha, 
     plot_topics_idx = NULL,
     p_alpha = 0.05,
-    highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"),    
+    highlight_topic_words = c("not", "never"),    
     save_dir,
     figure_format = "svg",
     width = 10, 
@@ -1040,9 +1039,7 @@ clean_characters_for_plotting_test <- function(test) {
 #'   "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner).
 #'
 #' 
-#' @param highlight_topic_words (named vector) Words to highlight in topics (e.g., negative words). 
-#'  The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"); note that it needs
-#'  to be hexa codes, so color naming such as "blue" does not work. The default value is NULL.
+#' @param highlight_topic_words (str vector) Words to highlight in topics (e.g., negative words). Format: highlight_topic_words = c("not", "never"). The default value is NULL.
 #' @param allowed_word_overlap (numeric) A filter function determining the maximum number of identical words in the topics to be plotted. 
 #' This filter removes topics within each "color group" and also include removing topics from the distribution and grid legends; 
 #' (Note that the adjustment for multiple comparison is taking place before these are removed; i.e., the adjusted p-values are not affected by this filter).   
