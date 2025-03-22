@@ -571,7 +571,7 @@ test_that("topicsPlot WITH concentric circles", {
   
   testthat::skip_on_os(c("linux", "windows"))  # Skip on Ubuntu (Linux) and Windows
   testthat::skip_on_cran()
-  save_dir_temp <- 'tests/testthat/_snaps/1_6_topicsPlot'
+  save_dir_temp <- tempfile()
   #save_dir_temp <- "./res_under"
   # Testing with _ 
   data_test <- dep_wor_data
