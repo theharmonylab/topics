@@ -41,7 +41,8 @@ Imports:
     rlang,
     tidyr, 
     purrr,
-    data.table
+    data.table,
+    ggforce
 RoxygenNote: 7.3.2
 Suggests: 
     text,

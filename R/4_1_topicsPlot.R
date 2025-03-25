@@ -23,11 +23,15 @@
 #' @param scatter_bg_dot_size Size of the dots for background topics in the scatter legend. Default: 9.
 #' @param scatter_legend_dots_alpha The transparency of the dots
 #' @param scatter_legend_bg_dots_alpha The transparency of the dots
+#' @param scatter_legend_circles Plot concentric circles for the scatter legend
+#' @param scatter_legend_circles_radius Radius of first concentric circle
+#' @param scatter_legend_circles_num Number of Concentric circles
 #' @param width Width of the saved scatter plot in inches. Default: 10.
 #' @param height Height of the saved scatter plot in inches. Default: 8.
 #' @param seed Seed for reproducibility, ensuring consistent plot generation. Default: 42.
-#' @importFrom ggplot2 ggplot geom_point scale_color_manual labs theme_minimal theme element_blank
+#' @importFrom ggplot2 ggplot geom_point scale_color_manual labs theme_minimal theme element_blank geom_hline geom_vline
 #' @importFrom rlang sym !!
+#' @importFrom ggforce geom_circle
 #' @importFrom dplyr pull select filter mutate anti_join summarise pull group_by group_modify ungroup
 #' @export
 topicsScatterLegend <- function(
@@ -48,6 +52,9 @@ topicsScatterLegend <- function(
     scatter_bg_dot_size = c(1, 5),
     scatter_legend_dots_alpha = 0.8,
     scatter_legend_bg_dots_alpha = 0.2, 
+    scatter_legend_circles = FALSE,
+    scatter_legend_circles_radius = 0,
+    scatter_legend_circles_num = 4,
     width = 10, 
     height = 8, 
     seed = 42
@@ -150,7 +157,10 @@ topicsScatterLegend <- function(
     scatter_legend_dots_alpha = scatter_legend_dots_alpha,
     scatter_legend_bg_dots_alpha = scatter_legend_bg_dots_alpha,
     allow_topic_num_legend = allow_topic_num_legend, 
-    scatter_show_axis_values = scatter_show_axis_values
+    scatter_show_axis_values = scatter_show_axis_values,
+    scatter_legend_circles = scatter_legend_circles,
+    scatter_legend_circles_radius = scatter_legend_circles_radius,
+    scatter_legend_circles_num = scatter_legend_circles_num
   )
   
   # Save the plot
@@ -320,6 +330,9 @@ determine_popout_topics <- function(
 #' @param scatter_legend_dots_alpha The transparency of the dots
 #' @param allow_topic_num_legend Logical; if TRUE, adds topic numbers as text labels to the pop-out points. Default: FALSE.
 #' @param scatter_show_axis_values Show the values on the axises. 
+#' @param scatter_legend_circles Plot concentric circles for the scatter legend
+#' @param scatter_legend_circles_radius Radius of first concentric circle
+#' @param scatter_legend_circles_num Number of Concentric circles
 #' @noRd
 generate_scatter_plot <- function(
     popout,
@@ -335,7 +348,10 @@ generate_scatter_plot <- function(
     scatter_legend_dots_alpha = 0.8, 
     scatter_legend_bg_dots_alpha = 0.2,
     allow_topic_num_legend, 
-    scatter_show_axis_values
+    scatter_show_axis_values,
+    scatter_legend_circles = FALSE,
+    scatter_legend_circles_radius = 0,
+    scatter_legend_circles_num = 4
 ) {
   
   # Define aesthetics for popout and background points
@@ -404,7 +420,7 @@ generate_scatter_plot <- function(
       axis.ticks = if (scatter_show_axis_values) ggplot2::element_line() else ggplot2::element_blank(),
       legend.position = "none"
     )
-  
+
   
   # Add topic numbers if enabled
   if (allow_topic_num_legend) {
@@ -485,6 +501,26 @@ generate_scatter_plot <- function(
       )
   }
   
+  #Add concentric circles 2 dimensional scatter legend plots
+  if(!is.null(y_col) && scatter_legend_circles){
+
+    if(scatter_legend_circles_radius == 0) {
+     radius <- interval/2 
+    } 
+    else {
+     radius <- scatter_legend_circles_radius
+    }
+
+    x0 <- y0 <- r <- NULL
+    circles <- data.frame(
+      x0 = 0,
+      y0 = 0,
+      r = seq(radius,  by=radius, length.out = scatter_legend_circles_num)
+    )
+    plot <- plot  + ggplot2::geom_hline(yintercept = 0, size = 0.2, color = "#787373") + ggplot2::geom_vline(xintercept = 0, size = 0.2, color = "#787373")
+    plot <- plot + ggforce::geom_circle(aes(x0 = x0, y0 = y0, r = r), linetype = 2, data = circles, linewidth = 0.2, color = "#787373")
+  }
+
   plot <- plot + ggplot2::coord_cartesian(clip = "off") # Prevent clipping
   
   return(plot)
@@ -1061,6 +1097,9 @@ clean_characters_for_plotting_test <- function(test) {
 #' @param scatter_legend_bg_dots_alpha (numeric) The transparency alphe level of the background dots.
 #' @param scatter_legend_method (string) The method to filter topics to be emphasized in the scatter legend; either "mean", "max_x", or "max_y".
 #' @param scatter_legend_specified_topics (vector) Specify which topic(s) to emphasize in the scatter legend. 
+#' @param scatter_legend_circles Plot concentric circles for the scatter legend
+#' @param scatter_legend_circles_radius Radius of first concentric circle
+#' @param scatter_legend_circles_num Number of Concentric circles
 #' For example, c("t_1", "t_2"). If set, scatter_legend_method will have no effect.
 #' @param scatter_legend_topic_n (boolean) If TRUE, the topic numbers are shown in the scatter legend.
 #' @param scatter_show_axis_values (boolean) If TRUE, the estimate values are shown on the distribution plot axes.
@@ -1108,6 +1147,9 @@ topicsPlot <- function(
     scatter_legend_specified_topics = NULL,
     scatter_legend_topic_n = FALSE,
     scatter_show_axis_values = TRUE,
+    scatter_legend_circles = FALSE,
+    scatter_legend_circles_radius = 0,
+    scatter_legend_circles_num = 4,
     grid_legend_title = "legend_title",
     grid_legend_title_size = 5,
     grid_legend_title_color = 'black',
@@ -1374,6 +1416,9 @@ topicsPlot <- function(
       scatter_legend_dots_alpha = scatter_legend_dots_alpha, 
       scatter_legend_bg_dots_alpha = scatter_legend_bg_dots_alpha,
       scatter_show_axis_values = scatter_show_axis_values,
+      scatter_legend_circles = scatter_legend_circles,
+      scatter_legend_circles_radius = scatter_legend_circles_radius,
+      scatter_legend_circles_num = scatter_legend_circles_num,
       save_dir = save_dir,
       figure_format = figure_format,
       width = 15,
