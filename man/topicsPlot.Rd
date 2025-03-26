@@ -33,6 +33,9 @@ topicsPlot(
   scatter_legend_specified_topics = NULL,
   scatter_legend_topic_n = FALSE,
   scatter_show_axis_values = TRUE,
+  scatter_legend_circles = FALSE,
+  scatter_legend_circles_radius = 0,
+  scatter_legend_circles_num = 4,
   grid_legend_title = "legend_title",
   grid_legend_title_size = 5,
   grid_legend_title_color = "black",
@@ -152,6 +155,12 @@ For example, c("t_1", "t_2"). If set, scatter_legend_method will have no effect.
 \item{scatter_legend_topic_n}{(boolean) If TRUE, the topic numbers are shown in the scatter legend.}
 
 \item{scatter_show_axis_values}{(boolean) If TRUE, the estimate values are shown on the distribution plot axes.}
+
+\item{scatter_legend_circles}{(boolean) If TRUE, concentric circles are drawn on the 2-dimensional scatter legend. Default: FALSE}
+
+\item{scatter_legend_circles_radius}{(numeric) The radius of the first concentric circle and the interval for the subsequent circles.}
+
+\item{scatter_legend_circles_num}{(integer) The number of concentric circles to be plotted. Default: 4}
 
 \item{grid_legend_title}{Title of the grid topic plot.}
 
