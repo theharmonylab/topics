@@ -2,6 +2,7 @@
 library(testthat)
 library(vdiffr)
 library(topics)
+library(ggforce)
 
 test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
   
@@ -569,3 +570,106 @@ test_that("topicsPlot WITH PMI", {
   
 })
 
+test_that("topicsPlot WITH concentric circles", {
+  
+  testthat::skip_on_os(c("linux", "windows"))  # Skip on Ubuntu (Linux) and Windows
+  testthat::skip_on_cran()
+  save_dir_temp <- tempfile()
+  #save_dir_temp <- "./res_under"
+  # Testing with _ 
+  data_test <- dep_wor_data
+  data_test$Dep_text <- data_test$Deptext
+  data_test$Age_test <- data_test$Age
+
+
+  has_geom_circle <- function(plot) {
+    any(sapply(plot$layers, function(layer) inherits(layer$geom, "GeomCircle")))
+  }
+
+
+  ## 1-Dimension
+  dtm <- topics::topicsDtm(
+    data = data_test$Dep_text)
+  
+  model <- topics::topicsModel(
+    dtm = dtm)
+  
+  preds <- topics::topicsPreds(
+    model = model, 
+    data = data_test$Dep_text)
+  
+  test1 <- topics::topicsTest(
+    model= model,
+    preds = preds,
+    data = data_test,
+    x_variable = "Age_test")
+  
+  plot5 <- topics::topicsPlot(
+    model = model, 
+    test = test1, 
+    p_alpha = 1,
+    scatter_legend_circles = TRUE,
+    figure_format = "png",
+    seed = 15, 
+    save_dir = save_dir_temp)
+  plot5
+  # Check if the wordcloud directory exists
+  testthat::expect_true(file.exists(paste0(
+    save_dir_temp, "/seed_15/wordclouds/dot_legend_corvar_Age_test.png")), info = 'One Dimensional scatter legend file exists')
+ 
+  testthat::expect_false(has_geom_circle(plot5$distribution), info = 'One Dimensional Scatter Legend should not plot circles even with a TRUE parameter')
+   
+  
+  
+  ## 2-Dimension  
+  
+  test2 <- topics::topicsTest(
+    model = model, 
+    preds = preds, 
+    data = data_test, 
+    x_variable = "PHQ9tot",
+    y_variable = "Age_test"
+  )
+  
+  plot6 <- topics::topicsPlot(
+    model = model, 
+    test = test2, 
+    p_alpha = 1, 
+    figure_format = "png",
+    scatter_legend_circles = TRUE,
+    seed = 14, 
+    save_dir = save_dir_temp
+  )
+  
+  
+  # Check if the wordcloud directory exists
+  testthat::expect_true(file.exists(paste0(
+    save_dir_temp, "/seed_14/wordclouds/dot_legend_corvar_PHQ9tot__Age_test.png")),  info = '2d Scatter Legend file exists')
+
+  testthat::expect_true(has_geom_circle(plot6$distribution),  info = 'Two Dimensional Scatter Legend should plot circles with a TRUE parameter')
+
+  plot7 <- topics::topicsPlot(
+    model = model, 
+    test = test2, 
+    p_alpha = 1, 
+    figure_format = "png",
+    save_dir = save_dir_temp
+  )
+
+  testthat::expect_false(has_geom_circle(plot7$distribution),  info = 'No Circles plot by default for Scatter Legend')
+
+  plot8 <- topics::topicsPlot(
+    model = model, 
+    test = test2, 
+    p_alpha = 1, 
+    figure_format = "png",
+    scatter_legend_circles = TRUE,
+    scatter_legend_circles_num = 3,
+    scatter_legend_circles_radius = 0.02,
+    save_dir = save_dir_temp
+  )
+
+  testthat::expect_true(has_geom_circle(plot8$distribution),  info = 'Scatter Legend circles plot can use custom values')
+
+
+})
