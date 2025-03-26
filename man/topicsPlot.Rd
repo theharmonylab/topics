@@ -149,18 +149,18 @@ For example: c(1,1,1,1,0,1,1,1,1) result in one dot in each quadrant except for 
 
 \item{scatter_legend_method}{(string) The method to filter topics to be emphasized in the scatter legend; either "mean", "max_x", or "max_y".}
 
-\item{scatter_legend_specified_topics}{(vector) Specify which topic(s) to emphasize in the scatter legend. 
-For example, c("t_1", "t_2"). If set, scatter_legend_method will have no effect.}
+\item{scatter_legend_specified_topics}{(vector) Specify which topic(s) to emphasize in the scatter legend.}
 
 \item{scatter_legend_topic_n}{(boolean) If TRUE, the topic numbers are shown in the scatter legend.}
 
 \item{scatter_show_axis_values}{(boolean) If TRUE, the estimate values are shown on the distribution plot axes.}
 
-\item{scatter_legend_circles}{(boolean) If TRUE, concentric circles are drawn on the 2-dimensional scatter legend. Default: FALSE}
+\item{scatter_legend_circles}{Plot concentric circles for the scatter legend}
 
-\item{scatter_legend_circles_radius}{(numeric) The radius of the first concentric circle and the interval for the subsequent circles.}
+\item{scatter_legend_circles_radius}{Radius of first concentric circle}
 
-\item{scatter_legend_circles_num}{(integer) The number of concentric circles to be plotted. Default: 4}
+\item{scatter_legend_circles_num}{Number of Concentric circles
+For example, c("t_1", "t_2"). If set, scatter_legend_method will have no effect.}
 
 \item{grid_legend_title}{Title of the grid topic plot.}
 

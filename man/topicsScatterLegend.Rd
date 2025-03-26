@@ -69,11 +69,11 @@ Can be a single integer (applies to all categories) or a vector for specific cat
 
 \item{scatter_legend_bg_dots_alpha}{The transparency of the dots}
 
-\item{scatter_legend_circles}{If TRUE, concentric circles are drawn on the 2-dimensional scatter legend. Default: FALSE.}
+\item{scatter_legend_circles}{Plot concentric circles for the scatter legend}
 
-\item{scatter_legend_circles_radius}{The radius of the first concentric circle and the interval for the subsequent circles.}
+\item{scatter_legend_circles_radius}{Radius of first concentric circle}
 
-\item{scatter_legend_circles_num}{The number of concentric circles to be plotted. Default: 4.}
+\item{scatter_legend_circles_num}{Number of Concentric circles}
 
 \item{width}{Width of the saved scatter plot in inches. Default: 10.}
 

@@ -20,7 +20,7 @@ utils::globalVariables(c(
   "binomial", 
   
   # topicsScatterLegend
-  "contains_only", 
+  "contains_only", "label_content",
   
   # General
   "msg2",
