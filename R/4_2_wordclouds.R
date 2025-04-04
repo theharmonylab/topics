@@ -226,8 +226,7 @@ separate_neg_words <- function(
     df_list_element, 
     highlight_topic_words) {
   
-  pattern <- paste(highlight_topic_words, 
-                   collapse = "|")
+  pattern <- paste0("(^|[ _])(", paste(highlight_topic_words, collapse = "|"), ")(?=[ _])")
   
   # Create df_list_ele_fixed with words that match or contain the dictionary keys
   df_list_ele_fixed <- df_list_element %>%
