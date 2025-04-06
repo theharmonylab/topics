@@ -116,6 +116,7 @@ remove_stopwords <- function(
   words <- unlist(strsplit(text, "\\s+"))                 # Split the text into words
   cleaned_words <- words[!tolower(words) %in% stopwords] # Remove stopwords (case insensitive)
   cleaned_text <- paste(cleaned_words, collapse = " ")   # Reconstruct the cleaned text
+  cleaned_text <- stringr::str_squish(cleaned_text) # Removes leading and trailing whitespace; ensures one space between words
   
   return(cleaned_text)
 }
