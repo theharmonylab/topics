@@ -20,6 +20,12 @@ A data frame with 500 participants and 13 variables:
   \item{Age}{respondents age in years}
   \item{PHQ9tot}{total score of the respondents PHQ-9}
   \item{GAD7tot}{total score of the respondents GAD-7}
+  \item{MentalSickDays}{self-reported sick days due to mental health issues}
+  \item{MentalSickDaysYear}{self-reported sick days due to mental health issues in the last year}
+  \item{HealthCareMental}{self-reported health care visits due to mental health}
+  \item{SickDaysMonth}{self-reported sick days last month}
+  \item{SickDaysYear}{self-reported sick days last year}
+  \item{HealthCareVisits}{self-reported health care visits}
 }
 }
 \source{

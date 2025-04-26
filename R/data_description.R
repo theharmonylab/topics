@@ -15,6 +15,12 @@
 #'   \item{Age}{respondents age in years}
 #'   \item{PHQ9tot}{total score of the respondents PHQ-9}
 #'   \item{GAD7tot}{total score of the respondents GAD-7}
+#'   \item{MentalSickDays}{self-reported sick days due to mental health issues}
+#'   \item{MentalSickDaysYear}{self-reported sick days due to mental health issues in the last year}
+#'   \item{HealthCareMental}{self-reported health care visits due to mental health}
+#'   \item{SickDaysMonth}{self-reported sick days last month}
+#'   \item{SickDaysYear}{self-reported sick days last year}
+#'   \item{HealthCareVisits}{self-reported health care visits}
 #' }
 #' @source <https://osf.io/preprints/psyarxiv/p67db>
 "dep_wor_data"
