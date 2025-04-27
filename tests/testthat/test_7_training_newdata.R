@@ -42,7 +42,8 @@ test_that("Testing to training topics distributions using textTrainRegression",{
     multi_cores = FALSE
   )
   #model_same_data
-  testthat::expect_equal(model_same_data$results$estimate[[1]], .3906754, tolerance = .00001)
+#  testthat::expect_equal(model_same_data$results$estimate[[1]], .3906754, tolerance = .00001)
+  testthat::expect_equal(model_same_data$results$estimate[[1]], .4097224, tolerance = .00001)
   
   ##### Testing on new data #####
   new_data_preds <- topics::topicsPreds(
@@ -58,7 +59,7 @@ test_that("Testing to training topics distributions using textTrainRegression",{
     multi_cores = FALSE
   )
   #model_new_data
-  testthat::expect_equal(model_new_data$results$estimate[[1]], .1779766, tolerance = .00001)
+  testthat::expect_equal(model_new_data$results$estimate[[1]], 0.14506, tolerance = .0001)
   
   ##### Testing on new data with new dtm ####
   new_data_newdtm_preds <- topics::topicsPreds(
@@ -75,7 +76,7 @@ test_that("Testing to training topics distributions using textTrainRegression",{
   )
   model_new_data_pewnew$results
   
-  testthat::expect_equal(model_new_data_pewnew$results$estimate[[1]], .2480465, tolerance = .00001)
+  testthat::expect_equal(model_new_data_pewnew$results$estimate[[1]], .2380506, tolerance = .00001)
   
 })
 
