@@ -252,7 +252,7 @@ separate_neg_words <- function(
 ensure_dir <- function(path){ if(!dir.exists(path)) dir.create(path, recursive = TRUE) }
 
 #' @noRd
-save_plot <- function(plot, stub, header='', save_dir, figure_format, seed){
+save_plot <- function(plot, stub, header='', save_dir, figure_format, width, height, seed){
   if(is.null(save_dir)) return(invisible(NULL))
   root <- file.path(save_dir, sprintf("seed_%s", seed), "wordclouds")
   ensure_dir(root)
@@ -415,7 +415,7 @@ create_plots <- function(
                   format(p_vec["x"], scientific = TRUE, digits = 2),
                   format(p_vec["y"], scientific = TRUE, digits = 2))
         }
-        save_plot(plot, stub, 't_', save_dir, figure_format, seed)
+        save_plot(plot, stub, 't_', save_dir, figure_format, width, height, seed)
         plots[[topic]] <- plot
       }
     }
@@ -431,7 +431,7 @@ create_plots <- function(
         max_size * log(prev)
       } else max_size
       plot <- build_cloud(data, color_negative_cor, max_size_topic)
-      save_plot(plot, topic, 't_', save_dir, figure_format, seed)
+      save_plot(plot, topic, 't_', save_dir, figure_format, width, height, seed)
       plots[[paste0('t_',as.character(topic))]] <- plot
     }
   }
@@ -443,7 +443,7 @@ create_plots <- function(
         ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
         ggplot2::theme_minimal() +
         color_positive_cor
-      save_plot(plot, "ngrams", '', save_dir, figure_format, seed)
+      save_plot(plot, "ngrams", '', save_dir, figure_format, width, height, seed)
       plots <- plot
     } else {
       ng  <- ngrams %>% dplyr::rename(top_terms = ngrams)
@@ -464,8 +464,8 @@ create_plots <- function(
         }
         pos  <- make_ngram_plot(dplyr::filter(tst, estimate > 0), color_positive_cor)
         neg  <- make_ngram_plot(dplyr::filter(tst, estimate < 0), color_negative_cor)
-        save_plot(pos, "ngrams_positive", '', save_dir, figure_format, seed)
-        save_plot(neg, "ngrams_negative", '', save_dir, figure_format, seed)
+        save_plot(pos, "ngrams_positive", '', save_dir, figure_format, width, height, seed)
+        save_plot(neg, "ngrams_negative", '', save_dir, figure_format, width, height, seed)
         plots <- list(positive = pos, negative = neg)
       }
     }
