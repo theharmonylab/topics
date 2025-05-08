@@ -1,7 +1,7 @@
 Package: topics
 Type: Package
 Title: Creating and Significance Testing Language Features for Visualisation
-Version: 0.51
+Version: 0.52
 Authors@R: c(
     person("Leon", "Ackermann", 
     role = c("aut"), 
@@ -29,7 +29,6 @@ Imports:
     ggplot2,
     dplyr,
     mallet,
-    rJava,
     ggwordcloud,
     tibble, 
     methods,
@@ -46,6 +45,7 @@ Imports:
 RoxygenNote: 7.3.2
 Suggests: 
     text,
+    rJava,
     glmnet,
     knitr,
     rmarkdown,
