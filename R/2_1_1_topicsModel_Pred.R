@@ -1,46 +1,4 @@
 
-#' check_java_available
-#'
-#' Checks whether the specified package (typically 'rJava') is installed and, 
-#' if applicable, whether Java is correctly configured. 
-#' Used to safely guard functions that rely on Java dependencies.
-#'
-#' @param pkg (string) The name of the package to check, default is "rJava".
-#' @param func_name (string) Optional. The name of the calling function, 
-#'        used to improve error messaging.
-#' @return (invisible) TRUE if the package and Java (if applicable) are available.
-#' @noRd
-check_java_available <- function(pkg = "rJava", func_name = NULL) {
-  if (!requireNamespace(pkg, quietly = TRUE)) {
-    msg <- paste0("This function requires the '", pkg, "' package, which is not installed.",
-                  "\nPlease install it using: install.packages('", pkg, "')")
-    
-    if (!is.null(func_name)) {
-      msg <- paste0(msg, "\n\nWhile running: ", func_name)
-    }
-    
-    message(colourise(msg, "brown"))
-    return(FALSE)
-  }
-  
-  if (pkg == "rJava") {
-    ok <- tryCatch(
-      {
-        rJava::.jinit()
-        TRUE
-      },
-      error = function(e) {
-        msg <- paste0("Java is not properly configured. Please ensure Java is installed and working.",
-                      "\nError from rJava:::.jinit(): ", conditionMessage(e))
-        message(colourise(msg, "brown"))
-        FALSE
-      }
-    )
-    
-    if (!ok) return(FALSE)
-  }
-  TRUE
-}
 
 #' get_mallet_model
 #' @param dtm (R_obj) A document-term matrix
@@ -351,9 +309,6 @@ topicsModel <- function(
   
   set.seed(seed)
   
-  check_java_available(pkg = "rJava", func_name = "topicsModel")
-  
-  
   dtm_settings <- dtm$settings
   dtm <- dtm$train_dtm
   
@@ -442,8 +397,6 @@ topicsPreds <- function(
     ){
   
   set.seed(seed)
-  
-  check_java_available(pkg = "rJava", func_name = "topicsPreds")
     
     if (length(data) == 0){
       msg <- "The data provided is empty. Please provide a list of text data."

@@ -1,8 +1,11 @@
 # text (development version)
 
+
 # topics 0.51
 - adding function to plot circles in the scatter legend. 
-
+- fixing where non-significant plots were the same.
+- improving the structure of the creat_plot help function. 
+- moving rJava to suggest to enable compatibility with the text-package.
 
 # topics 0.40.6
 - addting `scatter_legend_dots_alpha` and `scatter_legend_bg_dots_alpha` parameters for the `topicsPlot()` function. 

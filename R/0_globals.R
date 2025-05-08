@@ -37,6 +37,7 @@ utils::globalVariables(c(
   "n", "component_prob", "joint_prob", "n_gram_type", "ngrams", "pmi_value", ":=",
   
   # topicsPlot
-  "pmi"
+  "pmi", "color_negative_cor", "color_positive_cor", "estimate", "highlight_topic_words",
+  "p_adjusted"
   
 ))
