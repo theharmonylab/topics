@@ -471,6 +471,7 @@ create_plots <- function(
     }
   }
   
+  cat('Hi.')
   return(plots)
 }
 
