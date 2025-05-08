@@ -247,28 +247,79 @@ separate_neg_words <- function(
 }
 
 
-## Simplified version of `create_plots` with clear plain-English comments
-#' @param df_list (list) list of data.frames with topics most frequent words and assigned topic term scores
-#' @param test (data.frame) the test returned from textTopicTest()
-#' @param test_type (string) "linear_regression", or "binary_regression"
-#' @param cor_var (string) Variable for t-test, linear, or binary/logistic regression
-#' @param popout (tibble) The tibble containing topic idx to popout
-#' @param color_negative_cor (function) color of topic cloud with negative correlation
-#' @param color_positive_cor (function) color of topic cloud with positive correlation
-#' @param grid_pos (numeric) position of grid plots
-#' @param scale_size (bool) if True, then the size of the topic cloud is scaled by the prevalence of the topic
-#' @param plot_topics_idx (list) if specified, then only the specified topics are plotted
-#' @param p_alpha (float) set threshold which determines which topics are plotted
-#' @param highlight_topic_words (str vector) The dictionary to popout negative words to an individual plot for easier reading. 
-#'  Default words are "not", "never". 
-#'  The values of the vector determine the color code to popout. The color values can be different for different words.
-#' @param save_dir (string) save plots in specified directory, if left blank, plots is not saved,
-#' thus save_dir is necessary.
-#' @param figure_format (string) Set the figure format, e.g., .svg, or .png.
-#' @param seed (int) seed is needed for saving the plots in the correct directory
+# Helper functions for create_plots 
+#' @noRd
+ensure_dir <- function(path){ if(!dir.exists(path)) dir.create(path, recursive = TRUE) }
+
+#' @noRd
+save_plot <- function(plot, stub, header=''){
+  if(is.null(save_dir)) return(invisible(NULL))
+  root <- file.path(save_dir, sprintf("seed_%s", seed), "wordclouds")
+  ensure_dir(root)
+  ggplot2::ggsave(
+    file.path(root, sprintf("%s%s.%s", header, stub, figure_format)),
+    plot   = plot,
+    width  = width,
+    height = height,
+    units  = "in"
+  )
+}
+
+#' @noRd
+choose_scheme <- function(est){ if(est[1] < 0) color_negative_cor else color_positive_cor }
+
+#' @noRd
+highlight_neg <- function(topic_df){
+  if(is.null(highlight_topic_words) || !is.character(highlight_topic_words))
+    return(topic_df)
+  separated <- separate_neg_words(topic_df, highlight_topic_words)
+  separated[[2]] <- dplyr::mutate(separated[[2]], source = "negDic",
+                                  label_content = sprintf("<b><i>%s</i></b>", Word))
+  separated[[1]] <- dplyr::mutate(separated[[1]], source = "notNegDic",
+                                  label_content = Word)
+  dplyr::bind_rows(separated[[1]], separated[[2]]) %>%
+    dplyr::mutate(phi = phi^1.1 / sum(phi^1.1))
+}
+
+#' @noRd
+build_cloud <- function(data, scheme, max_size_local){
+  lbl <- if("label_content" %in% colnames(data)) "label_content" else "Word"
+  ggplot2::ggplot(data, ggplot2::aes_string(label = lbl, size = "phi", color = "phi")) +
+    ggwordcloud::geom_text_wordcloud() +
+    ggplot2::scale_size_area(max_size = max_size_local) +
+    ggplot2::theme_minimal() +
+    scheme
+}
+
+#' @noRd
+min_p <- function(p_vec) suppressWarnings(min(p_vec, na.rm = TRUE))
+
+#' @noRd
+format_p <- function(p_vec) format(min_p(p_vec), scientific = TRUE, digits = 2)
+
+#' Generate topic and n-gram wordcloud plots
+#'
+#' @param df_list list of data.frames with topic word distributions
+#' @param summary data.frame with topic prevalences (row‑names t_1, t_2, …)
+#' @param ngrams data.frame with two columns: ngrams, prop
+#' @param test data.frame returned by textTopicTest()
+#' @param test_type "linear_regression" | "binary_regression"
+#' @param cor_var variable name used in the regression columns (e.g. "age")
+#' @param popout tibble of topic indices to always plot regardless of p‑value
+#' @param color_negative_cor, color_positive_cor ggplot2 scale functions
+#' @param grid_pos numeric grid position used when emphasising topics
+#' @param scale_size logical, scale cloud size by topic prevalence?
+#' @param plot_topics_idx vector of topic indices to plot (NULL => all)
+#' @param p_alpha max adjusted p‑value for a topic/term to be plotted
+#' @param highlight_topic_words character vector of words to emphasise
+#' @param save_dir directory where plots are saved (mandatory)
+#' @param figure_format image file extension (svg | png | …)
+#' @param width,height,max_size basic ggsave options
+#' @param seed integer used in the file‑path so different runs do not collide
 #' @importFrom ggwordcloud geom_text_wordcloud
-#' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient scale_colour_identity
-#' @importFrom dplyr rename
+#' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes
+#' @importFrom ggplot2 scale_colour_identity scale_color_gradient
+#' @importFrom dplyr rename left_join filter bind_rows mutate
 #' @noRd
 create_plots <- function(
     df_list = NULL,
@@ -290,192 +341,137 @@ create_plots <- function(
     width = 10,
     height = 8,
     max_size = 10,
-    seed = 42
-) {
-  # Prepare list to hold all generated plots
-  plot_list <- list()
+    seed = 42){
   
-  # Utility: create output directory if needed
-  ensure_dir <- function(path) {
-    if (!dir.exists(path)) dir.create(path, recursive = TRUE)
+  # Dependencies
+  for(pkg in c("ggplot2", "ggwordcloud", "dplyr", "tibble", "rlang")){
+    if(!requireNamespace(pkg, quietly = TRUE))
+      stop(sprintf("Package '%s' is required but not installed.", pkg), call. = FALSE)
   }
   
-  # Utility: construct file path and save plot
-  save_plot <- function(plot, filename) {
-    if (!is.null(save_dir)) {
-      base <- file.path(save_dir, paste0("seed_", seed, "/", "wordclouds"))
-      ensure_dir(base)
-      ggplot2::ggsave(
-        filename = file.path(base, filename),
-        plot = plot,
-        width = width,
-        height = height,
-        units = "in",
-        create.dir = TRUE
-      )
-    }
-  }
+  # Pre‑processing
+  if(!is.null(test) && is.null(plot_topics_idx)){
+    plot_topics_idx <- seq_along(test)
+  }else{plot_topics_idx <- plot_topics_idx}
   
-  # Decide which block to run based on provided inputs
-  has_df_and_summary <- !is.null(df_list) && !is.null(summary)
-  has_ngrams <- !is.null(ngrams)
-  has_test <- !is.null(test)
+  plots <- list()
   
-  ## 1. Case: topics + summary + test
-  if (has_df_and_summary && has_test) {
-    # Determine which topics to plot
-    if (is.null(plot_topics_idx)) {
-      plot_topics_idx <- seq_along(df_list)
-      grid_prefix <- ""
-    } else {
-      grid_prefix <- paste0("0_scatter_emphasised_grid_pos_", grid_pos, "_")
+  # CASE 1: Topic models + test
+  if(!is.null(df_list) && !is.null(summary) && !is.null(test)){
+    # Column extractors for test‑results 
+    split_vars <- strsplit(cor_var, "__", fixed = TRUE)[[1]]
+    get_stats <- function(topic_id){
+      if(is.null(test)) return(list(est = NA, p = NA))
+      row <- dplyr::filter(tibble::as_tibble(test, .name_repair = "minimal"), topic == topic_id)
+      if(length(split_vars) == 1){
+        list(
+          est = row[[grep(paste0(cor_var, ".estimate"),names(row))]],
+          p   = row[[grep(paste0(cor_var, ".p_adjusted"),names(row))]]
+        )
+      } else {
+        est_x <- row[[grep(paste0(split_vars[1],".estimate"),names(row))]]
+        est_y <- row[[grep(paste0(split_vars[2],".estimate"),names(row))]]
+        p_x   <- row[[grep(paste0(split_vars[1],".p_adjusted"),names(row))]]
+        p_y   <- row[[grep(paste0(split_vars[2],".p_adjusted"),names(row))]]
+        list(est = c(x = est_x, y = est_y), p = c(x = p_x, y = p_y), na.rm = TRUE)
+      }
     }
     
-    # Loop through each chosen topic
-    for (i in plot_topics_idx) {
-      topic_label <- paste0("t_", i)
-      
-      # Extract estimate and adjusted p-value columns from test
-      extract_cols <- function(var_name) {
-        grep(paste0(var_name, "\\.(estimate|p_adjusted)"), colnames(test), value = TRUE)
-      }
-      cols <- extract_cols(cor_var)
-      estimate_col <- cols[grepl("estimate", cols)]
-      pval_col     <- cols[grepl("p_adjusted", cols)]
-      
-      # Get numeric values for this topic
-      row_data <- test[test$topic == topic_label, ]
-      estimate <- as.numeric(row_data[[estimate_col]])
-      p_adjusted <- as.numeric(row_data[[pval_col]])
-      
-      # Compute size scaling if requested
-      if (scale_size) {
-        prevalence <- summary[topic_label, ]$prevalence
-        current_max <- max_size * log(prevalence)
-        y_label <- paste0("P = ", round(prevalence, 3))
-      } else {
-        current_max <- max_size
-        y_label <- ""
-      }
-      
-      # Decide whether to plot based on p_alpha or forced popout
-      threshold <- ifelse(is.null(p_alpha), p_adjusted + 1, p_alpha)
-      if (!is.nan(p_adjusted) && (p_adjusted < threshold || i %in% popout$topic)) {
-        # Choose color scheme by sign of estimate
-        color_scale <- if (estimate < 0) color_negative_cor else color_positive_cor
-        
-        # Prepare the topic data, handling highlighted words if requested
-        topic_df <- df_list[[i]]
-        if (!is.null(highlight_topic_words) && is.character(highlight_topic_words)) {
-          sep <- separate_neg_words(topic_df, highlight_topic_words)
-          neg <- sep[[2]]; pos <- sep[[1]]
-          names(neg)[3] <- "color"
-          neg$source <- "negDic"; pos$source <- "notNegDic"
-          topic_df <- dplyr::bind_rows(pos, neg) %>%
-            dplyr::mutate(
-              label = ifelse(source == "negDic",
-                             sprintf("<b><i>%s</i></b>", Word), Word),
-              phi = phi^1.1 / sum(phi^1.1)
-            )
+    for(topic in plot_topics_idx){
+      stats <- get_stats(topic)
+      est   <- stats$est
+      p_vec <- stats$p
+      p_val_min <- min_p(p_vec)
+      cur_alpha <- if(is.null(p_alpha)) p_val_min + 1 else p_alpha
+      is_pop <- !is.null(popout) && topic %in% popout$topic
+      if(!is.nan(p_val_min) && (p_val_min < cur_alpha || is_pop)){
+        idx   <- as.numeric(sub(".*_", "", topic))
+        data  <- df_list[[idx]]
+        if(!is.null(highlight_topic_words))
+          data <- highlight_neg(data)
+        # size scaling
+        max_size_topic <- if(scale_size){
+          prev <- summary[topic, "prevalence"][[1]]
+          max_size * log(prev)
+        } else max_size
+        scheme <- choose_scheme(est)
+        plot   <- build_cloud(data, scheme, max_size_topic)
+        # axis annotations
+        x_lab  <- if(length(est) == 1){
+          sprintf("r = %.4f", est)
+        } else {
+          sprintf("r_x = %.4f\nr_y = %.4f", est["x"], est["y"])
         }
-        
-        # Build the wordcloud plot
-        plt <- ggplot2::ggplot(topic_df, aes(label = Word, size = phi, color = phi)) +
-          ggwordcloud::geom_text_wordcloud() +
-          ggplot2::scale_size_area(max_size = current_max) +
-          ggplot2::theme_minimal() +
-          color_scale +
-          ggplot2::labs(x = paste0("r = ", round(estimate, 3)), y = y_label)
-        
-        # Save and store the plot
-        # if (is.null(popout)){fileHead <- ''} else {
-        #   if (i %in% popout$topic){fileHead <- '0_scatter_emphasised_'}else{fileHead <- ''}
-        # }
-        file_name <- paste0(grid_prefix, "topic_", i,
-                            "_r_", round(estimate,3),
-                            "_p_", sprintf("%.2e", p_adjusted),
-                            ".", figure_format)
-        save_plot(plt, file_name)
-        
-        plot_list[[topic_label]] <- plt
-      } else {
-        plot_list[[topic_label]] <- "need_to_specify"
+        plot   <- plot + ggplot2::labs(x = x_lab)
+        # file name stub
+        stub <- if(length(est) == 1){
+          sprintf("%scorvar_%s_%s_r_%.4f_p_%s",
+                  if(grid_pos != "") sprintf("grid_pos_%s_", grid_pos) else "",
+                  cor_var, topic, est, format_p(p_vec))
+        } else {
+          sprintf("%scorvar_%s_%s_rx_%.4f_ry_%.4f_px_%s_py_%s",
+                  if(grid_pos != "") sprintf("grid_pos_%s_", grid_pos) else "",
+                  cor_var, topic, est["x"], est["y"],
+                  format(p_vec["x"], scientific = TRUE, digits = 2),
+                  format(p_vec["y"], scientific = TRUE, digits = 2))
+        }
+        save_plot(plot, stub, 't_')
+        plots[[topic]] <- plot
       }
     }
   }
   
-  ## 2. Case: topics + summary, no test
-  if (has_df_and_summary && !has_test) {
-    plot_topics_idx <- plot_topics_idx %||% seq_along(df_list)
-    for (i in plot_topics_idx) {
-      topic_label <- paste0("t_", i)
-      topic_df <- df_list[[i]]
-      
-      # Scale size if requested
-      current_max <- if (scale_size) {
-        prevalence <- summary[topic_label, ]$prevalence
-        max_size * log(prevalence)
+  # CASE 2: Topic models alone
+  if(!is.null(df_list) && !is.null(summary) && is.null(test)){
+    for(topic in plot_topics_idx){
+      idx      <- as.numeric(sub(".*_", "", topic))
+      data     <- df_list[[idx]]
+      max_size_topic <- if(scale_size){
+        prev <- summary[topic, "prevalence"][[1]]
+        max_size * log(prev)
       } else max_size
-      
-      plt <- ggplot2::ggplot(topic_df, aes(label = Word, size = phi, color = phi)) +
-        ggwordcloud::geom_text_wordcloud() +
-        ggplot2::scale_size_area(max_size = current_max) +
-        ggplot2::theme_minimal() +
-        color_negative_cor
-      
-      save_plot(plt, paste0(topic_label, ".", figure_format))
-      plot_list[[topic_label]] <- plt
+      plot <- build_cloud(data, color_negative_cor, max_size_topic)
+      save_plot(plot, topic,'t_')
+      plots[[paste0('t_',as.character(topic))]] <- plot
     }
   }
   
-  ## 3. Case: n-grams only
-  if (!has_df_and_summary && has_ngrams && !has_test) {
-    plt <- ggplot2::ggplot(ngrams, aes(label = ngrams, size = prop, color = prop)) +
-      ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
-      ggplot2::theme_minimal() +
-      color_positive_cor
-    save_plot(plt, paste0("ngrams.", figure_format))
-    plot_list[["ngrams"]] <- plt
-  }
-  
-  ## 4. Case: n-grams + test
-  if (!has_df_and_summary && has_ngrams && has_test) {
-    # Prepare data: rename, join, filter by p_alpha
-    df <- ngrams %>% dplyr::rename(term = ngrams)
-    test2 <- test %>%
-      dplyr::rename(estimate = contains("estimate"), p_adjusted = contains("p_adjusted")) %>%
-      dplyr::left_join(df, by = "term")
-    if (!is.null(p_alpha)) test2 <- dplyr::filter(test2, p_adjusted < p_alpha)
-    
-    if (nrow(test2) == 0) {
-      message("No significant terms. No wordclouds generated.")
-    } else {
-      pos <- dplyr::filter(test2, estimate > 0)
-      neg <- dplyr::filter(test2, estimate < 0)
-      
-      # Positive cloud
-      plt_pos <- ggplot2::ggplot(pos, aes(label = term, size = prop, color = estimate)) +
+  # CASE 3: N‑grams (no topic model) 
+  if(is.null(df_list) && !is.null(ngrams)){
+    if(is.null(test)){
+      plot <- ggplot2::ggplot(ngrams, ggplot2::aes(label = ngrams, size = prop, color = prop)) +
         ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
-        ggplot2::scale_size_area(max_size = max_size) +
         ggplot2::theme_minimal() +
         color_positive_cor
-      save_plot(plt_pos, paste0("ngrams_positive.", figure_format))
-      
-      # Negative cloud
-      plt_neg <- ggplot2::ggplot(neg, aes(label = term, size = prop, color = abs(estimate))) +
-        ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
-        ggplot2::scale_size_area(max_size = max_size) +
-        ggplot2::theme_minimal() +
-        color_negative_cor
-      save_plot(plt_neg, paste0("ngrams_negative.", figure_format))
-      
-      plot_list[["positive"]] <- plt_pos
-      plot_list[["negative"]] <- plt_neg
+      save_plot(plot, "ngrams")
+      plots <- plot
+    } else {
+      ng  <- ngrams %>% dplyr::rename(top_terms = ngrams)
+      tst <- test   %>% dplyr::rename(estimate   = dplyr::contains("estimate"),
+                                      p_adjusted = dplyr::contains("p_adjusted")) %>%
+        dplyr::left_join(ng, by = "top_terms")
+      if(!is.null(p_alpha))
+        tst <- dplyr::filter(tst, p_adjusted < p_alpha)
+      if(nrow(tst) == 0){
+        message("No significant terms. No wordclouds generated.")
+      } else {
+        make_ngram_plot <- function(df, scheme){
+          ggplot2::ggplot(df, ggplot2::aes(label = top_terms, size = prop, color = abs(estimate))) +
+            ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
+            ggplot2::scale_size_area(max_size = max_size) +
+            ggplot2::theme_minimal() +
+            scheme
+        }
+        pos  <- make_ngram_plot(dplyr::filter(tst, estimate > 0), color_positive_cor)
+        neg  <- make_ngram_plot(dplyr::filter(tst, estimate < 0), color_negative_cor)
+        save_plot(pos, "ngrams_positive")
+        save_plot(neg, "ngrams_negative")
+        plots <- list(positive = pos, negative = neg)
+      }
     }
   }
   
-  # Return all generated plots in a named list
-  return(plot_list)
+  return(plots)
 }
 
 
@@ -503,7 +499,7 @@ create_plots <- function(
 #' @importFrom ggplot2 ggsave labs scale_size_area theme_minimal ggplot aes scale_color_gradient scale_colour_identity
 #' @importFrom dplyr rename
 #' @noRd
-create_plots_pre <- function(
+create_plots_old <- function(
     df_list = NULL,
     summary = NULL,
     ngrams = NULL,
