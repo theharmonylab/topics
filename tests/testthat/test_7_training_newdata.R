@@ -1,4 +1,10 @@
 
+Sys.setenv(OMP_NUM_THREADS = "1") #Limit the number of threads to prevent conflicts.
+
+Sys.setenv(OMP_MAX_ACTIVE_LEVELS = "1")
+
+# If above does not work, you can also try this; although this solution might have some risks assocaited with it (for more information see https://github.com/dmlc/xgboost/issues/1715)
+Sys.setenv(KMP_DUPLICATE_LIB_OK = "TRUE") #Temporarily allows execution despite duplicate OpenMP libraries.
 
 library(testthat)
 library(topics)
