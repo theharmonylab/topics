@@ -84,12 +84,14 @@ topicsScatterLegend <- function(
     # Only non-significant topics. Generating scatter legend.
   } else if (only_two && y_axes_1 == 1) {
     popout <- filtered_test %>% dplyr::filter(color_categories %in% 1:3)
-    backgr_dots <- tibble::tibble() # No background dots
+    backgr_dots <- tibble::tibble(data.frame(matrix(0,nrow=1,ncol=ncol(popout)))) # No background dots
+    names(backgr_dots) <- names(popout)
     
     # Only significant topics. Generating scatter plot.\n
   } else if (only_five && y_axes_1 == 2) {
     popout <- filtered_test
-    backgr_dots <- tibble::tibble() # No background dots
+    backgr_dots <- tibble::tibble(data.frame(matrix(0,nrow=1,ncol=ncol(popout)))) # No background dots
+    names(backgr_dots) <- names(popout)
     
     # Generating scatter plot based on specified popout criteria.\n
   } else {
