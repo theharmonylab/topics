@@ -265,8 +265,7 @@ save_plot <- function(plot, stub, header='', save_dir, figure_format, width, hei
   )
 }
 
-#' @noRd
-choose_scheme <- function(est){ if(est[1] < 0) color_negative_cor else color_positive_cor }
+#choose_scheme <- function(est){ if(est[1] < 0) color_negative_cor else color_positive_cor }
 
 #' @noRd
 highlight_neg <- function(topic_df){
@@ -350,8 +349,9 @@ create_plots <- function(
   }
   
   # Pre‑processing
-  if(!is.null(test) && is.null(plot_topics_idx)){
-    plot_topics_idx <- seq_along(test)
+  if(is.null(plot_topics_idx)){
+    plot_topics_idx <- seq(1, length(df_list))
+    #plot_topics_idx <- test$topic# seq_along(test)
   }else{plot_topics_idx <- plot_topics_idx}
   
   plots <- list()
@@ -362,7 +362,8 @@ create_plots <- function(
     split_vars <- strsplit(cor_var, "__", fixed = TRUE)[[1]]
     get_stats <- function(topic_id){
       if(is.null(test)) return(list(est = NA, p = NA))
-      row <- dplyr::filter(tibble::as_tibble(test, .name_repair = "minimal"), topic == topic_id)
+      row <- dplyr::filter(tibble::as_tibble(test, .name_repair = "minimal"), 
+                           topic == paste0("t_",topic_id))
       if(length(split_vars) == 1){
         list(
           est = row[[grep(paste0(cor_var, ".estimate"),names(row))]],
@@ -383,7 +384,7 @@ create_plots <- function(
       p_vec <- stats$p
       p_val_min <- min_p(p_vec)
       cur_alpha <- if(is.null(p_alpha)) p_val_min + 1 else p_alpha
-      is_pop <- !is.null(popout) && topic %in% popout$topic
+      is_pop <- !is.null(popout) && paste0("t_",topic) %in% popout$topic
       if(!is.nan(p_val_min) && (p_val_min < cur_alpha || is_pop)){
         idx   <- as.numeric(sub(".*_", "", topic))
         data  <- df_list[[idx]]
@@ -394,7 +395,9 @@ create_plots <- function(
           prev <- summary[topic, "prevalence"][[1]]
           max_size * log(prev)
         } else max_size
-        scheme <- choose_scheme(est)
+        #scheme <- choose_scheme(est)
+        scheme <- if (est[1] < 0) color_negative_cor else color_positive_cor
+        #choose_scheme <- function(est){ if(est[1] < 0) color_negative_cor else color_positive_cor }
         plot   <- build_cloud(data, scheme, max_size_topic)
         # axis annotations
         x_lab  <- if(length(est) == 1){
@@ -416,7 +419,7 @@ create_plots <- function(
                   format(p_vec["y"], scientific = TRUE, digits = 2))
         }
         save_plot(plot, stub, 't_', save_dir, figure_format, width, height, seed)
-        plots[[topic]] <- plot
+        plots[[paste0("t_",topic)]] <- plot
       }
     }
   }

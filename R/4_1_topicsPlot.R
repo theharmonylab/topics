@@ -84,12 +84,14 @@ topicsScatterLegend <- function(
     # Only non-significant topics. Generating scatter legend.
   } else if (only_two && y_axes_1 == 1) {
     popout <- filtered_test %>% dplyr::filter(color_categories %in% 1:3)
-    backgr_dots <- tibble::tibble() # No background dots
+    backgr_dots <- tibble::tibble(data.frame(matrix(0,nrow=1,ncol=ncol(popout)))) # No background dots
+    names(backgr_dots) <- names(popout)# No background dots
     
     # Only significant topics. Generating scatter plot.\n
   } else if (only_five && y_axes_1 == 2) {
     popout <- filtered_test
-    backgr_dots <- tibble::tibble() # No background dots
+    backgr_dots <- tibble::tibble(data.frame(matrix(0,nrow=1,ncol=ncol(popout)))) # No background dots
+    names(backgr_dots) <- names(popout) # No background dots
     
     # Generating scatter plot based on specified popout criteria.\n
   } else {
@@ -104,6 +106,10 @@ topicsScatterLegend <- function(
     
     # Perform anti_join
     backgr_dots <- filtered_test %>% dplyr::anti_join(popout, by = colnames(filtered_test))
+    if (nrow(backgr_dots) == 0){
+      backgr_dots <- tibble::tibble(data.frame(matrix(0,nrow=1,ncol=ncol(popout)))) # No background dots
+      names(backgr_dots) <- names(popout) # No background dots
+    }
   }
  
 #  if (scatter_popout_dot_size == "prevalence"){
@@ -289,28 +295,50 @@ determine_popout_topics <- function(
   # Determine which color category should use the min-based selection:
   # - For a 9-element vector, the popout category is "5".
   # - For a 3-element vector, the popout category is "2".
-  popout_category <- if (length(num_popout) == 9) "5" else "2"
+  num1 <- max(as.numeric(filtered_test$color_categories))
+  popout_category <- if (length(num_popout) == 9 && num1 == 9) "5" else "2"
   
   # Process each category using group_modify:
-  filtered_test %>%
-    dplyr::filter(color_categories %in% names(valid_map)) %>%
-    dplyr::group_by(color_categories) %>%
-    dplyr::group_modify(~ {
+  filtered_test %>% 
+    filter(color_categories %in% names(valid_map)) %>% 
+    group_by(color_categories) %>% 
+    group_modify(~ {
       category <- .y$color_categories
-      n_pop <- valid_map[[category]]
-      if (n_pop > 0) {
-        if (category == popout_category) {
-          # For the designated popout group (only category "5" or "2"), use min-based selection.
-          select_rows_min(.x, n_pop)
-        } else {
-          # For all other groups, use the existing max-based selection.
-          select_rows(.x, n_pop)
-        }
+      n_pop    <- valid_map[[category]]
+      
+      if (n_pop <= 0) return(.x[0, ])
+      
+      if (category == popout_category) {
+        select_rows_min(.x, n_pop)
       } else {
-        .x[0, ]  # Return an empty tibble for groups with 0 in the mapping.
+        select_rows(.x, n_pop)
       }
-    }) %>%
-    dplyr::ungroup()
+    }) %>% 
+    ungroup() %>%                                  # <- dplyr re-attaches the key here
+   dplyr::select(-color_categories, color_categories)
+   #relocate(color_categories, .after = last_col())   # move it to the very end
+
+  
+  # filtered_test %>%
+  #   dplyr::filter(color_categories %in% names(valid_map)) %>%
+  #   dplyr::group_by(color_categories) %>%
+  #   dplyr::group_modify(~ {
+  #     category <- .y$color_categories
+  #     n_pop <- valid_map[[category]]
+  #     if (n_pop > 0) {
+  #       if (category == popout_category) {
+  #         
+  #         res <- select_rows_min(.x, n_pop)
+  #       } else {
+  #         
+  #         res <- select_rows(.x, n_pop)
+  #       }
+  #     } else {
+  #       res <- .x[0, ]  # Return an empty tibble for groups with 0 in the mapping.
+  #     }
+  #     dplyr::bind_cols(.y, res)
+  #   }) %>%
+  #   dplyr::ungroup()
 }
 
 #' @param popout A data frame containing the data points to be highlighted ("pop-out") in the scatter plot.
@@ -1433,7 +1461,6 @@ topicsPlot <- function(
   if (!is.null(model) & !is.null(test)){
     
     if (dim == 1){
-      #i=1
       plot_list <- list()
       plot_list <- vector("list", length = 3)
       names(plot_list) <- paste0("square", 1:3)
