@@ -24,7 +24,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     topics::topicsPlot(
       ngrams = ngrams, 
       ngrams_max = 40,
-      ngram_select = "proportion",
+      ngram_select = "prevalence",
       figure_format = "png", 
       save_dir = save_dir_temp)
   }
@@ -49,15 +49,15 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     x_variable = "Age")
   
   
-  
   pl <- topics::topicsPlot(
     ngrams = ngrams, 
     test = test,
     ngrams_max = 10,
     ngram_select = "prevalence",
     figure_format = "png", 
-    p_alpha = 1, 
-    save_dir = save_dir_temp)
+    p_alpha = 1,
+    save_dir = save_dir_temp
+    )
   
   ngram_negative <- function() {
     pl$negative

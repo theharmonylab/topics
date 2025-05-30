@@ -11,7 +11,7 @@ utils::globalVariables(c(
   
   ".", ".data", "color_categories", "contains_only_five", "fill", "group", "left_join",
   
-  "map_num", "mean_value", "prop", "rename", "topic", "topic_number", "x", "y",
+  "map_num", "mean_value", "prevalence", "rename", "topic", "topic_number", "x", "y",
   
   # generate_scatter_plot
   "geom_text", 

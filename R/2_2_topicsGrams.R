@@ -35,7 +35,7 @@ add_missing_rows <- function(input_tibble, value_list) {
 
 # Function to filter ngrams based on different modes
 #' @param ngrams (tibble) A tibble with n_grams and freq columns representing n-grams and their frequencies.
-#' @param removal_mode (character) The mode of filtering. Choose from 'term', 'frequency', or 'proportion'.
+#' @param removal_mode (character) The mode of filtering. Choose from 'term', 'frequency', or 'prevalence'.
 #' @param removal_rate_most (numeric) The number of terms to remove from the top or the maximum frequency.
 #' @param removal_rate_least (numeric) The number of terms to remove from the bottom or the minimum frequency.
 #' @importFrom dplyr arrange filter
@@ -82,11 +82,11 @@ filter_ngrams <- function(
     ngrams_filtered <- ngrams[removal_rate_least:removal_rate_most, ]
 
     #ngrams_filtered <- ngrams %>%
-    #    dplyr::filter(prop <= removal_rate_most & prop >= removal_rate_least)
+    #    dplyr::filter(prevalence <= removal_rate_most & prevalence >= removal_rate_least)
 
     
   } else {
-    stop("Invalid mode. Choose 'term', 'frequency', or 'proportion'.")
+    stop("Invalid mode. Choose 'term', 'frequency', or 'prevalence'.")
   }
   # Compute the stats
   initial_count = table(ngrams$n_gram_type)
@@ -270,7 +270,7 @@ topicsGrams <- function(
   ngrams <- list()
   counts <- c()
   
-  # Loop through n-gram sizes and generate n-grams
+  # Loop through n-gram sizes and generate n-grams 
   for (i in seq_along(ngram_window)) {
     
     filtered_data <- data_cleaned[sapply(strsplit(data_cleaned, "\\s+"), length) >= ngram_window[i]]
@@ -302,6 +302,9 @@ topicsGrams <- function(
   total <- sum(ngrams$freq)
   ngrams$prevalence <- ngrams$freq / total
   ngrams$coherence <- NA  # Placeholder for coherence; to make the data frame look the same as the dtm output
+  
+  # Removing prop to not confue with prevalence (prop is f)
+  ngrams$prop <- NULL
   
   # Get number of documents for each ngram
   # doc_count <- docs_per_ngram(ngrams, data_cleaned)
