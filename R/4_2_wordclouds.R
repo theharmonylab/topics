@@ -283,6 +283,7 @@ highlight_neg <- function(topic_df){
 #' @noRd
 build_cloud <- function(data, scheme, max_size_local){
   lbl <- if("label_content" %in% colnames(data)) "label_content" else "Word"
+  # Here we set what the size and colour of the words in topics represents
   ggplot2::ggplot(data, ggplot2::aes_string(label = lbl, size = "phi", color = "phi")) +
     ggwordcloud::geom_text_wordcloud() +
     ggplot2::scale_size_area(max_size = max_size_local) +
@@ -300,7 +301,7 @@ format_p <- function(p_vec) format(min_p(p_vec), scientific = TRUE, digits = 2)
 #'
 #' @param df_list list of data.frames with topic word distributions
 #' @param summary data.frame with topic prevalences (row‑names t_1, t_2, …)
-#' @param ngrams data.frame with two columns: ngrams, prop
+#' @param ngrams data.frame with two columns: ngrams, prevalence
 #' @param test data.frame returned by textTopicTest()
 #' @param test_type "linear_regression" | "binary_regression"
 #' @param cor_var variable name used in the regression columns (e.g. "age")
@@ -363,7 +364,7 @@ create_plots <- function(
     get_stats <- function(topic_id){
       if(is.null(test)) return(list(est = NA, p = NA))
       row <- dplyr::filter(tibble::as_tibble(test, .name_repair = "minimal"), 
-                           topic == paste0("t_",topic_id))
+                           topic == paste0("t_", topic_id))
       if(length(split_vars) == 1){
         list(
           est = row[[grep(paste0(cor_var, ".estimate"),names(row))]],
@@ -442,7 +443,7 @@ create_plots <- function(
   # CASE 3: N‑grams (no topic model) 
   if(is.null(df_list) && !is.null(ngrams)){
     if(is.null(test)){
-      plot <- ggplot2::ggplot(ngrams, ggplot2::aes(label = ngrams, size = prop, color = prop)) +
+      plot <- ggplot2::ggplot(ngrams, ggplot2::aes(label = ngrams, size = prevalence, color = prevalence)) +
         ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
         ggplot2::theme_minimal() +
         color_positive_cor
@@ -459,13 +460,24 @@ create_plots <- function(
         message("No significant terms. No wordclouds generated.")
       } else {
         make_ngram_plot <- function(df, scheme){
-          ggplot2::ggplot(df, ggplot2::aes(label = top_terms, size = prop, color = abs(estimate))) +
+          # Identify the first column name that starts with "prevalence"
+          prevalence_col <- grep("^prevalence", names(df), value = TRUE)[1]
+          
+          # Custom legend titles
+          size_legend_title <- "prevalence"
+          color_legend_title <- "estimate"
+          
+          ggplot2::ggplot(df, 
+                          ggplot2::aes(label = top_terms, 
+                                       size = .data[[prevalence_col]], 
+                                       color = abs(estimate))) +
             ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
-            ggplot2::scale_size_area(max_size = max_size) +
+            ggplot2::scale_size_area(max_size = max_size, name = size_legend_title)+
+            ggplot2::labs(color = color_legend_title) +
             ggplot2::theme_minimal() +
             scheme
         }
-        pos  <- make_ngram_plot(dplyr::filter(tst, estimate > 0), color_positive_cor)
+        pos  <- make_ngram_plot(df = dplyr::filter(tst, estimate > 0), scheme = color_positive_cor)
         neg  <- make_ngram_plot(dplyr::filter(tst, estimate < 0), color_negative_cor)
         save_plot(pos, "ngrams_positive", '', save_dir, figure_format, width, height, seed)
         save_plot(neg, "ngrams_negative", '', save_dir, figure_format, width, height, seed)
@@ -833,8 +845,8 @@ create_plots_old <- function(
     
     plot <- ggplot2::ggplot(ngrams, 
                             ggplot2::aes(label = ngrams, 
-                                         size = prop, 
-                                         color = prop)) +
+                                         size = prevalence, 
+                                         color = prevalence)) +
       ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
       ggplot2::theme_minimal() +
       color_positive_cor # ggplot2::scale_color_gradient(low = "yellow", high = "red")
@@ -887,7 +899,7 @@ create_plots_old <- function(
       # Word cloud with correlation strength mapped to color gradient
       plot1 <- ggplot2::ggplot(test_positive, 
                                ggplot2::aes(label = top_terms,
-                                            size = prop,
+                                            size = prevalence,
                                             color = estimate)) +
         ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
         ggplot2::scale_size_area(max_size = max_size) +  # Adjust max size
@@ -910,7 +922,7 @@ create_plots_old <- function(
       # Word cloud with correlation strength mapped to color gradient
       plot2 <- ggplot2::ggplot(test_negative, 
                                ggplot2::aes(label = top_terms,
-                                            size = prop,
+                                            size = prevalence,
                                             color = abs(estimate))) +
         ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
         ggplot2::scale_size_area(max_size = max_size) +  # Adjust max size

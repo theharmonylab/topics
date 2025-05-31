@@ -62,7 +62,7 @@ see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").}
 \item{ngrams_max}{(integer) The maximum number of n-grams to plot.}
 
 \item{ngram_select}{(character) Method to select ngrams_max, when using both ngram and test use "prevalence" or "estimate"; 
-if you only use ngrams use "pmi", "frequency", or "proportion".}
+if you only use ngrams use "pmi", "frequency", or "prevalence".}
 
 \item{color_scheme}{(string 'default' or vector) The color scheme.
  

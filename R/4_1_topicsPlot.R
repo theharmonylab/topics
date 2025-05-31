@@ -1054,7 +1054,7 @@ clean_characters_for_plotting_test <- function(test) {
 #' see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").
 #' @param ngrams_max (integer) The maximum number of n-grams to plot.
 #' @param ngram_select (character) Method to select ngrams_max, when using both ngram and test use "prevalence" or "estimate"; 
-#' if you only use ngrams use "pmi", "frequency", or "proportion". 
+#' if you only use ngrams use "pmi", "frequency", or "prevalence". 
 #' @param color_scheme (string 'default' or vector) The color scheme.
 #'  
 #' For plots not including a test, the color_scheme should in clude 2 colours (1 gradient pair), such as:
@@ -1327,8 +1327,8 @@ topicsPlot <- function(
   if(!is.null(ngrams) & !is.null(ngrams_max)){
     
     if(is.null(test)){
-      if (!ngram_select %in% c("pmi", "frequency", "proportion")){
-        stop("ngram_select incorrect -- can only select pmi, frequency, or proportion when not including a test.")
+      if (!ngram_select %in% c("pmi", "frequency", "prevalence")){
+        stop("ngram_select incorrect -- can only select pmi, frequency, or prevalence when not including a test.")
       }
       
       ngrams$ngrams <- ngrams$ngrams %>% 
@@ -1337,8 +1337,8 @@ topicsPlot <- function(
             dplyr::desc(pmi)
           } else if (ngram_select == "frequency") {
             dplyr::desc(freq)
-          } else if (ngram_select == "proportion") {
-            dplyr::desc(prop)
+          } else if (ngram_select == "prevalence") {
+            dplyr::desc(prevalence)
           } else {
             stop("Invalid value for ngram_select")
           }
