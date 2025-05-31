@@ -283,6 +283,7 @@ highlight_neg <- function(topic_df){
 #' @noRd
 build_cloud <- function(data, scheme, max_size_local){
   lbl <- if("label_content" %in% colnames(data)) "label_content" else "Word"
+  # Here we set what the size and colour of the words in topics represents
   ggplot2::ggplot(data, ggplot2::aes_string(label = lbl, size = "phi", color = "phi")) +
     ggwordcloud::geom_text_wordcloud() +
     ggplot2::scale_size_area(max_size = max_size_local) +
