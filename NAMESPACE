@@ -3,6 +3,7 @@
 export(topicsDtm)
 export(topicsDtmEval)
 export(topicsGrams)
+export(topicsGridLegend)
 export(topicsModel)
 export(topicsPlot)
 export(topicsPreds)

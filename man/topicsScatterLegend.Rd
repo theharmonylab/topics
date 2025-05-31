@@ -2,7 +2,7 @@
 % Please edit documentation in R/4_1_topicsPlot.R
 \name{topicsScatterLegend}
 \alias{topicsScatterLegend}
-\title{Plot a distribution plot}
+\title{Plot a distribution plot (available for the text-package)}
 \usage{
 topicsScatterLegend(
   bivariate_color_codes,
@@ -82,5 +82,5 @@ Can be a single integer (applies to all categories) or a vector for specific cat
 \item{seed}{Seed for reproducibility, ensuring consistent plot generation. Default: 42.}
 }
 \description{
-Plot a distribution plot
+Plot a distribution plot (available for the text-package)
 }

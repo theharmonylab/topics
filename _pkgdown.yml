@@ -65,6 +65,7 @@ reference:
 - title: Help functions
   contents:
     - topicsScatterLegend
+    - topicsGridLegend
 
 articles:
 - title: Set-up

@@ -1,6 +1,6 @@
 
 
-#'  Plot a distribution plot
+#'  Plot a distribution plot (available for the text-package)
 #'  
 #' @param bivariate_color_codes A vector of color codes specifying colors for 
 #' different categories in the scatter plot. 
@@ -555,6 +555,7 @@ generate_scatter_plot <- function(
 }
 
 #### topicsGridLegend ####
+#'  Plot a grid (matrix) legend (available for the text-package)
 #' @param bivariate_color_codes A vector of color codes specifying the colors for the 3x3 grid legend.
 #'                              Default: c("#398CF9", "#60A1F7", "#5dc688", "#e07f6a", "#EAEAEA", "#40DD52", "#FF0000", "#EA7467", "#85DB8E").
 #' @param filtered_test A data frame containing the filtered topic data. Must include a `color_categories` column.
@@ -576,7 +577,7 @@ generate_scatter_plot <- function(
 #' @importFrom tidyr gather separate
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 geom_tile ggtitle scale_fill_identity labs theme_void annotate theme element_text coord_fixed ggsave
-#' @noRd
+#' @export
 topicsGridLegend <- function(
     bivariate_color_codes = c(
       "#398CF9", "#60A1F7", "#5dc688",
