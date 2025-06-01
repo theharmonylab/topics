@@ -45,22 +45,35 @@ assign_phi_to_words <- function(
 
 #
 #' Create list of data.frames with topics most frequent words and topic term scores
-#' @param save_dir (string) directory where to get data from
-#' @param num_topics (int) the number of topics
+#' @param df (string) 
 #' @return list of data.frames
-#' @importFrom utils read.csv
 #' @noRd
 create_df_list_bert_topics <- function(
-    save_dir,
-    seed,
-    num_topics) {
+    df
+    ) {
   
-  df_list <- list()
-  
-  for (i in 1:num_topics) {
-    
-    df_list[[i]] <- utils::read.csv(paste0(save_dir, "/seed_", seed, "/df_list_term_phi/", i, "_top_words.csv"))
+  n <- nrow(df$summary)
+  df_list <- vector("list", n)
+
+  for (i in 1:n) {
+    top_terms_bert <- df$summary$top_terms[i]
+    df_list[[i]] <- top_terms_bert
   }
+  
+  # Convert each topic's word list to a dataframe with Word and phi
+  df_list <- lapply(df_list, function(words_string) {
+    # Split into individual words
+    words <- unlist(strsplit(words_string, ",\\s*"))
+    # If removing/changing below line then update message in text-package
+    phi <- rev(seq_along(words)) / sum(seq_along(words))
+    
+    # Return as data.frame
+    tibble::tibble(Word = words, phi = phi)
+  })
+  
+  # Assign pseudo-phi values as descending importance scores (normalized from 1 to N)
+  # This is moved to the text-package message(colourise("Note: BERTopic does not provide true 'phi' values (i.e., P(word | topic)) as in probabilistic models like LDA. Instead, we assign descending normalized values to approximate word importance.", "blue"))
+  
   return(df_list)
 }
 

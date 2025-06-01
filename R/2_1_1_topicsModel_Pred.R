@@ -338,6 +338,8 @@ topicsModel <- function(
     stringsAsFactors = FALSE)
   model$summary[order(model$summary$prevalence, decreasing = TRUE) , ][ 1:10 , ]
   
+  model$model_type <- "mallet"
+  
   return(model)
 }
 

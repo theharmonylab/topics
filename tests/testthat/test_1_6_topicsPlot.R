@@ -188,6 +188,7 @@ test_that("topicsPlot WITH test", {
     preds = preds,
     data = dep_wor_data,
     x_variable = "Age")
+  
 
   save_dir_temp <- tempdir()
   
@@ -256,7 +257,7 @@ test_that("topicsPlot WITH test", {
   
   save_dir_temp <- tempdir()
   
-  topics4_Logistic <- topicsPlot(
+  topics4_Logistic <- topics::topicsPlot(
     model = model, 
     test = test1, 
     p_alpha = .1,

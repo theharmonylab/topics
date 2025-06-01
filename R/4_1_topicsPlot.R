@@ -792,7 +792,7 @@ topicsPlot1 <- function(
     plot_topics_idx = NULL,
     p_alpha = 0.05,
     highlight_topic_words = c("not", "never"),    
-    save_dir,
+    save_dir = NULL,
     figure_format = "svg",
     width = 10, 
     height = 8,
@@ -803,8 +803,8 @@ topicsPlot1 <- function(
 
   if (!is.null(model)){
     
-    # if model$model_type == "bert_topic" (i.e., a maller model return null on model$model_type)
-    if (!is.null(model$model_type)) {
+    
+    if (model$model_type == "bert_topic") {
       
       if(!is.null(test)){
         num_topics <- nrow(test$test)
@@ -817,10 +817,13 @@ topicsPlot1 <- function(
         stop("There are no significant topics to plot.")
       }
       
-      df_list <- create_df_list_bert_topics(
-        save_dir, 
-        seed, 
-        num_topics)
+      if(model$model_type == "bert_topic"){
+        df_list <- create_df_list_bert_topics(df = model$model)
+        summary = model$model$summary
+        cor_var = test$x_y_axis
+        test_type = test$test_method
+        test = test$test
+      }
       
     } else {
       # if from mallet: 
@@ -830,7 +833,7 @@ topicsPlot1 <- function(
     }
   }
   
-  if (!is.null(test) && !is.null(model)){
+  if (!is.null(test) && !is.null(model) && !model$model_type == "bert_topic"){
     summary = model$summary
     cor_var = test$x_y_axis
     test_type = test$test_method
@@ -1169,7 +1172,7 @@ topicsPlot <- function(
     seed = 42,
     scatter_legend_dot_size = c(3,8),
     scatter_legend_bg_dot_size = c(1,3),
-    scatter_legend_dots_alpha = 0.8, 
+    scatter_legend_dots_alpha = 0.8,
     scatter_legend_bg_dots_alpha = 0.2,
     scatter_legend_n = c(1,1,1,1,0,1,1,1,1),
     scatter_legend_method = c("mean"),
@@ -1559,8 +1562,6 @@ topicsPlot <- function(
     
     plot_list[["legend"]] <- legend
     plot_list[["distribution"]] <- popout1$legend
-    msg <- "The grid plot legends are saved in the save_dir."
-    message(colourise(msg, "green"))
   }
   return(plot_list)
 }

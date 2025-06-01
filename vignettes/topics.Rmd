@@ -33,7 +33,7 @@ In an example where the topics are used to predict the PHQ-9 score, the pipeline
 **1. Data Preprocessing**<br>
 To preprocess the data, run the following command:
 
-```{r dtm, eval = TRUE, warning=TRUE, message=TRUE}
+```{r dtm, eval = FALSE, warning=TRUE, message=TRUE}
 
 library(topics)
 
@@ -49,7 +49,7 @@ dtm_evaluation$frequency_plot
 **2. Model Training**<br>
 To train the LDA model, run the following command:
 
-```{r model, eval = TRUE, warning=FALSE, message=FALSE}
+```{r model, eval = FALSE, warning=FALSE, message=FALSE}
 
 model <- topicsModel(
   dtm = dtm,
@@ -71,7 +71,7 @@ preds <- topicsPreds(
 
 **4. Statistical Analysis**<br>
 To analyze the relationship between the topics and the prediction variable, run the following command:
-```{r test, eval = TRUE, warning=FALSE, message=FALSE}
+```{r test, eval = FALSE, warning=FALSE, message=FALSE}
 
 test <- topicsTest(
   data = dep_wor_data,
@@ -85,7 +85,7 @@ test <- topicsTest(
 
 **5. Visualization**<br>
 To visualize the significant topics as wordclouds, run the following command:
-```{r plot_list, eval = TRUE, warning=FALSE, message=FALSE}
+```{r plot_list, eval = FALSE, warning=FALSE, message=FALSE}
 
 plot_list <- topicsPlot(
   model = model,
