@@ -60,7 +60,7 @@ model <- topicsModel(
 
 **3. Model Inference**<br>
 To infer the topic term distribution of the documents, run the following command:
-```{r preds, eval = TRUE, warning=FALSE, message=FALSE}
+```{r preds, eval = FALSE, warning=FALSE, message=FALSE}
 
 preds <- topicsPreds(
   model = model,
