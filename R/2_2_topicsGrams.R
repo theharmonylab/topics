@@ -365,7 +365,9 @@ topicsGrams <- function(
     frequency <- ngrams$filtered_ngrams$freq[i]
     
     # Counting of n-gram occurrences in all sentences
-    ngram_counts <- stringr::str_count(data, gram_escaped)
+    # ngram_counts <- stringr::str_count(data, gram_escaped) # version .53
+    ngram_counts <- stringr::str_count(data, paste0("\\b", gram_escaped, "\\b"))
+
     
     # Calculate relative frequencies
     relative_frequencies <- ngram_counts / frequency
@@ -373,7 +375,6 @@ topicsGrams <- function(
     # Store the result with a clean name for the n-gram
     col_name <- paste(unlist(strsplit(gram, " ")), collapse = "_")
     freq_per_user[[col_name]] <- relative_frequencies
-    #print(paste0(i, "/", length_i))
     
   }
   freq_per_user_tbl <- tibble::as_tibble(freq_per_user, .name_repair = "minimal")

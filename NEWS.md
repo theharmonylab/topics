@@ -1,5 +1,9 @@
 # text (development version)
 
+# topics 0.54
+- topicsGrams() now uses exact word boundary matching for n-grams (e.g., "lack" is matched 
+as a standalone word, excluding partial matches like "black" or "lacking").
+- added ability to handle NAs in topicsTest(). 
 
 # topics 0.51
 - adding function to plot circles in the scatter legend. 
