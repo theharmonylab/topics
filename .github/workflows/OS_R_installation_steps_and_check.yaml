@@ -100,9 +100,19 @@ jobs:
         shell: Rscript {0}
 
 
+       # Intall macOS dependencies to solve OMP issues
+      - name: Install macOS OMP dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew update || echo "Homebrew update failed"
+          brew install libomp || echo "libomp installation failed"
+          brew install qpdf || echo "qpdf installation failed but continuing"
+          export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
+          echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
 
-      # Set up so that text also works 
-      - name: Install system dependencies
+
+      # Set up so that TEXT also works 
+      - name: Install system dependencies for text
         if: runner.os == 'Linux'
         run: |
           while read -r cmd
@@ -113,10 +123,10 @@ jobs:
           sudo apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libharfbuzz-dev libfribidi-dev
 
 
-      - name: Fix Conda permissions on macOS
-        if: runner.os == 'macOS'
-        run: sudo chown -R $UID $CONDA
-
+#      - name: Fix Conda permissions on macOS
+#        if: runner.os == 'macOS'
+#        run: sudo chown -R $UID $CONDA
+#
       - name: Installing text and testing it
         run:  |
           install.packages("devtools")
