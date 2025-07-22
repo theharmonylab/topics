@@ -71,7 +71,10 @@ check_java_installed <- function(verbose = TRUE) {
       topics_version_nr1 <- ""
     }
   )
-
+  
+  nowarranty <- c("The topics package is provided 'as is' without any warranty of any kind. \n")
+  
+  
   packageStartupMessage(
     colourise(
       paste("\nThis is topics: your text's new best friend",
@@ -84,21 +87,15 @@ check_java_installed <- function(verbose = TRUE) {
     colourise(java_msg,
       fg = "brown", bg = NULL
     ),
+    colourise(nowarranty,
+              fg = "purple", bg = NULL
+    ),
     colourise("\nFor more information about the topics package see www.r-topics.org and www.r-text.org.",
       fg = "green", bg = NULL
     )
   )
 }
 
-
-.onLoad <- function(libname, pkgname) {
-  java_version <- tryCatch(system("java -version", intern = TRUE, ignore.stderr = TRUE), error = function(e) NULL)
-  if (is.null(java_version)) {
-    packageStartupMessage(
-      "Java does not appear to be installed or accessible to R.\nPlease download and install it from https://www.java.com/en/download/ before using the 'topics' package."
-    )
-  }
-}
 
 # Below function is from testthat:
 # https://github.com/r-lib/testthat/blob/717b02164def5c1f027d3a20b889dae35428b6d7/R/colour-text.r

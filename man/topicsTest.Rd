@@ -14,6 +14,7 @@ topicsTest(
   controls = c(),
   test_method = "default",
   p_adjust_method = "fdr",
+  complete_cases = FALSE,
   seed = 42
 )
 }
@@ -38,6 +39,8 @@ Alternatively, the user may manually specify either "linear_regression" or "logi
 
 \item{p_adjust_method}{(character) Method to adjust/correct p-values for multiple comparisons
 (default = "fdr"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "none").}
+
+\item{complete_cases}{If TRUE, it will only use complete cases for x_variable, y_variable, controls, and preds.}
 
 \item{seed}{(integer) The seed to set for reproducibility}
 }

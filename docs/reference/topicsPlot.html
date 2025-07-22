@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">topics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.50</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.60</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,6 +72,9 @@
 <span>  scatter_legend_specified_topics <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scatter_legend_topic_n <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  scatter_show_axis_values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  scatter_legend_circles <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  scatter_legend_circles_radius <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  scatter_legend_circles_num <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  grid_legend_title <span class="op">=</span> <span class="st">"legend_title"</span>,</span>
 <span>  grid_legend_title_size <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  grid_legend_title_color <span class="op">=</span> <span class="st">"black"</span>,</span>
@@ -115,7 +118,7 @@ see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr").</p></dd
 
 <dt id="arg-ngram-select">ngram_select<a class="anchor" aria-label="anchor" href="#arg-ngram-select"></a></dt>
 <dd><p>(character) Method to select ngrams_max, when using both ngram and test use "prevalence" or "estimate";
-if you only use ngrams use "pmi", "frequency", or "proportion".</p></dd>
+if you only use ngrams use "pmi", "frequency", or "prevalence".</p></dd>
 
 
 <dt id="arg-color-scheme">color_scheme<a class="anchor" aria-label="anchor" href="#arg-color-scheme"></a></dt>
@@ -149,9 +152,7 @@ if you only use ngrams use "pmi", "frequency", or "proportion".</p></dd>
 
 
 <dt id="arg-highlight-topic-words">highlight_topic_words<a class="anchor" aria-label="anchor" href="#arg-highlight-topic-words"></a></dt>
-<dd><p>(named vector) Words to highlight in topics (e.g., negative words).
-The values of the vector determine the color: highlight_topic_words = c(not = "#2d00ff", never = "#2d00ff"); note that it needs
-to be hexa codes, so color naming such as "blue" does not work. The default value is NULL.</p></dd>
+<dd><p>(str vector) Words to highlight in topics (e.g., negative words). Format: highlight_topic_words = c("not", "never"). The default value is NULL.</p></dd>
 
 
 <dt id="arg-scale-size">scale_size<a class="anchor" aria-label="anchor" href="#arg-scale-size"></a></dt>
@@ -223,8 +224,7 @@ For example: c(1,1,1,1,0,1,1,1,1) result in one dot in each quadrant except for 
 
 
 <dt id="arg-scatter-legend-specified-topics">scatter_legend_specified_topics<a class="anchor" aria-label="anchor" href="#arg-scatter-legend-specified-topics"></a></dt>
-<dd><p>(vector) Specify which topic(s) to emphasize in the scatter legend.
-For example, c("t_1", "t_2"). If set, scatter_legend_method will have no effect.</p></dd>
+<dd><p>(vector) Specify which topic(s) to emphasize in the scatter legend.</p></dd>
 
 
 <dt id="arg-scatter-legend-topic-n">scatter_legend_topic_n<a class="anchor" aria-label="anchor" href="#arg-scatter-legend-topic-n"></a></dt>
@@ -233,6 +233,19 @@ For example, c("t_1", "t_2"). If set, scatter_legend_method will have no effect.
 
 <dt id="arg-scatter-show-axis-values">scatter_show_axis_values<a class="anchor" aria-label="anchor" href="#arg-scatter-show-axis-values"></a></dt>
 <dd><p>(boolean) If TRUE, the estimate values are shown on the distribution plot axes.</p></dd>
+
+
+<dt id="arg-scatter-legend-circles">scatter_legend_circles<a class="anchor" aria-label="anchor" href="#arg-scatter-legend-circles"></a></dt>
+<dd><p>Plot concentric circles for the scatter legend</p></dd>
+
+
+<dt id="arg-scatter-legend-circles-radius">scatter_legend_circles_radius<a class="anchor" aria-label="anchor" href="#arg-scatter-legend-circles-radius"></a></dt>
+<dd><p>Radius of first concentric circle</p></dd>
+
+
+<dt id="arg-scatter-legend-circles-num">scatter_legend_circles_num<a class="anchor" aria-label="anchor" href="#arg-scatter-legend-circles-num"></a></dt>
+<dd><p>Number of Concentric circles
+For example, c("t_1", "t_2"). If set, scatter_legend_method will have no effect.</p></dd>
 
 
 <dt id="arg-grid-legend-title">grid_legend_title<a class="anchor" aria-label="anchor" href="#arg-grid-legend-title"></a></dt>

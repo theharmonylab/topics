@@ -261,6 +261,7 @@ topic_test <- function(
 # @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
 #' (default = "fdr"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "none").
+#' @param complete_cases If TRUE, it will only use complete cases for x_variable, y_variable, controls, and preds.
 #' @param seed (integer) The seed to set for reproducibility
 #' @return A list of the test results, test method, and prediction variable.
 #' @examples
@@ -301,47 +302,50 @@ topicsTest <- function(
     controls = c(),
     test_method = "default",
     p_adjust_method = "fdr",
+    complete_cases = FALSE,
     seed = 42){
   
   
   ##### Getting complete.cases #####
-  
-#  # Select relevant columns from data
-#  relevant_columns <- c(x_variable, y_variable, controls)
-#  
-#  # Ensure relevant columns exist in data
-#  if (!all(relevant_columns %in% colnames(data))) {
-#    stop("One or more relevant columns are missing in the data.")
-#  }
-#  
-#  # Create a subset with relevant columns
-#  data_subset <- data %>% dplyr::select(all_of(relevant_columns))
-#  
-#  # Merge preds with the data subset
-#  merged_data <- dplyr::bind_cols(preds, data_subset)
-#  
-#  # Check initial number of rows
-#  initial_rows <- nrow(merged_data)
-#  
-#  # Remove rows with any NA values
-#  cleaned_data <- merged_data[complete.cases(merged_data), ]
-#  
-#  # Check number of rows after removing NAs
-#  final_rows <- nrow(cleaned_data)
-#  
-#  # Compare and report the number of rows
-#  message(sprintf("Rows before NA removal: %d", initial_rows))
-#  message(sprintf("Rows after NA removal: %d", final_rows))
-#  
-#  # Optionally stop if too many rows are removed
-#  if (final_rows == 0) {
-#    stop("All rows have been removed due to missing values. Check your data for NAs.")
-#  }
-#  
-#  # Update preds and data for subsequent analysis
-#  preds <- cleaned_data %>% dplyr::select(names(preds))
-#  data <- cleaned_data %>% dplyr::select(all_of(relevant_columns))
-#  
+  if(complete_cases){
+    # Select relevant columns from data
+    relevant_columns <- c(x_variable, y_variable, controls)
+    
+    # Ensure relevant columns exist in data
+    if (!all(relevant_columns %in% colnames(data))) {
+      stop("One or more relevant columns are missing in the data.")
+    }
+    
+    # Create a subset with relevant columns
+    data_subset <- data %>% dplyr::select(all_of(relevant_columns))
+    
+    # Merge preds with the data subset
+    merged_data <- dplyr::bind_cols(preds, data_subset)
+    
+    # Check initial number of rows
+    initial_rows <- nrow(merged_data)
+    
+    # Remove rows with any NA values
+    cleaned_data <- merged_data[complete.cases(merged_data), ]
+    
+    # Check number of rows after removing NAs
+    final_rows <- nrow(cleaned_data)
+    
+    # Compare and report the number of rows
+    message(sprintf("Rows before NA removal: %d", initial_rows))
+    message(sprintf("Rows after NA removal: %d", final_rows))
+    
+    # Optionally stop if too many rows are removed
+    if (final_rows == 0) {
+      stop("All rows have been removed due to missing values. Check your data for NAs.")
+    }
+    
+    # Update preds and data for subsequent analysis
+    preds <- cleaned_data %>% dplyr::select(names(preds))
+    data <- cleaned_data %>% dplyr::select(all_of(relevant_columns))
+  }
+
+ 
   ###### End of handling NAs ####
   
   if (is.null(x_variable) & is.null(y_variable)){

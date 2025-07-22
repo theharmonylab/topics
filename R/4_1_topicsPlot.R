@@ -300,9 +300,9 @@ determine_popout_topics <- function(
   
   # Process each category using group_modify:
   filtered_test %>% 
-    filter(color_categories %in% names(valid_map)) %>% 
-    group_by(color_categories) %>% 
-    group_modify(~ {
+    dplyr::filter(color_categories %in% names(valid_map)) %>% 
+    dplyr::group_by(color_categories) %>% 
+    dplyr::group_modify(~ {
       category <- .y$color_categories
       n_pop    <- valid_map[[category]]
       
@@ -314,31 +314,9 @@ determine_popout_topics <- function(
         select_rows(.x, n_pop)
       }
     }) %>% 
-    ungroup() %>%                                  # <- dplyr re-attaches the key here
+    dplyr::ungroup() %>% 
    dplyr::select(-color_categories, color_categories)
-   #relocate(color_categories, .after = last_col())   # move it to the very end
 
-  
-  # filtered_test %>%
-  #   dplyr::filter(color_categories %in% names(valid_map)) %>%
-  #   dplyr::group_by(color_categories) %>%
-  #   dplyr::group_modify(~ {
-  #     category <- .y$color_categories
-  #     n_pop <- valid_map[[category]]
-  #     if (n_pop > 0) {
-  #       if (category == popout_category) {
-  #         
-  #         res <- select_rows_min(.x, n_pop)
-  #       } else {
-  #         
-  #         res <- select_rows(.x, n_pop)
-  #       }
-  #     } else {
-  #       res <- .x[0, ]  # Return an empty tibble for groups with 0 in the mapping.
-  #     }
-  #     dplyr::bind_cols(.y, res)
-  #   }) %>%
-  #   dplyr::ungroup()
 }
 
 #' @param popout A data frame containing the data points to be highlighted ("pop-out") in the scatter plot.

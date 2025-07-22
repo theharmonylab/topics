@@ -1,4 +1,6 @@
 # text (development version)
+# topics .60
+- ready for CRAN and instllation harmonized with the text-package. 
 
 # topics 0.54
 - topicsGrams() now uses exact word boundary matching for n-grams (e.g., "lack" is matched 
