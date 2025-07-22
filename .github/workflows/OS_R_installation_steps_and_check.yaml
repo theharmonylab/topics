@@ -72,12 +72,12 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
-      # stringi for ubuntu
-      - name: Reinstall stringi from source on Ubuntu 24.04
-        if: matrix.config.os == 'ubuntu-24.04'
-        run: |
-          install.packages("stringi", type = "source")
-        shell: Rscript {0}
+#      # stringi for ubuntu
+#      - name: Reinstall stringi from source on Ubuntu 24.04
+#        if: matrix.config.os == 'ubuntu-24.04'
+#        run: |
+#          install.packages("stringi", type = "source")
+#        shell: Rscript {0}
 
       # Install R dependencies
       - name: Install R Dependencies
