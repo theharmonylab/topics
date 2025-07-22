@@ -1,10 +1,66 @@
+check_java_installed <- function(verbose = TRUE) {
+  
+  java_path <- Sys.which("java")[[1]]
+  has_java <- java_path != ""
+  
+  summary_lines <- character()
+  
+  if (!has_java) {
+    summary_lines <- c(
+      "Java is NOT installed or not found in your system PATH.",
+      "To install Java:",
+      "  - On macOS: brew install openjdk",
+      "  - On Ubuntu/Debian: sudo apt-get install default-jdk",
+      "  - On Windows: Install Java from https://www.java.com/"
+    )
+  } else {
+    # Try running `java -version` to confirm it's accessible
+    java_version_output <- tryCatch(
+      system2("java", args = "-version", stderr = TRUE, stdout = TRUE),
+      error = function(e) NA
+    )
+    
+    if (is.na(java_version_output)[[1]]) {
+      summary_lines <- c(
+        "Java is found, but 'java -version' failed to run.",
+        "There may be permission or PATH issues."
+      )
+      has_java <- FALSE
+    } else {
+      summary_lines <- c("Java is installed.")
+      if (length(java_version_output) > 0) {
+        summary_lines <- c(summary_lines, paste("Version info:", java_version_output[1]))
+      }
+    }
+  }
+  
+  if (verbose) message(paste(summary_lines, collapse = "\n"))
+  
+  list(
+    java_found = has_java,
+    java_path = if (has_java) java_path else NULL,
+    version_info = if (has_java) java_version_output else NULL,
+    summary_lines = summary_lines
+  )
+}
+
+
 #' @importFrom utils packageVersion
 #' @noRd
 .onAttach <- function(libname, pkgname) {
+  
   if (!grepl(x = R.Version()$arch, pattern = "64")) {
     warning("\n\nThe topic package requires running R on a 64-bit systems.")
   }
 
+  log <- check_java_installed(verbose = FALSE)
+  
+  if(log$java_found){
+    java_msg <- "" 
+  } else {
+    java_msg <- "\nPlease note that the topics package requires you to download and install java from www.java.com. \n" 
+  }
+  
   topics_version_nr <- tryCatch(
     {
       topics_version_nr1 <- paste(" (version ", 
@@ -25,7 +81,7 @@
       ),
       fg = "blue", bg = NULL
     ),
-    colourise("Please note that the topics package requires you to download and install java from www.java.com. \n",
+    colourise(java_msg,
       fg = "brown", bg = NULL
     ),
     colourise("\nFor more information about the topics package see www.r-topics.org and www.r-text.org.",
