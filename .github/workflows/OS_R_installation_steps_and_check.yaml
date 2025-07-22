@@ -31,24 +31,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
- #     # macOS-specific steps
- #     - name: Fix Homebrew Issues
- #       if: runner.os == 'macOS'
- #       run: |
- #         if [ -d "/opt/homebrew/Library/Taps/homebrew/homebrew-core" ]; then
- #             cd /opt/homebrew/Library/Taps/homebrew/homebrew-core
- #             git stash -u || echo "No changes to stash"
- #             git clean -d -f || echo "No files to clean"
- #         fi
- #         brew uninstall openssl@1.1 ruby@3.0 || echo "Deprecated formulae not found"
- #         brew install openssl@3 ruby || echo "Failed to install replacements"
- #         brew doctor || echo "brew doctor warnings"
- #         brew config || echo "brew config warnings"
- #         brew update || echo "Failed to update Homebrew"
- #         brew install libomp qpdf || echo "Failed to install utilities"
- #         export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
- #         echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
-
       - uses: r-lib/actions/setup-r@v2-branch
         with:
           r-version: ${{ matrix.config.r }}
@@ -72,13 +54,6 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
-#      # stringi for ubuntu
-#      - name: Reinstall stringi from source on Ubuntu 24.04
-#        if: matrix.config.os == 'ubuntu-24.04'
-#        run: |
-#          install.packages("stringi", type = "source")
-#        shell: Rscript {0}
-
       # Install R dependencies
       - name: Install R Dependencies
         run: |
@@ -88,7 +63,7 @@ jobs:
         shell: Rscript {0}
 
       # Install topics
-      - name: Installing topics and testing it
+      - name: Installing TOPICS and testing it
         run:  |
           install.packages("devtools")
           library(devtools)
@@ -99,7 +74,7 @@ jobs:
           result
         shell: Rscript {0}
 
-
+      ##### INSTALLING TEXT ######
        # Intall macOS dependencies to solve OMP issues
       - name: Install macOS OMP dependencies
         if: runner.os == 'macOS'
@@ -122,12 +97,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libharfbuzz-dev libfribidi-dev
 
-
-#      - name: Fix Conda permissions on macOS
-#        if: runner.os == 'macOS'
-#        run: sudo chown -R $UID $CONDA
-#
-      - name: Installing text and testing it
+      - name: Installing TEXT and testing it
         run:  |
           install.packages("devtools")
           library(devtools)
