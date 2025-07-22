@@ -1,0 +1,160 @@
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - main
+
+name: OS_installation_steps_and_check
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: macOS-latest,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-24.04, r: 'release'}
+
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      RSPM: ${{ matrix.config.rspm }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CODECOV_DEBUG: true
+
+    steps:
+      - uses: actions/checkout@v3
+
+ #     # macOS-specific steps
+ #     - name: Fix Homebrew Issues
+ #       if: runner.os == 'macOS'
+ #       run: |
+ #         if [ -d "/opt/homebrew/Library/Taps/homebrew/homebrew-core" ]; then
+ #             cd /opt/homebrew/Library/Taps/homebrew/homebrew-core
+ #             git stash -u || echo "No changes to stash"
+ #             git clean -d -f || echo "No files to clean"
+ #         fi
+ #         brew uninstall openssl@1.1 ruby@3.0 || echo "Deprecated formulae not found"
+ #         brew install openssl@3 ruby || echo "Failed to install replacements"
+ #         brew doctor || echo "brew doctor warnings"
+ #         brew config || echo "brew config warnings"
+ #         brew update || echo "Failed to update Homebrew"
+ #         brew install libomp qpdf || echo "Failed to install utilities"
+ #         export DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib
+ #         echo "DYLD_LIBRARY_PATH=$(brew --prefix libomp)/lib" >> $GITHUB_ENV
+
+      - uses: r-lib/actions/setup-r@v2-branch
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+
+      - uses: r-lib/actions/setup-pandoc@v2-branch
+
+      - name: Query R Dependencies
+        run: |
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
+        shell: Rscript {0}
+
+      # Cache R packages
+      - name: Cache R Packages
+        if: runner.os != 'Windows'
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+
+      # stringi for ubuntu
+      - name: Reinstall stringi from source on Ubuntu 24.04
+        if: matrix.config.os == 'ubuntu-24.04'
+        run: |
+          install.packages("stringi", type = "source")
+        shell: Rscript {0}
+
+      # Install R dependencies
+      - name: Install R Dependencies
+        run: |
+          remotes::install_deps(dependencies = TRUE)
+          install.packages("glmnet")
+          remotes::install_cran("rcmdcheck")
+        shell: Rscript {0}
+
+      # Install topics
+      - name: Installing topics and testing it
+        run:  |
+          install.packages("devtools")
+          library(devtools)
+          devtools::install_github("theharmonylab/topics")
+          library(topics)
+          dtm <- topicsDtm(data = c("This is a test document.", "This is another test."))
+          result <- topicsModel(dtm)
+          result
+        shell: Rscript {0}
+
+
+
+      # Set up so that text also works 
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          while read -r cmd
+          do
+            eval sudo $cmd
+          done < <(Rscript -e 'cat(remotes::system_requirements("ubuntu", "20.04"), sep = "\n")')
+          sudo apt-get update
+          sudo apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libharfbuzz-dev libfribidi-dev
+
+
+      - name: Fix Conda permissions on macOS
+        if: runner.os == 'macOS'
+        run: sudo chown -R $UID $CONDA
+
+      - name: Installing text and testing it
+        run:  |
+          install.packages("devtools")
+          library(devtools)
+          install.packages("glmnet")
+          devtools::install_github("oscarkjell/text")
+          text::textrpp_install(prompt = FALSE)
+          text::textrpp_initialize(textEmbed_test = TRUE)
+        shell: Rscript {0}
+
+      - name: Session info
+        run: |
+          options(width = 100)
+          pkgs <- installed.packages()[, "Package"]
+          sessioninfo::session_info(pkgs, include_base = TRUE)
+        shell: Rscript {0}
+
+      # Run R CMD check
+      - name: R CMD check
+        env:
+          _R_CHECK_CRAN_INCOMING_: false
+          SKIP_GITHUB_ACTIONS: true  # Set the variable for this step
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+        shell: Rscript {0}
+
+      # Debugging step to confirm coverage files are generated
+      - name: List files for debugging
+        run: ls -R
+
+      # Wait to ensure all coverage data is saved
+      - name: Wait for coverage files to be ready
+        run: sleep 5
+
+      # Upload coverage to Codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: ${{ matrix.config.os }}
+          verbose: true
+          files: "path/to/coverage/file"  # Replace with actual coverage file path
