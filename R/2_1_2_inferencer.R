@@ -10,6 +10,7 @@
 #' @return (invisible) TRUE if the package and Java (if applicable) are available.
 #' @noRd
 check_java_available <- function(pkg = "rJava", func_name = NULL) {
+  
   if (!requireNamespace(pkg, quietly = TRUE)) {
     msg <- paste0("This function requires the '", pkg, "' package, which is not installed.",
                   "\nPlease install it using: install.packages('", pkg, "')")

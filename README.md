@@ -1,7 +1,10 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- badges: start -->
 
+[![CRAN
+Status](https://www.r-pkg.org/badges/version/topics)](https://CRAN.R-project.org/package=topics)
 [![DOI](https://zenodo.org/badge/785738351.svg)](https://zenodo.org/doi/10.5281/zenodo.11165377)
 [![Github build
 status](https://github.com/theharmonylab/topics/workflows/R-CMD-check/badge.svg)](https://github.com/theharmonylab/topics/actions)

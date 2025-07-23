@@ -9,7 +9,7 @@
 #' @return Mallet model
 #' @importFrom textmineR Dtm2Docs CalcGamma
 #' @importFrom stats setNames
-#' @importFrom mallet mallet.top.words mallet.doc.topics mallet.word.freqs mallet.topic.labels MalletLDA  mallet.import  mallet.topic.words
+# @importFrom mallet mallet.top.words mallet.doc.topics mallet.word.freqs mallet.topic.labels MalletLDA  mallet.import  mallet.topic.words
 #' @importFrom utils combn
 #' @noRd
 get_mallet_model <- function(
@@ -18,6 +18,12 @@ get_mallet_model <- function(
     num_top_words = 10, 
     num_iterations = 1000, 
     seed){
+  
+  
+  if (!requireNamespace("mallet", quietly = TRUE)) {
+    stop(paste0("Package 'mallet' is required for this function but is not installed.", 
+                "Please install it via install.packages('mallet')."))
+  }
   
   docs <- textmineR::Dtm2Docs(dtm)
   
@@ -307,6 +313,13 @@ topicsModel <- function(
     num_iterations = 1000,
     seed = 42){
   
+  
+  if (!requireNamespace("mallet", quietly = TRUE)) {
+    stop(paste0("Package 'mallet' is required for this function but is not installed.", 
+         "Please install it via install.packages('mallet')."))
+  }
+  
+  
   set.seed(seed)
   
   dtm_settings <- dtm$settings
@@ -398,6 +411,10 @@ topicsPreds <- function(
     create_new_dtm = FALSE
     ){
   
+  if (!requireNamespace("mallet", quietly = TRUE)) {
+    stop(paste0("Package 'mallet' is required for this function but is not installed.", 
+                "Please install it via install.packages('mallet')."))
+  }
   set.seed(seed)
     
     if (length(data) == 0){
