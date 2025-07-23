@@ -21,8 +21,9 @@ get_mallet_model <- function(
   
   
   if (!requireNamespace("mallet", quietly = TRUE)) {
-    stop(paste0("Package 'mallet' is required for this function but is not installed.", 
-                "Please install it via install.packages('mallet')."))
+    stop(paste0("JAVA and the R-packages 'rJava' and 'mallet' are required but one or more are not installed. \n", 
+                "Please install JAVA from https://www.java.com/. \n", 
+                "And then run install.packages(c('mallet', 'rJava')."))
   }
   
   docs <- textmineR::Dtm2Docs(dtm)
@@ -315,8 +316,9 @@ topicsModel <- function(
   
   
   if (!requireNamespace("mallet", quietly = TRUE)) {
-    stop(paste0("Package 'mallet' is required for this function but is not installed.", 
-         "Please install it via install.packages('mallet')."))
+    stop(paste0("JAVA and the R-packages 'rJava' and 'mallet' are required but one or more are not installed. \n", 
+                "Please install JAVA from https://www.java.com/. \n", 
+                "And then run install.packages(c('mallet', 'rJava')."))
   }
   
   
@@ -412,8 +414,9 @@ topicsPreds <- function(
     ){
   
   if (!requireNamespace("mallet", quietly = TRUE)) {
-    stop(paste0("Package 'mallet' is required for this function but is not installed.", 
-                "Please install it via install.packages('mallet')."))
+    stop(paste0("JAVA and the R-packages 'rJava' and 'mallet' are required but one or more are not installed. \n", 
+                "Please install JAVA from https://www.java.com/. \n", 
+                "And then run install.packages(c('mallet', 'rJava')."))
   }
   set.seed(seed)
     
