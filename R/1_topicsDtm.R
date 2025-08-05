@@ -157,7 +157,7 @@ filter_by_pmi <- function(
 #' @param data (list) A list containing the text data with each entry belonging to a unique id
 #' @param ngram_window (list) The minimum and maximum n-gram length, e.g., c(1,3)
 #' @param stopwords (stopwords) The stopwords to remove, e.g., stopwords::stopwords("en", source = "snowball")
-#' @param removalword (string) The word to remove
+#' @param removalword (string) Character vector of words to remove; e.g., "word1" or c("word1", "word2", ...)
 #' @param removal_mode (string) Mode of removal -> one of c("none", "frequency", "term", "percentage"). frequency removes all words under a certain frequency or over a certain frequency, as indicated by removal_rate_least and removal_rate_most. term removes an absolute number of terms that are most frequent and least frequent. percentage removes the number of terms indicated by removal_rate_least and removal_rate_most relative to the number of terms in the matrix
 #' @param removal_rate_most (integer) The rate of most frequent words to be removed, functionality depends on removal_mode
 #' @param removal_rate_least (integer) The rate of least frequent words to be removed, functionality depends on removal_mode
@@ -261,10 +261,11 @@ topicsDtm <- function(
   } else {
     train <- text_cols 
   }
-  
-  if (removalword != ""){
-    train[[data_col]] <- gsub(paste0("\\b", removalword, "\\b"), "", train[[data_col]]) 
-  }
+
+    if (length(removalword) > 0 && any(removalword != "")) {
+      pattern <- paste0("\\b(", paste(removalword, collapse = "|"), ")\\b")
+      train[[data_col]] <- gsub(pattern, "", train[[data_col]])
+    }
   
   if (length(ngram_window) == 1){
     ngram_window <- c(ngram_window, ngram_window)
