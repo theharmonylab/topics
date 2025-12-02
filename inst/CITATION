@@ -1,11 +1,21 @@
 citHeader("To cite the topics-package in publications use:")
 
 bibentry(
-   bibtype = "Misc",
-   title = "An R-package for visualizing text in topics.",
-   author = as.person("Leon Ackermann [aut], Zhuojun Gu [aut], Oscar Kjell [aut]"),
-   journal = " ",
-   doi = "10.5281/zenodo.11165378",
-   year = 2024,
-   url = "https://github.com/theharmonylab/topics")
+  bibtype = "Misc",
+  title   = "An R-package for visualizing text in topics.",
+  author  = as.person("Leon Ackermann [aut], Zhuojun Gu [aut], Oscar Kjell [aut]"),
+  doi     = "10.5281/zenodo.11165378",
+  year    = 2024,
+  url     = "https://github.com/theharmonylab/topics"
+)
 
+bibentry(
+  bibtype = "Misc",
+  title   = "Multiple Methods for Visualizing Human Language: A Tutorial for Social and Behavioural Scientists.",
+  author  = as.person("Veerle. C. Eijsbroek [aut], Leon Ackermann [aut], August Nilsson [aut], Zhuojun Gu [aut], Clara Wiebel [aut], A. V. Ganesan [aut], Katarina Kjell [aut], H. Andrew Schwartz [aut], Oscar N. E. Kjell [aut]"),
+  year    = 2025,
+  url     = "https://doi.org/10.31234/osf.io/nxfvr_v1"
+)
+
+
+1

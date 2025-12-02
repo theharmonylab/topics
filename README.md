@@ -22,9 +22,13 @@ Downloads](https://cranlogs.r-pkg.org/badges/grand-total/topics)](https://CRAN.R
 ## Overview
 
 An R-package for analyzing natural language implementing Differential
-Language Analysis using words, phrases and topics. The `topics` package
-is part of the *R Language Analysis Suite*, including `talk`, `text` and
-`topics`.
+Language Analysis using words, phrases and topics. <br> <br> Check out
+our tutorial paper: [Multiple Methods for Visualizing Human Language: A
+Tutorial for Social and Behavioural
+Scientists](https://osf.io/preprints/psyarxiv/nxfvr_v1/). If you use the
+topics package, please cite this tutorial in your work. <br> <br> The
+`topics` package is part of the *R Language Analysis Suite*, including
+`talk`, `text` and `topics`.
 
 - [`talk`](https://www.r-talk.org/) transforms voice recordings into
   text, audio features, or embeddings.<br> <br>

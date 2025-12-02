@@ -28,7 +28,12 @@ knitr::opts_chunk$set(
 # topics <a href="https://r-topics.org"><img src="man/figures/logo.png" align="right" height="138" alt="topics website" /></a>
 
 ## Overview
-An R-package for analyzing natural language implementing Differential Language Analysis using  words, phrases and topics. The `topics` package is part of the *R Language Analysis Suite*, including `talk`, `text` and `topics`.
+An R-package for analyzing natural language implementing Differential Language Analysis using  words, phrases and topics. <br>
+<br>
+Check out our tutorial paper: 
+[Multiple Methods for Visualizing Human Language: A Tutorial for Social and Behavioural Scientists](https://osf.io/preprints/psyarxiv/nxfvr_v1/). If you use the topics package, please cite this tutorial in your work. <br>
+<br>
+The `topics` package is part of the *R Language Analysis Suite*, including `talk`, `text` and `topics`.
 
 + [`talk`](https://www.r-talk.org/) transforms voice recordings into text, audio features, or embeddings.<br>
 <br>
