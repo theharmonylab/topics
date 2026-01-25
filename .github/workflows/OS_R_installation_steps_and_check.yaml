@@ -95,7 +95,7 @@ jobs:
             eval sudo $cmd
           done < <(Rscript -e 'cat(remotes::system_requirements("ubuntu", "20.04"), sep = "\n")')
           sudo apt-get update
-          sudo apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libharfbuzz-dev libfribidi-dev libgit2-dev libcairo2-dev
+          sudo apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libharfbuzz-dev libfribidi-dev libgit2-dev libcairo2-dev libcurl4-openssl-dev libfontconfig1-dev libfreetype6-dev libharfbuzz-dev libfribidi-dev
 
       - name: Installing TEXT and testing it
         run:  |
