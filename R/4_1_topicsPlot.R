@@ -934,8 +934,8 @@ colour_settings <- function(
     if (dim == 1 && !is.null(ngrams)){
       # gradient pairs
       bivariate_color_codes <- c(
-        "#EAEAEA", "darkred", # negative ngrams colours
-        "#EAEAEA", "darkgreen" # positve ngrams colours
+        "#d0d0d0", "#ff7c00", # negative ngrams colours (Orange)
+        "#d0d0d0", "#00508c"  # positve ngrams colours (Blue)
       )
     }
     
@@ -944,31 +944,31 @@ colour_settings <- function(
     if (dim == 1 && is.null(ngrams)){
       # gradient pairs
       
-      # Colors for the "background" words
+      # Colors for the "background" words (The "Low" value)
       bivariate_color_codes_b <- c(
-        "#e07f6a",  "lightgray","#5dc688"
+        "#d0d0d0",  "#d0d0d0","#d0d0d0"
       )
-      # Colors for the "front" words
+      # Colors for the "front" words (The "High" value)
       bivariate_color_codes_f <- c(
-        "darkred", "darkgray", "darkgreen"
-      ) 
+        "#ff7c00", "#a4a4a4", "#00508c" # Orange, Gray, Blue
+      )
     }
     
     if (dim == 2){
       # Colors for the "background" words
-      bivariate_color_codes_b <- rep("lightgray", 9)
+      bivariate_color_codes_b <- rep("#d0d0d0", 9)
       
       # Colors for the "front" words 
       bivariate_color_codes_f <-  c(
-        "#398CF9",  # quadrant 1 (upper left corner)
-        "#60A1F7",  # quadrant 2 
-        "#5dc688",  # quadrant 3 (upper right corner)
-        "#e07f6a",  # quadrant 4
-        "darkgray", # quadrant 5 (middle square)
-        "#40DD52",  # quadrant 6 
-        "#FF0000",  # quadrant 7 (bottom left corner)
-        "#EA7467",  # quadrant 8 
-        "#85DB8E")  # quadrant 9 (bottom right corner)
+        "#00508c",  # quadrant 1 (upper left corner)
+        "#635089",  # quadrant 2 
+        "#A64E85",  # quadrant 3 (upper right corner)
+        "#00807d",  # quadrant 4
+        "#a4a4a4",  # quadrant 5 (middle square)
+        "#bf6f51",  # quadrant 6 
+        "#009E73",  # quadrant 7 (bottom left corner)
+        "#8a9f2e",  # quadrant 8 
+        "#E69F00")  # quadrant 9 (bottom right corner)
     }
   }
   

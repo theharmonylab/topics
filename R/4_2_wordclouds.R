@@ -494,7 +494,7 @@ create_plots <- function(
         neg  <- make_ngram_plot(dplyr::filter(tst, estimate < 0), color_negative_cor)
         save_plot(pos, "ngrams_positive", '', save_dir, figure_format, width, height, seed)
         save_plot(neg, "ngrams_negative", '', save_dir, figure_format, width, height, seed)
-        plots <- list(positive = pos, negative = neg)
+        plots <- list(positive_association = pos, negative_association = neg)
       }
     }
   }
