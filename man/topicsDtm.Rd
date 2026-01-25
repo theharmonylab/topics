@@ -26,7 +26,7 @@ topicsDtm(
 
 \item{stopwords}{(stopwords) The stopwords to remove, e.g., stopwords::stopwords("en", source = "snowball")}
 
-\item{removalword}{(string) The word to remove}
+\item{removalword}{(string) Character vector of words to remove; e.g., "word1" or c("word1", "word2", ...)}
 
 \item{pmi_threshold}{(integer; experimental) Pointwise Mutual Information (PMI) measures the association 
 between terms by comparing their co-occurrence probability to their individual probabilities, 

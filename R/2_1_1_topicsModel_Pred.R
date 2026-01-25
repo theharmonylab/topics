@@ -397,13 +397,13 @@ topicsModel <- function(
 #'                      num_iterations = 1000,
 #'                      seed = 42)
 #'                      
-#' preds <- topicsPreds(model = model, # output of topicsModel()
+#' preds <- topicsPredict(model = model, # output of topicsModel()
 #'                      data = dep_wor_data$Depphrase)
 #' }
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>%
 #' @export
-topicsPreds <- function(
+topicsPredict <- function(
     model, 
     data, 
     num_iterations = 200,
@@ -508,4 +508,23 @@ topicsPreds <- function(
   
   return(preds)
 }
+
+
+# Alias functions
+#' @rdname textPredict
+# @examples textAssess(model = model, data = dep_wor_data$Depphrase)
+#' @export
+topicsAssess <- topicsPredict
+
+#' @rdname textPredict
+# @examples textClassify(model = model, data = dep_wor_data$Depphrase)
+#' @export
+topicsClassify <- topicsPredict
+
+#' @rdname textPredict
+# @examples textClassify(model = model, data = dep_wor_data$Depphrase)
+#' @export
+topicsPreds <- topicsPredict
+
+
 
