@@ -358,7 +358,7 @@ topicsModel <- function(
   return(model)
 }
 
-#' Predict topic distributions
+#' topicsPredict, topicsPreds, topicsAssess and topicsClassify
 #' 
 #' The function to predict the topics of a new document with the trained model.
 #' @param model (list) The trained model.
@@ -511,17 +511,17 @@ topicsPredict <- function(
 
 
 # Alias functions
-#' @rdname textPredict
+#' @rdname topicsPredict
 # @examples textAssess(model = model, data = dep_wor_data$Depphrase)
 #' @export
 topicsAssess <- topicsPredict
 
-#' @rdname textPredict
+#' @rdname topicsPredict
 # @examples textClassify(model = model, data = dep_wor_data$Depphrase)
 #' @export
 topicsClassify <- topicsPredict
 
-#' @rdname textPredict
+#' @rdname topicsPredict
 # @examples textClassify(model = model, data = dep_wor_data$Depphrase)
 #' @export
 topicsPreds <- topicsPredict

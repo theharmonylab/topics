@@ -2,9 +2,42 @@
 % Please edit documentation in R/2_1_1_topicsModel_Pred.R
 \name{topicsPredict}
 \alias{topicsPredict}
-\title{Predict topic distributions}
+\alias{topicsAssess}
+\alias{topicsClassify}
+\alias{topicsPreds}
+\title{topicsPredict, topicsPreds, topicsAssess and topicsClassify}
 \usage{
 topicsPredict(
+  model,
+  data,
+  num_iterations = 200,
+  sampling_interval = 10,
+  burn_in = 10,
+  seed = 42,
+  create_new_dtm = FALSE
+)
+
+topicsAssess(
+  model,
+  data,
+  num_iterations = 200,
+  sampling_interval = 10,
+  burn_in = 10,
+  seed = 42,
+  create_new_dtm = FALSE
+)
+
+topicsClassify(
+  model,
+  data,
+  num_iterations = 200,
+  sampling_interval = 10,
+  burn_in = 10,
+  seed = 42,
+  create_new_dtm = FALSE
+)
+
+topicsPreds(
   model,
   data,
   num_iterations = 200,
