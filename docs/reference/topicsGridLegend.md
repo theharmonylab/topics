@@ -1,0 +1,111 @@
+# Plot a grid (matrix) legend (available for the text-package)
+
+Plot a grid (matrix) legend (available for the text-package)
+
+## Usage
+
+``` r
+topicsGridLegend(
+  bivariate_color_codes = c("#398CF9", "#60A1F7", "#5dc688", "#e07f6a", "#EAEAEA",
+    "#40DD52", "#FF0000", "#EA7467", "#85DB8E"),
+  filtered_test,
+  cor_var = "",
+  save_dir,
+  figure_format = "svg",
+  seed = 42,
+  width = 10,
+  height = 8,
+  y_axes_1 = 2,
+  legend_title,
+  legend_title_size,
+  titles_color,
+  legend_x_axes_label,
+  legend_y_axes_label,
+  topic_data_all,
+  legend_number_color,
+  legend_number_size
+)
+```
+
+## Arguments
+
+- bivariate_color_codes:
+
+  A vector of color codes specifying the colors for the 3x3 grid legend.
+  Default: c("#398CF9", "#60A1F7", "#5dc688", "#e07f6a", "#EAEAEA",
+  "#40DD52", "#FF0000", "#EA7467", "#85DB8E").
+
+- filtered_test:
+
+  A data frame containing the filtered topic data. Must include a
+  \`color_categories\` column.
+
+- cor_var:
+
+  A string used to name the correlation variable, included in the file
+  name of the saved plot. Default: "".
+
+- save_dir:
+
+  Directory where the grid legend plot will be saved. Default:
+  "./results".
+
+- figure_format:
+
+  File format for the saved grid legend plot. Examples: "svg", "png",
+  "pdf". Default: "svg".
+
+- seed:
+
+  Seed for reproducibility, ensuring consistent plot generation.
+  Default: 42.
+
+- width:
+
+  Width of the saved grid legend in inches. Default: 10.
+
+- height:
+
+  Height of the saved grid legend in inches. Default: 8.
+
+- y_axes_1:
+
+  Specifies axis alignment for the grid legend. Options: 2 (2D grid with
+  x and y axes) or 1 (1D legend for x-axis only). Default: 2.
+
+- legend_title:
+
+  Title text for the grid legend. Must be provided by the user.
+
+- legend_title_size:
+
+  Font size of the legend title text. Must be provided by the user.
+
+- titles_color:
+
+  Color of the title and axis labels in the legend. Must be provided by
+  the user.
+
+- legend_x_axes_label:
+
+  Label for the x-axis of the grid legend. Must be provided by the user.
+
+- legend_y_axes_label:
+
+  Label for the y-axis of the grid legend. Must be provided by the user.
+
+- topic_data_all:
+
+  A data frame containing all topic data, including the
+  \`color_categories\` column used for counting topics.
+
+- legend_number_color:
+
+  Color of the numeric annotations in the grid legend. Must be provided
+  by the user.
+
+- legend_number_size:
+
+  Font size of the numeric annotations in the grid legend. Must be
+  provided by the user.' @return A legend plot saved that can be
+  combined with the plot object.

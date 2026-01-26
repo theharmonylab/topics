@@ -1,0 +1,284 @@
+# Plot word clouds
+
+This function create word clouds and topic figures
+
+## Usage
+
+``` r
+topicsPlot(
+  model = NULL,
+  ngrams = NULL,
+  test = NULL,
+  p_alpha = 0.05,
+  p_adjust_method = "none",
+  ngrams_max = 30,
+  ngram_select = "prevalence",
+  color_scheme = "default",
+  overview_plot = TRUE,
+  highlight_topic_words = NULL,
+  scale_size = FALSE,
+  plot_topics_idx = NULL,
+  allowed_word_overlap = NULL,
+  plot_n_most_prevalent_topics = NULL,
+  save_dir = NULL,
+  figure_format = "svg",
+  width = 6,
+  height = 5,
+  max_size = 10,
+  seed = 42,
+  scatter_legend_dot_size = c(3, 8),
+  scatter_legend_bg_dot_size = c(1, 3),
+  scatter_legend_dots_alpha = 0.8,
+  scatter_legend_bg_dots_alpha = 0.2,
+  scatter_legend_n = c(1, 1, 1, 1, 0, 1, 1, 1, 1),
+  scatter_legend_method = c("mean"),
+  scatter_legend_specified_topics = NULL,
+  scatter_legend_topic_n = FALSE,
+  scatter_show_axis_values = TRUE,
+  scatter_legend_circles = FALSE,
+  scatter_legend_circles_radius = 0,
+  scatter_legend_circles_num = 4,
+  grid_legend_title = "legend_title",
+  grid_legend_title_size = 5,
+  grid_legend_title_color = "black",
+  grid_legend_x_axes_label = "legend_x_axes_label",
+  grid_legend_y_axes_label = "legend_y_axes_label",
+  grid_legend_number_color = "white",
+  grid_legend_number_size = 15
+)
+```
+
+## Arguments
+
+- model:
+
+  (list) A trained topics model, e.g., from topicsModel(). Should be
+  NULL if plotting ngrams.
+
+- ngrams:
+
+  (list) The output from the the topicsGram() function. Should be NULL
+  if plotting topics. Note 1: it is not possible to plot tags like
+  \<place\>; so the \< are replaced with underscore. Note 2: it is not
+  possible to plot dash - alone, it is replaced with \`\_-\_\`.
+
+- test:
+
+  (list) The test results; if plotting according to dimension(s) include
+  the object from topicsTest() function.
+
+- p_alpha:
+
+  (integer) The p-value threshold to use for significance testing.
+
+- p_adjust_method:
+
+  (character) Method to adjust/correct p-values for multiple comparisons
+  (default = "none"; see also "holm", "hochberg", "hommel",
+  "bonferroni", "BH", "BY", "fdr").
+
+- ngrams_max:
+
+  (integer) The maximum number of n-grams to plot.
+
+- ngram_select:
+
+  (character) Method to select ngrams_max, when using both ngram and
+  test use "prevalence" or "estimate"; if you only use ngrams use "pmi",
+  "frequency", or "prevalence".
+
+- color_scheme:
+
+  (string 'default' or vector) The color scheme.
+
+  For plots not including a test, the color_scheme should in clude 2
+  colours (1 gradient pair), such as:
+
+  c("lightgray", "darkblue)
+
+  For 1 dimensional plots of n-grams it should contain 4 colours (2
+  gradient pairs), such as:
+
+  c( "#EAEAEA", "darkred", \# negative ngrams colors
+
+  "#EAEAEA", "darkgreen" \# positve ngrams colors)
+
+  For 1-dimension plots of topics, it should contain 6 colours (3
+  gradient pairs), such as
+
+  c( "#EAEAEA", "darkred", \# negative topics colors
+
+  "#EAEAEA", "darkgray", \# colours of topics not significantly
+  associated
+
+  "#EAEAEA", "darkgreen" \# positve topics colors)
+
+  For 2-dimensional plots of topics, the color scheme should contain 18
+  colours (9 gradient pairs), such as:
+
+  c( "lightgray", "#398CF9", \# quadrant 1 (upper left corner)
+
+  "lightgray", "#60A1F7", \# quadrant 2
+
+  "lightgray", "#5dc688", \# quadrant 3 (upper right corner)
+
+  "lightgray", "#e07f6a", \# quadrant 4
+
+  "lightgray", "darkgray", \# quadrant 5 (middle square)
+
+  "lightgray", "#40DD52", \# quadrant 6
+
+  "lightgray", "#FF0000", \# quadrant 7 (bottom left corner)
+
+  "lightgray", "#EA7467", \# quadrant 8
+
+  "lightgray", "#85DB8E") \# quadrant 9 (bottom right corner).
+
+- overview_plot:
+
+  (boolean) Whether to produce an overview plot, including some of the
+  topics and the ditribution (experimental).
+
+- highlight_topic_words:
+
+  (str vector) Words to highlight in topics (e.g., negative words).
+  Format: highlight_topic_words = c("not", "never"). The default value
+  is NULL.
+
+- scale_size:
+
+  (logical) Whether to scale the size of the words.
+
+- plot_topics_idx:
+
+  (vector) The index or indices of the topics to plot (look in the
+  model-object for the indices). They can, for example, be c(1, 3:5) to
+  plot topic t_1, t_3, t_4 and t_5) (optional).
+
+- allowed_word_overlap:
+
+  (numeric) A filter function determining the maximum number of
+  identical words in the topics to be plotted. This filter removes
+  topics within each "color group" and also include removing topics from
+  the distribution and grid legends; (Note that the adjustment for
+  multiple comparison is taking place before these are removed; i.e.,
+  the adjusted p-values are not affected by this filter).
+
+- plot_n_most_prevalent_topics:
+
+  (numeric) Plots the n most prevalent topics in a given model.
+
+- save_dir:
+
+  (string) The directory to save the plots.
+
+- figure_format:
+
+  (string) Set the figure format, e.g., ".svg", or ".png".
+
+- width:
+
+  (integer) The width of the topic (units = "in").
+
+- height:
+
+  (integer) The width of the topic (units = "in").
+
+- max_size:
+
+  (integer) The maximum size of the words.
+
+- seed:
+
+  (integer) The seed to set for reproducibility.
+
+- scatter_legend_dot_size:
+
+  (integer) The size of dots in the scatter legend. If set to
+  "prevalence", the size will change accordingly.
+
+- scatter_legend_bg_dot_size:
+
+  (integer) The size of background dots in the scatter legend.
+
+- scatter_legend_dots_alpha:
+
+  (numeric) The transparency alphe level of the dots.
+
+- scatter_legend_bg_dots_alpha:
+
+  (numeric) The transparency alphe level of the background dots.
+
+- scatter_legend_n:
+
+  (numeric or vector) A vector determining the number of dots to
+  emphasize in each quadrant of the scatter legend. For example:
+  c(1,1,1,1,0,1,1,1,1) result in one dot in each quadrant except for the
+  middle quadrant.
+
+- scatter_legend_method:
+
+  (string) The method to filter topics to be emphasized in the scatter
+  legend; either "mean", "max_x", or "max_y".
+
+- scatter_legend_specified_topics:
+
+  (vector) Specify which topic(s) to emphasize in the scatter legend.
+
+- scatter_legend_topic_n:
+
+  (boolean) If TRUE, the topic numbers are shown in the scatter legend.
+
+- scatter_show_axis_values:
+
+  (boolean) If TRUE, the estimate values are shown on the distribution
+  plot axes.
+
+- scatter_legend_circles:
+
+  Plot concentric circles for the scatter legend
+
+- scatter_legend_circles_radius:
+
+  Radius of first concentric circle
+
+- scatter_legend_circles_num:
+
+  Number of Concentric circles For example, c("t_1", "t_2"). If set,
+  scatter_legend_method will have no effect.
+
+- grid_legend_title:
+
+  Title of the grid topic plot.
+
+- grid_legend_title_size:
+
+  Title size of the grid topic plot.
+
+- grid_legend_title_color:
+
+  Legend title color of the grid topic plot.
+
+- grid_legend_x_axes_label:
+
+  x-axis label of the grid topic plot.
+
+- grid_legend_y_axes_label:
+
+  y-axis label of the grid topic plot.
+
+- grid_legend_number_color:
+
+  Text color in the legend boxes of the grid topic plot.
+
+- grid_legend_number_size:
+
+  Text size in the legend boxes.
+
+## Value
+
+The function provides a list of topic plots (if there are any
+significant topics), a legend plot, and a plot showing the topic
+distribution. If save_dir is specified, it saves all plots in this
+directory. If you want to show all plots irrespective of the topics'
+significance, set p_alpha = 1.

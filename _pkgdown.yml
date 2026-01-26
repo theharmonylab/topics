@@ -58,6 +58,7 @@ reference:
 - title: Plotting word topics
   contents:
     - topicsPlot
+    - topicsPlotOverview
     # - topicsPlot1
 - title: Example Data
   contents:
@@ -66,6 +67,8 @@ reference:
   contents:
     - topicsScatterLegend
     - topicsGridLegend
+    - topicsTutorialData
+
 
 articles:
 - title: Set-up

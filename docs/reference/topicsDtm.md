@@ -1,0 +1,125 @@
+# Document Term Matrix
+
+This function creates a document term matrix
+
+## Usage
+
+``` r
+topicsDtm(
+  data,
+  ngram_window = c(1, 3),
+  stopwords = stopwords::stopwords("en", source = "snowball"),
+  removalword = "",
+  pmi_threshold = NULL,
+  occurance_rate = 0,
+  removal_mode = "percentage",
+  removal_rate_most = 0,
+  removal_rate_least = 0,
+  shuffle = TRUE,
+  seed = 42L,
+  threads = 1
+)
+```
+
+## Arguments
+
+- data:
+
+  (list) A list containing the text data with each entry belonging to a
+  unique id
+
+- ngram_window:
+
+  (list) The minimum and maximum n-gram length, e.g., c(1,3)
+
+- stopwords:
+
+  (stopwords) The stopwords to remove, e.g., stopwords::stopwords("en",
+  source = "snowball")
+
+- removalword:
+
+  (string) Character vector of words to remove; e.g., "word1" or
+  c("word1", "word2", ...)
+
+- pmi_threshold:
+
+  (integer; experimental) Pointwise Mutual Information (PMI) measures
+  the association between terms by comparing their co-occurrence
+  probability to their individual probabilities, highlighting term pairs
+  that occur together more often than expected by chance; in this
+  implementation, terms with average PMI below the specified threshold
+  (pmi_threshold) are removed from the document-term matrix.
+
+- occurance_rate:
+
+  (numerical) The occurance rate (0-1) removes words that occur less
+  then in (occurance_rate)\*(number of documents). Example: If the
+  training dataset has 1000 documents and the occurrence rate is set to
+  0.05, the code will remove terms that appear in less than 49
+  documents.
+
+- removal_mode:
+
+  (string) Mode of removal -\> one of c("none", "frequency", "term",
+  "percentage"). frequency removes all words under a certain frequency
+  or over a certain frequency, as indicated by removal_rate_least and
+  removal_rate_most. term removes an absolute number of terms that are
+  most frequent and least frequent. percentage removes the number of
+  terms indicated by removal_rate_least and removal_rate_most relative
+  to the number of terms in the matrix
+
+- removal_rate_most:
+
+  (integer) The rate of most frequent words to be removed, functionality
+  depends on removal_mode
+
+- removal_rate_least:
+
+  (integer) The rate of least frequent words to be removed,
+  functionality depends on removal_mode
+
+- shuffle:
+
+  (boolean) Shuffle the data before analyses
+
+- seed:
+
+  (integer) A seed to set for reproducibility
+
+- threads:
+
+  (integer) The number of threads to use; also called cpu in
+  (CreateDtm).
+
+## Value
+
+The document term matrix
+
+## Examples
+
+``` r
+# \donttest{
+
+# Create a Dtm and remove the terms that occur less than 4 times and more than 500 times.
+
+dtm <- topicsDtm(data = dep_wor_data$Depphrase,
+                 removal_mode = "frequency",
+                 removal_rate_least = 4,
+                 removal_rate_most = 500)
+
+# Create Dtm and remove the 1 least and 1 most frequent terms.
+dtm <- topicsDtm(data = dep_wor_data$Depphrase,
+                 removal_mode = "term",
+                 removal_rate_least = 1,
+                 removal_rate_most = 1)
+
+# Create Dtm and remove the 1% least frequent and 1% most frequent terms. 
+# The percentage values are scaled to values between 0 and 1.
+dtm <- topicsDtm(data = dep_wor_data$Depphrase,
+                 removal_mode = "percentage",
+                 removal_rate_least = 0.01,
+                 removal_rate_most = 0.01)
+
+# }
+```
