@@ -98,6 +98,7 @@ test_that("topicsPlot WITHOUT test and preds", {
     plot_topics_idx = c(1,3),
     figure_format = "png", 
     save_dir = save_dir_temp)
+
   
   topics_t1 <- function() {
     topics_1$t1
@@ -108,6 +109,11 @@ test_that("topicsPlot WITHOUT test and preds", {
     topics_1$t3
   }
   expect_doppelganger("topics_t3", topics_t1())
+  
+  topics_overview_plot <- function() {
+    topics_1$overview_plot
+  }
+  expect_doppelganger("topics_overview_plot", topics_overview_plot())
   
   # Check if the word cloud directory exists
   testthat::expect_true(file.exists(paste0(
@@ -126,7 +132,7 @@ test_that("topicsPlot WITHOUT test and preds", {
   
   testthat::expect_equal(
     names(topics2), 
-    c("t_t_2",  "t_t_29", "t_t_46", "t_t_36", "t_t_35")
+    c("t_t_2",  "t_t_29", "t_t_46", "t_t_36", "t_t_35", "overview_plot")
   )
   
   topics2_t_t_2 <- function() {
@@ -134,6 +140,10 @@ test_that("topicsPlot WITHOUT test and preds", {
   }
   expect_doppelganger("topics2_t_t_2", topics2_t_t_2())
   
+  topics2_overview_plot <- function() {
+    topics2$overview_plot
+  }
+  expect_doppelganger("topics2_overview_plot", topics2_overview_plot())
   
   topics3 <- topics::topicsPlot(
     model = model,
@@ -144,7 +154,7 @@ test_that("topicsPlot WITHOUT test and preds", {
   
   testthat::expect_equal(
     names(topics3), 
-    c("t_t_2", "t_t_46", "t_t_31", "t_t_18", "t_t_19")
+    c("t_t_2", "t_t_46", "t_t_31", "t_t_18", "t_t_19", "overview_plot")
   )
   
   topics3_t3 <- function() {
@@ -193,21 +203,22 @@ test_that("topicsPlot WITH test", {
   save_dir_temp <- tempdir()
   
   topics4 <- topics::topicsPlot(
-    model = model, 
-    test = test1, 
+    model = model,
+    test = test1,
     p_alpha = .1,
     scatter_legend_dot_size = c(1, 10),
     scatter_legend_bg_dot_size = c(10, 20),
-    scatter_legend_dots_alpha = 0.3, 
+    scatter_legend_dots_alpha = 0.3,
     scatter_legend_bg_dots_alpha = 0.1,
     figure_format = "png",
-    seed = 11, 
+    seed = 11,
     allowed_word_overlap = 3,
-    save_dir = save_dir_temp, 
+    save_dir = save_dir_temp,
     grid_legend_number_color = "white")
   
   topics4$distribution
   topics4$legend
+
   
 
   topics4_legend <- function() {
@@ -224,7 +235,15 @@ test_that("topicsPlot WITH test", {
     topics4$square1$t_48
   }
   expect_doppelganger("topics4square1t_48", topics4square1t_48())
+
   
+  topics4overview_plot <- function() {
+    topics4$overview_plot
+  }
+  expect_doppelganger("topics4overview_plot", topics4overview_plot())
+  
+  
+    
 #  topics4square2t_1 <- function() {
 #    topics4$square2$t_1
 #  }
@@ -233,7 +252,7 @@ test_that("topicsPlot WITH test", {
   topics4square3t_34 <- function() {
     topics4$square3$t_34
   }
-  expect_doppelganger("topics4square2t_1", topics4square3t_34())
+  expect_doppelganger("topics4square3t_34", topics4square3t_34())
   
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists(paste0(
@@ -382,6 +401,13 @@ test_that("topicsPlot WITH test", {
   expect_doppelganger("topics5square9", topics5square9())
   
   
+  # Square 9
+  topics5overview_plot <- function() {
+    topics5$overview_plot
+  }
+  expect_doppelganger("topics5overview_plot", topics5overview_plot())
+  
+  
   # Check if the wordcloud directory exists
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_12/wordclouds/dot_legend_corvar_PHQ9tot__Age.png")))
@@ -459,10 +485,12 @@ test_that("topicsPlot WITH underscores in names", {
   testthat::skip_on_cran()
   save_dir_temp <- tempfile()
   #save_dir_temp <- "./res_under"
+  
   # Testing with _ 
   data_test <- dep_wor_data
   data_test$Dep_text <- data_test$Deptext
   data_test$Age_test <- data_test$Age
+  
   ## 1-Dimension
   dtm <- topics::topicsDtm(
     data = data_test$Dep_text)

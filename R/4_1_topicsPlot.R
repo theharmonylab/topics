@@ -1023,6 +1023,103 @@ clean_characters_for_plotting_test <- function(test) {
 }
 
 
+#' Combine topics and distribution legend (experimental)
+#'
+#' @param plot_list (list) Output from the topicsPlot function.   
+#' @param overview_plot_type  (character) Number of dimensions to plot (1 or 2).
+#' @return An overview plot including topics and distribution legend
+#' @importFrom  ggplot2 labs element_blank theme margin element_text
+#' @importFrom patchwork wrap_plots plot_layout
+#' @export
+topicsPlotOverview <- function(
+    plot_list, 
+    overview_plot_type) {
+  
+  # Helper: Handles NULL, Lists of plots, and Single plots
+  get_plot_or_spacer <- function(plot_obj) {
+    if (is.null(plot_obj) || length(plot_obj) == 0) {
+      return(patchwork::plot_spacer())
+    }
+    
+    # If it's a list (like square1), take first. If it's a ggplot, take it.
+    if (is.list(plot_obj) && !ggplot2::is.ggplot(plot_obj)) {
+      p <- plot_obj[[1]]
+    } else {
+      p <- plot_obj
+    }
+    
+    return(p + ggplot2::theme_void() + 
+             ggplot2::labs(x = NULL, y = NULL) + 
+             ggplot2::theme(plot.margin = ggplot2::margin(2, 2, 2, 2)))
+  } 
+  
+  # N-grams
+  if (overview_plot_type == "ngrams_grid") {
+    p_pos <- get_plot_or_spacer(plot_list$positive_association)
+    p_neg <- get_plot_or_spacer(plot_list$negative_association)
+    
+    combined <- (p_pos | p_neg) + 
+      patchwork::plot_layout(guides = 'collect')
+  }
+
+  # Selected topics Grid Version (Rows of 4) ---
+  if (overview_plot_type == "topics_grid") {
+    # 1. Clean all plots in the list
+    # Assuming 'plot_list' is the list of topics like topics_1
+    cleaned_plots <- lapply(plot_list, get_plot_or_spacer)
+    
+    # 2. Wrap them into 4 columns
+    combined <- patchwork::wrap_plots(cleaned_plots, ncol = 4) + 
+      patchwork::plot_layout(guides = 'collect') &
+      ggplot2::theme(plot.margin = ggplot2::margin(5, 5, 5, 5))
+  }
+
+  # One-dimensional topic plot
+  if (overview_plot_type == "one_dimension_topics") {
+    p1 <- get_plot_or_spacer(plot_list$square1)
+    p2 <- get_plot_or_spacer(plot_list$square2)
+    p3 <- get_plot_or_spacer(plot_list$square3)
+    
+    top_row <- (p1 | p2 | p3)
+    combined <- patchwork::wrap_plots(top_row, plot_list$distribution, ncol = 1) + 
+      patchwork::plot_layout(heights = c(1, 1))
+  }
+  
+  # Two-dimensional topic plot
+  if (overview_plot_type == "two_dimension_topics") {
+    # 1. Process all 9 potential squares (skipping square 5 for distribution)
+    p1 <- get_plot_or_spacer(plot_list$square1)
+    p2 <- get_plot_or_spacer(plot_list$square2)
+    p3 <- get_plot_or_spacer(plot_list$square3)
+    p4 <- get_plot_or_spacer(plot_list$square4)
+    p6 <- get_plot_or_spacer(plot_list$square6)
+    p7 <- get_plot_or_spacer(plot_list$square7)
+    p8 <- get_plot_or_spacer(plot_list$square8)
+    p9 <- get_plot_or_spacer(plot_list$square9)
+    
+    # 2. Central Distribution Plot
+    # We ensure the distribution plot also cleans its axis titles for the overview
+    dist_plot <- plot_list$distribution + 
+      ggplot2::theme(plot.margin = ggplot2::margin(5, 5, 5, 5))
+    
+    # 3. Define the 3x3 grid
+    # Distribution sits in the absolute center
+    combined <- (p1 | p2 | p3) /
+      (p4 | dist_plot | p6) /
+      (p7 | p8 | p9) +
+      patchwork::plot_layout(guides = 'collect') & 
+      ggplot2::theme(
+        plot.margin = ggplot2::margin(0, 0, 0, 0),
+        axis.title = ggplot2::element_blank()
+      )
+  }
+  
+  
+  return(combined)
+}
+
+#plotout <- create_overview_plot(plot_list)
+
 #' Plot word clouds
 #' 
 #' This function create word clouds and topic figures
@@ -1085,6 +1182,7 @@ clean_characters_for_plotting_test <- function(test) {
 #'   "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner).
 #'
 #' 
+#' @param overview_plot (boolean) Whether to produce an overview plot, including some of the topics and the ditribution (experimental).
 #' @param highlight_topic_words (str vector) Words to highlight in topics (e.g., negative words). Format: highlight_topic_words = c("not", "never"). The default value is NULL.
 #' @param allowed_word_overlap (numeric) A filter function determining the maximum number of identical words in the topics to be plotted. 
 #' This filter removes topics within each "color group" and also include removing topics from the distribution and grid legends; 
@@ -1137,6 +1235,7 @@ topicsPlot <- function(
     ngrams_max = 30,
     ngram_select = "prevalence",
     color_scheme = "default",
+    overview_plot = TRUE,
     highlight_topic_words = NULL,
     scale_size = FALSE,
     plot_topics_idx = NULL,
@@ -1186,6 +1285,24 @@ topicsPlot <- function(
     # Only set dim to 2 if the test include enough tests
     if(ncol(test$test) == 12) {
       dim = 2
+    }
+  }
+  
+  #### Setting type of overview plot ####
+  if(overview_plot) {
+    if(!is.null(test)) {
+      overview_type = "one_dimension_topics"
+      if(ncol(test$test) == 12) {
+        overview_type = "two_dimension_topics"
+      }
+    }
+    
+    if(!is.null(plot_topics_idx) | !is.null(plot_n_most_prevalent_topics)) {
+      overview_type = "topics_grid"
+    }
+    
+    if(!is.null(ngrams)) {
+      overview_type = "ngrams_grid"
     }
   }
   
@@ -1541,5 +1658,17 @@ topicsPlot <- function(
     plot_list[["legend"]] <- legend
     plot_list[["distribution"]] <- popout1$legend
   }
+  
+  # Create overview image for ngrams
+  if(overview_plot){
+    
+    overview_p <- topicsPlotOverview(
+      plot_list = plot_list, 
+      overview_plot_type = overview_type)
+    
+    plot_list[["overview_plot"]] <- overview_p
+  }
+  
+  
   return(plot_list)
 }

@@ -13,6 +13,7 @@ topicsPlot(
   ngrams_max = 30,
   ngram_select = "prevalence",
   color_scheme = "default",
+  overview_plot = TRUE,
   highlight_topic_words = NULL,
   scale_size = FALSE,
   plot_topics_idx = NULL,
@@ -110,6 +111,8 @@ For 1-dimension plots of topics, it should contain 6 colours (3 gradient pairs),
   "lightgray", "#EA7467",     # quadrant 8 
   
   "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner).}
+
+\item{overview_plot}{(boolean) Whether to produce an overview plot, including some of the topics and the ditribution (experimental).}
 
 \item{highlight_topic_words}{(str vector) Words to highlight in topics (e.g., negative words). Format: highlight_topic_words = c("not", "never"). The default value is NULL.}
 
