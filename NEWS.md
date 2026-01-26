@@ -1,4 +1,10 @@
 # text (development version)
+# topics .64
+- need to set `test_method` for each variable. 
+- `x_variable` and `y_variable` can be factors.
+- changed default colours in `topicsPlot()`. 
+- `topicsPreds()` can be called with `topicsPredict()`, `topicsAssess()` and `topicsClassify()`.
+
 # topics .60
 - ready for CRAN and instllation harmonized with the text-package. 
 

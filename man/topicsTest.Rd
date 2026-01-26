@@ -35,7 +35,7 @@ topicsTest(
 
 \item{test_method}{(string) The test method to use. "default" checks if x_variable and y_variable
 only contain 0s and 1s, for which it applies logistic regression; otherwise it applies linear regression. 
-Alternatively, the user may manually specify either "linear_regression" or "logistic_regression".}
+Alternatively, if only specifying x_variable, the user may manually specify either "linear_regression" or "logistic_regression".}
 
 \item{p_adjust_method}{(character) Method to adjust/correct p-values for multiple comparisons
 (default = "fdr"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "none").}

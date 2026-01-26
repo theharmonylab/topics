@@ -31,7 +31,7 @@ test_that("topicsTest performs linear regression correctly", {
     x_variable = "Age",
     y_variable = "PHQ9tot",
     controls = NULL,
-    test_method = "linear_regression"
+    test_method = c("linear_regression", "linear_regression")
     )
   result
 
@@ -74,7 +74,7 @@ test_that("topicsTest performs linear regression correctly", {
     x_variable = "Age",
     y_variable = "PHQ9tot",
     controls = c("Gender",  "GAD7tot"), #,
-    test_method = "linear_regression"
+    test_method = c("linear_regression", "linear_regression")
   )
   result_ctrl
   
@@ -98,7 +98,7 @@ test_that("topicsTest performs linear regression correctly", {
   ##############################
   #### logistic_regression #####
   ##############################
-  
+
   result_log <- topics::topicsTest(
     model = model,
     preds = preds,

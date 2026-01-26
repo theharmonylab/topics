@@ -57,12 +57,30 @@ topic_test <- function(
      }
     
     column_name <- colnames(x_y_axis1)
-   # z_outcome <- tibble(!!paste0("z_", column_name) := base::scale(x_y_axis1)[1:nrow(x_y_axis1)])
-    z_outcome <- tibble::tibble(x_y_axis1) %>%
-      dplyr::mutate(dplyr::across(dplyr::everything(), ~ base::scale(.))) %>%
-      dplyr::rename_with(~ paste0("z_", column_name))
+# #   # z_outcome <- tibble(!!paste0("z_", column_name) := base::scale(x_y_axis1)[1:nrow(x_y_axis1)])
+# #    z_outcome <- tibble::tibble(x_y_axis1) %>%
+# #      dplyr::mutate(dplyr::across(dplyr::everything(), ~ base::scale(.))) %>%
+# #      dplyr::rename_with(~ paste0("z_", column_name))
+# #    
+# #    colnames(z_outcome) <- (paste0("z_", column_name))
     
-    colnames(z_outcome) <- (paste0("z_", column_name))
+    if (test_method == "linear_regression") {
+      # Linear: We scale, so the "z_" prefix makes sense
+      out_prefix <- "z_"
+      outcome_data <- tibble::tibble(x_y_axis1) %>%
+        dplyr::mutate(dplyr::across(dplyr::everything(), ~ as.numeric(base::scale(.)))) %>%
+        dplyr::rename_with(~ paste0(out_prefix, column_name))
+    } 
+    if (test_method == "logistic_regression") {
+      # Logistic: No scaling, so we use a different prefix or none at all
+      # Let's use "y_" to denote the outcome/target
+      out_prefix <- "y_"
+      outcome_data <- x_y_axis1 %>%
+        dplyr::rename_with(~ paste0(out_prefix, column_name))
+    }
+    
+    # Now your target_name matches the actual column name created above
+    target_name <- colnames(outcome_data)
     
     # Replace NA values with 0 #### Should be a flag
     #preds[is.na(preds)] <- 0
@@ -74,15 +92,41 @@ topic_test <- function(
       #which(is.na(preds), arr.ind = TRUE)
       #rows_with_na <- which(apply(preds, 1, anyNA))
       
-      message("Note that all NAs are set to 0.")
+      #message("Note that all NAs are set to 0.")
       #preds[is.na(preds)] <- 0
     } 
     
     
     # For logistic regression, ensure the outcome variable is binary
+# #    if (test_method == "logistic_regression") {
+# #      
+# #      if (!all(x_y_axis1[[1]] %in% c(0, 1))) {
+# #        stop(paste("The outcome variable", colnames(x_y_axis1), "must be binary (0 or 1) for logistic regression."))
+# #      }
+# #    }
+    # For logistic regression, ensure the outcome variable is binary (0/1) OR a 2-level factor
     if (test_method == "logistic_regression") {
-      if (!all(x_y_axis1[[1]] %in% c(0, 1))) {
-        stop(paste("The outcome variable", colnames(x_y_axis1), "must be binary (0 or 1) for logistic regression."))
+      actual_values <- x_y_axis1[[1]]
+      
+      # 1. Check if it's a Factor or Character (Categorical)
+      if (is.factor(actual_values) || is.character(actual_values)) {
+        num_unique <- length(unique(stats::na.omit(actual_values)))
+        if (num_unique != 2) {
+          stop(paste("The outcome variable '", colnames(x_y_axis1), 
+                     "' must have exactly 2 levels/groups, but found", num_unique))
+        }
+      } 
+      # 2. Check if it's Numeric (must be exactly 0 and 1)
+      else if (is.numeric(actual_values)) {
+        unique_vals <- unique(stats::na.omit(actual_values))
+        if (!all(unique_vals %in% c(0, 1))) {
+          stop(paste("Numeric outcome variable '", colnames(x_y_axis1), 
+                     "' must be 0 or 1 for logistic regression. Found:", 
+                     paste(unique_vals, collapse = ", ")))
+        }
+      } 
+      else {
+        stop("Outcome variable must be numeric (0/1) or a 2-level factor/character.")
       }
     }
     
@@ -97,12 +141,12 @@ topic_test <- function(
     }
     
     regression_data <-  dplyr::bind_cols(
-      preds, x_y_axis1, z_outcome, controls)
+      preds, x_y_axis1, outcome_data, controls) #z_outcome is now outcome_data
     
     if (test_method == "linear_regression" | test_method == "logistic_regression"){
       
       if (test_method == "linear_regression") {
-        target_name <- colnames(z_outcome)
+        target_name <- colnames(outcome_data)
       }
       if (test_method == "logistic_regression") {
         target_name <- colnames(x_y_axis1)
@@ -116,7 +160,7 @@ topic_test <- function(
         
         message(colourise(
           paste0(i, ": fitting model formula: ", 
-                 paste(deparse(formula), collapse = " "), "\n"), 
+                 paste(deparse(formula), collapse = " "), " \n"), 
           "green"))
         
         # Extract variables used in the formula
@@ -233,10 +277,26 @@ topic_test <- function(
     summary_statistics[paste0(target_name, ".p_adjusted")] <- stats::p.adjust(
       p_variable[[1]], multiple_comparison)
     
+    
+    levels_comment <- NULL
+    if(test_method == "logistic_regression"){
+      if (is.factor(actual_values)) {
+        levels <- levels(actual_values)
+        levels_comment <- paste0("Logistic Regression: Baseline (0) = ", levels[1], 
+                                 ", Target (1) = ", levels[2], "  \n")
+        message(colourise(
+          levels_comment, 
+          "blue"))
+      }
+    }
+   
+    
     # Merge with topic_terms for additional metadata
     output <- dplyr::bind_cols(
       topic_terms[c("topic", "top_terms", "prevalence", "coherence")], 
       summary_statistics)
+    
+    comment(output) <- levels_comment
     
     return(output)
   }
@@ -257,7 +317,7 @@ topic_test <- function(
 #' @param controls (vector) The control variables (not supported yet).
 #' @param test_method (string) The test method to use. "default" checks if x_variable and y_variable
 #' only contain 0s and 1s, for which it applies logistic regression; otherwise it applies linear regression. 
-#' Alternatively, the user may manually specify either "linear_regression" or "logistic_regression".  
+#' Alternatively, if only specifying x_variable, the user may manually specify either "linear_regression" or "logistic_regression".  
 # @param p_alpha (numeric) Threshold of p value set by the user for visualising significant topics 
 #' @param p_adjust_method (character) Method to adjust/correct p-values for multiple comparisons
 #' (default = "fdr"; see also "holm", "hochberg", "hommel", "bonferroni", "BH", "BY",  "none").
@@ -304,7 +364,6 @@ topicsTest <- function(
     p_adjust_method = "fdr",
     complete_cases = FALSE,
     seed = 42){
-  
   
   ##### Getting complete.cases #####
   if(complete_cases){
@@ -361,6 +420,7 @@ topicsTest <- function(
            Please rename the variable in the dataset.")
     }
   }
+  
   if(!is.null(x_variable)){
     if(grepl("__", x_variable)){
       stop("The x_variable, y_variable or controls cannot have names containing 2 underscores in a row ('__'). 
@@ -374,7 +434,7 @@ topicsTest <- function(
         
         msg <- paste0("The controls variable '", 
                       control_var, 
-                      "' should be numeric!\n")
+                      "' should be numeric! \n")
         
         message(
           colourise(msg, "brown"))
@@ -445,33 +505,66 @@ topicsTest <- function(
   #### Testing the elements (i.e., ngrams or topics) ####
   x_y_axis <- c(x_variable, y_variable)
   
-  if(test_method == "default"){
-    # Function to check if a column is binary (contains only 0 and 1)
-    is_binary <- function(column) {
-      all(unique(column[!is.na(column)]) %in% c(0, 1))
+  if(!is.null(x_variable) & !is.null(y_variable) & length(test_method) == 1 &
+     test_method[1] != "default"){
+    
+    stop(
+      paste("When setting both x_variable and y_variable, ",
+            "you have to provide two methods to test_method;", 
+            "e.g., test_method = c('logistic_regression', 'linear_regreission')  .")
+    )
+    
+  }
+  # # # # # #
+  
+  if(test_method[1] == "default"){
+    # Updated Function to check if a column is binary (0/1 or a 2-level factor)
+    is_binary_or_factor <- function(column) {
+      vals <- column[!is.na(column)]
+      if (is.factor(vals) || is.character(vals)) {
+        return(length(unique(vals)) == 2)
+      }
+      return(all(unique(vals) %in% c(0, 1)))
     }
     
     # Create a vector of test_method for each column in x_y_axis
     test_method <- sapply(data[x_y_axis], function(col) {
-      if (is_binary(col)) {
+      if (is_binary_or_factor(col)) {
         "logistic_regression"
       } else {
         "linear_regression"
       }
     })
-  } else if (test_method == "linear_regression") {
-    
-    test_method <- rep("linear_regression", 2)
-    
-  } else if (test_method == "logistic_regression") {
-    
-    test_method <- rep("logistic_regression", 2)
-    
   }
+  
+  # # # # # #
+  #  if(test_method == "default"){
+  #    # Function to check if a column is binary (contains only 0 and 1)
+  #    is_binary <- function(column) {
+  #      all(unique(column[!is.na(column)]) %in% c(0, 1))
+  #    }
+  #    
+  #    # Create a vector of test_method for each column in x_y_axis
+  #    test_method <- sapply(data[x_y_axis], function(col) {
+  #      if (is_binary(col)) {
+  #        "logistic_regression"
+  #      } else {
+  #        "linear_regression"
+  #      }
+  #    })
+  #  } else if (test_method == "linear_regression") {
+  #    
+  #    test_method <- rep("linear_regression", 2)
+  #    
+  #  } else if (test_method == "logistic_regression") {
+  #    
+  #    test_method <- rep("logistic_regression", 2)
+  #    
+  #  }
   
   topic_loadings_all <- list()
   pre <- c('x','y')
-  # i = 1
+  # i = 2
   for (i in 1:length(x_y_axis)){
     
     test <- topic_test(
@@ -485,7 +578,8 @@ topicsTest <- function(
     topic_loading <- list(
       test = test,
       test_method = test_method[i],
-      x_y_axis1 = x_y_axis[i])
+      x_y_axis1 = x_y_axis[i], 
+      comment = comment(test))
     
     
     # Sorting output when not using ridge regression
@@ -511,6 +605,10 @@ topicsTest <- function(
     topic_loadings_all[[3]]$x_y_axis <- paste0(topic_loadings_all[[1]]$x_y_axis, '__',
                                                topic_loadings_all[[2]]$x_y_axis) 
     
+    topic_loadings_all[[3]]$comment <- paste0("x_axis: ", topic_loadings_all[[1]]$comment, 
+                                              "; y_axis: ",
+                                              topic_loadings_all[[2]]$comment)
+    
   } else {
     
       msg <- "The parameter y_variable is not set! Output 1 dimensional results."
@@ -521,6 +619,7 @@ topicsTest <- function(
       topic_loadings_all[[3]]$test <- topic_loadings_all[[1]][[1]]#[,1:8]
       topic_loadings_all[[3]]$test_method <- topic_loadings_all[[1]]$test_method
       topic_loadings_all[[3]]$x_y_axis <- topic_loadings_all[[1]]$x_y_axis
+      topic_loadings_all[[3]]$comment <- topic_loadings_all[[1]]$comment
       
   }
   

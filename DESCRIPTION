@@ -1,7 +1,7 @@
 Package: topics
 Type: Package
 Title: Creating and Significance Testing Language Features for Visualisation
-Version: 0.62
+Version: 0.64
 Authors@R: c(
     person("Leon", "Ackermann", 
     role = c("aut"), 
