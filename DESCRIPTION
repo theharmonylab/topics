@@ -1,7 +1,7 @@
 Package: topics
 Type: Package
 Title: Creating and Significance Testing Language Features for Visualisation
-Version: 0.64
+Version: 0.65
 Authors@R: c(
     person("Leon", "Ackermann", 
     role = c("aut"), 
@@ -40,7 +40,8 @@ Imports:
     tidyr, 
     purrr,
     data.table,
-    ggforce
+    ggforce, 
+    patchwork
 RoxygenNote: 7.3.3
 Suggests: 
     text,
@@ -51,6 +52,8 @@ Suggests:
     rmarkdown,
     testthat,
     covr,
-    vdiffr
+    vdiffr,
+    httr,
+    arrow
 VignetteBuilder: knitr
 Depends: R (>= 4.00)

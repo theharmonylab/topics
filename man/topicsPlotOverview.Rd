@@ -7,9 +7,9 @@
 topicsPlotOverview(plot_list, overview_plot_type)
 }
 \arguments{
-\item{plot_list}{(list) Output from topicsPlot.}
+\item{plot_list}{(list) Output from the topicsPlot function.}
 
-\item{overview_plot_type}{(numeric) Number of dimensions to plot (1 or 2).}
+\item{overview_plot_type}{(character) Number of dimensions to plot (1 or 2).}
 }
 \value{
 An overview plot including topics and distribution legend

@@ -38,6 +38,9 @@ utils::globalVariables(c(
   
   # topicsPlot
   "pmi", "color_negative_cor", "color_positive_cor", "estimate", "highlight_topic_words",
-  "p_adjusted"
+  "p_adjusted", 
+  
+  # topicsTutorialData
+  "WordCount", "text"
   
 ))

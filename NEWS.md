@@ -4,7 +4,8 @@
 - `x_variable` and `y_variable` can be factors.
 - changed default colours in `topicsPlot()`. 
 - `topicsPreds()` can be called with `topicsPredict()`, `topicsAssess()` and `topicsClassify()`.
-
+- add function to downlaod long text tutorial data (`topicsTutorialData()`)
+- add function to plot overview plot: `topicsPlotOveview()`.
 # topics .60
 - ready for CRAN and instllation harmonized with the text-package. 
 
