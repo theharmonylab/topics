@@ -37,16 +37,55 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="topics-development-version">topics (development version)<a class="anchor" aria-label="anchor" href="#topics-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.65" id="topics-065">topics 0.65<a class="anchor" aria-label="anchor" href="#topics-065"></a></h2>
+<div class="section level4">
+<h4 id="new-functions-0-65">New Functions<a class="anchor" aria-label="anchor" href="#new-functions-0-65"></a></h4>
+<ul><li>
+<strong><code><a href="../reference/topicsTutorialData.html">topicsTutorialData()</a></code></strong>: New utility function to download and prepare long-text essay data directly from Hugging Face. Supports custom <code>sample_size</code>, <code>min_word_count</code>, <code>max_word_count</code>, and <code>seed</code>.</li>
+<li>
+<strong><code><a href="../reference/topicsPlotOverview.html">topicsPlotOverview()</a></code></strong>: Introduced a high-level plotting function for structured overviews. Supports side-by-side comparisons (ngrams), 1D layouts, and 2-D 3x3 grids with a central distribution plot.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="improvements-to-topicstest-0-65">Improvements to <code>topicsTest()</code>
+<a class="anchor" aria-label="anchor" href="#improvements-to-topicstest-0-65"></a></h4>
+<ul><li>
+<strong>Categorical Variable Support</strong>: <code>x_variable</code> and <code>y_variable</code> now fully support <strong>Factors</strong> and <strong>Character</strong> vectors.</li>
+<li>
+<strong>Intelligent Method Detection</strong>: The <code>test_method</code> is now assigned per-variable. The package automatically detects binary data (0/1 or 2-level factors) to apply <code>logistic_regression</code> while using <code>linear_regression</code> for continuous data.</li>
+<li>
+<strong>Baseline Reporting</strong>: Logistic regression results now include a <code>logistic_level</code> string in the output list to clarify the Baseline (0) vs. Target (1) mapping.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="enhancements--aliases-0-65">Enhancements &amp; Aliases<a class="anchor" aria-label="anchor" href="#enhancements--aliases-0-65"></a></h4>
+<ul><li>
+<strong>Function Aliasing</strong>: <code><a href="../reference/topicsPredict.html">topicsPreds()</a></code> can now be accessed via descriptive aliases:
+<ul><li><code><a href="../reference/topicsPredict.html">topicsPredict()</a></code></li>
+<li><code><a href="../reference/topicsPredict.html">topicsAssess()</a></code></li>
+<li><code><a href="../reference/topicsPredict.html">topicsClassify()</a></code></li>
+</ul></li>
+<li>
+<strong>Visual Refinement</strong>: Updated default color palettes in <code><a href="../reference/topicsPlot.html">topicsPlot()</a></code> for better aesthetic consistency.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.60" id="topics-060">topics 0.60<a class="anchor" aria-label="anchor" href="#topics-060"></a></h2><p class="text-muted">CRAN release: 2025-07-22</p>
+<ul><li>ready for CRAN and installation-harmonized with the <code>text</code>-package.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.54" id="topics-054">topics 0.54<a class="anchor" aria-label="anchor" href="#topics-054"></a></h2>
-<ul><li>topicsGrams() now uses exact word boundary matching for n-grams (e.g., “lack” is matched as a standalone word, excluding partial matches like “black” or “lacking”).</li>
-<li>added ability to handle NAs in topicsTest().</li>
+<ul><li>
+<code><a href="../reference/topicsGrams.html">topicsGrams()</a></code> now uses exact word boundary matching for n-grams (e.g., “lack” is matched as a standalone word, excluding partial matches like “black” or “lacking”).</li>
+<li>added ability to handle NAs in <code><a href="../reference/topicsTest.html">topicsTest()</a></code>.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.51" id="topics-051">topics 0.51<a class="anchor" aria-label="anchor" href="#topics-051"></a></h2>
 <ul><li>adding function to plot circles in the scatter legend.</li>
 <li>fixing where non-significant plots were the same.</li>
-<li>improving the structure of the creat_plot help function.</li>
-<li>moving rJava to suggest to enable compatibility with the text-package.</li>
+<li>improving the structure of the <code>creat_plot</code> help function.</li>
+<li>moving <code>rJava</code> to suggest to enable compatibility with the <code>text</code>-package.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.40.6" id="topics-0406">topics 0.40.6<a class="anchor" aria-label="anchor" href="#topics-0406"></a></h2>

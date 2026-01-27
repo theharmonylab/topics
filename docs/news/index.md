@@ -1,18 +1,66 @@
 # Changelog
 
+## topics (development version)
+
+## topics 0.65
+
+#### New Functions
+
+- **[`topicsTutorialData()`](https://r-topics.org/reference/topicsTutorialData.md)**:
+  New utility function to download and prepare long-text essay data
+  directly from Hugging Face. Supports custom `sample_size`,
+  `min_word_count`, `max_word_count`, and `seed`.
+- **[`topicsPlotOverview()`](https://r-topics.org/reference/topicsPlotOverview.md)**:
+  Introduced a high-level plotting function for structured overviews.
+  Supports side-by-side comparisons (ngrams), 1D layouts, and 2-D 3x3
+  grids with a central distribution plot.
+
+#### Improvements to `topicsTest()`
+
+- **Categorical Variable Support**: `x_variable` and `y_variable` now
+  fully support **Factors** and **Character** vectors.
+- **Intelligent Method Detection**: The `test_method` is now assigned
+  per-variable. The package automatically detects binary data (0/1 or
+  2-level factors) to apply `logistic_regression` while using
+  `linear_regression` for continuous data.
+- **Baseline Reporting**: Logistic regression results now include a
+  `logistic_level` string in the output list to clarify the Baseline (0)
+  vs. Target (1) mapping.
+
+#### Enhancements & Aliases
+
+- **Function Aliasing**:
+  [`topicsPreds()`](https://r-topics.org/reference/topicsPredict.md) can
+  now be accessed via descriptive aliases:
+  - [`topicsPredict()`](https://r-topics.org/reference/topicsPredict.md)
+  - [`topicsAssess()`](https://r-topics.org/reference/topicsPredict.md)
+  - [`topicsClassify()`](https://r-topics.org/reference/topicsPredict.md)
+- **Visual Refinement**: Updated default color palettes in
+  [`topicsPlot()`](https://r-topics.org/reference/topicsPlot.md) for
+  better aesthetic consistency.
+
+## topics 0.60
+
+CRAN release: 2025-07-22
+
+- ready for CRAN and installation-harmonized with the `text`-package.
+
 ## topics 0.54
 
-- topicsGrams() now uses exact word boundary matching for n-grams (e.g.,
-  “lack” is matched as a standalone word, excluding partial matches like
-  “black” or “lacking”).
-- added ability to handle NAs in topicsTest().
+- [`topicsGrams()`](https://r-topics.org/reference/topicsGrams.md) now
+  uses exact word boundary matching for n-grams (e.g., “lack” is matched
+  as a standalone word, excluding partial matches like “black” or
+  “lacking”).
+- added ability to handle NAs in
+  [`topicsTest()`](https://r-topics.org/reference/topicsTest.md).
 
 ## topics 0.51
 
 - adding function to plot circles in the scatter legend.
 - fixing where non-significant plots were the same.
-- improving the structure of the creat_plot help function.
-- moving rJava to suggest to enable compatibility with the text-package.
+- improving the structure of the `creat_plot` help function.
+- moving `rJava` to suggest to enable compatibility with the
+  `text`-package.
 
 ## topics 0.40.6
 
