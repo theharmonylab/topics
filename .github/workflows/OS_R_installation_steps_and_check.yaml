@@ -66,6 +66,8 @@ jobs:
       - name: Installing TOPICS and testing it
         run:  |
           install.packages("devtools")
+          install.packages("httr")
+          install.packages("arrow")
           library(devtools)
           devtools::install_github("theharmonylab/topics")
           library(topics)

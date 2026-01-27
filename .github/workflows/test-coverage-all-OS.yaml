@@ -101,6 +101,8 @@ jobs:
       - name: Installing text and testing it
         run:  |
           install.packages("devtools")
+          install.packages("httr")
+          install.packages("arrow")
           library(devtools)
           install.packages("glmnet")
           devtools::install_github("oscarkjell/text")
