@@ -564,7 +564,7 @@ topicsTest <- function(
   
   topic_loadings_all <- list()
   pre <- c('x','y')
-  # i = 2
+  # i = 1
   for (i in 1:length(x_y_axis)){
     
     test <- topic_test(

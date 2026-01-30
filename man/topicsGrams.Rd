@@ -8,37 +8,102 @@ topicsGrams(
   data,
   ngram_window = c(1, 3),
   stopwords = stopwords::stopwords("en", source = "snowball"),
+  removalword = "",
+  pmi_threshold = NULL,
   occurance_rate = 0,
   removal_mode = "frequency",
   removal_rate_most = NULL,
   removal_rate_least = NULL,
-  pmi_threshold = 0,
-  top_frequent = 200
+  shuffle = TRUE,
+  lower = TRUE,
+  remove_punctuation = TRUE,
+  remove_numbers = TRUE,
+  stem_lemma_function = NULL,
+  verbose = FALSE,
+  seed = 42L,
+  threads = 1,
+  top_frequent = 200,
+  freq_per_user_format = c("auto", "wide", "long"),
+  max_wide_cells = 5e+07
 )
 }
 \arguments{
-\item{data}{(tibble) The data}
+\item{data}{A character vector of texts or a data.frame/tibble (first column used as text).}
 
-\item{ngram_window}{(list) the minimum and maximum n-gram length, e.g. c(1,3)}
+\item{ngram_window}{Integer vector specifying n-gram sizes.
+If length 1, only that n is used (e.g., \code{2}).
+If length 2 and increasing, it is interpreted as an inclusive range (e.g., \code{c(1, 3)} -> 1,2,3).
+Otherwise it is treated as an explicit set (e.g., \code{c(1, 3)} means only 1 and 3).}
 
-\item{stopwords}{(stopwords) the stopwords to remove, e.g. stopwords::stopwords("en", source = "snowball")}
+\item{stopwords}{Character vector of stopwords to remove (e.g.,
+\code{stopwords::stopwords("en", source = "snowball")}).}
 
-\item{occurance_rate}{(numerical) The occurance rate (0-1) removes words that occur less then in (occurance_rate)*(number of documents). Example: If the training dataset has 1000 documents and the occurrence rate is set to 0.05, the code will remove terms that appear in less than 50 documents.}
+\item{removalword}{Character vector of words to remove from the raw text prior to tokenization.}
 
-\item{removal_mode}{(character) The mode of removal, either "term", frequency" or "percentage"}
+\item{pmi_threshold}{Numeric PMI threshold used to filter multi-word n-grams.
+If \code{NULL}, PMI filtering is skipped.}
 
-\item{removal_rate_most}{(numeric) The rate of most frequent ngrams to remove}
+\item{occurance_rate}{Numeric in [0,1]. Terms are removed if they occur in fewer than
+\code{round(N_docs * occurance_rate) - 1} documents, where \code{N_docs} is the number of texts.
+Example: with 1000 documents and \code{occurance_rate = 0.05}, terms occurring in fewer than ~50 documents are removed.}
 
-\item{removal_rate_least}{(numeric) The rate of least frequent ngrams to remove}
+\item{removal_mode}{Character. Removal mode passed to \code{filter_ngrams()}.
+Common options include \code{"frequency"} and \code{"percentage"} (depending on your helper implementation).}
 
-\item{pmi_threshold}{(integer) The pmi threshold, if it shall not be used set to 0}
+\item{removal_rate_most}{Numeric. Rate/threshold for removing the most frequent n-grams
+(interpreted by \code{filter_ngrams()} according to \code{removal_mode}).}
 
-\item{top_frequent}{(integer) The number of most frequently occuring ngrams to included in the output.}
+\item{removal_rate_least}{Numeric. Rate/threshold for removing the least frequent n-grams
+(interpreted by \code{filter_ngrams()} according to \code{removal_mode}).}
+
+\item{shuffle}{Logical. If \code{TRUE}, texts are shuffled (seed-controlled) before processing.
+The original ids are preserved in output.}
+
+\item{lower}{Logical. If \code{TRUE}, text is lowercased prior to tokenization.}
+
+\item{remove_punctuation}{Logical. Passed to \code{quanteda::tokens(remove_punct = ...)}.}
+
+\item{remove_numbers}{Logical. Passed to \code{quanteda::tokens(remove_numbers = ...)}.}
+
+\item{stem_lemma_function}{Optional function applied to tokens (via \code{quanteda::tokens_apply()}).
+Should accept and return a character vector of tokens.}
+
+\item{verbose}{Logical. If \code{TRUE}, prints simple progress messages (if implemented).}
+
+\item{seed}{Integer. Random seed used when \code{shuffle = TRUE}.}
+
+\item{threads}{Integer. Number of threads used by \pkg{quanteda} via \code{quanteda_options(threads = ...)}.}
+
+\item{top_frequent}{Integer or \code{NULL}. If set, keeps only the \code{top_frequent} most frequent n-grams
+after filtering (recommended for large corpora). If \code{NULL}, keeps all retained n-grams.}
+
+\item{freq_per_user_format}{Output format for \code{freq_per_user}:
+\describe{
+  \item{\code{"wide"}}{Wide document-by-ngram table (may be large).}
+  \item{\code{"long"}}{Long sparse table with columns \code{id}, \code{ngram}, \code{rel_freq}.}
+  \item{\code{"auto"}}{Uses wide format only if \code{N_docs * N_ngrams <= max_wide_cells}; otherwise returns long.}
+}}
+
+\item{max_wide_cells}{Numeric. Safety limit for \code{"auto"}: if \code{N_docs * N_ngrams} exceeds this,
+\code{freq_per_user} is returned in long format to avoid dense allocation and excessive memory use.}
 }
 \value{
-A list containing tibble of the ngrams with the frequency and probability and 
-a tibble containing the relative frequency of the ngrams for each user
+A named list with:
+\describe{
+  \item{settings}{A named list of settings used to generate the results (for reproducibility).}
+  \item{n_grams_pmi}{PMI information if available from your PMI helper, otherwise a message.}
+  \item{ngrams}{A tibble of retained n-grams and statistics (e.g., \code{freq}, \code{prevalence}, \code{num_docs}).}
+  \item{freq_per_user}{Per-document relative frequencies, either wide or long depending on \code{freq_per_user_format}.}
+  \item{stats}{A tibble summarizing how many n-grams were removed by each filtering step, by n-gram size.}
+}
 }
 \description{
-The function computes ngrams from a text
+Compute n-grams and per-document relative frequencies from text.
+}
+\details{
+This function extracts n-grams using  and returns:
+(1) a tibble of n-grams with frequency/prevalence and document frequency,
+(2) per-document relative frequencies for the retained n-grams (wide or long format),
+(3) filtering statistics,
+(4) a named list of settings (for reproducibility).
 }

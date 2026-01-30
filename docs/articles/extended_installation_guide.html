@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Extended Installation Guide • topics</title>
+<title>Installation • topics</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Extended Installation Guide">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Installation">
 <script defer data-domain="r-talk.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
 <body>
@@ -37,14 +37,9 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="../articles/topics.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/extended_installation_guide.html">Extended Installation Guide</a></li>
-  </ul>
-</li>
+<li class="active nav-item"><a class="nav-link" href="../articles/extended_installation_guide.html">Installation</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference API</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/resources.html">Resources</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -64,7 +59,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Extended Installation Guide</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Installation</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/theharmonylab/topics/blob/HEAD/vignettes/extended_installation_guide.Rmd" class="external-link"><code>vignettes/extended_installation_guide.Rmd</code></a></small>
@@ -73,16 +68,49 @@
 
     
     
-<p><em>topics</em> enables users access to mallet in R through mallet in
-Java. So it’s important to install the R-package rJava, which requires
-that you download JAVA manually.</p>
 <div class="section level2">
-<h2 id="rjava-installation">rJava installation<a class="anchor" aria-label="anchor" href="#rjava-installation"></a>
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Please visit <code>https://www.java.com</code> for information on
-installing JAVA.</p>
+<p>The <code>topics</code> package relies on <strong>Java</strong> for
+high-performance processing. To ensure a smooth installation, please
+follow these two steps.</p>
+<div class="section level4">
+<h4 id="step-1-install-java-required">Step 1: Install Java (Required)<a class="anchor" aria-label="anchor" href="#step-1-install-java-required"></a>
+</h4>
+<p>Before installing the R package, you must have the Java Runtime
+Environment (JRE) installed on your computer. 1. Download Java from <a href="https://www.java.com/en/download/" class="external-link">www.java.com/en/download/</a>.
+2. Restart your computer after installation to ensure R can detect the
+new system paths.</p>
 </div>
-  </main>
+<div class="section level4">
+<h4 id="step-2-install-topics-in-r">Step 2: Install topics in R<a class="anchor" aria-label="anchor" href="#step-2-install-topics-in-r"></a>
+</h4>
+<p>Open R or RStudio and run the following commands.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Install and verify the Java interface</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"topics"</span><span class="op">)</span></span></code></pre></div>
+<p>You can also install the development version from GitHub.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Install devtools if not already present</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Install topics from GitHub</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"theharmonylab/topics"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="step-3-memory-configuration">Step 3: Memory Configuration<a class="anchor" aria-label="anchor" href="#step-3-memory-configuration"></a>
+</h4>
+<p>Topic modeling is memory-intensive. You must increase the Java memory
+limit before loading the library. If you skip this, you may encounter
+OutOfMemoryError during model training.</p>
+<pre><code><span><span class="co"># Set memory limit to 5GB (Run this BEFORE loading the library)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>java.parameters <span class="op">=</span> <span class="st">"-Xmx5000m"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-topics.org/">topics</a></span><span class="op">)</span></span></code></pre>
+</div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
@@ -100,7 +128,7 @@ installing JAVA.</p>
   </div></footer><div style="text-align: center; margin-top: 1px;">
   <p>
     <a href="https://harmonyresearchgroup.com" target="_blank" class="external-link">
-      <img src="reference/figures/harmony_logo_all.png" alt="GitHub" style="height:25px; vertical-align:middle;"></a>
+      <img src="reference/figures/harmony_logo_all.png" alt="Harmony Logo" style="height:25px; vertical-align:middle;"></a>
   </p>
 </div>
 

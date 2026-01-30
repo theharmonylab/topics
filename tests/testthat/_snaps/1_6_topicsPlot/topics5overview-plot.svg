@@ -38,16 +38,6 @@
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 </g>
-<defs>
-  <clipPath id='cpNDgwLjAwfDcyMC4wMHwxNy4zMHwxOTAuNTk='>
-    <rect x='480.00' y='17.30' width='240.00' height='173.29' />
-  </clipPath>
-</defs>
-<g clip-path='url(#cpNDgwLjAwfDcyMC4wMHwxNy4zMHwxOTAuNTk=)'>
-<rect x='480.00' y='17.30' width='240.00' height='173.29' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
-</g>
-<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-</g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MTcuMzB8MTkwLjU5)'>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
@@ -72,55 +62,85 @@
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 </g>
+<defs>
+  <clipPath id='cpNDgwLjAwfDcyMC4wMHwxNy4zMHwxOTAuNTk='>
+    <rect x='480.00' y='17.30' width='240.00' height='173.29' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNDgwLjAwfDcyMC4wMHwxNy4zMHwxOTAuNTk=)'>
+<rect x='480.00' y='17.30' width='240.00' height='173.29' style='stroke-width: 0.00; stroke: none;' />
+</g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+</g>
 <g clip-path='url(#cpMC4wMHwyNDAuMDB8MTcuMzB8MTkwLjU5)'>
-<text x='51.20' y='110.78' style='font-size: 28.45px; fill: #398CF9; font-family: sans;' textLength='137.60px' lengthAdjust='spacingAndGlyphs'>sometimes</text>
-<text x='75.28' y='131.53' style='font-size: 22.36px; fill: #B7B9B1; font-family: sans;' textLength='59.68px' lengthAdjust='spacingAndGlyphs'>things</text>
-<text x='73.33' y='88.60' style='font-size: 13.81px; fill: #EFEB57; font-family: sans;' textLength='43.75px' lengthAdjust='spacingAndGlyphs'>without</text>
-<text x='146.03' y='124.55' style='font-size: 13.81px; fill: #EFEB57; font-family: sans;' textLength='26.87px' lengthAdjust='spacingAndGlyphs'>year</text>
-<text x='141.50' y='87.99' style='font-size: 12.92px; fill: #F2EF4E; font-family: sans;' textLength='21.55px' lengthAdjust='spacingAndGlyphs'>age</text>
-<text x='99.53' y='73.22' style='font-size: 11.96px; fill: #F5F343; font-family: sans;' textLength='41.24px' lengthAdjust='spacingAndGlyphs'>achieve</text>
-<text x='168.87' y='86.73' style='font-size: 10.92px; fill: #F9F736; font-family: sans;' textLength='31.58px' lengthAdjust='spacingAndGlyphs'>school</text>
-<text x='31.19' y='122.91' style='font-size: 10.92px; fill: #F9F736; font-family: sans;' textLength='30.36px' lengthAdjust='spacingAndGlyphs'>longer</text>
-<text x='153.49' y='136.06' style='font-size: 9.77px; fill: #FCFB24; font-family: sans;' textLength='19.56px' lengthAdjust='spacingAndGlyphs'>hard</text>
-<text x='37.56' y='86.02' style='font-size: 9.77px; fill: #FCFB24; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>helps</text>
-<text x='28.68' y='146.85' style='font-size: 9.77px; fill: #FCFB24; font-family: sans;' textLength='98.32px' lengthAdjust='spacingAndGlyphs'>depressed_sometimes</text>
-<text x='180.74' y='124.97' style='font-size: 9.77px; fill: #FCFB24; font-family: sans;' textLength='36.40px' lengthAdjust='spacingAndGlyphs'>sadness</text>
-<text x='43.44' y='69.87' style='font-size: 9.77px; fill: #FCFB24; font-family: sans;' textLength='43.47px' lengthAdjust='spacingAndGlyphs'>happened</text>
-<text x='147.63' y='67.96' style='font-size: 9.77px; fill: #FCFB24; font-family: sans;' textLength='68.43px' lengthAdjust='spacingAndGlyphs'>sometimes_feel</text>
-<text x='196.43' y='108.50' style='font-size: 9.77px; fill: #FCFB24; font-family: sans;' textLength='40.20px' lengthAdjust='spacingAndGlyphs'>dont_feel</text>
-<text x='15.22' y='102.20' style='font-size: 8.46px; fill: #FFFF00; font-family: sans;' textLength='26.35px' lengthAdjust='spacingAndGlyphs'>waiting</text>
-<text x='96.01' y='59.57' style='font-size: 8.46px; fill: #FFFF00; font-family: sans;' textLength='36.24px' lengthAdjust='spacingAndGlyphs'>lot_things</text>
-<text x='205.86' y='94.09' style='font-size: 8.46px; fill: #FFFF00; font-family: sans;' textLength='16.48px' lengthAdjust='spacingAndGlyphs'>dont</text>
-<text x='142.47' y='153.27' style='font-size: 8.46px; fill: #FFFF00; font-family: sans;' textLength='33.41px' lengthAdjust='spacingAndGlyphs'>life_feels</text>
-<text x='54.14' y='162.13' style='font-size: 8.46px; fill: #FFFF00; font-family: sans;' textLength='79.08px' lengthAdjust='spacingAndGlyphs'>dont_feel_depressed</text>
+<text x='93.12' y='110.78' style='font-size: 28.45px; fill: #398CF9; font-family: sans;' textLength='53.76px' lengthAdjust='spacingAndGlyphs'>time</text>
+<text x='118.29' y='88.89' style='font-size: 18.79px; fill: #D6D189; font-family: sans;' textLength='55.36px' lengthAdjust='spacingAndGlyphs'>feeling</text>
+<text x='106.33' y='128.05' style='font-size: 17.05px; fill: #E1DB76; font-family: sans;' textLength='31.29px' lengthAdjust='spacingAndGlyphs'>now</text>
+<text x='24.91' y='104.98' style='font-size: 16.43px; fill: #E4DF70; font-family: sans;' textLength='62.13px' lengthAdjust='spacingAndGlyphs'>negative</text>
+<text x='53.09' y='143.62' style='font-size: 14.41px; fill: #EEE95A; font-family: sans;' textLength='117.81px' lengthAdjust='spacingAndGlyphs'>feeling_depressed</text>
+<text x='150.04' y='112.08' style='font-size: 14.41px; fill: #EEE95A; font-family: sans;' textLength='58.49px' lengthAdjust='spacingAndGlyphs'>generally</text>
+<text x='46.68' y='78.75' style='font-size: 12.06px; fill: #F7F43F; font-family: sans;' textLength='59.02px' lengthAdjust='spacingAndGlyphs'>depressing</text>
+<text x='64.43' y='119.92' style='font-size: 11.17px; fill: #F9F832; font-family: sans;' textLength='24.22px' lengthAdjust='spacingAndGlyphs'>thing</text>
+<text x='165.65' y='127.59' style='font-size: 11.17px; fill: #F9F832; font-family: sans;' textLength='29.18px' lengthAdjust='spacingAndGlyphs'>whole</text>
+<text x='110.75' y='65.92' style='font-size: 11.17px; fill: #F9F832; font-family: sans;' textLength='47.18px' lengthAdjust='spacingAndGlyphs'>worthless</text>
+<text x='184.63' y='94.50' style='font-size: 10.20px; fill: #FCFB22; font-family: sans;' textLength='13.61px' lengthAdjust='spacingAndGlyphs'>led</text>
+<text x='24.78' y='119.47' style='font-size: 10.20px; fill: #FCFB22; font-family: sans;' textLength='31.18px' lengthAdjust='spacingAndGlyphs'>person</text>
+<text x='182.52' y='78.00' style='font-size: 10.20px; fill: #FCFB22; font-family: sans;' textLength='18.14px' lengthAdjust='spacingAndGlyphs'>lack</text>
+<text x='76.19' y='62.71' style='font-size: 10.20px; fill: #FCFB22; font-family: sans;' textLength='22.69px' lengthAdjust='spacingAndGlyphs'>head</text>
+<text x='5.27' y='86.58' style='font-size: 10.20px; fill: #FCFB22; font-family: sans;' textLength='33.45px' lengthAdjust='spacingAndGlyphs'>content</text>
+<text x='9.94' y='132.15' style='font-size: 10.20px; fill: #FCFB22; font-family: sans;' textLength='31.18px' lengthAdjust='spacingAndGlyphs'>corona</text>
+<text x='108.54' y='156.66' style='font-size: 9.12px; fill: #FFFF00; font-family: sans;' textLength='33.97px' lengthAdjust='spacingAndGlyphs'>stressful</text>
+<text x='213.53' y='96.80' style='font-size: 9.12px; fill: #FFFF00; font-family: sans;' textLength='11.66px' lengthAdjust='spacingAndGlyphs'>full</text>
+<text x='177.68' y='145.65' style='font-size: 9.12px; fill: #FFFF00; font-family: sans;' textLength='19.78px' lengthAdjust='spacingAndGlyphs'>quite</text>
+<text x='41.86' y='62.20' style='font-size: 9.12px; fill: #FFFF00; font-family: sans;' textLength='30.43px' lengthAdjust='spacingAndGlyphs'>specific</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 </g>
 <g clip-path='url(#cpMjQwLjAwfDQ4MC4wMHwxNy4zMHwxOTAuNTk=)'>
-<text x='325.20' y='110.78' style='font-size: 28.45px; fill: #60A1F7; font-family: sans;' textLength='69.60px' lengthAdjust='spacingAndGlyphs'>years</text>
-<text x='375.78' y='91.42' style='font-size: 23.87px; fill: #B5BFBB; font-family: sans;' textLength='38.50px' lengthAdjust='spacingAndGlyphs'>day</text>
-<text x='280.72' y='133.37' style='font-size: 21.91px; fill: #C8CBA3; font-family: sans;' textLength='107.18px' lengthAdjust='spacingAndGlyphs'>depression</text>
-<text x='331.49' y='85.59' style='font-size: 20.49px; fill: #D3D493; font-family: sans;' textLength='34.19px' lengthAdjust='spacingAndGlyphs'>one</text>
-<text x='289.98' y='102.03' style='font-size: 18.97px; fill: #DDDC82; font-family: sans;' textLength='31.66px' lengthAdjust='spacingAndGlyphs'>ago</text>
-<text x='395.86' y='127.78' style='font-size: 17.32px; fill: #E7E56F; font-family: sans;' textLength='42.37px' lengthAdjust='spacingAndGlyphs'>every</text>
-<text x='413.82' y='105.89' style='font-size: 16.43px; fill: #EBE964; font-family: sans;' textLength='41.12px' lengthAdjust='spacingAndGlyphs'>never</text>
-<text x='271.76' y='81.74' style='font-size: 14.50px; fill: #F3F24C; font-family: sans;' textLength='52.38px' lengthAdjust='spacingAndGlyphs'>suffered</text>
-<text x='349.59' y='147.52' style='font-size: 13.42px; fill: #F7F63D; font-family: sans;' textLength='18.66px' lengthAdjust='spacingAndGlyphs'>get</text>
-<text x='357.91' y='66.54' style='font-size: 13.42px; fill: #F7F63D; font-family: sans;' textLength='36.55px' lengthAdjust='spacingAndGlyphs'>failure</text>
-<text x='423.94' y='90.44' style='font-size: 13.42px; fill: #F7F63D; font-family: sans;' textLength='39.54px' lengthAdjust='spacingAndGlyphs'>almost</text>
-<text x='288.65' y='49.30' style='font-size: 12.25px; fill: #FBFB2A; font-family: sans;' textLength='105.61px' lengthAdjust='spacingAndGlyphs'>anxiety_depression</text>
-<text x='309.22' y='165.40' style='font-size: 12.25px; fill: #FBFB2A; font-family: sans;' textLength='111.06px' lengthAdjust='spacingAndGlyphs'>suffered_depression</text>
-<text x='313.00' y='145.09' style='font-size: 12.25px; fill: #FBFB2A; font-family: sans;' textLength='29.28px' lengthAdjust='spacingAndGlyphs'>worst</text>
-<text x='383.40' y='145.32' style='font-size: 12.25px; fill: #FBFB2A; font-family: sans;' textLength='23.17px' lengthAdjust='spacingAndGlyphs'>died</text>
-<text x='325.63' y='65.73' style='font-size: 10.96px; fill: #FFFF00; font-family: sans;' textLength='26.80px' lengthAdjust='spacingAndGlyphs'>worry</text>
-<text x='245.10' y='98.29' style='font-size: 10.96px; fill: #FFFF00; font-family: sans;' textLength='37.80px' lengthAdjust='spacingAndGlyphs'>anxious</text>
-<text x='405.02' y='69.01' style='font-size: 10.96px; fill: #FFFF00; font-family: sans;' textLength='24.99px' lengthAdjust='spacingAndGlyphs'>great</text>
-<text x='243.06' y='114.89' style='font-size: 10.96px; fill: #FFFF00; font-family: sans;' textLength='29.88px' lengthAdjust='spacingAndGlyphs'>happy</text>
-<text x='441.53' y='128.09' style='font-size: 10.96px; fill: #FFFF00; font-family: sans;' textLength='19.50px' lengthAdjust='spacingAndGlyphs'>wife</text>
+<text x='322.03' y='110.78' style='font-size: 28.45px; fill: #60A1F7; font-family: sans;' textLength='75.93px' lengthAdjust='spacingAndGlyphs'>things</text>
+<text x='312.74' y='130.01' style='font-size: 20.64px; fill: #CFD09A; font-family: sans;' textLength='48.21px' lengthAdjust='spacingAndGlyphs'>away</text>
+<text x='367.66' y='91.59' style='font-size: 18.47px; fill: #DDDC83; font-family: sans;' textLength='46.20px' lengthAdjust='spacingAndGlyphs'>mood</text>
+<text x='334.01' y='83.49' style='font-size: 17.27px; fill: #E3E176; font-family: sans;' textLength='30.73px' lengthAdjust='spacingAndGlyphs'>less</text>
+<text x='369.50' y='134.48' style='font-size: 15.99px; fill: #E9E769; font-family: sans;' textLength='53.35px' lengthAdjust='spacingAndGlyphs'>general</text>
+<text x='402.41' y='114.13' style='font-size: 14.60px; fill: #EFED5A; font-family: sans;' textLength='18.66px' lengthAdjust='spacingAndGlyphs'>full</text>
+<text x='292.58' y='100.14' style='font-size: 13.85px; fill: #F2F051; font-family: sans;' textLength='23.86px' lengthAdjust='spacingAndGlyphs'>well</text>
+<text x='290.43' y='116.74' style='font-size: 13.06px; fill: #F5F348; font-family: sans;' textLength='20.33px' lengthAdjust='spacingAndGlyphs'>just</text>
+<text x='308.70' y='82.89' style='font-size: 13.06px; fill: #F5F348; font-family: sans;' textLength='13.79px' lengthAdjust='spacingAndGlyphs'>bit</text>
+<text x='418.40' y='95.06' style='font-size: 13.06px; fill: #F5F348; font-family: sans;' textLength='13.79px' lengthAdjust='spacingAndGlyphs'>im</text>
+<text x='368.84' y='75.87' style='font-size: 12.22px; fill: #F7F63E; font-family: sans;' textLength='19.70px' lengthAdjust='spacingAndGlyphs'>half</text>
+<text x='276.41' y='84.62' style='font-size: 11.31px; fill: #FAF932; font-family: sans;' textLength='27.05px' lengthAdjust='spacingAndGlyphs'>usual</text>
+<text x='430.70' y='117.00' style='font-size: 11.31px; fill: #FAF932; font-family: sans;' textLength='36.49px' lengthAdjust='spacingAndGlyphs'>despite</text>
+<text x='275.44' y='132.98' style='font-size: 10.33px; fill: #FCFC21; font-family: sans;' textLength='31.58px' lengthAdjust='spacingAndGlyphs'>normal</text>
+<text x='309.20' y='145.43' style='font-size: 10.33px; fill: #FCFC21; font-family: sans;' textLength='31.59px' lengthAdjust='spacingAndGlyphs'>energy</text>
+<text x='346.77' y='60.13' style='font-size: 10.33px; fill: #FCFC21; font-family: sans;' textLength='68.34px' lengthAdjust='spacingAndGlyphs'>positive_things</text>
+<text x='352.03' y='153.86' style='font-size: 10.33px; fill: #FCFC21; font-family: sans;' textLength='45.37px' lengthAdjust='spacingAndGlyphs'>especially</text>
+<text x='417.82' y='78.73' style='font-size: 9.24px; fill: #FFFF00; font-family: sans;' textLength='22.09px' lengthAdjust='spacingAndGlyphs'>times</text>
+<text x='314.78' y='66.16' style='font-size: 9.24px; fill: #FFFF00; font-family: sans;' textLength='27.75px' lengthAdjust='spacingAndGlyphs'>course</text>
+<text x='258.21' y='101.69' style='font-size: 9.24px; fill: #FFFF00; font-family: sans;' textLength='22.61px' lengthAdjust='spacingAndGlyphs'>affect</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 </g>
 <g clip-path='url(#cpNDgwLjAwfDcyMC4wMHwxNy4zMHwxOTAuNTk=)'>
+<text x='533.55' y='110.78' style='font-size: 28.45px; fill: #5DC688; font-family: sans;' textLength='132.90px' lengthAdjust='spacingAndGlyphs'>depressed</text>
+<text x='594.43' y='89.72' style='font-size: 25.88px; fill: #86D17A; font-family: sans;' textLength='33.08px' lengthAdjust='spacingAndGlyphs'>life</text>
+<text x='555.89' y='138.26' style='font-size: 25.88px; fill: #86D17A; font-family: sans;' textLength='40.29px' lengthAdjust='spacingAndGlyphs'>just</text>
+<text x='611.26' y='138.20' style='font-size: 23.03px; fill: #A7DC6A; font-family: sans;' textLength='48.66px' lengthAdjust='spacingAndGlyphs'>think</text>
+<text x='526.82' y='80.45' style='font-size: 22.42px; fill: #ADDE67; font-family: sans;' textLength='57.33px' lengthAdjust='spacingAndGlyphs'>future</text>
+<text x='547.59' y='62.24' style='font-size: 21.79px; fill: #B3E063; font-family: sans;' textLength='106.61px' lengthAdjust='spacingAndGlyphs'>depression</text>
+<text x='643.64' y='81.35' style='font-size: 19.05px; fill: #C9E954; font-family: sans;' textLength='40.25px' lengthAdjust='spacingAndGlyphs'>want</text>
+<text x='525.82' y='160.29' style='font-size: 17.53px; fill: #D5ED4B; font-family: sans;' textLength='128.66px' lengthAdjust='spacingAndGlyphs'>think_depressed</text>
+<text x='506.59' y='131.67' style='font-size: 16.71px; fill: #DAF046; font-family: sans;' textLength='36.24px' lengthAdjust='spacingAndGlyphs'>point</text>
+<text x='500.50' y='100.09' style='font-size: 15.86px; fill: #DFF240; font-family: sans;' textLength='30.84px' lengthAdjust='spacingAndGlyphs'>tired</text>
+<text x='672.60' y='115.05' style='font-size: 14.95px; fill: #E5F43A; font-family: sans;' textLength='34.91px' lengthAdjust='spacingAndGlyphs'>tasks</text>
+<text x='667.52' y='133.75' style='font-size: 13.99px; fill: #EAF634; font-family: sans;' textLength='14.78px' lengthAdjust='spacingAndGlyphs'>ok</text>
+<text x='675.77' y='98.50' style='font-size: 12.95px; fill: #EFF82C; font-family: sans;' textLength='31.69px' lengthAdjust='spacingAndGlyphs'>spent</text>
+<text x='484.25' y='77.94' style='font-size: 11.82px; fill: #F5FB23; font-family: sans;' textLength='35.50px' lengthAdjust='spacingAndGlyphs'>severe</text>
+<text x='658.36' y='153.66' style='font-size: 11.82px; fill: #F5FB23; font-family: sans;' textLength='47.99px' lengthAdjust='spacingAndGlyphs'>everyday</text>
+<text x='667.36' y='59.69' style='font-size: 10.58px; fill: #FAFD17; font-family: sans;' textLength='44.70px' lengthAdjust='spacingAndGlyphs'>just_want</text>
+<text x='498.50' y='60.08' style='font-size: 9.17px; fill: #FFFF00; font-family: sans;' textLength='41.78px' lengthAdjust='spacingAndGlyphs'>somewhat</text>
+<text x='496.38' y='115.16' style='font-size: 9.17px; fill: #FFFF00; font-family: sans;' textLength='22.41px' lengthAdjust='spacingAndGlyphs'>result</text>
+<text x='580.53' y='43.21' style='font-size: 9.17px; fill: #FFFF00; font-family: sans;' textLength='34.15px' lengthAdjust='spacingAndGlyphs'>succeed</text>
+<text x='540.99' y='177.61' style='font-size: 9.17px; fill: #FFFF00; font-family: sans;' textLength='63.70px' lengthAdjust='spacingAndGlyphs'>everyday_tasks</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 </g>
@@ -173,26 +193,26 @@
   </clipPath>
 </defs>
 <g clip-path='url(#cpMC4wMHwyMjguMzN8MTkwLjU5fDM2My44OA==)'>
-<text x='92.02' y='284.07' style='font-size: 28.45px; fill: #E07F6A; font-family: sans;' textLength='44.28px' lengthAdjust='spacingAndGlyphs'>last</text>
-<text x='103.51' y='261.39' style='font-size: 27.69px; fill: #E28668; font-family: sans;' textLength='43.09px' lengthAdjust='spacingAndGlyphs'>two</text>
-<text x='64.50' y='310.47' style='font-size: 27.06px; fill: #E48C66; font-family: sans;' textLength='76.72px' lengthAdjust='spacingAndGlyphs'>weeks</text>
-<text x='1.69' y='250.35' style='font-size: 25.25px; fill: #E99C60; font-family: sans;' textLength='92.63px' lengthAdjust='spacingAndGlyphs'>last_two</text>
-<text x='51.88' y='330.39' style='font-size: 24.90px; fill: #EA9F5F; font-family: sans;' textLength='123.22px' lengthAdjust='spacingAndGlyphs'>two_weeks</text>
-<text x='50.59' y='225.78' style='font-size: 24.55px; fill: #EBA25E; font-family: sans;' textLength='173.37px' lengthAdjust='spacingAndGlyphs'>last_two_weeks</text>
-<text x='42.73' y='352.18' style='font-size: 20.12px; fill: #F3C34F; font-family: sans;' textLength='93.98px' lengthAdjust='spacingAndGlyphs'>depressed</text>
-<text x='98.33' y='202.76' style='font-size: 17.36px; fill: #F7D344; font-family: sans;' textLength='117.79px' lengthAdjust='spacingAndGlyphs'>depressed_last</text>
-<text x='40.31' y='281.22' style='font-size: 16.60px; fill: #F8D841; font-family: sans;' textLength='147.70px' lengthAdjust='spacingAndGlyphs'>depressed_last_two</text>
-<text x='72.65' y='273.22' style='font-size: 12.79px; fill: #FCEA30; font-family: sans;' textLength='17.07px' lengthAdjust='spacingAndGlyphs'>felt</text>
-<text x='142.38' y='280.96' style='font-size: 12.10px; fill: #FCED2C; font-family: sans;' textLength='32.98px' lengthAdjust='spacingAndGlyphs'>happy</text>
-<text x='64.07' y='288.01' style='font-size: 10.98px; fill: #FDF126; font-family: sans;' textLength='14.04px' lengthAdjust='spacingAndGlyphs'>life</text>
-<text x='144.22' y='296.34' style='font-size: 8.81px; fill: #FEF819; font-family: sans;' textLength='26.94px' lengthAdjust='spacingAndGlyphs'>though</text>
-<text x='151.44' y='265.96' style='font-size: 8.31px; fill: #FEF916; font-family: sans;' textLength='20.78px' lengthAdjust='spacingAndGlyphs'>mood</text>
-<text x='40.75' y='268.71' style='font-size: 8.31px; fill: #FEF916; font-family: sans;' textLength='19.39px' lengthAdjust='spacingAndGlyphs'>week</text>
-<text x='155.54' y='251.75' style='font-size: 7.77px; fill: #FEFB12; font-family: sans;' textLength='67.39px' lengthAdjust='spacingAndGlyphs'>felt_depressed_last</text>
-<text x='32.06' y='282.74' style='font-size: 6.57px; fill: #FFFE07; font-family: sans;' textLength='21.18px' lengthAdjust='spacingAndGlyphs'>healthy</text>
-<text x='175.89' y='266.17' style='font-size: 6.57px; fill: #FFFE07; font-family: sans;' textLength='21.18px' lengthAdjust='spacingAndGlyphs'>various</text>
-<text x='1.86' y='297.98' style='font-size: 5.88px; fill: #FFFF00; font-family: sans;' textLength='52.28px' lengthAdjust='spacingAndGlyphs'>yes_depressed_last</text>
-<text x='168.99' y='307.68' style='font-size: 5.88px; fill: #FFFF00; font-family: sans;' textLength='35.60px' lengthAdjust='spacingAndGlyphs'>fairly_positive</text>
+<text x='95.19' y='284.07' style='font-size: 28.45px; fill: #E07F6A; font-family: sans;' textLength='37.95px' lengthAdjust='spacingAndGlyphs'>felt</text>
+<text x='46.77' y='305.29' style='font-size: 23.71px; fill: #EEAD59; font-family: sans;' textLength='110.76px' lengthAdjust='spacingAndGlyphs'>depressed</text>
+<text x='142.17' y='280.84' style='font-size: 23.71px; fill: #EEAD59; font-family: sans;' textLength='44.80px' lengthAdjust='spacingAndGlyphs'>time</text>
+<text x='42.94' y='270.95' style='font-size: 20.67px; fill: #F4C64D; font-family: sans;' textLength='45.99px' lengthAdjust='spacingAndGlyphs'>good</text>
+<text x='39.45' y='247.60' style='font-size: 20.12px; fill: #F5CA4A; font-family: sans;' textLength='132.02px' lengthAdjust='spacingAndGlyphs'>felt_depressed</text>
+<text x='163.05' y='296.61' style='font-size: 18.97px; fill: #F7D245; font-family: sans;' textLength='31.66px' lengthAdjust='spacingAndGlyphs'>one</text>
+<text x='64.27' y='323.57' style='font-size: 15.73px; fill: #FBE733; font-family: sans;' textLength='72.60px' lengthAdjust='spacingAndGlyphs'>something</text>
+<text x='159.71' y='260.38' style='font-size: 14.23px; fill: #FCEF2A; font-family: sans;' textLength='47.50px' lengthAdjust='spacingAndGlyphs'>enough</text>
+<text x='5.66' y='265.21' style='font-size: 14.23px; fill: #FCEF2A; font-family: sans;' textLength='34.01px' lengthAdjust='spacingAndGlyphs'>times</text>
+<text x='146.11' y='323.42' style='font-size: 14.23px; fill: #FCEF2A; font-family: sans;' textLength='54.61px' lengthAdjust='spacingAndGlyphs'>although</text>
+<text x='10.77' y='278.99' style='font-size: 14.23px; fill: #FCEF2A; font-family: sans;' textLength='26.11px' lengthAdjust='spacingAndGlyphs'>new</text>
+<text x='5.69' y='292.75' style='font-size: 13.42px; fill: #FDF323; font-family: sans;' textLength='31.34px' lengthAdjust='spacingAndGlyphs'>news</text>
+<text x='196.16' y='281.73' style='font-size: 12.55px; fill: #FEF71C; font-family: sans;' textLength='32.09px' lengthAdjust='spacingAndGlyphs'>within</text>
+<text x='107.94' y='233.36' style='font-size: 12.55px; fill: #FEF71C; font-family: sans;' textLength='38.38px' lengthAdjust='spacingAndGlyphs'>routine</text>
+<text x='201.37' y='295.63' style='font-size: 11.62px; fill: #FEFB12; font-family: sans;' textLength='13.57px' lengthAdjust='spacingAndGlyphs'>far</text>
+<text x='4.87' y='312.50' style='font-size: 11.62px; fill: #FEFB12; font-family: sans;' textLength='34.25px' lengthAdjust='spacingAndGlyphs'>finding</text>
+<text x='178.85' y='240.97' style='font-size: 11.62px; fill: #FEFB12; font-family: sans;' textLength='28.44px' lengthAdjust='spacingAndGlyphs'>upset</text>
+<text x='61.49' y='224.25' style='font-size: 10.61px; fill: #FFFF00; font-family: sans;' textLength='33.04px' lengthAdjust='spacingAndGlyphs'>usually</text>
+<text x='86.13' y='338.35' style='font-size: 10.61px; fill: #FFFF00; font-family: sans;' textLength='39.53px' lengthAdjust='spacingAndGlyphs'>exercise</text>
+<text x='9.75' y='247.41' style='font-size: 10.61px; fill: #FFFF00; font-family: sans;' textLength='21.83px' lengthAdjust='spacingAndGlyphs'>daily</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 <polyline points='263.35,356.00 491.67,356.00 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />
@@ -218,55 +238,55 @@
 <polyline points='419.03,363.88 419.03,190.59 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='460.54,363.88 460.54,190.59 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <circle cx='388.36' cy='273.65' r='1.58' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
-<circle cx='379.89' cy='248.26' r='2.04' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
+<circle cx='379.89' cy='248.26' r='2.04' style='stroke-width: 0.71; stroke: #60A1F7; stroke-opacity: 0.20; fill: #60A1F7; fill-opacity: 0.20;' />
 <circle cx='352.28' cy='262.29' r='2.58' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.20; fill: #E07F6A; fill-opacity: 0.20;' />
-<circle cx='352.15' cy='245.22' r='2.09' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.20; fill: #E07F6A; fill-opacity: 0.20;' />
-<circle cx='409.94' cy='254.35' r='2.51' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
-<circle cx='405.70' cy='256.41' r='1.59' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
-<circle cx='358.23' cy='257.44' r='2.25' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
+<circle cx='352.15' cy='245.22' r='2.09' style='stroke-width: 0.71; stroke: #398CF9; stroke-opacity: 0.20; fill: #398CF9; fill-opacity: 0.20;' />
+<circle cx='355.99' cy='223.93' r='1.48' style='stroke-width: 0.71; stroke: #398CF9; stroke-opacity: 0.20; fill: #398CF9; fill-opacity: 0.20;' />
+<circle cx='409.94' cy='254.35' r='2.51' style='stroke-width: 0.71; stroke: #5DC688; stroke-opacity: 0.20; fill: #5DC688; fill-opacity: 0.20;' />
+<circle cx='405.70' cy='256.41' r='1.59' style='stroke-width: 0.71; stroke: #5DC688; stroke-opacity: 0.20; fill: #5DC688; fill-opacity: 0.20;' />
+<circle cx='358.23' cy='257.44' r='2.25' style='stroke-width: 0.71; stroke: #398CF9; stroke-opacity: 0.20; fill: #398CF9; fill-opacity: 0.20;' />
 <circle cx='368.54' cy='293.09' r='1.82' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
 <circle cx='398.91' cy='292.75' r='1.79' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
-<circle cx='365.01' cy='293.59' r='1.95' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
-<circle cx='394.42' cy='291.46' r='2.22' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
-<circle cx='379.02' cy='259.33' r='2.11' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
+<circle cx='394.42' cy='291.46' r='2.22' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
+<circle cx='379.02' cy='259.33' r='2.11' style='stroke-width: 0.71; stroke: #60A1F7; stroke-opacity: 0.20; fill: #60A1F7; fill-opacity: 0.20;' />
 <circle cx='399.36' cy='289.50' r='2.48' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
 <circle cx='332.80' cy='274.65' r='2.00' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.20; fill: #E07F6A; fill-opacity: 0.20;' />
-<circle cx='418.49' cy='257.06' r='2.47' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
-<circle cx='395.76' cy='273.78' r='2.41' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
+<circle cx='418.49' cy='257.06' r='2.47' style='stroke-width: 0.71; stroke: #5DC688; stroke-opacity: 0.20; fill: #5DC688; fill-opacity: 0.20;' />
+<circle cx='395.76' cy='273.78' r='2.41' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
 <circle cx='369.74' cy='277.36' r='2.29' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
 <circle cx='347.00' cy='289.30' r='2.28' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.20; fill: #E07F6A; fill-opacity: 0.20;' />
 <circle cx='385.62' cy='276.21' r='1.69' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
 <circle cx='431.60' cy='332.20' r='2.10' style='stroke-width: 0.71; stroke: #85DB8E; stroke-opacity: 0.20; fill: #85DB8E; fill-opacity: 0.20;' />
-<circle cx='413.59' cy='238.36' r='1.86' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
-<circle cx='353.05' cy='303.73' r='2.08' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.20; fill: #E07F6A; fill-opacity: 0.20;' />
+<circle cx='353.05' cy='303.73' r='2.08' style='stroke-width: 0.71; stroke: #FF0000; stroke-opacity: 0.20; fill: #FF0000; fill-opacity: 0.20;' />
 <circle cx='340.15' cy='280.62' r='2.25' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.20; fill: #E07F6A; fill-opacity: 0.20;' />
-<circle cx='352.63' cy='259.19' r='1.77' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.20; fill: #E07F6A; fill-opacity: 0.20;' />
+<circle cx='352.63' cy='259.19' r='1.77' style='stroke-width: 0.71; stroke: #398CF9; stroke-opacity: 0.20; fill: #398CF9; fill-opacity: 0.20;' />
 <circle cx='385.23' cy='275.38' r='2.36' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
-<circle cx='350.09' cy='293.58' r='3.56' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.20; fill: #E07F6A; fill-opacity: 0.20;' />
+<circle cx='350.09' cy='293.58' r='3.56' style='stroke-width: 0.71; stroke: #FF0000; stroke-opacity: 0.20; fill: #FF0000; fill-opacity: 0.20;' />
 <circle cx='319.02' cy='268.57' r='1.73' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.20; fill: #E07F6A; fill-opacity: 0.20;' />
-<circle cx='420.49' cy='287.62' r='2.55' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
-<circle cx='395.79' cy='236.26' r='1.91' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
-<circle cx='334.18' cy='239.34' r='1.81' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.20; fill: #E07F6A; fill-opacity: 0.20;' />
+<circle cx='395.79' cy='236.26' r='1.91' style='stroke-width: 0.71; stroke: #5DC688; stroke-opacity: 0.20; fill: #5DC688; fill-opacity: 0.20;' />
 <circle cx='379.97' cy='289.21' r='2.64' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
-<circle cx='373.38' cy='295.49' r='3.16' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
-<circle cx='402.16' cy='298.19' r='2.06' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
-<circle cx='395.21' cy='264.34' r='1.67' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
-<circle cx='424.12' cy='297.05' r='2.07' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
+<circle cx='373.38' cy='295.49' r='3.16' style='stroke-width: 0.71; stroke: #EA7467; stroke-opacity: 0.20; fill: #EA7467; fill-opacity: 0.20;' />
+<circle cx='402.16' cy='298.19' r='2.06' style='stroke-width: 0.71; stroke: #85DB8E; stroke-opacity: 0.20; fill: #85DB8E; fill-opacity: 0.20;' />
+<circle cx='395.21' cy='264.34' r='1.67' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
+<circle cx='424.12' cy='297.05' r='2.07' style='stroke-width: 0.71; stroke: #85DB8E; stroke-opacity: 0.20; fill: #85DB8E; fill-opacity: 0.20;' />
 <circle cx='383.03' cy='273.21' r='1.42' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
-<circle cx='400.31' cy='298.13' r='1.76' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
-<circle cx='306.16' cy='280.74' r='2.55' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.20; fill: #E07F6A; fill-opacity: 0.20;' />
-<circle cx='410.05' cy='303.61' r='1.94' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.20; fill: #40DD52; fill-opacity: 0.20;' />
-<circle cx='380.49' cy='302.77' r='1.61' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
-<circle cx='369.26' cy='232.37' r='1.91' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
+<circle cx='400.31' cy='298.13' r='1.76' style='stroke-width: 0.71; stroke: #85DB8E; stroke-opacity: 0.20; fill: #85DB8E; fill-opacity: 0.20;' />
+<circle cx='410.05' cy='303.61' r='1.94' style='stroke-width: 0.71; stroke: #85DB8E; stroke-opacity: 0.20; fill: #85DB8E; fill-opacity: 0.20;' />
+<circle cx='380.49' cy='302.77' r='1.61' style='stroke-width: 0.71; stroke: #EA7467; stroke-opacity: 0.20; fill: #EA7467; fill-opacity: 0.20;' />
+<circle cx='369.26' cy='232.37' r='1.91' style='stroke-width: 0.71; stroke: #60A1F7; stroke-opacity: 0.20; fill: #60A1F7; fill-opacity: 0.20;' />
 <circle cx='351.66' cy='280.58' r='3.19' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.20; fill: #E07F6A; fill-opacity: 0.20;' />
-<circle cx='380.67' cy='303.38' r='2.29' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
-<circle cx='369.40' cy='254.80' r='2.10' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
+<circle cx='380.67' cy='303.38' r='2.29' style='stroke-width: 0.71; stroke: #EA7467; stroke-opacity: 0.20; fill: #EA7467; fill-opacity: 0.20;' />
+<circle cx='418.33' cy='351.74' r='1.99' style='stroke-width: 0.71; stroke: #85DB8E; stroke-opacity: 0.20; fill: #85DB8E; fill-opacity: 0.20;' />
+<circle cx='369.40' cy='254.80' r='2.10' style='stroke-width: 0.71; stroke: #60A1F7; stroke-opacity: 0.20; fill: #60A1F7; fill-opacity: 0.20;' />
 <circle cx='382.34' cy='287.13' r='1.84' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.20; fill: #A9A9A9; fill-opacity: 0.20;' />
-<circle cx='355.99' cy='223.93' r='3.56' style='stroke-width: 0.71; stroke: #398CF9; stroke-opacity: 0.80; fill: #398CF9; fill-opacity: 0.80;' />
-<circle cx='367.11' cy='198.47' r='4.73' style='stroke-width: 0.71; stroke: #60A1F7; stroke-opacity: 0.80; fill: #60A1F7; fill-opacity: 0.80;' />
-<circle cx='305.81' cy='297.05' r='8.89' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.80; fill: #E07F6A; fill-opacity: 0.80;' />
-<circle cx='481.30' cy='296.00' r='5.12' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.80; fill: #40DD52; fill-opacity: 0.80;' />
-<circle cx='418.33' cy='351.74' r='4.32' style='stroke-width: 0.71; stroke: #85DB8E; stroke-opacity: 0.80; fill: #85DB8E; fill-opacity: 0.80;' />
+<circle cx='334.18' cy='239.34' r='3.56' style='stroke-width: 0.71; stroke: #398CF9; stroke-opacity: 0.80; fill: #398CF9; fill-opacity: 0.80;' />
+<circle cx='367.11' cy='198.47' r='4.31' style='stroke-width: 0.71; stroke: #60A1F7; stroke-opacity: 0.80; fill: #60A1F7; fill-opacity: 0.80;' />
+<circle cx='413.59' cy='238.36' r='3.64' style='stroke-width: 0.71; stroke: #5DC688; stroke-opacity: 0.80; fill: #5DC688; fill-opacity: 0.80;' />
+<circle cx='306.16' cy='280.74' r='4.76' style='stroke-width: 0.71; stroke: #E07F6A; stroke-opacity: 0.80; fill: #E07F6A; fill-opacity: 0.80;' />
+<circle cx='420.49' cy='287.62' r='4.76' style='stroke-width: 0.71; stroke: #40DD52; stroke-opacity: 0.80; fill: #40DD52; fill-opacity: 0.80;' />
+<circle cx='305.81' cy='297.05' r='8.89' style='stroke-width: 0.71; stroke: #FF0000; stroke-opacity: 0.80; fill: #FF0000; fill-opacity: 0.80;' />
+<circle cx='365.01' cy='293.59' r='3.78' style='stroke-width: 0.71; stroke: #EA7467; stroke-opacity: 0.80; fill: #EA7467; fill-opacity: 0.80;' />
+<circle cx='481.30' cy='296.00' r='4.74' style='stroke-width: 0.71; stroke: #85DB8E; stroke-opacity: 0.80; fill: #85DB8E; fill-opacity: 0.80;' />
 <text x='255.68' y='344.38' text-anchor='end' style='font-size: 12.00px; fill: #4D4D4D; font-family: sans;' textLength='27.35px' lengthAdjust='spacingAndGlyphs'>-0.12</text>
 <text x='255.68' y='312.87' text-anchor='end' style='font-size: 12.00px; fill: #4D4D4D; font-family: sans;' textLength='27.35px' lengthAdjust='spacingAndGlyphs'>-0.06</text>
 <text x='255.68' y='281.36' text-anchor='end' style='font-size: 12.00px; fill: #4D4D4D; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>0.00</text>
@@ -296,25 +316,25 @@
 </defs>
 <g clip-path='url(#cpNDkxLjY3fDcyMC4wMHwxOTAuNTl8MzYzLjg4)'>
 <text x='539.39' y='284.07' style='font-size: 28.45px; fill: #40DD52; font-family: sans;' textLength='132.90px' lengthAdjust='spacingAndGlyphs'>depressed</text>
-<text x='606.27' y='263.28' style='font-size: 25.88px; fill: #75E44A; font-family: sans;' textLength='33.08px' lengthAdjust='spacingAndGlyphs'>life</text>
-<text x='581.58' y='311.75' style='font-size: 25.88px; fill: #75E44A; font-family: sans;' textLength='40.29px' lengthAdjust='spacingAndGlyphs'>just</text>
-<text x='547.74' y='256.24' style='font-size: 23.03px; fill: #9BEB41; font-family: sans;' textLength='48.66px' lengthAdjust='spacingAndGlyphs'>think</text>
-<text x='632.31' y='306.93' style='font-size: 22.42px; fill: #A2EC3F; font-family: sans;' textLength='57.33px' lengthAdjust='spacingAndGlyphs'>future</text>
-<text x='590.22' y='233.06' style='font-size: 21.79px; fill: #A9EE3D; font-family: sans;' textLength='106.61px' lengthAdjust='spacingAndGlyphs'>depression</text>
-<text x='526.93' y='306.60' style='font-size: 19.05px; fill: #C3F333; font-family: sans;' textLength='40.25px' lengthAdjust='spacingAndGlyphs'>want</text>
-<text x='522.41' y='333.93' style='font-size: 17.53px; fill: #CFF52E; font-family: sans;' textLength='128.66px' lengthAdjust='spacingAndGlyphs'>think_depressed</text>
-<text x='649.50' y='254.23' style='font-size: 16.71px; fill: #D6F72A; font-family: sans;' textLength='36.24px' lengthAdjust='spacingAndGlyphs'>point</text>
-<text x='508.93' y='264.33' style='font-size: 15.86px; fill: #DCF827; font-family: sans;' textLength='30.84px' lengthAdjust='spacingAndGlyphs'>tired</text>
-<text x='496.22' y='281.91' style='font-size: 14.95px; fill: #E2F923; font-family: sans;' textLength='34.91px' lengthAdjust='spacingAndGlyphs'>tasks</text>
-<text x='678.58' y='289.76' style='font-size: 13.99px; fill: #E8FA1F; font-family: sans;' textLength='14.78px' lengthAdjust='spacingAndGlyphs'>ok</text>
-<text x='679.49' y='270.65' style='font-size: 12.95px; fill: #EDFC1A; font-family: sans;' textLength='31.69px' lengthAdjust='spacingAndGlyphs'>spent</text>
-<text x='547.69' y='228.42' style='font-size: 11.82px; fill: #F3FD14; font-family: sans;' textLength='35.50px' lengthAdjust='spacingAndGlyphs'>severe</text>
-<text x='658.34' y='323.55' style='font-size: 11.82px; fill: #F3FD14; font-family: sans;' textLength='47.99px' lengthAdjust='spacingAndGlyphs'>everyday</text>
-<text x='599.83' y='348.78' style='font-size: 10.58px; fill: #F9FE0B; font-family: sans;' textLength='44.70px' lengthAdjust='spacingAndGlyphs'>just_want</text>
-<text x='496.78' y='240.02' style='font-size: 9.17px; fill: #FFFF00; font-family: sans;' textLength='41.78px' lengthAdjust='spacingAndGlyphs'>somewhat</text>
-<text x='494.47' y='304.38' style='font-size: 9.17px; fill: #FFFF00; font-family: sans;' textLength='22.41px' lengthAdjust='spacingAndGlyphs'>result</text>
-<text x='609.82' y='214.96' style='font-size: 9.17px; fill: #FFFF00; font-family: sans;' textLength='34.15px' lengthAdjust='spacingAndGlyphs'>succeed</text>
-<text x='538.59' y='210.94' style='font-size: 9.17px; fill: #FFFF00; font-family: sans;' textLength='63.70px' lengthAdjust='spacingAndGlyphs'>everyday_tasks</text>
+<text x='563.26' y='261.75' style='font-size: 27.65px; fill: #59E04F; font-family: sans;' textLength='81.48px' lengthAdjust='spacingAndGlyphs'>feeling</text>
+<text x='555.39' y='312.59' style='font-size: 25.98px; fill: #7DE648; font-family: sans;' textLength='54.89px' lengthAdjust='spacingAndGlyphs'>days</text>
+<text x='616.23' y='311.69' style='font-size: 25.98px; fill: #7DE648; font-family: sans;' textLength='54.89px' lengthAdjust='spacingAndGlyphs'>back</text>
+<text x='653.51' y='251.42' style='font-size: 24.18px; fill: #9BEB41; font-family: sans;' textLength='59.17px' lengthAdjust='spacingAndGlyphs'>going</text>
+<text x='502.61' y='300.39' style='font-size: 18.98px; fill: #DCF827; font-family: sans;' textLength='40.08px' lengthAdjust='spacingAndGlyphs'>work</text>
+<text x='499.83' y='255.78' style='font-size: 18.98px; fill: #DCF827; font-family: sans;' textLength='58.01px' lengthAdjust='spacingAndGlyphs'>normal</text>
+<text x='579.17' y='235.47' style='font-size: 18.98px; fill: #DCF827; font-family: sans;' textLength='47.48px' lengthAdjust='spacingAndGlyphs'>home</text>
+<text x='559.63' y='333.66' style='font-size: 18.98px; fill: #DCF827; font-family: sans;' textLength='46.42px' lengthAdjust='spacingAndGlyphs'>much</text>
+<text x='680.05' y='287.33' style='font-size: 18.98px; fill: #DCF827; font-family: sans;' textLength='39.03px' lengthAdjust='spacingAndGlyphs'>daily</text>
+<text x='622.51' y='334.76' style='font-size: 18.98px; fill: #DCF827; font-family: sans;' textLength='74.89px' lengthAdjust='spacingAndGlyphs'>definitely</text>
+<text x='505.93' y='276.27' style='font-size: 17.75px; fill: #E8FA1F; font-family: sans;' textLength='28.62px' lengthAdjust='spacingAndGlyphs'>feel</text>
+<text x='512.74' y='319.50' style='font-size: 17.75px; fill: #E8FA1F; font-family: sans;' textLength='34.53px' lengthAdjust='spacingAndGlyphs'>start</text>
+<text x='535.49' y='231.86' style='font-size: 17.75px; fill: #E8FA1F; font-family: sans;' textLength='38.49px' lengthAdjust='spacingAndGlyphs'>point</text>
+<text x='641.79' y='227.26' style='font-size: 17.75px; fill: #E8FA1F; font-family: sans;' textLength='42.42px' lengthAdjust='spacingAndGlyphs'>world</text>
+<text x='683.30' y='306.94' style='font-size: 16.44px; fill: #F3FD14; font-family: sans;' textLength='34.71px' lengthAdjust='spacingAndGlyphs'>virus</text>
+<text x='567.98' y='210.96' style='font-size: 16.44px; fill: #F3FD14; font-family: sans;' textLength='70.37px' lengthAdjust='spacingAndGlyphs'>days_feel</text>
+<text x='493.48' y='333.49' style='font-size: 15.01px; fill: #FFFF00; font-family: sans;' textLength='48.39px' lengthAdjust='spacingAndGlyphs'>coming</text>
+<text x='547.19' y='348.82' style='font-size: 15.01px; fill: #FFFF00; font-family: sans;' textLength='53.39px' lengthAdjust='spacingAndGlyphs'>struggle</text>
+<text x='505.26' y='235.88' style='font-size: 15.01px; fill: #FFFF00; font-family: sans;' textLength='22.52px' lengthAdjust='spacingAndGlyphs'>live</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 </g>
@@ -327,13 +347,17 @@
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 </g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8NDAyLjcxfDU3Ni4wMA==)'>
+</g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+</g>
 <defs>
   <clipPath id='cpMC4wMHwyNDAuMDB8NDAyLjcxfDU3Ni4wMA=='>
     <rect x='0.00' y='402.71' width='240.00' height='173.29' />
   </clipPath>
 </defs>
 <g clip-path='url(#cpMC4wMHwyNDAuMDB8NDAyLjcxfDU3Ni4wMA==)'>
-<rect x='0.00' y='402.71' width='240.00' height='173.29' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
+<rect x='0.00' y='402.71' width='240.00' height='173.29' style='stroke-width: 0.00; stroke: none;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 </g>
@@ -343,19 +367,7 @@
   </clipPath>
 </defs>
 <g clip-path='url(#cpMjQwLjAwfDQ4MC4wMHw0MDIuNzF8NTc2LjAw)'>
-<rect x='240.00' y='402.71' width='240.00' height='173.29' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
-</g>
-<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-</g>
-<g clip-path='url(#cpMC4wMHw3MjAuMDB8NDAyLjcxfDU3Ni4wMA==)'>
-</g>
-<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-</g>
-<g clip-path='url(#cpMC4wMHwyNDAuMDB8NDAyLjcxfDU3Ni4wMA==)'>
-</g>
-<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
-</g>
-<g clip-path='url(#cpMjQwLjAwfDQ4MC4wMHw0MDIuNzF8NTc2LjAw)'>
+<rect x='240.00' y='402.71' width='240.00' height='173.29' style='stroke-width: 0.00; stroke: none;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 </g>
@@ -369,27 +381,75 @@
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 </g>
+<g clip-path='url(#cpMC4wMHwyNDAuMDB8NDAyLjcxfDU3Ni4wMA==)'>
+<text x='97.86' y='496.19' style='font-size: 28.45px; fill: #FF0000; font-family: sans;' textLength='44.28px' lengthAdjust='spacingAndGlyphs'>last</text>
+<text x='144.98' y='489.34' style='font-size: 27.69px; fill: #FF2F00; font-family: sans;' textLength='43.09px' lengthAdjust='spacingAndGlyphs'>two</text>
+<text x='77.54' y='522.11' style='font-size: 27.06px; fill: #FF4100; font-family: sans;' textLength='76.72px' lengthAdjust='spacingAndGlyphs'>weeks</text>
+<text x='76.78' y='464.97' style='font-size: 25.25px; fill: #FF6500; font-family: sans;' textLength='92.63px' lengthAdjust='spacingAndGlyphs'>last_two</text>
+<text x='63.59' y='539.95' style='font-size: 24.90px; fill: #FF6A00; font-family: sans;' textLength='123.22px' lengthAdjust='spacingAndGlyphs'>two_weeks</text>
+<text x='62.57' y='434.21' style='font-size: 24.55px; fill: #FF7000; font-family: sans;' textLength='173.37px' lengthAdjust='spacingAndGlyphs'>last_two_weeks</text>
+<text x='72.10' y='560.86' style='font-size: 20.12px; fill: #FFA600; font-family: sans;' textLength='93.98px' lengthAdjust='spacingAndGlyphs'>depressed</text>
+<text x='61.11' y='493.53' style='font-size: 17.36px; fill: #FFC000; font-family: sans;' textLength='117.79px' lengthAdjust='spacingAndGlyphs'>depressed_last</text>
+<text x='46.15' y='493.35' style='font-size: 16.60px; fill: #FFC600; font-family: sans;' textLength='147.70px' lengthAdjust='spacingAndGlyphs'>depressed_last_two</text>
+<text x='77.47' y='483.99' style='font-size: 12.79px; fill: #FFE100; font-family: sans;' textLength='17.07px' lengthAdjust='spacingAndGlyphs'>felt</text>
+<text x='155.91' y='501.64' style='font-size: 12.10px; fill: #FFE500; font-family: sans;' textLength='32.98px' lengthAdjust='spacingAndGlyphs'>happy</text>
+<text x='74.08' y='497.65' style='font-size: 10.98px; fill: #FFEB00; font-family: sans;' textLength='14.04px' lengthAdjust='spacingAndGlyphs'>life</text>
+<text x='45.84' y='479.76' style='font-size: 8.81px; fill: #FFF500; font-family: sans;' textLength='26.94px' lengthAdjust='spacingAndGlyphs'>though</text>
+<text x='48.37' y='491.95' style='font-size: 8.31px; fill: #FFF700; font-family: sans;' textLength='20.78px' lengthAdjust='spacingAndGlyphs'>mood</text>
+<text x='47.29' y='506.82' style='font-size: 8.31px; fill: #FFF700; font-family: sans;' textLength='19.39px' lengthAdjust='spacingAndGlyphs'>week</text>
+<text x='4.30' y='465.02' style='font-size: 7.77px; fill: #FFF900; font-family: sans;' textLength='67.39px' lengthAdjust='spacingAndGlyphs'>felt_depressed_last</text>
+<text x='175.01' y='517.37' style='font-size: 6.57px; fill: #FFFD00; font-family: sans;' textLength='21.18px' lengthAdjust='spacingAndGlyphs'>healthy</text>
+<text x='176.21' y='467.25' style='font-size: 6.57px; fill: #FFFD00; font-family: sans;' textLength='21.18px' lengthAdjust='spacingAndGlyphs'>various</text>
+<text x='18.92' y='451.30' style='font-size: 5.88px; fill: #FFFF00; font-family: sans;' textLength='52.28px' lengthAdjust='spacingAndGlyphs'>yes_depressed_last</text>
+<text x='198.05' y='495.94' style='font-size: 5.88px; fill: #FFFF00; font-family: sans;' textLength='35.60px' lengthAdjust='spacingAndGlyphs'>fairly_positive</text>
+</g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+</g>
+<g clip-path='url(#cpMjQwLjAwfDQ4MC4wMHw0MDIuNzF8NTc2LjAw)'>
+<text x='344.98' y='496.19' style='font-size: 28.45px; fill: #EA7467; font-family: sans;' textLength='30.05px' lengthAdjust='spacingAndGlyphs'>lot</text>
+<text x='380.66' y='506.98' style='font-size: 27.69px; fill: #EC7E65; font-family: sans;' textLength='58.51px' lengthAdjust='spacingAndGlyphs'>think</text>
+<text x='277.90' y='492.79' style='font-size: 24.43px; fill: #F4A25A; font-family: sans;' textLength='58.37px' lengthAdjust='spacingAndGlyphs'>really</text>
+<text x='377.35' y='480.10' style='font-size: 23.54px; fill: #F5AA56; font-family: sans;' textLength='43.19px' lengthAdjust='spacingAndGlyphs'>also</text>
+<text x='337.67' y='518.85' style='font-size: 22.62px; fill: #F7B353; font-family: sans;' textLength='33.94px' lengthAdjust='spacingAndGlyphs'>live</text>
+<text x='323.50' y='468.54' style='font-size: 21.65px; fill: #F8BB4F; font-family: sans;' textLength='54.18px' lengthAdjust='spacingAndGlyphs'>made</text>
+<text x='382.76' y='524.61' style='font-size: 21.65px; fill: #F8BB4F; font-family: sans;' textLength='78.24px' lengthAdjust='spacingAndGlyphs'>moment</text>
+<text x='268.42' y='515.52' style='font-size: 18.47px; fill: #FCD540; font-family: sans;' textLength='55.46px' lengthAdjust='spacingAndGlyphs'>people</text>
+<text x='293.26' y='537.46' style='font-size: 17.28px; fill: #FDDD39; font-family: sans;' textLength='80.71px' lengthAdjust='spacingAndGlyphs'>depressed</text>
+<text x='286.49' y='467.10' style='font-size: 16.00px; fill: #FEE632; font-family: sans;' textLength='27.57px' lengthAdjust='spacingAndGlyphs'>part</text>
+<text x='426.35' y='474.94' style='font-size: 16.00px; fill: #FEE632; font-family: sans;' textLength='53.37px' lengthAdjust='spacingAndGlyphs'>support</text>
+<text x='410.55' y='458.27' style='font-size: 16.00px; fill: #FEE632; font-family: sans;' textLength='31.13px' lengthAdjust='spacingAndGlyphs'>dark</text>
+<text x='351.34' y='442.03' style='font-size: 16.00px; fill: #FEE632; font-family: sans;' textLength='47.15px' lengthAdjust='spacingAndGlyphs'>seeing</text>
+<text x='308.09' y='447.22' style='font-size: 14.61px; fill: #FEEE28; font-family: sans;' textLength='37.35px' lengthAdjust='spacingAndGlyphs'>future</text>
+<text x='244.13' y='469.11' style='font-size: 14.61px; fill: #FEEE28; font-family: sans;' textLength='35.74px' lengthAdjust='spacingAndGlyphs'>alone</text>
+<text x='381.26' y='539.11' style='font-size: 14.61px; fill: #FEEE28; font-family: sans;' textLength='57.66px' lengthAdjust='spacingAndGlyphs'>shielding</text>
+<text x='310.54' y='553.66' style='font-size: 13.07px; fill: #FFF71B; font-family: sans;' textLength='65.40px' lengthAdjust='spacingAndGlyphs'>understand</text>
+<text x='249.43' y='491.09' style='font-size: 13.07px; fill: #FFF71B; font-family: sans;' textLength='24.71px' lengthAdjust='spacingAndGlyphs'>hold</text>
+<text x='451.82' y='498.51' style='font-size: 11.32px; fill: #FFFF00; font-family: sans;' textLength='22.04px' lengthAdjust='spacingAndGlyphs'>dont</text>
+<text x='278.52' y='449.33' style='font-size: 11.32px; fill: #FFFF00; font-family: sans;' textLength='20.77px' lengthAdjust='spacingAndGlyphs'>look</text>
+</g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
+</g>
 <g clip-path='url(#cpNDgwLjAwfDcyMC4wMHw0MDIuNzF8NTc2LjAw)'>
-<text x='578.65' y='496.19' style='font-size: 28.45px; fill: #85DB8E; font-family: sans;' textLength='42.70px' lengthAdjust='spacingAndGlyphs'>low</text>
-<text x='607.55' y='477.49' style='font-size: 17.56px; fill: #DBF34F; font-family: sans;' textLength='42.00px' lengthAdjust='spacingAndGlyphs'>sleep</text>
-<text x='537.18' y='515.64' style='font-size: 16.43px; fill: #E1F548; font-family: sans;' textLength='80.40px' lengthAdjust='spacingAndGlyphs'>depression</text>
-<text x='538.72' y='490.21' style='font-size: 15.21px; fill: #E7F741; font-family: sans;' textLength='38.06px' lengthAdjust='spacingAndGlyphs'>mood</text>
-<text x='625.94' y='501.05' style='font-size: 13.18px; fill: #EFF934; font-family: sans;' textLength='36.63px' lengthAdjust='spacingAndGlyphs'>recent</text>
-<text x='570.21' y='467.43' style='font-size: 12.42px; fill: #F2FA2F; font-family: sans;' textLength='27.63px' lengthAdjust='spacingAndGlyphs'>often</text>
-<text x='518.12' y='469.86' style='font-size: 12.42px; fill: #F2FA2F; font-family: sans;' textLength='42.13px' lengthAdjust='spacingAndGlyphs'>felt_low</text>
-<text x='623.43' y='520.23' style='font-size: 11.62px; fill: #F4FB29; font-family: sans;' textLength='44.60px' lengthAdjust='spacingAndGlyphs'>unhappy</text>
-<text x='611.07' y='457.63' style='font-size: 11.62px; fill: #F4FB29; font-family: sans;' textLength='52.99px' lengthAdjust='spacingAndGlyphs'>low_mood</text>
-<text x='658.99' y='480.46' style='font-size: 9.83px; fill: #FAFD1B; font-family: sans;' textLength='27.85px' lengthAdjust='spacingAndGlyphs'>simply</text>
-<text x='532.40' y='532.69' style='font-size: 9.83px; fill: #FAFD1B; font-family: sans;' textLength='66.11px' lengthAdjust='spacingAndGlyphs'>low_depressed</text>
-<text x='490.97' y='488.71' style='font-size: 9.83px; fill: #FAFD1B; font-family: sans;' textLength='40.43px' lengthAdjust='spacingAndGlyphs'>struggled</text>
-<text x='669.09' y='496.22' style='font-size: 8.79px; fill: #FCFE11; font-family: sans;' textLength='15.64px' lengthAdjust='spacingAndGlyphs'>lack</text>
-<text x='566.78' y='447.29' style='font-size: 8.79px; fill: #FCFE11; font-family: sans;' textLength='28.84px' lengthAdjust='spacingAndGlyphs'>esteem</text>
-<text x='609.51' y='444.22' style='font-size: 8.79px; fill: #FCFE11; font-family: sans;' textLength='47.41px' lengthAdjust='spacingAndGlyphs'>self_esteem</text>
-<text x='503.06' y='502.41' style='font-size: 7.62px; fill: #FFFF00; font-family: sans;' textLength='28.37px' lengthAdjust='spacingAndGlyphs'>due_low</text>
-<text x='671.72' y='513.39' style='font-size: 7.62px; fill: #FFFF00; font-family: sans;' textLength='16.52px' lengthAdjust='spacingAndGlyphs'>even</text>
-<text x='609.15' y='538.68' style='font-size: 7.62px; fill: #FFFF00; font-family: sans;' textLength='33.02px' lengthAdjust='spacingAndGlyphs'>extremely</text>
-<text x='512.95' y='451.74' style='font-size: 7.62px; fill: #FFFF00; font-family: sans;' textLength='47.00px' lengthAdjust='spacingAndGlyphs'>recent_weeks</text>
-<text x='485.25' y='515.97' style='font-size: 7.62px; fill: #FFFF00; font-family: sans;' textLength='41.50px' lengthAdjust='spacingAndGlyphs'>many_years</text>
+<text x='580.22' y='496.19' style='font-size: 28.45px; fill: #85DB8E; font-family: sans;' textLength='39.56px' lengthAdjust='spacingAndGlyphs'>get</text>
+<text x='575.75' y='478.43' style='font-size: 22.04px; fill: #C1EB68; font-family: sans;' textLength='36.78px' lengthAdjust='spacingAndGlyphs'>bed</text>
+<text x='625.61' y='488.78' style='font-size: 21.63px; fill: #C4EC65; font-family: sans;' textLength='34.87px' lengthAdjust='spacingAndGlyphs'>find</text>
+<text x='584.16' y='514.22' style='font-size: 16.97px; fill: #E0F449; font-family: sans;' textLength='61.34px' lengthAdjust='spacingAndGlyphs'>get_bed</text>
+<text x='546.78' y='493.15' style='font-size: 15.30px; fill: #E8F73F; font-family: sans;' textLength='24.67px' lengthAdjust='spacingAndGlyphs'>day</text>
+<text x='536.28' y='477.62' style='font-size: 14.70px; fill: #EBF83B; font-family: sans;' textLength='29.42px' lengthAdjust='spacingAndGlyphs'>hard</text>
+<text x='525.43' y='515.54' style='font-size: 13.42px; fill: #F0FA33; font-family: sans;' textLength='47.74px' lengthAdjust='spacingAndGlyphs'>struggle</text>
+<text x='614.54' y='468.43' style='font-size: 12.00px; fill: #F5FB28; font-family: sans;' textLength='18.69px' lengthAdjust='spacingAndGlyphs'>yes</text>
+<text x='647.21' y='502.66' style='font-size: 12.00px; fill: #F5FB28; font-family: sans;' textLength='41.37px' lengthAdjust='spacingAndGlyphs'>wanting</text>
+<text x='603.28' y='528.55' style='font-size: 11.23px; fill: #F7FC22; font-family: sans;' textLength='51.82px' lengthAdjust='spacingAndGlyphs'>everything</text>
+<text x='498.17' y='490.68' style='font-size: 11.23px; fill: #F7FC22; font-family: sans;' textLength='41.83px' lengthAdjust='spacingAndGlyphs'>sleeping</text>
+<text x='669.01' y='483.93' style='font-size: 11.23px; fill: #F7FC22; font-family: sans;' textLength='28.10px' lengthAdjust='spacingAndGlyphs'>found</text>
+<text x='551.18' y='457.63' style='font-size: 11.23px; fill: #F7FC22; font-family: sans;' textLength='40.57px' lengthAdjust='spacingAndGlyphs'>morning</text>
+<text x='643.09' y='463.80' style='font-size: 10.40px; fill: #FAFD1A; font-family: sans;' textLength='49.72px' lengthAdjust='spacingAndGlyphs'>throughout</text>
+<text x='654.93' y='517.29' style='font-size: 10.40px; fill: #FAFD1A; font-family: sans;' textLength='21.96px' lengthAdjust='spacingAndGlyphs'>work</text>
+<text x='610.74' y='452.80' style='font-size: 10.40px; fill: #FAFD1A; font-family: sans;' textLength='24.28px' lengthAdjust='spacingAndGlyphs'>tasks</text>
+<text x='545.67' y='536.39' style='font-size: 10.40px; fill: #FAFD1A; font-family: sans;' textLength='47.39px' lengthAdjust='spacingAndGlyphs'>motivation</text>
+<text x='488.07' y='473.35' style='font-size: 9.49px; fill: #FCFE10; font-family: sans;' textLength='39.58px' lengthAdjust='spacingAndGlyphs'>find_hard</text>
+<text x='505.95' y='457.44' style='font-size: 9.49px; fill: #FCFE10; font-family: sans;' textLength='35.88px' lengthAdjust='spacingAndGlyphs'>motivate</text>
+<text x='570.92' y='440.35' style='font-size: 8.49px; fill: #FFFF00; font-family: sans;' textLength='34.48px' lengthAdjust='spacingAndGlyphs'>stay_bed</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 <text x='0.00' y='9.08' style='font-size: 13.20px; font-family: sans;' textLength='122.55px' lengthAdjust='spacingAndGlyphs'>topics5overview_plot</text>

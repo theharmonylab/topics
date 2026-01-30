@@ -15,12 +15,9 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/topics.html">Get started</a></li>
-<li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/extended_installation_guide.html">Extended Installation Guide</a></li>
-  </ul></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/extended_installation_guide.html">Installation</a></li>
+<li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference API</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/resources.html">Resources</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -54,6 +51,11 @@
 <span>  removal_rate_most <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  removal_rate_least <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  shuffle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  lower <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  remove_punctuation <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  remove_numbers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  stem_lemma_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">42L</span>,</span>
 <span>  threads <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -104,6 +106,27 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
 
 <dt id="arg-shuffle">shuffle<a class="anchor" aria-label="anchor" href="#arg-shuffle"></a></dt>
 <dd><p>(boolean) Shuffle the data before analyses</p></dd>
+
+
+<dt id="arg-lower">lower<a class="anchor" aria-label="anchor" href="#arg-lower"></a></dt>
+<dd><p>(boolean) If TRUE, converts all text to lowercase before embedding.</p></dd>
+
+
+<dt id="arg-remove-punctuation">remove_punctuation<a class="anchor" aria-label="anchor" href="#arg-remove-punctuation"></a></dt>
+<dd><p>(boolean) If TRUE, replaces non-alphanumeric characters with spaces.</p></dd>
+
+
+<dt id="arg-remove-numbers">remove_numbers<a class="anchor" aria-label="anchor" href="#arg-remove-numbers"></a></dt>
+<dd><p>(boolean) If TRUE, replaces all numerical digits with spaces.</p></dd>
+
+
+<dt id="arg-stem-lemma-function">stem_lemma_function<a class="anchor" aria-label="anchor" href="#arg-stem-lemma-function"></a></dt>
+<dd><p>(function). A custom function for stemming or lemmatization.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>Logical. If TRUE, displays progress bars and status updates during
+text vectorization and the embedding process. Defaults to FALSE.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
@@ -163,7 +186,7 @@ terms with average PMI below the specified threshold (pmi_threshold) are removed
   </div></footer><div style="text-align: center; margin-top: 1px;">
   <p>
     <a href="https://harmonyresearchgroup.com" target="_blank" class="external-link">
-      <img src="reference/figures/harmony_logo_all.png" alt="GitHub" style="height:25px; vertical-align:middle;"></a>
+      <img src="reference/figures/harmony_logo_all.png" alt="Harmony Logo" style="height:25px; vertical-align:middle;"></a>
   </p>
 </div>
 

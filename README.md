@@ -49,51 +49,40 @@ Ackermann L., Zhuojun G. & Kjell O.N.E. (2024). An R-package for
 visualizing text in topics. <https://github.com/theharmonylab/topics>.
 `DOI:zenodo.org/records/11165378`.
 
-## Installation
+## Differential Language Analysis with Topics and N-grams
 
-The topics package uses <b>JAVA</b>, which is another programming
-language. Please start by downloading and installing it from
-`www.java.com/en/download/`. Then open R and run:
+The `topics` pipeline is designed for a seamless transition from raw
+text to statistically grounded visualizations. It is composed of the
+following steps:
 
-``` r
-install.packages("devtools")
-devtools::install_github("theharmonylab/topics")
+**1. Data Preprocessing** Transform raw text into a Document-Term Matrix
+(DTM) or extract n-grams. This step handles cleaning, including the
+removal of stopwords and punctuation, to prepare data for modeling or
+frequency analysis.
 
-# if you run in to any installation problem, try installing rJava first.
+**2. Model Training** For topic modeling, an LDA (Latent Dirichlet
+Allocation) model is trained on the DTM. Users can specify the number of
+topics and iterations to optimize the thematic representation of the
+corpus.
 
-# Before open the library, consider setting this option (can increase 5000);  without it the code may ran out of memory
-options(java.parameters = "-Xmx5000m")
+**3. Model Inference** The model inference step uses the trained LDA
+model to infer the topic-term distribution across documents, converting
+qualitative text into quantitative topic loadings.
 
-```
+**4. Statistical Analysis** Perform Differential Language Analysis (DLA)
+using `topicsTest()`. The analysis now supports: \* **Automatic
+Detection:** Intelligent per-variable method detection (e.g.,
+automatically applying logistic regression for binary factors and linear
+regression for continuous data). \* **Multi-Element Analysis:**
+Statistically test both LDA topics and n-grams. \* **Rigorous
+Controls:** Support for control variables and various p-value adjustment
+methods for multiple comparisons (e.g., FDR, Bonferroni, Holm).
 
-## Table of Contents
-
-1.  [Overview](#overview)
-2.  [Installation](#installation)
-3.  [Usage](#usage)
-
-## Overview
-
-The pipeline is composed of the following steps:
-
-**1. Data Preprocessing**<br> The data preprocessing converts the data
-into a document term matrix (DTM) and removes stopwords, punctuation,
-etc. which is the data format needed for the LDA model.
-
-**2. Model Training**<br> The model training step trains the LDA model
-on the DTM with a number of iterations and predefined amount of topics.
-
-**3. Model Inference**<br> The model inference step uses the trained LDA
-model to infer the topic term distribution of the documents.
-
-**4. Statistical Analysis**<br> The analysis includes the methods like
-linear regression, binary regression, ridge regression or correlation to
-analyze the relationship between the topics and the prediction variable.
-It is possible to control for a number of variables and to adjust the
-p-value for multiple comparisons.
-
-**5. Visualization**<br> The visualization step creates wordclouds of
-the significant topics found by the statistical analysis.
+**5. Visualization** Generate publication-ready visualizations of your
+results: \* **Wordclouds:** Create clouds of significant topics where
+word size reflects the contribution to the theme. \* **N-gram Plots:**
+Directly visualize the relationship between specific phrases and your
+variables of interest.
 
 <img src="man/figures/one_dim.png" style="width:75.0%"
 alt="One-dimensional plots based on words and phrases (top) and LDA topics (bottom)." />

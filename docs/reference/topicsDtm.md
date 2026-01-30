@@ -16,6 +16,11 @@ topicsDtm(
   removal_rate_most = 0,
   removal_rate_least = 0,
   shuffle = TRUE,
+  lower = TRUE,
+  remove_punctuation = TRUE,
+  remove_numbers = TRUE,
+  stem_lemma_function = NULL,
+  verbose = FALSE,
   seed = 42L,
   threads = 1
 )
@@ -82,6 +87,27 @@ topicsDtm(
 - shuffle:
 
   (boolean) Shuffle the data before analyses
+
+- lower:
+
+  (boolean) If TRUE, converts all text to lowercase before embedding.
+
+- remove_punctuation:
+
+  (boolean) If TRUE, replaces non-alphanumeric characters with spaces.
+
+- remove_numbers:
+
+  (boolean) If TRUE, replaces all numerical digits with spaces.
+
+- stem_lemma_function:
+
+  (function). A custom function for stemming or lemmatization.
+
+- verbose:
+
+  Logical. If TRUE, displays progress bars and status updates during
+  text vectorization and the embedding process. Defaults to FALSE.
 
 - seed:
 

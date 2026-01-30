@@ -1,11 +1,9 @@
 # Installation
 
-## Installation
-
 The `topics` package relies on **Java** for high-performance processing.
 To ensure a smooth installation, please follow these two steps.
 
-#### Step 1: Install Java (Required)
+### Step 1: Install Java (Required)
 
 Before installing the R package, you must have the Java Runtime
 Environment (JRE) installed on your computer. 1. Download Java from
@@ -13,7 +11,7 @@ Environment (JRE) installed on your computer. 1. Download Java from
 Restart your computer after installation to ensure R can detect the new
 system paths.
 
-#### Step 2: Install topics in R
+### Step 2: Install topics in R
 
 Open R or RStudio and run the following commands.
 
@@ -33,7 +31,7 @@ if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
 devtools::install_github("theharmonylab/topics")
 ```
 
-#### Step 3: Memory Configuration
+### Step 3: Memory Configuration
 
 Topic modeling is memory-intensive. You must increase the Java memory
 limit before loading the library. If you skip this, you may encounter

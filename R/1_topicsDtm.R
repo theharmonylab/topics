@@ -166,6 +166,12 @@ filter_by_pmi <- function(
 #' highlighting term pairs that occur together more often than expected by chance; in this implementation,
 #' terms with average PMI below the specified threshold (pmi_threshold) are removed from the document-term matrix. 
 #' @param shuffle (boolean) Shuffle the data before analyses
+#' @param lower (boolean) If TRUE, converts all text to lowercase before embedding.
+#' @param remove_punctuation (boolean) If TRUE, replaces non-alphanumeric characters with spaces. 
+#' @param remove_numbers (boolean) If TRUE, replaces all numerical digits with spaces. 
+#' @param stem_lemma_function (function). A custom function for stemming or lemmatization.
+#' @param verbose Logical. If TRUE, displays progress bars and status updates during 
+#' text vectorization and the embedding process. Defaults to FALSE.
 #' @param seed (integer) A seed to set for reproducibility
 # @param save_dir (string) the directory to save the results, if NULL, no results are saved.
 # @param load_dir (string) the directory to load from.
@@ -213,6 +219,11 @@ topicsDtm <- function(
     removal_rate_most = 0,
     removal_rate_least = 0,
     shuffle = TRUE,
+    lower = TRUE, 
+    remove_punctuation = TRUE, 
+    remove_numbers = TRUE, 
+    stem_lemma_function = NULL,
+    verbose = FALSE,
     seed = 42L,
     threads = 1){
   
@@ -227,6 +238,10 @@ topicsDtm <- function(
     removal_rate_most = removal_rate_most,
     removal_rate_least = removal_rate_least,
     shuffle = shuffle,
+    lower = lower, 
+    remove_punctuation = remove_punctuation, 
+    remove_numbers = remove_numbers, 
+    verbose = verbose,
     seed = seed,
     threads = threads
   )
@@ -277,10 +292,11 @@ topicsDtm <- function(
     doc_names = train[["id"]], 
     ngram_window = ngram_window, 
     stopword_vec = stopwords, 
-    lower = TRUE, 
-    remove_punctuation = TRUE, 
-    remove_numbers = TRUE, 
-    verbose = FALSE, 
+    lower = lower, 
+    remove_punctuation = remove_punctuation, 
+    remove_numbers = remove_numbers, 
+    verbose = verbose,
+    stem_lemma_function = stem_lemma_function,
     cpus = threads
   )
   
@@ -291,10 +307,11 @@ topicsDtm <- function(
       doc_names = train[["id"]], 
       ngram_window = c(1, 1), # Unigrams only
       stopword_vec = stopwords, 
-      lower = TRUE, 
-      remove_punctuation = TRUE, 
-      remove_numbers = TRUE, 
-      verbose = FALSE, 
+      lower = lower, 
+      remove_punctuation = remove_punctuation, 
+      remove_numbers = remove_numbers, 
+      verbose = verbose,
+      stem_lemma_function = stem_lemma_function, 
       cpus = threads
     )
   }

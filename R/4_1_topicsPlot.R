@@ -1340,7 +1340,7 @@ topicsPlot <- function(
                                             method = p_adjust_method)
     
   } 
-  if(p_adjust_method != "none"){
+  if(p_adjust_method == "none"){
     
     # set the original p-value as the adjusted for plotting
     test$test[[8]] <- test$test[[7]]

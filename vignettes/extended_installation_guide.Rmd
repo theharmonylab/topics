@@ -1,8 +1,8 @@
 ---
-title: "Extended Installation Guide"
+title: "Installation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Extended Installation Guide}
+  %\VignetteIndexEntry{Installation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,7 +14,39 @@ knitr::opts_chunk$set(
 )
 ```
 
-*topics* enables users access to mallet in R through mallet in Java. So it's important to install the R-package rJava, which requires that you download JAVA manually.
+# Installation
 
-## rJava installation
-Please visit `https://www.java.com` for information on installing JAVA.
+The `topics` package relies on **Java** for high-performance processing. To ensure a smooth installation, please follow these two steps.
+
+### Step 1: Install Java (Required)
+Before installing the R package, you must have the Java Runtime Environment (JRE) installed on your computer.
+1. Download Java from [www.java.com/en/download/](https://www.java.com/en/download/).
+2. Restart your computer after installation to ensure R can detect the new system paths.
+
+### Step 2: Install topics in R
+Open R or RStudio and run the following commands.
+
+```r
+# Install and verify the Java interface
+install.packages("topics")
+```
+You can also install the development version from GitHub.
+
+```r
+
+# Install devtools if not already present
+if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
+
+# Install topics from GitHub
+devtools::install_github("theharmonylab/topics")
+```
+
+### Step 3: Memory Configuration
+Topic modeling is memory-intensive. You must increase the Java memory limit before loading the library. 
+If you skip this, you may encounter OutOfMemoryError during model training.
+
+```
+# Set memory limit to 5GB (Run this BEFORE loading the library)
+options(java.parameters = "-Xmx5000m")
+library(topics)
+```

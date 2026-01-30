@@ -1,5 +1,13 @@
 # topics (development version)
 
+# topics 0.66
+Performance & Robustness
+* `topicsGrams()` speed-up: Rebuilt the n-gram and per-document frequency computation using a single sparse-matrix pass with `quanteda`, replacing the slow per-n-gram regex counting loop (major runtime improvement on medium/large datasets).
+* Memory-safe output: `freq_per_user` now avoids accidental sparse → dense coercion (the “allocating GiB” warning). It supports auto wide/long output, returning long format when wide would be too large.
+
+Harmonization with `topicsDtm()`
+* Aligned settings & reproducibility: `topicsGrams()` now mirrors `topicsDtm()` preprocessing controls (e.g., lower, punctuation/numbers removal, removalword, shuffle, seed, threads, optional stemming/lemmatization hook) and returns a saved settings list in the output.
+
 # topics 0.65
 
 ### New Functions

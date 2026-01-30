@@ -1,7 +1,7 @@
 Package: topics
 Type: Package
 Title: Creating and Significance Testing Language Features for Visualisation
-Version: 0.65
+Version: 0.66
 Authors@R: c(
     person("Leon", "Ackermann", 
     role = c("aut"), 
@@ -26,6 +26,7 @@ LazyData: true
 BuildVignettes: true
 Imports:
     textmineR,
+    quanteda,
     ggplot2,
     dplyr,
     ggwordcloud,

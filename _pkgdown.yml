@@ -1,4 +1,3 @@
-
 url: https://r-topics.org
 
 template:
@@ -11,10 +10,25 @@ template:
       <div style="text-align: center; margin-top: 1px;">
         <p>
           <a href="https://harmonyresearchgroup.com" target="_blank">
-            <img src="man/figures/harmony_logo_all.png" alt="GitHub" style="height:25px; vertical-align:middle;">
+            <img src="man/figures/harmony_logo_all.png" alt="Harmony Logo" style="height:25px; vertical-align:middle;">
           </a>
         </p>
       </div>
+
+navbar:
+  structure:
+    left:  [installation, reference, resources, news]
+    right: [search, github, lightswitch]
+  components:
+    installation:
+      text: Installation
+      href: articles/extended_installation_guide.html
+    reference:
+      text: Reference API
+      href: reference/index.html
+    resources:
+      text: Resources
+      href: articles/resources.html
 
 development:
   mode: default
@@ -27,7 +41,6 @@ authors:
   Oscar Kjell:
     href: https://oscarkjell.se/
 
-
 home:
   title: topics
   description: Analyses of Text using LDA topics and Differential Language Analysis.
@@ -37,7 +50,6 @@ home:
   links:
   - text: Ask a question about topics using the r-topics tag
     href: https://stackoverflow.com/
-    
 
 reference:
 - title: Transform text to ngrams
@@ -51,15 +63,16 @@ reference:
 - title: Predict topic distribution from text
   contents:
   - topicsPreds
+  - topicsPredict
+  - topicsAssess
+  - topicsClassify
 - title: Differential language analysis
   contents:
   - topicsTest
-  # - topicsTest1
 - title: Plotting word topics
   contents:
     - topicsPlot
     - topicsPlotOverview
-    # - topicsPlot1
 - title: Example Data
   contents:
     - dep_wor_data
@@ -69,28 +82,24 @@ reference:
     - topicsGridLegend
     - topicsTutorialData
 
-
+# This section maps the vignettes to the website menus
 articles:
+- title: Resources
+  contents:
+  - resources
+
 - title: Set-up
   navbar: ~
   contents:
-#  - pre_trained_models
   - extended_installation_guide
-#  - singularity_transformers_container
-#  - huggingface_in_r_and_computer_capacity
-#  - removing_huggingface_transformers_cache_files
+
+# Uncomment and add files here as you create them to avoid build errors
 #- title: Tutorials
 #  desc: >
 #    These tutorials go into detail about various text-analyses.
 #  contents:
-# # - huggingface_in_r
-##  - psychological_methods
-#- title: Comments
-#  desc: >
-#    General comments about text-analyses.
-#  contents:
-##  - pre_registration_and_transformers
+#  - topics_tutorial_1 
 
 news:
-   one_page: true
-   cran_dates: true
+  one_page: true
+  cran_dates: true

@@ -1,6 +1,9 @@
 # Articles
 
+### Resources
+
+- [Resources](https://r-topics.org/articles/resources.md):
+
 ### Set-up
 
-- [Extended Installation
-  Guide](https://r-topics.org/articles/extended_installation_guide.md):
+- [Installation](https://r-topics.org/articles/extended_installation_guide.md):
