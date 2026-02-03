@@ -37,13 +37,15 @@ Imports:
     Matrix,
     ngram,
     stringr,
+    stringi, 
     rlang,
     tidyr, 
     purrr,
     data.table,
     ggforce, 
     patchwork, 
-    utils
+    utils, 
+    ngram
 RoxygenNote: 7.3.3
 Suggests: 
     text,

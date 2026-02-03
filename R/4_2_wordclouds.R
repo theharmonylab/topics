@@ -293,11 +293,28 @@ highlight_neg <- function(topic_df){
     dplyr::mutate(phi = phi^1.1 / sum(phi^1.1))
 }
 
+## #' @noRd
+## build_cloud <- function(data, scheme, max_size_local){
+##   lbl <- if("label_content" %in% colnames(data)) "label_content" else "Word"
+##   # Here we set what the size and colour of the words in topics represents
+##   ggplot2::ggplot(data, ggplot2::aes_string(label = lbl, size = "phi", color = "phi")) +
+##     ggwordcloud::geom_text_wordcloud() +
+##     ggplot2::scale_size_area(max_size = max_size_local) +
+##     ggplot2::theme_minimal() +
+##     scheme
+## }
 #' @noRd
 build_cloud <- function(data, scheme, max_size_local){
-  lbl <- if("label_content" %in% colnames(data)) "label_content" else "Word"
-  # Here we set what the size and colour of the words in topics represents
-  ggplot2::ggplot(data, ggplot2::aes_string(label = lbl, size = "phi", color = "phi")) +
+  lbl <- if ("label_content" %in% colnames(data)) "label_content" else "Word"
+  
+  ggplot2::ggplot(
+    data,
+    ggplot2::aes(
+      label = .data[[lbl]],
+      size  = phi,
+      color = phi
+    )
+  ) +
     ggwordcloud::geom_text_wordcloud() +
     ggplot2::scale_size_area(max_size = max_size_local) +
     ggplot2::theme_minimal() +
