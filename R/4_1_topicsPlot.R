@@ -1063,7 +1063,7 @@ topicsPlotOverview <- function(
   }
 
   # Selected topics Grid Version (Rows of 4) ---
-  if (overview_plot_type == "topics_grid") {
+  if (overview_plot_type == "topics_grid" | overview_plot_type == "textTopics") {
     # 1. Clean all plots in the list
     # Assuming 'plot_list' is the list of topics like topics_1
     cleaned_plots <- lapply(plot_list, get_plot_or_spacer)
@@ -1297,6 +1297,16 @@ topicsPlot <- function(
       }
     }
     
+    # This is to make it possible to send/set topics type from textTopicsWordcloud
+    if(!is.null(plot_topics_idx) ){
+      if(plot_topics_idx[[1]] == "textTopics"){
+        overview_type = "textTopics"
+        plot_topics_idx = NULL
+      }
+    }
+    
+   
+    
     if(!is.null(plot_topics_idx) | !is.null(plot_n_most_prevalent_topics)) {
       overview_type = "topics_grid"
     }
@@ -1304,6 +1314,7 @@ topicsPlot <- function(
     if(!is.null(ngrams)) {
       overview_type = "ngrams_grid"
     }
+    
   }
   
   #### Setting colors ####

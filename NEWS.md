@@ -1,5 +1,8 @@
 # topics (development version)
 
+# topics 0.67
+- adding compatability with  textTopicsWordCloud(). 
+
 # topics 0.66
 Performance & Robustness
 * `topicsGrams()` speed-up: Rebuilt the n-gram and per-document frequency computation using a single sparse-matrix pass with `quanteda`, replacing the slow per-n-gram regex counting loop (major runtime improvement on medium/large datasets).

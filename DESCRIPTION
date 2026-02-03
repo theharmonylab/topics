@@ -1,7 +1,7 @@
 Package: topics
 Type: Package
 Title: Creating and Significance Testing Language Features for Visualisation
-Version: 0.66
+Version: 0.67
 Authors@R: c(
     person("Leon", "Ackermann", 
     role = c("aut"), 
@@ -42,7 +42,8 @@ Imports:
     purrr,
     data.table,
     ggforce, 
-    patchwork
+    patchwork, 
+    utils
 RoxygenNote: 7.3.3
 Suggests: 
     text,

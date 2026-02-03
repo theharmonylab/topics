@@ -32,6 +32,7 @@ add_missing_rows <- function(vec, full_range) {
 #' @param removal_rate_most (numeric) The number of terms to remove from the top or the maximum frequency.
 #' @param removal_rate_least (numeric) The number of terms to remove from the bottom or the minimum frequency.
 #' @importFrom dplyr arrange filter
+#' @importFrom utils tail
 #' @noRd
 filter_ngrams <- function(
     ngrams,
@@ -68,7 +69,7 @@ filter_ngrams <- function(
       if (k_least > 0) {
         k_least <- min(k_least, sum(keep))
         idx <- which(keep)
-        drop_idx <- tail(idx, k_least)
+        drop_idx <- utils::tail(idx, k_least)
         keep[drop_idx] <- FALSE
       }
       
@@ -88,7 +89,7 @@ filter_ngrams <- function(
       if (k_least > 0) {
         k_least <- min(k_least, sum(keep))
         idx <- which(keep)
-        drop_idx <- tail(idx, k_least)
+        drop_idx <- utils::tail(idx, k_least)
         keep[drop_idx] <- FALSE
       }
       

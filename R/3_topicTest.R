@@ -349,7 +349,7 @@ topic_test <- function(
 #'   test_method = "linear_regression",
 #'   x_variable = "Age")
 #' }                 
-#' @importFrom dplyr bind_cols
+#' @importFrom dplyr bind_cols all_of
 #' @importFrom readr write_csv
 #' @export
 topicsTest <- function(
@@ -376,7 +376,7 @@ topicsTest <- function(
     }
     
     # Create a subset with relevant columns
-    data_subset <- data %>% dplyr::select(all_of(relevant_columns))
+    data_subset <- data %>% dplyr::select(dplyr::all_of(relevant_columns))
     
     # Merge preds with the data subset
     merged_data <- dplyr::bind_cols(preds, data_subset)
@@ -401,7 +401,7 @@ topicsTest <- function(
     
     # Update preds and data for subsequent analysis
     preds <- cleaned_data %>% dplyr::select(names(preds))
-    data <- cleaned_data %>% dplyr::select(all_of(relevant_columns))
+    data <- cleaned_data %>% dplyr::select(dplyr::all_of(relevant_columns))
   }
 
  
