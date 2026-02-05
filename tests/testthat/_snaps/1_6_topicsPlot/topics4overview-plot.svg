@@ -97,17 +97,17 @@
 <text x='130.09' y='105.86' style='font-size: 12.42px; fill: #DCC6B9; font-family: sans;' textLength='42.13px' lengthAdjust='spacingAndGlyphs'>felt_low</text>
 <text x='86.86' y='180.56' style='font-size: 11.62px; fill: #DAC8BD; font-family: sans;' textLength='44.60px' lengthAdjust='spacingAndGlyphs'>unhappy</text>
 <text x='140.90' y='180.00' style='font-size: 11.62px; fill: #DAC8BD; font-family: sans;' textLength='52.99px' lengthAdjust='spacingAndGlyphs'>low_mood</text>
-<text x='178.96' y='127.24' style='font-size: 9.83px; fill: #D5CCC7; font-family: sans;' textLength='27.85px' lengthAdjust='spacingAndGlyphs'>simply</text>
+<text x='180.78' y='132.37' style='font-size: 9.83px; fill: #D5CCC7; font-family: sans;' textLength='27.85px' lengthAdjust='spacingAndGlyphs'>simply</text>
 <text x='54.30' y='99.13' style='font-size: 9.83px; fill: #D5CCC7; font-family: sans;' textLength='66.11px' lengthAdjust='spacingAndGlyphs'>low_depressed</text>
 <text x='40.72' y='150.11' style='font-size: 9.83px; fill: #D5CCC7; font-family: sans;' textLength='40.43px' lengthAdjust='spacingAndGlyphs'>struggled</text>
 <text x='179.67' y='158.38' style='font-size: 8.79px; fill: #D3CECB; font-family: sans;' textLength='15.64px' lengthAdjust='spacingAndGlyphs'>lack</text>
-<text x='51.77' y='113.02' style='font-size: 8.79px; fill: #D3CECB; font-family: sans;' textLength='28.84px' lengthAdjust='spacingAndGlyphs'>esteem</text>
-<text x='145.17' y='92.84' style='font-size: 8.79px; fill: #D3CECB; font-family: sans;' textLength='47.41px' lengthAdjust='spacingAndGlyphs'>self_esteem</text>
+<text x='58.18' y='115.64' style='font-size: 8.79px; fill: #D3CECB; font-family: sans;' textLength='28.84px' lengthAdjust='spacingAndGlyphs'>esteem</text>
+<text x='179.59' y='116.31' style='font-size: 8.79px; fill: #D3CECB; font-family: sans;' textLength='47.41px' lengthAdjust='spacingAndGlyphs'>self_esteem</text>
 <text x='52.51' y='165.75' style='font-size: 7.62px; fill: #D0D0D0; font-family: sans;' textLength='28.37px' lengthAdjust='spacingAndGlyphs'>due_low</text>
-<text x='180.86' y='110.68' style='font-size: 7.62px; fill: #D0D0D0; font-family: sans;' textLength='16.52px' lengthAdjust='spacingAndGlyphs'>even</text>
-<text x='100.33' y='83.14' style='font-size: 7.62px; fill: #D0D0D0; font-family: sans;' textLength='33.02px' lengthAdjust='spacingAndGlyphs'>extremely</text>
-<text x='81.37' y='197.73' style='font-size: 7.62px; fill: #D0D0D0; font-family: sans;' textLength='47.00px' lengthAdjust='spacingAndGlyphs'>recent_weeks</text>
-<text x='141.39' y='198.67' style='font-size: 7.62px; fill: #D0D0D0; font-family: sans;' textLength='41.50px' lengthAdjust='spacingAndGlyphs'>many_years</text>
+<text x='180.36' y='102.66' style='font-size: 7.62px; fill: #D0D0D0; font-family: sans;' textLength='16.52px' lengthAdjust='spacingAndGlyphs'>even</text>
+<text x='141.02' y='90.45' style='font-size: 7.62px; fill: #D0D0D0; font-family: sans;' textLength='33.02px' lengthAdjust='spacingAndGlyphs'>extremely</text>
+<text x='78.79' y='83.98' style='font-size: 7.62px; fill: #D0D0D0; font-family: sans;' textLength='47.00px' lengthAdjust='spacingAndGlyphs'>recent_weeks</text>
+<text x='95.57' y='195.68' style='font-size: 7.62px; fill: #D0D0D0; font-family: sans;' textLength='41.50px' lengthAdjust='spacingAndGlyphs'>many_years</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 </g>
@@ -156,16 +156,16 @@
 <text x='544.90' y='102.58' style='font-size: 10.92px; fill: #C5C7CC; font-family: sans;' textLength='30.36px' lengthAdjust='spacingAndGlyphs'>longer</text>
 <text x='631.89' y='121.01' style='font-size: 9.77px; fill: #CBCCCE; font-family: sans;' textLength='19.56px' lengthAdjust='spacingAndGlyphs'>hard</text>
 <text x='520.12' y='160.69' style='font-size: 9.77px; fill: #CBCCCE; font-family: sans;' textLength='23.36px' lengthAdjust='spacingAndGlyphs'>helps</text>
-<text x='522.59' y='195.27' style='font-size: 9.77px; fill: #CBCCCE; font-family: sans;' textLength='98.32px' lengthAdjust='spacingAndGlyphs'>depressed_sometimes</text>
-<text x='591.26' y='182.73' style='font-size: 9.77px; fill: #CBCCCE; font-family: sans;' textLength='36.40px' lengthAdjust='spacingAndGlyphs'>sadness</text>
-<text x='490.76' y='122.81' style='font-size: 9.77px; fill: #CBCCCE; font-family: sans;' textLength='43.47px' lengthAdjust='spacingAndGlyphs'>happened</text>
-<text x='631.37' y='108.62' style='font-size: 9.77px; fill: #CBCCCE; font-family: sans;' textLength='68.43px' lengthAdjust='spacingAndGlyphs'>sometimes_feel</text>
-<text x='647.44' y='159.82' style='font-size: 9.77px; fill: #CBCCCE; font-family: sans;' textLength='40.20px' lengthAdjust='spacingAndGlyphs'>dont_feel</text>
-<text x='618.14' y='96.53' style='font-size: 8.46px; fill: #D0D0D0; font-family: sans;' textLength='26.35px' lengthAdjust='spacingAndGlyphs'>waiting</text>
-<text x='542.66' y='87.59' style='font-size: 8.46px; fill: #D0D0D0; font-family: sans;' textLength='36.24px' lengthAdjust='spacingAndGlyphs'>lot_things</text>
-<text x='516.89' y='110.84' style='font-size: 8.46px; fill: #D0D0D0; font-family: sans;' textLength='16.48px' lengthAdjust='spacingAndGlyphs'>dont</text>
-<text x='640.74' y='177.71' style='font-size: 8.46px; fill: #D0D0D0; font-family: sans;' textLength='33.41px' lengthAdjust='spacingAndGlyphs'>life_feels</text>
-<text x='601.37' y='80.43' style='font-size: 8.46px; fill: #D0D0D0; font-family: sans;' textLength='79.08px' lengthAdjust='spacingAndGlyphs'>dont_feel_depressed</text>
+<text x='554.87' y='195.65' style='font-size: 9.77px; fill: #CBCCCE; font-family: sans;' textLength='98.32px' lengthAdjust='spacingAndGlyphs'>depressed_sometimes</text>
+<text x='494.75' y='120.59' style='font-size: 9.77px; fill: #CBCCCE; font-family: sans;' textLength='36.40px' lengthAdjust='spacingAndGlyphs'>sadness</text>
+<text x='642.47' y='173.08' style='font-size: 9.77px; fill: #CBCCCE; font-family: sans;' textLength='43.47px' lengthAdjust='spacingAndGlyphs'>happened</text>
+<text x='624.86' y='102.46' style='font-size: 9.77px; fill: #CBCCCE; font-family: sans;' textLength='68.43px' lengthAdjust='spacingAndGlyphs'>sometimes_feel</text>
+<text x='539.95' y='85.77' style='font-size: 9.77px; fill: #CBCCCE; font-family: sans;' textLength='40.20px' lengthAdjust='spacingAndGlyphs'>dont_feel</text>
+<text x='659.25' y='147.43' style='font-size: 8.46px; fill: #D0D0D0; font-family: sans;' textLength='26.35px' lengthAdjust='spacingAndGlyphs'>waiting</text>
+<text x='596.71' y='82.73' style='font-size: 8.46px; fill: #D0D0D0; font-family: sans;' textLength='36.24px' lengthAdjust='spacingAndGlyphs'>lot_things</text>
+<text x='603.62' y='184.61' style='font-size: 8.46px; fill: #D0D0D0; font-family: sans;' textLength='16.48px' lengthAdjust='spacingAndGlyphs'>dont</text>
+<text x='505.19' y='103.37' style='font-size: 8.46px; fill: #D0D0D0; font-family: sans;' textLength='33.41px' lengthAdjust='spacingAndGlyphs'>life_feels</text>
+<text x='532.43' y='210.32' style='font-size: 8.46px; fill: #D0D0D0; font-family: sans;' textLength='79.08px' lengthAdjust='spacingAndGlyphs'>dont_feel_depressed</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw1NzYuMDA=)'>
 <polyline points='50.59,396.76 50.59,362.73 ' style='stroke-width: 0.53; stroke: #EBEBEB; stroke-linecap: butt;' />

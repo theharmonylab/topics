@@ -27,7 +27,8 @@ topicsScatterLegend(
   scatter_legend_circles_num = 4,
   width = 10,
   height = 8,
-  seed = 42
+  seed = 42,
+  title_font = "sans"
 )
 }
 \arguments{

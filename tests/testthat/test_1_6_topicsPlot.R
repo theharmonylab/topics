@@ -59,6 +59,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     save_dir = save_dir_temp
     )
   
+  
   ngram_negative <- function() {
     pl$negative
   }

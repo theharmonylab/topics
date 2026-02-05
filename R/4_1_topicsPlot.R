@@ -57,8 +57,9 @@ topicsScatterLegend <- function(
     scatter_legend_circles_num = 4,
     width = 10, 
     height = 8, 
-    seed = 42
-    ) {
+    seed = 42,
+    title_font = "sans"
+) {
   
   # Determine x, y, and color columns
   x_column <- names(filtered_test)[5]
@@ -111,8 +112,7 @@ topicsScatterLegend <- function(
       names(backgr_dots) <- names(popout) # No background dots
     }
   }
- 
-#  if (scatter_popout_dot_size == "prevalence"){
+  
   if (max(popout$prevalence) == min(popout$prevalence)) {
     # If all prevalence values are the same, assign the midpoint size to all rows
     popout <- popout %>%
@@ -129,7 +129,7 @@ topicsScatterLegend <- function(
   
   # Update scatter_popout_dot_size after mutation
   scatter_popout_dot_size <- popout$dot_size      
-
+  
   if (max(backgr_dots$prevalence) == min(backgr_dots$prevalence)) {
     # If all prevalence values are the same, assign the midpoint size to all rows
     backgr_dots <- backgr_dots %>%
@@ -145,9 +145,7 @@ topicsScatterLegend <- function(
   }
   
   scatter_bg_dot_size <- backgr_dots$`bg_dot_size`
-      
-#  }else{scatter_popout_dot_size <- scatter_popout_dot_size}
-    
+  
   # Generate scatter plot
   plot <- generate_scatter_plot(
     popout = popout,
@@ -166,7 +164,8 @@ topicsScatterLegend <- function(
     scatter_show_axis_values = scatter_show_axis_values,
     scatter_legend_circles = scatter_legend_circles,
     scatter_legend_circles_radius = scatter_legend_circles_radius,
-    scatter_legend_circles_num = scatter_legend_circles_num
+    scatter_legend_circles_num = scatter_legend_circles_num,
+    title_font = title_font
   )
   
   # Save the plot
@@ -184,9 +183,6 @@ topicsScatterLegend <- function(
                     create.dir = TRUE)
   }
   
-  
-  #if (!only_two && !only_five){return (popout)}else{ return (NULL) }
-  
   output <- list()
   output[[1]] <- popout
   output[[2]] <- plot
@@ -194,7 +190,6 @@ topicsScatterLegend <- function(
   
   return(output)
 }
-
 
 #' @param filtered_test A data frame containing the input data, which must include a `color_categories` column. 
 #' This column specifies the categories used for determining pop-out topics.
@@ -340,6 +335,7 @@ determine_popout_topics <- function(
 #' @param scatter_legend_circles_radius Radius of first concentric circle
 #' @param scatter_legend_circles_num Number of Concentric circles
 #' @noRd
+# --- UPDATED: generate_scatter_plot() ---
 generate_scatter_plot <- function(
     popout,
     background,
@@ -357,7 +353,8 @@ generate_scatter_plot <- function(
     scatter_show_axis_values,
     scatter_legend_circles = FALSE,
     scatter_legend_circles_radius = 0,
-    scatter_legend_circles_num = 4
+    scatter_legend_circles_num = 4,
+    title_font = "sans"
 ) {
   
   # Define aesthetics for popout and background points
@@ -420,17 +417,17 @@ generate_scatter_plot <- function(
                         alpha = scatter_legend_dots_alpha) +
     ggplot2::scale_color_manual(values = bivariate_color_codes) +
     ggplot2::labs(x = label_x_name, y = label_y_name, color = '') +
-    ggplot2::theme_minimal() +
+    ggplot2::theme_minimal(base_family = title_font) +
     ggplot2::theme(
       axis.text = if (scatter_show_axis_values) ggplot2::element_text(size = 12) else ggplot2::element_blank(),
       axis.ticks = if (scatter_show_axis_values) ggplot2::element_line() else ggplot2::element_blank(),
       legend.position = "none"
     )
-
+  
   
   # Add topic numbers if enabled
   if (allow_topic_num_legend) {
-    plot <- plot + geom_text(
+    plot <- plot + ggplot2::geom_text(
       data = popout, 
       ggplot2::aes(x = !!ggplot2::sym(x_col), 
                    y = if (is.null(y_col)) 1 else !!ggplot2::sym(y_col), 
@@ -471,36 +468,31 @@ generate_scatter_plot <- function(
   if (is.null(y_col)){
     plot <- plot + 
       ggplot2::theme(
-        # Then apply this hjust_value and move x axis downward
         axis.title.x = ggplot2::element_text(hjust = 0.5,
                                              margin = ggplot2::margin(t = 21.3, unit = "pt")
         ),
         axis.text.x = ggplot2::element_text(margin = ggplot2::margin(t = 21, unit = "pt"), size = 12),
         legend.position = "none",
-        # Remove all y-axis elements
         axis.title.y = ggplot2::element_blank(),
         axis.text.y = ggplot2::element_blank(),
         axis.ticks.y = ggplot2::element_blank(),
         axis.line.y = ggplot2::element_blank(),
-        axis.ticks.length.y = ggplot2::unit(0, "pt"), # Remove tick marks
+        axis.ticks.length.y = ggplot2::unit(0, "pt"),
         panel.spacing.y= ggplot2::unit(0, "lines"),
         panel.border = ggplot2::element_blank(),
         panel.grid.major.y = ggplot2::element_blank(),
         panel.grid.minor.y = ggplot2::element_blank(),
         aspect.ratio = 1/20,
-        # Other settings
         plot.margin = ggplot2::margin(0.5, 0.5, 1, 0.5, "cm") 
       ) 
   }else{
     plot <- plot +
       ggplot2::theme(
-        # Then apply this hjust_value and move x axis downward
         axis.title.x = ggplot2::element_text(hjust = 0.5,
                                              margin = ggplot2::margin(t = 10.6, unit = "pt")
         ),
         axis.text.x = ggplot2::element_text(margin = ggplot2::margin(t = 10.3, unit = "pt"), size = 12),
         legend.position = "none",
-        # Other settings
         axis.ticks.x = ggplot2::element_line(),
         axis.text.y = ggplot2::element_text(size = 12),
         plot.margin = ggplot2::margin(0.5, 0.5, 0.5, 0.5, "cm")
@@ -509,14 +501,14 @@ generate_scatter_plot <- function(
   
   #Add concentric circles 2 dimensional scatter legend plots
   if(!is.null(y_col) && scatter_legend_circles){
-
+    
     if(scatter_legend_circles_radius == 0) {
-     radius <- interval/2 
+      radius <- interval/2 
     } 
     else {
-     radius <- scatter_legend_circles_radius
+      radius <- scatter_legend_circles_radius
     }
-
+    
     x0 <- y0 <- r <- NULL
     circles <- data.frame(
       x0 = 0,
@@ -526,8 +518,8 @@ generate_scatter_plot <- function(
     plot <- plot  + ggplot2::geom_hline(yintercept = 0, size = 0.2, color = "#787373") + ggplot2::geom_vline(xintercept = 0, size = 0.2, color = "#787373")
     plot <- plot + ggforce::geom_circle(aes(x0 = x0, y0 = y0, r = r), linetype = 2, data = circles, linewidth = 0.2, color = "#787373")
   }
-
-  plot <- plot + ggplot2::coord_cartesian(clip = "off") # Prevent clipping
+  
+  plot <- plot + ggplot2::coord_cartesian(clip = "off")
   
   return(plot)
 }
@@ -556,6 +548,7 @@ generate_scatter_plot <- function(
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 geom_tile ggtitle scale_fill_identity labs theme_void annotate theme element_text coord_fixed ggsave
 #' @export
+# --- UPDATED: topicsGridLegend() ---
 topicsGridLegend <- function(
     bivariate_color_codes = c(
       "#398CF9", "#60A1F7", "#5dc688",
@@ -576,7 +569,8 @@ topicsGridLegend <- function(
     legend_y_axes_label,
     topic_data_all,
     legend_number_color,
-    legend_number_size
+    legend_number_size,
+    title_font = "sans"
 ) {
   if (y_axes_1 == 2){y_axes_1 <- ""}else{y_axes_1 <- "only_x_dimension"}
   legCor <- bivariate_color_codes
@@ -597,12 +591,10 @@ topicsGridLegend <- function(
     # Only select 3 colors
     bivariate_color_data <- bivariate_color_data[, c(4, 5, 6)]
     colnames(bivariate_color_data) <- c("1 - 2", "2 - 2", "3 - 2")
-    #bivariate_color_data
-    # Remove the y axes title on the legend
     legend_y_axes_label <- " "}
+  
   # To output the number of categories for dim 1 and dim 2 (plot 1dim or 2dim)
   if (y_axes_1 == "only_x_dimension") {
-    # for future only x dim grid in topicsTest
     categoryTotal_x_axes = c(
       sum(topic_data_all$color_categories == 1,
           na.rm = TRUE),
@@ -634,15 +626,13 @@ topicsGridLegend <- function(
       y = legend_y_axes_label
     ) +
     ggplot2::theme_void() +
-    #    ggplot2::annotate(geom="text", x=2, y=2, label="ns",
-    #               color = titles_color, size=legend_number_size)+
     {
       if (y_axes_1 != "only_x_dimension") {
         ggplot2::annotate(
           geom = "text", x = 1, y = 3, label = sum(topic_data_all$color_categories == 1,
                                                    na.rm = TRUE
           ),
-          color = legend_number_color, size = legend_number_size#bivariate_color_codes[1]
+          color = legend_number_color, size = legend_number_size
         )
       }
     } +
@@ -709,11 +699,12 @@ topicsGridLegend <- function(
       }
     } +
     ggplot2::theme(
-      plot.title = ggplot2::element_text(hjust = 0.5, size = legend_title_size + 1),
-      title = ggplot2::element_text(color = titles_color),
-      axis.title.x = ggplot2::element_text(color = titles_color),
-      axis.title = ggplot2::element_text(size = legend_title_size),
-      axis.title.y = ggplot2::element_text(angle = 90, color = titles_color)
+      text = ggplot2::element_text(family = title_font),
+      plot.title = ggplot2::element_text(hjust = 0.5, size = legend_title_size + 1, family = title_font),
+      title = ggplot2::element_text(color = titles_color, family = title_font),
+      axis.title.x = ggplot2::element_text(color = titles_color, family = title_font),
+      axis.title = ggplot2::element_text(size = legend_title_size, family = title_font),
+      axis.title.y = ggplot2::element_text(angle = 90, color = titles_color, family = title_font)
     ) +
     ggplot2::coord_fixed()
   
@@ -733,6 +724,7 @@ topicsGridLegend <- function(
   
   return(legend)
 }
+
 
 #' The function to create lda wordclouds
 #' @param model (list) The trained model
@@ -775,13 +767,14 @@ topicsPlot1 <- function(
     width = 10, 
     height = 8,
     max_size = 10, 
-    seed = 42){
+    seed = 42,
+    word_font  = "sans",
+    title_font = "sans"
+){
   
   df_list = NULL
-
+  
   if (!is.null(model)){
-    
-    
     if (model$model_type == "bert_topic") {
       
       if(!is.null(test)){
@@ -846,12 +839,13 @@ topicsPlot1 <- function(
     width = width, 
     height = height,
     max_size = max_size,
-    seed = seed)
+    seed = seed,
+    word_font = word_font,
+    title_font = title_font
+  )
   
   return(plot)
-  
 }
-
 
 #' The function sets default colors or arranges user specified colors
 #' @param color_scheme (string or vector of strings) 
@@ -1031,9 +1025,12 @@ clean_characters_for_plotting_test <- function(test) {
 #' @importFrom  ggplot2 labs element_blank theme margin element_text
 #' @importFrom patchwork wrap_plots plot_layout
 #' @export
+# --- UPDATED: topicsPlotOverview() ---
 topicsPlotOverview <- function(
     plot_list, 
-    overview_plot_type) {
+    overview_plot_type,
+    title_font = "sans"
+) {
   
   # Helper: Handles NULL, Lists of plots, and Single plots
   get_plot_or_spacer <- function(plot_obj) {
@@ -1048,9 +1045,15 @@ topicsPlotOverview <- function(
       p <- plot_obj
     }
     
-    return(p + ggplot2::theme_void() + 
-             ggplot2::labs(x = NULL, y = NULL) + 
-             ggplot2::theme(plot.margin = ggplot2::margin(2, 2, 2, 2)))
+    return(
+      p +
+        ggplot2::theme_void() + 
+        ggplot2::labs(x = NULL, y = NULL) + 
+        ggplot2::theme(
+          text = ggplot2::element_text(family = title_font),
+          plot.margin = ggplot2::margin(2, 2, 2, 2)
+        )
+    )
   } 
   
   # N-grams
@@ -1061,19 +1064,19 @@ topicsPlotOverview <- function(
     combined <- (p_pos | p_neg) + 
       patchwork::plot_layout(guides = 'collect')
   }
-
+  
   # Selected topics Grid Version (Rows of 4) ---
   if (overview_plot_type == "topics_grid" | overview_plot_type == "textTopics") {
-    # 1. Clean all plots in the list
-    # Assuming 'plot_list' is the list of topics like topics_1
     cleaned_plots <- lapply(plot_list, get_plot_or_spacer)
     
-    # 2. Wrap them into 4 columns
     combined <- patchwork::wrap_plots(cleaned_plots, ncol = 4) + 
       patchwork::plot_layout(guides = 'collect') &
-      ggplot2::theme(plot.margin = ggplot2::margin(5, 5, 5, 5))
+      ggplot2::theme(
+        text = ggplot2::element_text(family = title_font),
+        plot.margin = ggplot2::margin(5, 5, 5, 5)
+      )
   }
-
+  
   # One-dimensional topic plot
   if (overview_plot_type == "one_dimension_topics") {
     p1 <- get_plot_or_spacer(plot_list$square1)
@@ -1082,12 +1085,12 @@ topicsPlotOverview <- function(
     
     top_row <- (p1 | p2 | p3)
     combined <- patchwork::wrap_plots(top_row, plot_list$distribution, ncol = 1) + 
-      patchwork::plot_layout(heights = c(1, 1))
+      patchwork::plot_layout(heights = c(1, 1)) &
+      ggplot2::theme(text = ggplot2::element_text(family = title_font))
   }
   
   # Two-dimensional topic plot
   if (overview_plot_type == "two_dimension_topics") {
-    # 1. Process all 9 potential squares (skipping square 5 for distribution)
     p1 <- get_plot_or_spacer(plot_list$square1)
     p2 <- get_plot_or_spacer(plot_list$square2)
     p3 <- get_plot_or_spacer(plot_list$square3)
@@ -1097,23 +1100,22 @@ topicsPlotOverview <- function(
     p8 <- get_plot_or_spacer(plot_list$square8)
     p9 <- get_plot_or_spacer(plot_list$square9)
     
-    # 2. Central Distribution Plot
-    # We ensure the distribution plot also cleans its axis titles for the overview
     dist_plot <- plot_list$distribution + 
-      ggplot2::theme(plot.margin = ggplot2::margin(5, 5, 5, 5))
+      ggplot2::theme(
+        text = ggplot2::element_text(family = title_font),
+        plot.margin = ggplot2::margin(5, 5, 5, 5)
+      )
     
-    # 3. Define the 3x3 grid
-    # Distribution sits in the absolute center
     combined <- (p1 | p2 | p3) /
       (p4 | dist_plot | p6) /
       (p7 | p8 | p9) +
       patchwork::plot_layout(guides = 'collect') & 
       ggplot2::theme(
+        text = ggplot2::element_text(family = title_font),
         plot.margin = ggplot2::margin(0, 0, 0, 0),
         axis.title = ggplot2::element_blank()
       )
   }
-  
   
   return(combined)
 }
@@ -1226,6 +1228,7 @@ topicsPlotOverview <- function(
 #' @importFrom tibble as_tibble
 #' @importFrom stats p.adjust
 #' @export
+# --- UPDATED: topicsPlot() ---
 topicsPlot <- function(
     model = NULL,
     ngrams = NULL,
@@ -1265,24 +1268,20 @@ topicsPlot <- function(
     grid_legend_x_axes_label = "legend_x_axes_label",
     grid_legend_y_axes_label = "legend_y_axes_label",
     grid_legend_number_color = 'white',
-    grid_legend_number_size = 15){
-  
+    grid_legend_number_size = 15,
+    word_font  = "sans",
+    title_font = "sans"
+){
   
   set.seed(seed)
   
   #### Setting the number of dimensions to plot ####
-  # If no test is provide set dim to 0 
   if(is.null(test)){
     dim = 0
   }
   
-  # If a test is given
   if(!is.null(test)){
-    
-    # set default to 1 since that works for both n-grams and topics
     dim = 1
-    
-    # Only set dim to 2 if the test include enough tests
     if(ncol(test$test) == 12) {
       dim = 2
     }
@@ -1297,15 +1296,12 @@ topicsPlot <- function(
       }
     }
     
-    # This is to make it possible to send/set topics type from textTopicsWordcloud
     if(!is.null(plot_topics_idx) ){
       if(plot_topics_idx[[1]] == "textTopics"){
         overview_type = "textTopics"
         plot_topics_idx = NULL
       }
     }
-    
-   
     
     if(!is.null(plot_topics_idx) | !is.null(plot_n_most_prevalent_topics)) {
       overview_type = "topics_grid"
@@ -1314,7 +1310,6 @@ topicsPlot <- function(
     if(!is.null(ngrams)) {
       overview_type = "ngrams_grid"
     }
-    
   }
   
   #### Setting colors ####
@@ -1328,9 +1323,9 @@ topicsPlot <- function(
   bivariate_color_codes   <- codes[[1]]
   bivariate_color_codes_b <- codes[[2]]
   bivariate_color_codes_f <- codes[[3]]
-
+  
   if (!is.null(bivariate_color_codes_f)){
-      names(bivariate_color_codes_f) <- as.character(seq(1:length(bivariate_color_codes_f))) # The names of the color vector prevent the wrong ordering of colors in scatter plot.
+    names(bivariate_color_codes_f) <- as.character(seq(1:length(bivariate_color_codes_f)))
   }
   
   #### Controlling parameter settings and giving instructions #####
@@ -1342,57 +1337,37 @@ topicsPlot <- function(
   
   #### Add adjustment of p-values for multiple comparisons ####
   if (p_adjust_method != "none"){
-    
-    # reset the adjusted p-value with potentially new correction method
     test$test[[8]]<- stats::p.adjust(p = test$test[[7]],
-                              method = p_adjust_method)
+                                     method = p_adjust_method)
     
     if(dim == 2) test$test[[12]]<- stats::p.adjust(p = test$test[[11]],
-                                            method = p_adjust_method)
-    
+                                                   method = p_adjust_method)
   } 
+  
   if(p_adjust_method == "none"){
-    
-    # set the original p-value as the adjusted for plotting
     test$test[[8]] <- test$test[[7]]
     if(dim == 2) test$test[[12]] <- test$test[[11]]
   }
   
   #### Setting colour-categories: Selecting elements to plot according to the p_alpha ####
   if (dim == 1) {
-    
-    # Getting column names
     bak1 <- colnames(test$test)[c(5,8)]
     colnames(test$test)[c(5,8)] <- c('x_plotted', 'adjusted_p_values.x')
-    
-    # Getting colour-categories
     test$test <- topicsNumAssign_dim2(test$test, p_alpha, 1)
-    # Setting the original clumns
     colnames(test$test)[c(5,8)] <- bak1
-    
   }
   if (dim == 2){
-    
     bak1 <- colnames(test$test)[c(5,8,9,12)]
     colnames(test$test)[c(5,8,9,12)] <- c('x_plotted', 'adjusted_p_values.x',
                                           'y_plotted', 'adjusted_p_values.y')
-    
     test$test <- topicsNumAssign_dim2(test$test, p_alpha, 2)
     colnames(test$test)[c(5,8,9,12)] <- bak1
   }
   
-  
   #### Filtering duplicate topics #### 
   if (!is.null(allowed_word_overlap) & is.null(plot_n_most_prevalent_topics)){
-    
-    # Remove duplicates within group categories
     arranged_topics <- test$test 
     max_n_texts <- nrow(test$test )
-
-    # Apply the function to each color group based on scatter_legend_n
-    #df = arranged_topics
-    
-    # Store the original column names
     original_col_order <- names(arranged_topics)
     
     test$test <- arranged_topics %>%
@@ -1404,8 +1379,8 @@ topicsPlot <- function(
         n_texts = max_n_texts, 
         allowed_word_overlap)) %>%
       dplyr::ungroup() %>%
-      dplyr::select(-color_categories1) %>%            # Remove the temporary column
-      dplyr::select(dplyr::all_of(original_col_order)) # Reorder columns to the original order
+      dplyr::select(-color_categories1) %>%
+      dplyr::select(dplyr::all_of(original_col_order))
   }
   
   #### Selecting the most prevalence topics ####
@@ -1414,26 +1389,20 @@ topicsPlot <- function(
   }
   
   if (!is.null(plot_n_most_prevalent_topics)) {
-    
     arranged_topics <- model$summary %>% 
       dplyr::arrange(dplyr::desc(prevalence))
     
-    #if(!is.null(allowed_word_overlap)){
     arranged_topics <- select_non_overlapping_texts(
-        arranged_topics, 
-        "top_terms", 
-        n_texts = plot_n_most_prevalent_topics, 
-        allowed_word_overlap = allowed_word_overlap 
-      )
-   # }
+      arranged_topics, 
+      "top_terms", 
+      n_texts = plot_n_most_prevalent_topics, 
+      allowed_word_overlap = allowed_word_overlap 
+    )
     
     plot_topics_idx <- arranged_topics$topic
-    
   }
   
-  
-  #### NGRAM filtering and fixing tags (e.g., <place>) in ngrams because of error when plotting #### 
-  
+  #### NGRAM filtering and fixing tags (e.g., <place>) #### 
   if(!is.null(ngrams) & !is.null(ngrams_max)){
     
     if(is.null(test)){
@@ -1457,17 +1426,14 @@ topicsPlot <- function(
       
       ngrams <- clean_characters_for_plotting_grams(ngrams)
     }
+    
     if(!is.null(test)){
-      
       if (!ngram_select %in% c("prevalence", "estimate")){
         stop("ngram_select incorrect -- when using ngram and test use one of prevalence or estimate")
       }
       
-      # merge frequency
-      # get the name of the column to arrange after colnames(test$test)
       beta_column <- names(test$test)[grepl("_beta$", names(test$test))][1]
-    
-      # Filter and arrange by positive beta scores
+      
       positive_ngrams <- test$test %>%
         dplyr::filter(.data[[beta_column]] > 0) %>%
         {
@@ -1493,22 +1459,16 @@ topicsPlot <- function(
           }
         } %>%
         dplyr::slice_head(n = ngrams_max)
-      negative_ngrams[34,]
-      # Combine the positive and negative n-grams
+      
       test$test <- dplyr::bind_rows(positive_ngrams, negative_ngrams)
-
       test <- clean_characters_for_plotting_test(test)
     }
   }
   
   #### Making the plots ####
-  #### Plotting topics from model without at test | ####
-  #### Plotting n-grams WIHT test | ### 
-  #### Plotting n-grams WIHTOUT test | ####
   if(!is.null(model) & is.null(test) | 
      !is.null(ngrams) && !is.null(test)|
      !is.null(ngrams) && is.null(test)){
-    
     
     plot_list <- topicsPlot1(
       model = model,
@@ -1520,7 +1480,7 @@ topicsPlot <- function(
       plot_topics_idx = plot_topics_idx,
       popout = NULL,
       color_negative_cor = ggplot2::scale_color_gradient(
-        low = bivariate_color_codes[1], high = bivariate_color_codes[2]), # grey in hex code
+        low = bivariate_color_codes[1], high = bivariate_color_codes[2]),
       color_positive_cor = ggplot2::scale_color_gradient(
         low = bivariate_color_codes[3], high = bivariate_color_codes[4]),
       save_dir = save_dir,
@@ -1528,16 +1488,14 @@ topicsPlot <- function(
       width = width, 
       height = height,
       max_size = max_size, 
-      seed = seed
+      seed = seed,
+      word_font = word_font,
+      title_font = title_font
     )
   }
   
-  
   #### 1- or 2 dimensional topic-plots ####
-
-  
   if(is.null(ngrams) & !is.null(test$test)){
-    
     popout1 <- topicsScatterLegend(
       bivariate_color_codes = bivariate_color_codes_f,
       filtered_test = test$test,
@@ -1561,12 +1519,11 @@ topicsPlot <- function(
       figure_format = figure_format,
       width = 15,
       height = 15*9/16,
-      seed = seed
+      seed = seed,
+      title_font = title_font
     )
     popout <- popout1$popout
   }
-  
-  
   
   if (!is.null(model) & !is.null(test)){
     
@@ -1605,7 +1562,9 @@ topicsPlot <- function(
           width = width, 
           height = height,
           max_size = max_size, 
-          seed = seed
+          seed = seed,
+          word_font = word_font,
+          title_font = title_font
         )
         plot_list[[i]] <- plot
       }
@@ -1642,7 +1601,9 @@ topicsPlot <- function(
           width = width, 
           height = height,
           max_size = max_size, 
-          seed = seed
+          seed = seed,
+          word_font = word_font,
+          title_font = title_font
         )
         plot_list[[k]] <- plot
       }
@@ -1663,23 +1624,23 @@ topicsPlot <- function(
       legend_y_axes_label = grid_legend_y_axes_label,
       topic_data_all = test[["test"]],
       legend_number_color = grid_legend_number_color,
-      legend_number_size = grid_legend_number_size
+      legend_number_size = grid_legend_number_size,
+      title_font = title_font
     )
     
     plot_list[["legend"]] <- legend
     plot_list[["distribution"]] <- popout1$legend
   }
   
-  # Create overview image for ngrams
+  # Create overview image
   if(overview_plot){
-    
     overview_p <- topicsPlotOverview(
       plot_list = plot_list, 
-      overview_plot_type = overview_type)
-    
+      overview_plot_type = overview_type,
+      title_font = title_font
+    )
     plot_list[["overview_plot"]] <- overview_p
   }
-  
   
   return(plot_list)
 }

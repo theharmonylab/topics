@@ -22,7 +22,8 @@ topicsGridLegend(
   legend_y_axes_label,
   topic_data_all,
   legend_number_color,
-  legend_number_size
+  legend_number_size,
+  title_font = "sans"
 )
 }
 \arguments{

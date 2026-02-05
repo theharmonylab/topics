@@ -304,7 +304,7 @@ highlight_neg <- function(topic_df){
 ##     scheme
 ## }
 #' @noRd
-build_cloud <- function(data, scheme, max_size_local){
+build_cloud <- function(data, scheme, max_size_local, word_font = "sans", title_font = "sans"){
   lbl <- if ("label_content" %in% colnames(data)) "label_content" else "Word"
   
   ggplot2::ggplot(
@@ -315,11 +315,12 @@ build_cloud <- function(data, scheme, max_size_local){
       color = phi
     )
   ) +
-    ggwordcloud::geom_text_wordcloud() +
+    ggwordcloud::geom_text_wordcloud(family = word_font) +
     ggplot2::scale_size_area(max_size = max_size_local) +
-    ggplot2::theme_minimal() +
+    ggplot2::theme_minimal(base_family = title_font) +
     scheme
 }
+
 
 #' @noRd
 min_p <- function(p_vec) suppressWarnings(min(p_vec, na.rm = TRUE))
@@ -371,7 +372,10 @@ create_plots <- function(
     width = 10,
     height = 8,
     max_size = 10,
-    seed = 42){
+    seed = 42,
+    word_font  = "sans",
+    title_font = "sans"
+){
   
   # Dependencies
   for(pkg in c("ggplot2", "ggwordcloud", "dplyr", "tibble", "rlang")){
@@ -379,17 +383,16 @@ create_plots <- function(
       stop(sprintf("Package '%s' is required but not installed.", pkg), call. = FALSE)
   }
   
-  # Pre‑processing
+  # Pre-processing
   if(is.null(plot_topics_idx)){
     plot_topics_idx <- seq(1, length(df_list))
-    #plot_topics_idx <- test$topic# seq_along(test)
   }else{plot_topics_idx <- plot_topics_idx}
   
   plots <- list()
   
   # CASE 1: Topic models + test
   if(!is.null(df_list) && !is.null(summary) && !is.null(test)){
-    # Column extractors for test‑results 
+    # Column extractors for test-results 
     split_vars <- strsplit(cor_var, "__", fixed = TRUE)[[1]]
     get_stats <- function(topic_id){
       if(is.null(test)) return(list(est = NA, p = NA))
@@ -426,10 +429,12 @@ create_plots <- function(
           prev <- summary[topic, "prevalence"][[1]]
           max_size * log(prev)
         } else max_size
-        #scheme <- choose_scheme(est)
         scheme <- if (est[1] < 0) color_negative_cor else color_positive_cor
-        #choose_scheme <- function(est){ if(est[1] < 0) color_negative_cor else color_positive_cor }
-        plot   <- build_cloud(data, scheme, max_size_topic)
+        plot   <- build_cloud(
+          data, scheme, max_size_topic,
+          word_font = word_font,
+          title_font = title_font
+        )
         # axis annotations
         x_lab  <- if(length(est) == 1){
           sprintf("r = %.4f", est)
@@ -464,18 +469,22 @@ create_plots <- function(
         prev <- summary[topic, "prevalence"][[1]]
         max_size * log(prev)
       } else max_size
-      plot <- build_cloud(data, color_negative_cor, max_size_topic)
+      plot <- build_cloud(
+        data, color_negative_cor, max_size_topic,
+        word_font = word_font,
+        title_font = title_font
+      )
       save_plot(plot, topic, 't_', save_dir, figure_format, width, height, seed)
       plots[[paste0('t_',as.character(topic))]] <- plot
     }
   }
   
-  # CASE 3: N‑grams (no topic model) 
+  # CASE 3: N-grams (no topic model) 
   if(is.null(df_list) && !is.null(ngrams)){
     if(is.null(test)){
       plot <- ggplot2::ggplot(ngrams, ggplot2::aes(label = ngrams, size = prevalence, color = prevalence)) +
-        ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
-        ggplot2::theme_minimal() +
+        ggwordcloud::geom_text_wordcloud(show.legend = TRUE, family = word_font) +
+        ggplot2::theme_minimal(base_family = title_font) +
         color_positive_cor
       save_plot(plot, "ngrams", '', save_dir, figure_format, width, height, seed)
       plots <- plot
@@ -490,10 +499,8 @@ create_plots <- function(
         message("No significant terms. No wordclouds generated.")
       } else {
         make_ngram_plot <- function(df, scheme){
-          # Identify the first column name that starts with "prevalence"
           prevalence_col <- grep("^prevalence", names(df), value = TRUE)[1]
           
-          # Custom legend titles
           size_legend_title <- "prevalence"
           color_legend_title <- "estimate"
           
@@ -501,10 +508,10 @@ create_plots <- function(
                           ggplot2::aes(label = top_terms, 
                                        size = .data[[prevalence_col]], 
                                        color = abs(estimate))) +
-            ggwordcloud::geom_text_wordcloud(show.legend = TRUE) +
+            ggwordcloud::geom_text_wordcloud(show.legend = TRUE, family = word_font) +
             ggplot2::scale_size_area(max_size = max_size, name = size_legend_title)+
             ggplot2::labs(color = color_legend_title) +
-            ggplot2::theme_minimal() +
+            ggplot2::theme_minimal(base_family = title_font) +
             scheme
         }
         pos  <- make_ngram_plot(df = dplyr::filter(tst, estimate > 0), scheme = color_positive_cor)
@@ -517,8 +524,6 @@ create_plots <- function(
   }
   return(plots)
 }
-
-
 
 #' This is a private function
 #' @param df_list (list) list of data.frames with topics most frequent words and assigned topic term scores

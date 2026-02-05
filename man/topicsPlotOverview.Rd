@@ -4,7 +4,7 @@
 \alias{topicsPlotOverview}
 \title{Combine topics and distribution legend (experimental)}
 \usage{
-topicsPlotOverview(plot_list, overview_plot_type)
+topicsPlotOverview(plot_list, overview_plot_type, title_font = "sans")
 }
 \arguments{
 \item{plot_list}{(list) Output from the topicsPlot function.}
