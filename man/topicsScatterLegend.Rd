@@ -81,6 +81,9 @@ Can be a single integer (applies to all categories) or a vector for specific cat
 \item{height}{Height of the saved scatter plot in inches. Default: 8.}
 
 \item{seed}{Seed for reproducibility, ensuring consistent plot generation. Default: 42.}
+
+\item{title_font}{Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
+legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.}
 }
 \description{
 Plot a distribution plot (available for the text-package)

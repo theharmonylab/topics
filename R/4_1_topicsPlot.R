@@ -29,6 +29,8 @@
 #' @param width Width of the saved scatter plot in inches. Default: 10.
 #' @param height Height of the saved scatter plot in inches. Default: 8.
 #' @param seed Seed for reproducibility, ensuring consistent plot generation. Default: 42.
+#' @param title_font Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
+#' legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.
 #' @importFrom ggplot2 ggplot geom_point scale_color_manual labs theme_minimal theme element_blank geom_hline geom_vline
 #' @importFrom rlang sym !!
 #' @importFrom ggforce geom_circle
@@ -334,8 +336,10 @@ determine_popout_topics <- function(
 #' @param scatter_legend_circles Plot concentric circles for the scatter legend
 #' @param scatter_legend_circles_radius Radius of first concentric circle
 #' @param scatter_legend_circles_num Number of Concentric circles
+#' @param title_font Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
+#' legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.
+
 #' @noRd
-# --- UPDATED: generate_scatter_plot() ---
 generate_scatter_plot <- function(
     popout,
     background,
@@ -524,6 +528,8 @@ generate_scatter_plot <- function(
   return(plot)
 }
 
+
+
 #### topicsGridLegend ####
 #'  Plot a grid (matrix) legend (available for the text-package)
 #' @param bivariate_color_codes A vector of color codes specifying the colors for the 3x3 grid legend.
@@ -544,11 +550,12 @@ generate_scatter_plot <- function(
 #' @param topic_data_all A data frame containing all topic data, including the `color_categories` column used for counting topics.
 #' @param legend_number_color Color of the numeric annotations in the grid legend. Must be provided by the user.
 #' @param legend_number_size Font size of the numeric annotations in the grid legend. Must be provided by the user.' @return A legend plot saved that can be combined with the plot object.
+#' @param title_font Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
+#' legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.
 #' @importFrom tidyr gather separate
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 geom_tile ggtitle scale_fill_identity labs theme_void annotate theme element_text coord_fixed ggsave
 #' @export
-# --- UPDATED: topicsGridLegend() ---
 topicsGridLegend <- function(
     bivariate_color_codes = c(
       "#398CF9", "#60A1F7", "#5dc688",
@@ -746,6 +753,10 @@ topicsGridLegend <- function(
 #' @param height (integer) The width of the topic (units = "in").
 #' @param max_size (integer) The max size of the words.
 #' @param seed (integer) The seed to set for reproducibility
+#' @param word_font Font family used for the word text in the wordclouds (i.e., the plotted words only).
+#' Default: "sans". Examples: "serif", "mono", or a system-installed font family name (e.g., "Arial", "Times New Roman").
+#' @param title_font Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
+#' legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.
 #' @return nothing is returned, the wordclouds are saved in the save_dir
 #' @noRd
 topicsPlot1 <- function(
@@ -1021,11 +1032,12 @@ clean_characters_for_plotting_test <- function(test) {
 #'
 #' @param plot_list (list) Output from the topicsPlot function.   
 #' @param overview_plot_type  (character) Number of dimensions to plot (1 or 2).
+#' @param title_font Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
+#' legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.
 #' @return An overview plot including topics and distribution legend
 #' @importFrom  ggplot2 labs element_blank theme margin element_text
 #' @importFrom patchwork wrap_plots plot_layout
 #' @export
-# --- UPDATED: topicsPlotOverview() ---
 topicsPlotOverview <- function(
     plot_list, 
     overview_plot_type,
@@ -1061,7 +1073,7 @@ topicsPlotOverview <- function(
     p_pos <- get_plot_or_spacer(plot_list$positive_association)
     p_neg <- get_plot_or_spacer(plot_list$negative_association)
     
-    combined <- (p_pos | p_neg) + 
+    combined <- (p_neg  | p_pos) + 
       patchwork::plot_layout(guides = 'collect')
   }
   
@@ -1184,6 +1196,10 @@ topicsPlotOverview <- function(
 #'   "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner).
 #'
 #' 
+#' @param word_font Font family used for the word text in the wordclouds (i.e., the plotted words only).
+#' Default: "sans". Examples: "serif", "mono", or a system-installed font family name (e.g., "Arial", "Times New Roman").
+#' @param title_font Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
+#' legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.
 #' @param overview_plot (boolean) Whether to produce an overview plot, including some of the topics and the ditribution (experimental).
 #' @param highlight_topic_words (str vector) Words to highlight in topics (e.g., negative words). Format: highlight_topic_words = c("not", "never"). The default value is NULL.
 #' @param allowed_word_overlap (numeric) A filter function determining the maximum number of identical words in the topics to be plotted. 
@@ -1228,7 +1244,6 @@ topicsPlotOverview <- function(
 #' @importFrom tibble as_tibble
 #' @importFrom stats p.adjust
 #' @export
-# --- UPDATED: topicsPlot() ---
 topicsPlot <- function(
     model = NULL,
     ngrams = NULL,
@@ -1236,8 +1251,10 @@ topicsPlot <- function(
     p_alpha = 0.05,
     p_adjust_method = "none",
     ngrams_max = 30,
-    ngram_select = "prevalence",
+    ngram_select = "estimate",
     color_scheme = "default",
+    word_font  = "sans",
+    title_font = "sans",
     overview_plot = TRUE,
     highlight_topic_words = NULL,
     scale_size = FALSE,
@@ -1268,9 +1285,7 @@ topicsPlot <- function(
     grid_legend_x_axes_label = "legend_x_axes_label",
     grid_legend_y_axes_label = "legend_y_axes_label",
     grid_legend_number_color = 'white',
-    grid_legend_number_size = 15,
-    word_font  = "sans",
-    title_font = "sans"
+    grid_legend_number_size = 15
 ){
   
   set.seed(seed)
@@ -1451,7 +1466,8 @@ topicsPlot <- function(
         dplyr::filter(.data[[beta_column]] < 0) %>%
         {
           if (ngram_select == "estimate") {
-            dplyr::arrange(., dplyr::desc(.data[[beta_column]]))
+            #dplyr::arrange(., dplyr::desc(.data[[beta_column]]))
+            dplyr::arrange(., .data[[beta_column]])
           } else if (ngram_select == "prevalence") {
             dplyr::arrange(., dplyr::desc(prevalence))
           } else {
@@ -1459,6 +1475,7 @@ topicsPlot <- function(
           }
         } %>%
         dplyr::slice_head(n = ngrams_max)
+      
       
       test$test <- dplyr::bind_rows(positive_ngrams, negative_ngrams)
       test <- clean_characters_for_plotting_test(test)

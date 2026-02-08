@@ -11,8 +11,10 @@ topicsPlot(
   p_alpha = 0.05,
   p_adjust_method = "none",
   ngrams_max = 30,
-  ngram_select = "prevalence",
+  ngram_select = "estimate",
   color_scheme = "default",
+  word_font = "sans",
+  title_font = "sans",
   overview_plot = TRUE,
   highlight_topic_words = NULL,
   scale_size = FALSE,
@@ -43,9 +45,7 @@ topicsPlot(
   grid_legend_x_axes_label = "legend_x_axes_label",
   grid_legend_y_axes_label = "legend_y_axes_label",
   grid_legend_number_color = "white",
-  grid_legend_number_size = 15,
-  word_font = "sans",
-  title_font = "sans"
+  grid_legend_number_size = 15
 )
 }
 \arguments{
@@ -113,6 +113,12 @@ For 1-dimension plots of topics, it should contain 6 colours (3 gradient pairs),
   "lightgray", "#EA7467",     # quadrant 8 
   
   "lightgray", "#85DB8E")     # quadrant 9 (bottom right corner).}
+
+\item{word_font}{Font family used for the word text in the wordclouds (i.e., the plotted words only).
+Default: "sans". Examples: "serif", "mono", or a system-installed font family name (e.g., "Arial", "Times New Roman").}
+
+\item{title_font}{Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
+legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.}
 
 \item{overview_plot}{(boolean) Whether to produce an overview plot, including some of the topics and the ditribution (experimental).}
 

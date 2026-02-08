@@ -61,6 +61,9 @@ Default: c("#398CF9", "#60A1F7", "#5dc688", "#e07f6a", "#EAEAEA", "#40DD52", "#F
 \item{legend_number_color}{Color of the numeric annotations in the grid legend. Must be provided by the user.}
 
 \item{legend_number_size}{Font size of the numeric annotations in the grid legend. Must be provided by the user.' @return A legend plot saved that can be combined with the plot object.}
+
+\item{title_font}{Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
+legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.}
 }
 \description{
 Plot a grid (matrix) legend (available for the text-package)

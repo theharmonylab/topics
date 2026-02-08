@@ -351,7 +351,7 @@ topicsGrams <- function(
     verbose = FALSE,
     seed = 42L,
     threads = 1,
-    top_frequent = 200,
+    top_frequent = NULL,
     freq_per_user_format = c("auto", "wide", "long"),
     max_wide_cells = 5e7
     ) {

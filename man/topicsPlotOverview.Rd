@@ -10,6 +10,9 @@ topicsPlotOverview(plot_list, overview_plot_type, title_font = "sans")
 \item{plot_list}{(list) Output from the topicsPlot function.}
 
 \item{overview_plot_type}{(character) Number of dimensions to plot (1 or 2).}
+
+\item{title_font}{Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
+legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.}
 }
 \value{
 An overview plot including topics and distribution legend
