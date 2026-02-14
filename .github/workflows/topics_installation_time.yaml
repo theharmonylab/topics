@@ -43,8 +43,9 @@ jobs:
             libfontconfig1-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev \
             libharfbuzz-dev libfribidi-dev libcairo2-dev libgit2-dev
         shell: bash
-
-- name: Benchmark install (topics)
+        
+        
+      - name: Benchmark install (topics)
         run: |
           # Ensure R uses the user library FIRST (fixes Linux /opt/R not writable)
           userlib <- Sys.getenv("R_LIBS_USER")
@@ -109,6 +110,9 @@ jobs:
           dir.create("bench", showWarnings = FALSE)
           write.csv(out, file = "bench/install-benchmark.csv", row.names = FALSE)
         shell: Rscript {0}
+
+
+
 
       - name: Upload benchmark artifact
         uses: actions/upload-artifact@v4
