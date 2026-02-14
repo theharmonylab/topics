@@ -1,0 +1,98 @@
+name: Install benchmark (topics)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-latest, windows-latest]
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      # Force a clean R library location for this run
+      R_LIBS_USER: ${{ runner.temp }}/Rlib
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "release"
+
+      # Optional: minimal Linux system deps often useful for compiling some R packages
+      - name: Linux system deps (minimal)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev \
+            libfontconfig1-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev \
+            libharfbuzz-dev libfribidi-dev libcairo2-dev libgit2-dev
+        shell: bash
+
+      - name: Benchmark install (topics)
+        run: |
+          dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE, showWarnings = FALSE)
+
+          # helper for timing
+          run_timed <- function(label, expr) {
+            gc()
+            t0 <- Sys.time()
+            force(expr)
+            t1 <- Sys.time()
+            secs <- as.numeric(difftime(t1, t0, units = "secs"))
+            cat(sprintf("\nBENCHMARK|%s|%.1f seconds\n", label, secs))
+            return(secs)
+          }
+
+          repos <- "https://cloud.r-project.org"
+
+          # tooling
+          run_timed("install_remotes", install.packages("remotes", repos = repos))
+
+          # keep these explicit (matches your current workflow)
+          t_prereqs <- run_timed(
+            "install_prereqs_httr_arrow",
+            install.packages(c("httr", "arrow"), repos = repos)
+          )
+
+          # install topics from GitHub
+          t_topics <- run_timed(
+            "install_topics_from_github",
+            remotes::install_github("theharmonylab/topics", upgrade = "never", dependencies = TRUE)
+          )
+
+          # smoke test
+          t_test <- run_timed(
+            "topics_smoke_test",
+            {
+              library(topics)
+              dtm <- topicsDtm(data = c("This is a test document.", "This is another test."))
+              res <- topicsModel(dtm)
+              print(res)
+            }
+          )
+
+          out <- data.frame(
+            os = Sys.info()[["sysname"]],
+            install_prereqs_s = t_prereqs,
+            install_topics_from_github_s = t_topics,
+            smoke_test_s = t_test,
+            total_s = t_prereqs + t_topics + t_test
+          )
+          print(out)
+
+          dir.create("bench", showWarnings = FALSE)
+          write.csv(out, file = "bench/install-benchmark.csv", row.names = FALSE)
+        shell: Rscript {0}
+
+      - name: Upload benchmark artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: install-benchmark-topics-${{ matrix.os }}
+          path: bench/install-benchmark.csv
