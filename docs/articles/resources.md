@@ -11,7 +11,7 @@
 
 - **The *text* package tutorial**
 
-  [Full text on PsycNET](https://psycnet.apa.org/buy/2023-67479-001).
+  [Full text on PsycNET](https://doi.org/10.1037/met0000542).
 
   [OSF preprint](https://osf.io/preprints/psyarxiv/293kt_v1).
 
@@ -31,7 +31,7 @@
   *Automatic implicit motive codings are at least as accurate as humans’
   and 99% faster.*  
   *Journal of Personality and Social Psychology.*  
-  [Article link](https://psycnet.apa.org/fulltext/2026-03748-001.html)
+  [Article link](https://doi.org/10.1037/pspp0000544)
 
 - Gu, Z., Kjell, K., Schwartz, H. A., & Kjell, O. (2025).  
   *Natural language response formats for assessing depression and worry

@@ -1,11 +1,10 @@
 # topics (development version)
 
 
-# topics 0.68
+# topics 0.70
 - adding compatability with `textTopicsWordCloud()`. 
-- updated parameter defaults `top_frequent = NULL` and `ngram_select = "estimate"`
+- updated parameter defaults `top_frequent = NULL` and `ngram_select = "estimate"`.
 
-# topics 0.66
 Performance & Robustness
 * `topicsGrams()` speed-up: Rebuilt the n-gram and per-document frequency computation using a single sparse-matrix pass with `quanteda`, replacing the slow per-n-gram regex counting loop (major runtime improvement on medium/large datasets).
 * Memory-safe output: `freq_per_user` now avoids accidental sparse → dense coercion (the “allocating GiB” warning). It supports auto wide/long output, returning long format when wide would be too large.

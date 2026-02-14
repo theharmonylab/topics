@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">topics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.70</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,8 +47,10 @@
 <span>  p_alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  p_adjust_method <span class="op">=</span> <span class="st">"none"</span>,</span>
 <span>  ngrams_max <span class="op">=</span> <span class="fl">30</span>,</span>
-<span>  ngram_select <span class="op">=</span> <span class="st">"prevalence"</span>,</span>
+<span>  ngram_select <span class="op">=</span> <span class="st">"estimate"</span>,</span>
 <span>  color_scheme <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  word_font <span class="op">=</span> <span class="st">"sans"</span>,</span>
+<span>  title_font <span class="op">=</span> <span class="st">"sans"</span>,</span>
 <span>  overview_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  highlight_topic_words <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scale_size <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -147,6 +149,16 @@ if you only use ngrams use "pmi", "frequency", or "prevalence".</p></dd>
 <p>"lightgray", "#FF0000",     # quadrant 7 (bottom left corner)</p>
 <p>"lightgray", "#EA7467",     # quadrant 8</p>
 <p>"lightgray", "#85DB8E")     # quadrant 9 (bottom right corner).</p></dd>
+
+
+<dt id="arg-word-font">word_font<a class="anchor" aria-label="anchor" href="#arg-word-font"></a></dt>
+<dd><p>Font family used for the word text in the wordclouds (i.e., the plotted words only).
+Default: "sans". Examples: "serif", "mono", or a system-installed font family name (e.g., "Arial", "Times New Roman").</p></dd>
+
+
+<dt id="arg-title-font">title_font<a class="anchor" aria-label="anchor" href="#arg-title-font"></a></dt>
+<dd><p>Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
+legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.</p></dd>
 
 
 <dt id="arg-overview-plot">overview_plot<a class="anchor" aria-label="anchor" href="#arg-overview-plot"></a></dt>

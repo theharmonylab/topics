@@ -12,8 +12,10 @@ topicsPlot(
   p_alpha = 0.05,
   p_adjust_method = "none",
   ngrams_max = 30,
-  ngram_select = "prevalence",
+  ngram_select = "estimate",
   color_scheme = "default",
+  word_font = "sans",
+  title_font = "sans",
   overview_plot = TRUE,
   highlight_topic_words = NULL,
   scale_size = FALSE,
@@ -133,6 +135,19 @@ topicsPlot(
   "lightgray", "#EA7467", \# quadrant 8
 
   "lightgray", "#85DB8E") \# quadrant 9 (bottom right corner).
+
+- word_font:
+
+  Font family used for the word text in the wordclouds (i.e., the
+  plotted words only). Default: "sans". Examples: "serif", "mono", or a
+  system-installed font family name (e.g., "Arial", "Times New Roman").
+
+- title_font:
+
+  Font family used for all non-word text elements in the plots (e.g.,
+  titles, axis labels, tick labels, legend text, annotations). Default:
+  "sans". Examples: "serif", "mono", or a system-installed font family
+  name.
 
 - overview_plot:
 

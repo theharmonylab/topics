@@ -5,7 +5,7 @@ Combine topics and distribution legend (experimental)
 ## Usage
 
 ``` r
-topicsPlotOverview(plot_list, overview_plot_type)
+topicsPlotOverview(plot_list, overview_plot_type, title_font = "sans")
 ```
 
 ## Arguments
@@ -17,6 +17,13 @@ topicsPlotOverview(plot_list, overview_plot_type)
 - overview_plot_type:
 
   (character) Number of dimensions to plot (1 or 2).
+
+- title_font:
+
+  Font family used for all non-word text elements in the plots (e.g.,
+  titles, axis labels, tick labels, legend text, annotations). Default:
+  "sans". Examples: "serif", "mono", or a system-installed font family
+  name.
 
 ## Value
 

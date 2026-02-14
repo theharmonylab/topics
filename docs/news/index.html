@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">topics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.65</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.70</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,17 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="topics-development-version">topics (development version)<a class="anchor" aria-label="anchor" href="#topics-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.68" id="topics-068">topics 0.68<a class="anchor" aria-label="anchor" href="#topics-068"></a></h2>
+<ul><li>adding compatability with <code>textTopicsWordCloud()</code>.</li>
+<li>updated parameter defaults <code>top_frequent = NULL</code> and <code>ngram_select = "estimate"</code>
+</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.66" id="topics-066">topics 0.66<a class="anchor" aria-label="anchor" href="#topics-066"></a></h2>
+<p>Performance &amp; Robustness * <code><a href="../reference/topicsGrams.html">topicsGrams()</a></code> speed-up: Rebuilt the n-gram and per-document frequency computation using a single sparse-matrix pass with <code>quanteda</code>, replacing the slow per-n-gram regex counting loop (major runtime improvement on medium/large datasets). * Memory-safe output: <code>freq_per_user</code> now avoids accidental sparse → dense coercion (the “allocating GiB” warning). It supports auto wide/long output, returning long format when wide would be too large.</p>
+<p>Harmonization with <code><a href="../reference/topicsDtm.html">topicsDtm()</a></code> * Aligned settings &amp; reproducibility: <code><a href="../reference/topicsGrams.html">topicsGrams()</a></code> now mirrors <code><a href="../reference/topicsDtm.html">topicsDtm()</a></code> preprocessing controls (e.g., lower, punctuation/numbers removal, removalword, shuffle, seed, threads, optional stemming/lemmatization hook) and returns a saved settings list in the output.</p>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.65" id="topics-065">topics 0.65<a class="anchor" aria-label="anchor" href="#topics-065"></a></h2>

@@ -9,9 +9,9 @@ To ensure a smooth installation, please follow these two steps.
 
 Before installing the R package, you must have the Java Runtime
 Environment (JRE) installed on your computer. 1. Download Java from
-[www.java.com/en/download/](https://www.java.com/en/download/). 2.
-Restart your computer after installation to ensure R can detect the new
-system paths.
+[here](https://www.oracle.com/java/technologies/downloads/) or
+www.java.com/en/download/. 2. Restart your computer after installation
+to ensure R can detect the new system paths.
 
 #### Step 2: Install topics in R
 
