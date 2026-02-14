@@ -1,7 +1,7 @@
 Package: topics
 Type: Package
 Title: Creating and Significance Testing Language Features for Visualisation
-Version: 0.68
+Version: 0.70
 Authors@R: c(
     person("Leon", "Ackermann", 
     role = c("aut"), 
@@ -35,7 +35,6 @@ Imports:
     readr,
     stopwords, 
     Matrix,
-    ngram,
     stringr,
     stringi, 
     rlang,
@@ -44,8 +43,7 @@ Imports:
     data.table,
     ggforce, 
     patchwork, 
-    utils, 
-    ngram
+    utils
 RoxygenNote: 7.3.3
 Suggests: 
     text,

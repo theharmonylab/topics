@@ -2,7 +2,7 @@
 
 
 # topics 0.68
-- adding compatability with  textTopicsWordCloud(). 
+- adding compatability with `textTopicsWordCloud()`. 
 - updated parameter defaults `top_frequent = NULL` and `ngram_select = "estimate"`
 
 # topics 0.66
