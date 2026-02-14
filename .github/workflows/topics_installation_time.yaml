@@ -44,9 +44,15 @@ jobs:
             libharfbuzz-dev libfribidi-dev libcairo2-dev libgit2-dev
         shell: bash
 
-      - name: Benchmark install (topics)
+- name: Benchmark install (topics)
         run: |
-          dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE, showWarnings = FALSE)
+          # Ensure R uses the user library FIRST (fixes Linux /opt/R not writable)
+          userlib <- Sys.getenv("R_LIBS_USER")
+          dir.create(userlib, recursive = TRUE, showWarnings = FALSE)
+          .libPaths(c(userlib, .libPaths()))
+
+          cat("R_LIBS_USER:", userlib, "\n")
+          cat("libPaths:\n"); print(.libPaths())
 
           run_timed <- function(label, expr) {
             gc()
@@ -60,23 +66,30 @@ jobs:
 
           repos <- "https://cloud.r-project.org"
 
-          run_timed("install_remotes", install.packages("remotes", repos = repos))
+          # IMPORTANT: always specify lib = userlib to be extra safe
+          run_timed("install_remotes",
+                    install.packages("remotes", repos = repos, lib = userlib))
 
-          # keep explicit prereqs to match your current workflow (optional)
           t_prereqs <- run_timed(
             "install_prereqs_httr_arrow",
-            install.packages(c("httr", "arrow"), repos = repos)
+            install.packages(c("httr", "arrow"), repos = repos, lib = userlib)
           )
+
+          # remotes uses .libPaths(), but we can also be explicit
+          library(remotes, lib.loc = userlib)
 
           t_topics <- run_timed(
             "install_topics_from_github",
-            remotes::install_github("theharmonylab/topics", upgrade = "never", dependencies = TRUE)
+            remotes::install_github("theharmonylab/topics",
+                                   upgrade = "never",
+                                   dependencies = TRUE,
+                                   lib = userlib)
           )
 
           t_test <- run_timed(
             "topics_smoke_test",
             {
-              library(topics)
+              library(topics, lib.loc = userlib)
               dtm <- topicsDtm(data = c("This is a test document.", "This is another test."))
               res <- topicsModel(dtm)
               print(res)
@@ -85,6 +98,7 @@ jobs:
 
           out <- data.frame(
             os = Sys.info()[["sysname"]],
+            r_version = as.character(getRversion()),
             install_prereqs_s = t_prereqs,
             install_topics_from_github_s = t_topics,
             smoke_test_s = t_test,
