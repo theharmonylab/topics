@@ -34,17 +34,28 @@ jobs:
           echo "R_LIBS_USER=${RUNNER_TEMP}/Rlib" >> $GITHUB_ENV
         shell: bash
 
-      # Optional: minimal Linux system deps often useful for compiling some R packages
-      - name: Linux system deps (minimal)
+      # Linux deps incl Java (required for rJava/mallet used by topicsModel)
+      - name: Linux system deps (incl Java for rJava/mallet)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev \
+          sudo apt-get install -y \
+            default-jdk \
+            libcurl4-openssl-dev libssl-dev libxml2-dev \
             libfontconfig1-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev \
             libharfbuzz-dev libfribidi-dev libcairo2-dev libgit2-dev
+          sudo R CMD javareconf
         shell: bash
-        
-        
+
+      # macOS: ensure Java exists for rJava/mallet
+      - name: macOS Java deps (for rJava/mallet)
+        if: runner.os == 'macOS'
+        run: |
+          brew update || true
+          brew install --cask temurin || true
+          /Library/Java/JavaVirtualMachines/temurin*.jdk/Contents/Home/bin/java -version || true
+        shell: bash
+
       - name: Benchmark install (topics)
         run: |
           # Ensure R uses the user library FIRST (fixes Linux /opt/R not writable)
@@ -67,24 +78,32 @@ jobs:
 
           repos <- "https://cloud.r-project.org"
 
-          # IMPORTANT: always specify lib = userlib to be extra safe
+          # Always specify lib=userlib to avoid installing into system lib on Linux
           run_timed("install_remotes",
                     install.packages("remotes", repos = repos, lib = userlib))
 
+          # Small prereqs you had before (keep httr; DROP arrow to avoid long Linux source builds)
           t_prereqs <- run_timed(
-            "install_prereqs_httr_arrow",
-            install.packages(c("httr", "arrow"), repos = repos, lib = userlib)
+            "install_prereqs_httr",
+            install.packages(c("httr"), repos = repos, lib = userlib)
           )
 
-          # remotes uses .libPaths(), but we can also be explicit
+          # Java-dependent deps needed for topicsModel() path you are testing
+          t_java_pkgs <- run_timed(
+            "install_rJava_mallet",
+            install.packages(c("rJava", "mallet"), repos = repos, lib = userlib)
+          )
+
           library(remotes, lib.loc = userlib)
 
           t_topics <- run_timed(
             "install_topics_from_github",
-            remotes::install_github("theharmonylab/topics",
-                                   upgrade = "never",
-                                   dependencies = TRUE,
-                                   lib = userlib)
+            remotes::install_github(
+              "theharmonylab/topics",
+              upgrade = "never",
+              dependencies = TRUE,
+              lib = userlib
+            )
           )
 
           t_test <- run_timed(
@@ -101,18 +120,16 @@ jobs:
             os = Sys.info()[["sysname"]],
             r_version = as.character(getRversion()),
             install_prereqs_s = t_prereqs,
+            install_rJava_mallet_s = t_java_pkgs,
             install_topics_from_github_s = t_topics,
             smoke_test_s = t_test,
-            total_s = t_prereqs + t_topics + t_test
+            total_s = t_prereqs + t_java_pkgs + t_topics + t_test
           )
           print(out)
 
           dir.create("bench", showWarnings = FALSE)
           write.csv(out, file = "bench/install-benchmark.csv", row.names = FALSE)
         shell: Rscript {0}
-
-
-
 
       - name: Upload benchmark artifact
         uses: actions/upload-artifact@v4
