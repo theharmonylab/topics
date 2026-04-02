@@ -23,6 +23,9 @@ Before installing the R package, you must have the Java Runtime Environment (JRE
 1. Download Java from [here](https://www.oracle.com/java/technologies/downloads/) or www.java.com/en/download/.
 2. Restart your computer after installation to ensure R can detect the new system paths.
 
+On Linux run: 
+`sudo apt install libtirpc-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libharfbuzz-dev libfribidi-dev  libgit2-dev libcairo2-dev`
+
 ### Step 2: Install topics in R
 Open R or RStudio and run the following commands.
 
