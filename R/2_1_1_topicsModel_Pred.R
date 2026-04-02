@@ -388,7 +388,9 @@ topicsModel <- function(
   }
   
   # Warn if heap is likely insufficient  
-  if (matrix_size_check && !is.null(current_heap_gb) && current_heap_gb < recommended_gb) {
+  if (matrix_check && !is.null(current_heap_gb) && 
+      estimated_gb > 0.5 &&  # only check if estimated memory is non-trivial
+      current_heap_gb < recommended_gb) {
     stop(paste0(
       "\nInsufficient Java heap space for this model.\n",
       "  Current heap:  ", current_heap_gb, " GB\n",
