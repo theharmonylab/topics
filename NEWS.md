@@ -1,5 +1,7 @@
 # topics (development version)
 
+# topics 0.71
+- adding check_matrix_size in topicsModel() with advice on how to avoid matrix size to explode. 
 
 # topics 0.70
 - adding compatability with `textTopicsWordCloud()`. 

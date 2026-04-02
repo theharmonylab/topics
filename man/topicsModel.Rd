@@ -9,7 +9,8 @@ topicsModel(
   num_topics = 20,
   num_top_words = 10,
   num_iterations = 1000,
-  seed = 42
+  seed = 42,
+  matrix_size_check = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,13 @@ topicsModel(
 \item{num_iterations}{(integer) The number of iterations to run the model}
 
 \item{seed}{(integer) A seed to set for reproducibility}
+
+\item{matrix_size_check}{(boolean) If TRUE, checks whether the vocabulary 
+size and Java heap memory are sufficient before fitting the model. If the 
+vocabulary is too large or the heap too small, the function stops early with 
+advice on how to fix the issue — preventing R from crashing. Set to FALSE to 
+skip this check and attempt to fit the model regardless, though this may crash 
+your R session if memory is insufficient.}
 }
 \value{
 A named list containing the following elements:
