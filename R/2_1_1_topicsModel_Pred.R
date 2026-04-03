@@ -349,9 +349,9 @@ topicsModel <- function(
   phi_gb         <- (as.numeric(num_topics) * as.numeric(n_terms) * 8) / 1024^3
   theta_gb       <- (as.numeric(n_docs)     * as.numeric(num_topics) * 8) / 1024^3
   tokens_gb      <- (as.numeric(n_tokens)   * 4) / 1024^3
-  cooccurrence_gb <- (as.numeric(n_terms)   * as.numeric(n_terms) * 8) / 1024^3
-  estimated_gb   <- phi_gb + theta_gb + tokens_gb + cooccurrence_gb
-  recommended_gb <- ceiling(estimated_gb * 3)  # 3x safety multiplier for JVM overhead
+  # co-occurrence removed from heap estimate — it is sparse in practice and 
+  # wildly overestimates memory for small datasets when treated as dense
+  estimated_gb   <- phi_gb + theta_gb + tokens_gb
   
   current_heap_gb <- tryCatch({
     runtime <- rJava::.jcall("java/lang/Runtime", "Ljava/lang/Runtime;", "getRuntime")
@@ -367,39 +367,42 @@ topicsModel <- function(
     "  Topic-word matrix (phi):       ", round(phi_gb, 2), " GB\n",
     "  Document-topic matrix (theta): ", round(theta_gb, 2), " GB\n",
     "  Token assignments:             ", round(tokens_gb, 2), " GB\n",
-    "  Co-occurrence matrix:          ", round(cooccurrence_gb, 1), " GB\n",
-    "  Estimated total (raw):         ", round(estimated_gb, 1), " GB\n",
-    "  Recommended Java heap (3x):    ", recommended_gb, " GB\n",
+    "  Estimated total:               ", round(estimated_gb, 2), " GB\n",
     "  Current Java heap:             ", 
     ifelse(is.null(current_heap_gb), "unknown", paste0(current_heap_gb, " GB")), "\n",
     "----------------------------------------"
   ))
   
-  # Hard stop if vocabulary is so large the co-occurrence matrix alone is unworkable
-  if (matrix_size_check && cooccurrence_gb > 100) {
+  # Hard stop only if co-occurrence matrix alone is physically unworkable
+  if (matrix_size_check && n_terms > 100000) {
     stop(paste0(
       "\nVocabulary size (", n_terms, " terms) is too large to build the co-occurrence matrix.\n",
       "The co-occurrence matrix alone would require ~", round(cooccurrence_gb, 0), " GB — this will crash R.\n\n",
       "Please rebuild your DTM with a smaller vocabulary:\n\n",
-      "   In topicsDTM() see the parameters pmi_threshold, occurance_rate, removal_mode, removal_rate_most, and removal_rate_least,\n\n",
+      "  Option 1 — Remove trigrams:\n",
+      "    dtm <- topicsDtm(data = text, ngram_window = c(1, 2), ...)\n\n",
+      "  Option 2 — Remove rare n-grams (recommended):\n",
+      "    dtm <- topicsDtm(data = text, ngram_window = c(1, 3), min_freq = 10, ...)\n\n",
       "  A healthy vocabulary for LDA is typically 20,000-80,000 terms.\n",
-      "  Your current vocabulary has ", n_terms, " terms.\n"
+      "  Your current vocabulary has ", n_terms, " terms.\n\n",
+      "  To skip this check and try anyway (not recommended):\n",
+      "    topicsModel(dtm = dtm, ..., matrix_size_check = FALSE)\n"
     ), call. = FALSE)
   }
   
-  # Warn if heap is likely insufficient  
-  if (matrix_size_check && !is.null(current_heap_gb) && 
-      estimated_gb > 0.5 &&  # only check if estimated memory is non-trivial
-      current_heap_gb < recommended_gb) {
+  # Heap check: only trigger if raw estimate (no multiplier) exceeds current heap
+  if (matrix_size_check && !is.null(current_heap_gb) && estimated_gb > current_heap_gb) {
     stop(paste0(
       "\nInsufficient Java heap space for this model.\n",
       "  Current heap:  ", current_heap_gb, " GB\n",
-      "  Recommended:   ", recommended_gb, " GB\n\n",
+      "  Estimated need: ", round(estimated_gb, 1), " GB (plus JVM overhead)\n\n",
       "Please restart R and set the heap BEFORE loading any packages:\n\n",
-      '    options(java.parameters = "-Xmx', recommended_gb, 'g")\n',
+      '    options(java.parameters = "-Xmx', ceiling(estimated_gb * 2), 'g")  # 2x safety buffer\n',
       "    library(topics)\n\n",
       "To make this permanent, add that line to your .Rprofile:\n\n",
-      "    usethis::edit_r_profile()\n"
+      "    usethis::edit_r_profile()\n\n",
+      "  To skip this check and try anyway (not recommended):\n",
+      "    topicsModel(dtm = dtm, ..., matrix_size_check = FALSE)\n"
     ), call. = FALSE)
   }
 
