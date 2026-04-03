@@ -388,7 +388,7 @@ topicsModel <- function(
   }
   
   # Warn if heap is likely insufficient  
-  if (matrix_check && !is.null(current_heap_gb) && 
+  if (matrix_size_check && !is.null(current_heap_gb) && 
       estimated_gb > 0.5 &&  # only check if estimated memory is non-trivial
       current_heap_gb < recommended_gb) {
     stop(paste0(
