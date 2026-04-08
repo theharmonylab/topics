@@ -254,7 +254,7 @@ get_mallet_model <- function(
 #' @param matrix_size_check (boolean) If TRUE, checks whether the vocabulary 
 #'   size and Java heap memory are sufficient before fitting the model. If the 
 #'   vocabulary is too large or the heap too small, the function stops early with 
-#'   advice on how to fix the issue — preventing R from crashing. Set to FALSE to 
+#'   advice on how to fix the issue - preventing R from crashing. Set to FALSE to 
 #'   skip this check and attempt to fit the model regardless, though this may crash 
 #'   your R session if memory is insufficient.
 # @param save_dir (string) The directory to save the model, if NULL, the model will not be saved
@@ -285,7 +285,7 @@ get_mallet_model <- function(
 #'   making it easy to identify and understand them.}
 #'   \item{theta}{A data frame of document-topic probabilities: each row represents a document, and each column
 #'    represents a topic. Similar to topic_docs, this shows the contribution of each topic to each document. 
-#'    Each row sums to 1, representing the document’s composition of topics.}
+#'    Each row sums to 1, representing the document's composition of topics.}
 #'   \item{prevalence}{A numeric vector showing the overall prevalence (prominence) of each topic in the corpus.
 #'    The prevalences are expressed as percentages relative to the other topics  and add up to 100%. 
 #'    Higher values indicate topics that are present in more documents.}
@@ -349,7 +349,7 @@ topicsModel <- function(
   phi_gb         <- (as.numeric(num_topics) * as.numeric(n_terms) * 8) / 1024^3
   theta_gb       <- (as.numeric(n_docs)     * as.numeric(num_topics) * 8) / 1024^3
   tokens_gb      <- (as.numeric(n_tokens)   * 4) / 1024^3
-  # co-occurrence removed from heap estimate — it is sparse in practice and 
+  # co-occurrence removed from heap estimate - it is sparse in practice and 
   # wildly overestimates memory for small datasets when treated as dense
   estimated_gb   <- phi_gb + theta_gb + tokens_gb
   
@@ -377,11 +377,11 @@ topicsModel <- function(
   if (matrix_size_check && n_terms > 100000) {
     stop(paste0(
       "\nVocabulary size (", n_terms, " terms) is too large to build the co-occurrence matrix.\n",
-      "The co-occurrence matrix alone would require ~", round(cooccurrence_gb, 0), " GB — this will crash R.\n\n",
+      "The co-occurrence matrix alone would require ~", round(cooccurrence_gb, 0), " GB - this will crash R.\n\n",
       "Please rebuild your DTM with a smaller vocabulary:\n\n",
-      "  Option 1 — Remove trigrams:\n",
+      "  Option 1 - Remove trigrams:\n",
       "    dtm <- topicsDtm(data = text, ngram_window = c(1, 2), ...)\n\n",
-      "  Option 2 — Remove rare n-grams (recommended):\n",
+      "  Option 2 - Remove rare n-grams (recommended):\n",
       "    dtm <- topicsDtm(data = text, ngram_window = c(1, 3), min_freq = 10, ...)\n\n",
       "  A healthy vocabulary for LDA is typically 20,000-80,000 terms.\n",
       "  Your current vocabulary has ", n_terms, " terms.\n\n",

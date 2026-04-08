@@ -36,6 +36,9 @@ utils::globalVariables(c(
   # topicsGrams
   "n", "component_prob", "joint_prob", "n_gram_type", "ngrams", "pmi_value", ":=",
   
+  # topicsModel
+  "cooccurrence_gb",
+  
   # topicsPlot
   "pmi", "color_negative_cor", "color_positive_cor", "estimate", "highlight_topic_words",
   "p_adjusted", 
