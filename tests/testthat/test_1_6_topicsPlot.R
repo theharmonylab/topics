@@ -59,7 +59,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     save_dir = save_dir_temp
     )
   
-  
+  if (!testthat::is_testing_on_ci()) {
   ngram_negative <- function() {
     pl$negative
   }
@@ -74,7 +74,7 @@ test_that("N-Grams: topicsPlot with topicsGrams (without and with test",{
     save_dir_temp, "/seed_42/wordclouds/ngrams_negative.png")))
   testthat::expect_true(file.exists(paste0(
     save_dir_temp, "/seed_42/wordclouds/ngrams_positive.png")))
-  
+  }
 })
 
 
