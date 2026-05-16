@@ -106,6 +106,12 @@ jobs:
           install.packages("glmnet")
           devtools::install_github("oscarkjell/text")
 
+          # Ensure a conda binary is available before creating any env.
+          conda_bin <- tryCatch(reticulate::conda_binary(), error = function(e) NULL)
+          if (is.null(conda_bin)) {
+            reticulate::install_miniconda()
+          }
+
           # Pre-create the conda env *with* pip so textrpp_install can use it.
           # Works around recent miniconda releases not bundling pip in new envs.
           if (!reticulate::condaenv_exists("textrpp_condaenv")) {
