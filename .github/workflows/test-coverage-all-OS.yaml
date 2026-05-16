@@ -106,6 +106,16 @@ jobs:
           library(devtools)
           install.packages("glmnet")
           devtools::install_github("oscarkjell/text")
+
+          # Pre-create the conda env *with* pip so textrpp_install can use it.
+          # Works around recent miniconda releases not bundling pip in new envs.
+          if (!reticulate::condaenv_exists("textrpp_condaenv")) {
+            reticulate::conda_create(
+              "textrpp_condaenv",
+              packages = c("python=3.9", "pip")
+            )
+          }
+
           text::textrpp_install(prompt = FALSE)
           text::textrpp_initialize(textEmbed_test = TRUE)
         shell: Rscript {0}
