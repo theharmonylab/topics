@@ -1072,9 +1072,18 @@ topicsPlotOverview <- function(
   if (overview_plot_type == "ngrams_grid") {
     p_pos <- get_plot_or_spacer(plot_list$positive_association)
     p_neg <- get_plot_or_spacer(plot_list$negative_association)
-    
-    combined <- (p_neg  | p_pos) + 
-      patchwork::plot_layout(guides = 'collect')
+
+    # Place each plot's legend on its own side: left for negative, right for positive.
+    # Force prevalence (size) on top and estimate (colour) below on both sides.
+    legend_order <- ggplot2::guides(
+      size   = ggplot2::guide_legend(order = 1),
+      colour = ggplot2::guide_colourbar(order = 2)
+    )
+
+    p_neg <- p_neg + ggplot2::theme(legend.position = "left")  + legend_order
+    p_pos <- p_pos + ggplot2::theme(legend.position = "right") + legend_order
+
+    combined <- (p_neg | p_pos)
   }
   
   # Selected topics Grid Version (Rows of 4) ---
