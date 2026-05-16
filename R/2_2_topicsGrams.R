@@ -645,9 +645,9 @@ topicsGrams <- function(
       keep_idx <- keep_idx[!is.na(keep_idx)]
       M2 <- M[, keep_idx, drop = FALSE]
       
-      col_tot <- Matrix::colSums(M2)
-      col_tot[col_tot == 0] <- 1
-      relM <- Matrix::t(Matrix::t(M2) / col_tot)
+      row_tot <- Matrix::rowSums(M2)
+      row_tot[row_tot == 0] <- 1
+      relM <- M2 / row_tot
       
       n_docs <- nrow(relM)
       n_terms <- ncol(relM)

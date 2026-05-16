@@ -1,5 +1,13 @@
 # topics (development version)
 
+# topics 0.72
+- `topicsGrams()`: Fixed incorrect normalization of `freq_per_user`. Values were
+  previously column-normalized (each cell = a document's share of the corpus-wide
+  count for that n-gram), which produced statistically uninterpretable predictors
+  in `topicsTest()`. Values are now row-normalized (each cell = relative frequency
+  of the n-gram within that document's own token count), which is the correct
+  definition of per-user relative frequency.
+
 # topics 0.71
 - adding check_matrix_size in topicsModel() with advice on how to avoid matrix size to explode. 
 
