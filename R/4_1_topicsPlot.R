@@ -1030,8 +1030,11 @@ clean_characters_for_plotting_test <- function(test) {
 
 #' Combine topics and distribution legend (experimental)
 #'
-#' @param plot_list (list) Output from the topicsPlot function.   
+#' @param plot_list (list) Output from the topicsPlot function.
 #' @param overview_plot_type  (character) Number of dimensions to plot (1 or 2).
+#' @param overview_n_topics (integer) For the "topics_grid" / "textTopics" overview,
+#' the number of topic plots to include. Plots are arranged in 3 columns (e.g.,
+#' the default of 9 produces a 3x3 grid). Default: 9.
 #' @param title_font Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
 #' legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.
 #' @return An overview plot including topics and distribution legend
@@ -1039,8 +1042,9 @@ clean_characters_for_plotting_test <- function(test) {
 #' @importFrom patchwork wrap_plots plot_layout
 #' @export
 topicsPlotOverview <- function(
-    plot_list, 
+    plot_list,
     overview_plot_type,
+    overview_n_topics = 9,
     title_font = "sans"
 ) {
   
@@ -1086,11 +1090,18 @@ topicsPlotOverview <- function(
     combined <- (p_neg | p_pos)
   }
   
-  # Selected topics Grid Version (Rows of 4) ---
+  # Selected topics Grid Version (3 columns) ---
   if (overview_plot_type == "topics_grid" | overview_plot_type == "textTopics") {
-    cleaned_plots <- lapply(plot_list, get_plot_or_spacer)
-    
-    combined <- patchwork::wrap_plots(cleaned_plots, ncol = 4) + 
+    # Keep only the first `overview_n_topics` plots in the grid
+    plots_for_grid <- plot_list
+    if (!is.null(overview_n_topics) &&
+        length(plots_for_grid) > overview_n_topics) {
+      plots_for_grid <- plots_for_grid[seq_len(overview_n_topics)]
+    }
+
+    cleaned_plots <- lapply(plots_for_grid, get_plot_or_spacer)
+
+    combined <- patchwork::wrap_plots(cleaned_plots, ncol = 3) +
       patchwork::plot_layout(guides = 'collect') &
       ggplot2::theme(
         text = ggplot2::element_text(family = title_font),
@@ -1210,6 +1221,9 @@ topicsPlotOverview <- function(
 #' @param title_font Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
 #' legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.
 #' @param overview_plot (boolean) Whether to produce an overview plot, including some of the topics and the ditribution (experimental).
+#' @param overview_n_topics (integer) For the prevalent-topics / textTopics overview, the
+#' number of topic plots to include in the grid. Plots are arranged in 3 columns
+#' (e.g., the default of 9 produces a 3x3 grid). Default: 9.
 #' @param highlight_topic_words (str vector) Words to highlight in topics (e.g., negative words). Format: highlight_topic_words = c("not", "never"). The default value is NULL.
 #' @param allowed_word_overlap (numeric) A filter function determining the maximum number of identical words in the topics to be plotted. 
 #' This filter removes topics within each "color group" and also include removing topics from the distribution and grid legends; 
@@ -1265,6 +1279,7 @@ topicsPlot <- function(
     word_font  = "sans",
     title_font = "sans",
     overview_plot = TRUE,
+    overview_n_topics = 9,
     highlight_topic_words = NULL,
     scale_size = FALSE,
     plot_topics_idx = NULL,
@@ -1661,8 +1676,9 @@ topicsPlot <- function(
   # Create overview image
   if(overview_plot){
     overview_p <- topicsPlotOverview(
-      plot_list = plot_list, 
+      plot_list = plot_list,
       overview_plot_type = overview_type,
+      overview_n_topics = overview_n_topics,
       title_font = title_font
     )
     plot_list[["overview_plot"]] <- overview_p

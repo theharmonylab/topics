@@ -16,6 +16,7 @@ topicsPlot(
   word_font = "sans",
   title_font = "sans",
   overview_plot = TRUE,
+  overview_n_topics = 9,
   highlight_topic_words = NULL,
   scale_size = FALSE,
   plot_topics_idx = NULL,
@@ -121,6 +122,10 @@ Default: "sans". Examples: "serif", "mono", or a system-installed font family na
 legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.}
 
 \item{overview_plot}{(boolean) Whether to produce an overview plot, including some of the topics and the ditribution (experimental).}
+
+\item{overview_n_topics}{(integer) For the prevalent-topics / textTopics overview, the
+number of topic plots to include in the grid. Plots are arranged in 3 columns
+(e.g., the default of 9 produces a 3x3 grid). Default: 9.}
 
 \item{highlight_topic_words}{(str vector) Words to highlight in topics (e.g., negative words). Format: highlight_topic_words = c("not", "never"). The default value is NULL.}
 

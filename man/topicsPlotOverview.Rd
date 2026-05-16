@@ -4,12 +4,21 @@
 \alias{topicsPlotOverview}
 \title{Combine topics and distribution legend (experimental)}
 \usage{
-topicsPlotOverview(plot_list, overview_plot_type, title_font = "sans")
+topicsPlotOverview(
+  plot_list,
+  overview_plot_type,
+  overview_n_topics = 9,
+  title_font = "sans"
+)
 }
 \arguments{
 \item{plot_list}{(list) Output from the topicsPlot function.}
 
 \item{overview_plot_type}{(character) Number of dimensions to plot (1 or 2).}
+
+\item{overview_n_topics}{(integer) For the "topics_grid" / "textTopics" overview,
+the number of topic plots to include. Plots are arranged in 3 columns (e.g.,
+the default of 9 produces a 3x3 grid). Default: 9.}
 
 \item{title_font}{Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
 legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.}

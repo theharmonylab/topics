@@ -27,7 +27,7 @@ topicsModel(
 \item{matrix_size_check}{(boolean) If TRUE, checks whether the vocabulary 
 size and Java heap memory are sufficient before fitting the model. If the 
 vocabulary is too large or the heap too small, the function stops early with 
-advice on how to fix the issue — preventing R from crashing. Set to FALSE to 
+advice on how to fix the issue - preventing R from crashing. Set to FALSE to 
 skip this check and attempt to fit the model regardless, though this may crash 
 your R session if memory is insufficient.}
 }
@@ -58,7 +58,7 @@ A named list containing the following elements:
   making it easy to identify and understand them.}
   \item{theta}{A data frame of document-topic probabilities: each row represents a document, and each column
    represents a topic. Similar to topic_docs, this shows the contribution of each topic to each document. 
-   Each row sums to 1, representing the document’s composition of topics.}
+   Each row sums to 1, representing the document's composition of topics.}
   \item{prevalence}{A numeric vector showing the overall prevalence (prominence) of each topic in the corpus.
    The prevalences are expressed as percentages relative to the other topics  and add up to 100%. 
    Higher values indicate topics that are present in more documents.}
