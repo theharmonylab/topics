@@ -7,6 +7,9 @@
   in `topicsTest()`. Values are now row-normalized (each cell = relative frequency
   of the n-gram within that document's own token count), which is the correct
   definition of per-user relative frequency.
+- making n-gram overview plot layout symmetrical
+- adding parameter to number of prevalent topics plotted in overview plot
+
 
 # topics 0.71
 - adding check_matrix_size in topicsModel() with advice on how to avoid matrix size to explode. 

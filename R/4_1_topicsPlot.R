@@ -1028,25 +1028,81 @@ clean_characters_for_plotting_test <- function(test) {
 }
 
 
-#' Combine topics and distribution legend (experimental)
+#' Combine topics and distribution legend into an overview figure (experimental)
 #'
-#' @param plot_list (list) Output from the topicsPlot function.
-#' @param overview_plot_type  (character) Number of dimensions to plot (1 or 2).
-#' @param overview_n_topics (integer) For the "topics_grid" / "textTopics" overview,
-#' the number of topic plots to include. Plots are arranged in 3 columns (e.g.,
-#' the default of 9 produces a 3x3 grid). Default: 9.
-#' @param title_font Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
-#' legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.
-#' @return An overview plot including topics and distribution legend
+#' Assembles a single composite figure from the individual topic word clouds
+#' returned by `topicsPlot()`. The shape of the composition depends on
+#' `overview_plot_type`:
+#' \itemize{
+#'   \item `"topics_grid"` / `"textTopics"`: a grid of the most prevalent topics
+#'     (no test), controlled by `overview_n_topics`.
+#'   \item `"one_dimension_topics"`: three columns (negative / non-significant /
+#'     positive), controlled by `scatter_legend_n` (length 3).
+#'   \item `"two_dimension_topics"`: a 3x3 quadrant layout with the distribution
+#'     legend in the centre, controlled by `scatter_legend_n` (length 9).
+#' }
+#'
+#' This function is intended as a convenience for quickly inspecting results.
+#' For publication figures, users typically save the individual topic plots
+#' (returned separately by `topicsPlot()`) and assemble them in external
+#' software such as PowerPoint, Google Drawings, or Illustrator.
+#'
+#' @param plot_list (list) Output from the `topicsPlot()` function.
+#' @param overview_plot_type (character) One of `"topics_grid"`, `"textTopics"`,
+#'   `"one_dimension_topics"`, or `"two_dimension_topics"`.
+#' @param overview_n_topics (integer) For the `"topics_grid"` / `"textTopics"`
+#'   overview only: the number of topic plots to include. Plots are arranged
+#'   in 3 columns (the default of 9 produces a 3x3 grid). Ignored for the
+#'   test-based 1D and 2D overviews, which instead use `scatter_legend_n`.
+#'   Default: 9.
+#' @param scatter_legend_n (numeric vector) For the test-based 1D and 2D
+#'   overviews: the per-category counts that determine how many topic plots
+#'   appear in the overview. Length 3 for 1D (negative, non-significant,
+#'   positive) and length 9 for 2D (one value per quadrant). A value of 0
+#'   omits that category. Ignored for the prevalent-topics overview.
+#' @param title_font Font family used for all non-word text elements in the plots
+#'   (e.g., titles, axis labels, tick labels, legend text, annotations).
+#'   Default: `"sans"`.
+#' @return A patchwork composition that can be printed, saved with `ggsave()`,
+#'   or further modified with patchwork operators.
 #' @importFrom  ggplot2 labs element_blank theme margin element_text
-#' @importFrom patchwork wrap_plots plot_layout
+#' @importFrom patchwork wrap_plots plot_layout plot_spacer
 #' @export
 topicsPlotOverview <- function(
     plot_list,
     overview_plot_type,
     overview_n_topics = 9,
+    scatter_legend_n = NULL,
     title_font = "sans"
 ) {
+
+  # ---- Sanity check: warn if the composition is going to be very dense ----
+  # The overview is a convenience layout. Users who need many topics per panel
+  # generally get better results by saving the individual plots and assembling
+  # them in external software (PowerPoint, Google Drawings, Illustrator, etc.).
+  overview_total <- NULL
+  if (overview_plot_type %in% c("topics_grid", "textTopics")) {
+    overview_total <- overview_n_topics
+  } else if (overview_plot_type == "one_dimension_topics" &&
+             !is.null(scatter_legend_n)) {
+    overview_total <- sum(scatter_legend_n[seq_len(min(3, length(scatter_legend_n)))],
+                          na.rm = TRUE)
+  } else if (overview_plot_type == "two_dimension_topics" &&
+             !is.null(scatter_legend_n)) {
+    overview_total <- sum(scatter_legend_n[seq_len(min(9, length(scatter_legend_n)))],
+                          na.rm = TRUE)
+  }
+
+  if (!is.null(overview_total) && overview_total > 12) {
+    message(
+      "Note: the overview is being built from ", overview_total, " topic plots, ",
+      "which may produce a cramped figure with overlapping words. ",
+      "The individual topic plots are also returned by `topicsPlot()` and can be ",
+      "saved separately (e.g., via `save_dir` / `figure_format`) and assembled ",
+      "manually in PowerPoint, Google Drawings, Illustrator, or a similar tool ",
+      "for publication-quality layouts."
+    )
+  }
   
   # Helper: Handles NULL, Lists of plots, and Single plots
   get_plot_or_spacer <- function(plot_obj) {
@@ -1111,37 +1167,88 @@ topicsPlotOverview <- function(
   
   # One-dimensional topic plot
   if (overview_plot_type == "one_dimension_topics") {
-    p1 <- get_plot_or_spacer(plot_list$square1)
-    p2 <- get_plot_or_spacer(plot_list$square2)
-    p3 <- get_plot_or_spacer(plot_list$square3)
-    
-    top_row <- (p1 | p2 | p3)
-    combined <- patchwork::wrap_plots(top_row, plot_list$distribution, ncol = 1) + 
-      patchwork::plot_layout(heights = c(1, 1)) &
+    # Default to a single plot per category if scatter_legend_n is missing
+    n_per_cat <- if (is.null(scatter_legend_n)) c(1, 1, 1) else scatter_legend_n
+    if (length(n_per_cat) < 3) n_per_cat <- rep(n_per_cat, length.out = 3)
+
+    # Helper: take the first `n` plots from a square list, padding with spacers
+    take_n_plots <- function(square_obj, n) {
+      if (n <= 0) return(list(patchwork::plot_spacer()))
+      if (is.null(square_obj) || length(square_obj) == 0) {
+        return(replicate(n, patchwork::plot_spacer(), simplify = FALSE))
+      }
+      # If it's a single ggplot, wrap it
+      if (ggplot2::is.ggplot(square_obj)) square_obj <- list(square_obj)
+      available <- length(square_obj)
+      take <- min(n, available)
+      plots <- lapply(square_obj[seq_len(take)], function(p) {
+        get_plot_or_spacer(p)
+      })
+      if (take < n) {
+        plots <- c(plots, replicate(n - take, patchwork::plot_spacer(), simplify = FALSE))
+      }
+      plots
+    }
+
+    col_neg <- take_n_plots(plot_list$square1, n_per_cat[1])
+    col_mid <- take_n_plots(plot_list$square2, n_per_cat[2])
+    col_pos <- take_n_plots(plot_list$square3, n_per_cat[3])
+
+    # Stack each category vertically into a column
+    stack_col <- function(plots) {
+      Reduce(function(a, b) a / b, plots)
+    }
+
+    col1 <- stack_col(col_neg)
+    col2 <- stack_col(col_mid)
+    col3 <- stack_col(col_pos)
+
+    top_row <- (col1 | col2 | col3)
+
+    combined <- patchwork::wrap_plots(top_row, plot_list$distribution, ncol = 1) +
+      patchwork::plot_layout(heights = c(max(n_per_cat), 1)) &
       ggplot2::theme(text = ggplot2::element_text(family = title_font))
   }
   
   # Two-dimensional topic plot
   if (overview_plot_type == "two_dimension_topics") {
-    p1 <- get_plot_or_spacer(plot_list$square1)
-    p2 <- get_plot_or_spacer(plot_list$square2)
-    p3 <- get_plot_or_spacer(plot_list$square3)
-    p4 <- get_plot_or_spacer(plot_list$square4)
-    p6 <- get_plot_or_spacer(plot_list$square6)
-    p7 <- get_plot_or_spacer(plot_list$square7)
-    p8 <- get_plot_or_spacer(plot_list$square8)
-    p9 <- get_plot_or_spacer(plot_list$square9)
-    
-    dist_plot <- plot_list$distribution + 
+    # Default to a single plot per quadrant if scatter_legend_n is missing
+    n_per_q <- if (is.null(scatter_legend_n)) rep(1, 9) else scatter_legend_n
+    if (length(n_per_q) < 9) n_per_q <- rep(n_per_q, length.out = 9)
+
+    # Helper: combine the first `n` plots from a square list horizontally
+    # into a single cell. Returns a patchwork composition or a spacer.
+    build_quadrant_cell <- function(square_obj, n) {
+      if (is.null(n) || n <= 0) return(patchwork::plot_spacer())
+      if (is.null(square_obj) || length(square_obj) == 0) return(patchwork::plot_spacer())
+      if (ggplot2::is.ggplot(square_obj)) square_obj <- list(square_obj)
+
+      take <- min(n, length(square_obj))
+      plots <- lapply(square_obj[seq_len(take)], function(p) get_plot_or_spacer(p))
+
+      if (length(plots) == 1) return(plots[[1]])
+      Reduce(function(a, b) a | b, plots)
+    }
+
+    q1 <- build_quadrant_cell(plot_list$square1, n_per_q[1])
+    q2 <- build_quadrant_cell(plot_list$square2, n_per_q[2])
+    q3 <- build_quadrant_cell(plot_list$square3, n_per_q[3])
+    q4 <- build_quadrant_cell(plot_list$square4, n_per_q[4])
+    q6 <- build_quadrant_cell(plot_list$square6, n_per_q[6])
+    q7 <- build_quadrant_cell(plot_list$square7, n_per_q[7])
+    q8 <- build_quadrant_cell(plot_list$square8, n_per_q[8])
+    q9 <- build_quadrant_cell(plot_list$square9, n_per_q[9])
+
+    dist_plot <- plot_list$distribution +
       ggplot2::theme(
         text = ggplot2::element_text(family = title_font),
         plot.margin = ggplot2::margin(5, 5, 5, 5)
       )
-    
-    combined <- (p1 | p2 | p3) /
-      (p4 | dist_plot | p6) /
-      (p7 | p8 | p9) +
-      patchwork::plot_layout(guides = 'collect') & 
+
+    combined <- (q1 | q2 | q3) /
+      (q4 | dist_plot | q6) /
+      (q7 | q8 | q9) +
+      patchwork::plot_layout(guides = 'collect') &
       ggplot2::theme(
         text = ggplot2::element_text(family = title_font),
         plot.margin = ggplot2::margin(0, 0, 0, 0),
@@ -1220,10 +1327,18 @@ topicsPlotOverview <- function(
 #' Default: "sans". Examples: "serif", "mono", or a system-installed font family name (e.g., "Arial", "Times New Roman").
 #' @param title_font Font family used for all non-word text elements in the plots (e.g., titles, axis labels, tick labels,
 #' legend text, annotations). Default: "sans". Examples: "serif", "mono", or a system-installed font family name.
-#' @param overview_plot (boolean) Whether to produce an overview plot, including some of the topics and the ditribution (experimental).
-#' @param overview_n_topics (integer) For the prevalent-topics / textTopics overview, the
-#' number of topic plots to include in the grid. Plots are arranged in 3 columns
-#' (e.g., the default of 9 produces a 3x3 grid). Default: 9.
+#' @param overview_plot (boolean) Whether to produce a combined overview plot (`$overview_plot`)
+#' that arranges selected topic word clouds and (where applicable) the distribution
+#' legend into a single figure (experimental). The individual topic plots are also
+#' returned separately in the result list, so users who prefer to assemble their own
+#' figure in PowerPoint, Google Drawings, Illustrator, etc. can ignore the overview
+#' and combine the individual plots manually. Default: TRUE.
+#' @param overview_n_topics (integer) Used only by the **prevalent-topics** overview
+#' (i.e., when `plot_n_most_prevalent_topics` is set and no `test` is provided).
+#' Number of topic plots to include in the grid; plots are arranged in 3 columns
+#' (e.g., the default of 9 produces a 3x3 grid). For test-based overviews
+#' (1D and 2D differential plots), the number of topics shown is instead
+#' controlled by `scatter_legend_n`. Default: 9.
 #' @param highlight_topic_words (str vector) Words to highlight in topics (e.g., negative words). Format: highlight_topic_words = c("not", "never"). The default value is NULL.
 #' @param allowed_word_overlap (numeric) A filter function determining the maximum number of identical words in the topics to be plotted. 
 #' This filter removes topics within each "color group" and also include removing topics from the distribution and grid legends; 
@@ -1240,8 +1355,19 @@ topicsPlotOverview <- function(
 #' @param seed (integer) The seed to set for reproducibility.
 #' @param scatter_legend_dot_size (integer) The size of dots in the scatter legend. If set to "prevalence", the size will change accordingly.
 #' @param scatter_legend_bg_dot_size (integer) The size of background dots in the scatter legend.
-#' @param scatter_legend_n (numeric or vector) A vector determining the number of dots to emphasize in each quadrant of the scatter legend.
-#' For example: c(1,1,1,1,0,1,1,1,1) result in one dot in each quadrant except for the middle quadrant. 
+#' @param scatter_legend_n (numeric or vector) A vector determining the number of dots to emphasize
+#' in each quadrant of the scatter legend. For 1-dimensional plots this is a length-3 vector
+#' `c(negative, non-significant, positive)`; for 2-dimensional plots it is a length-9 vector
+#' (one value per quadrant). Example: `c(1,1,1,1,0,1,1,1,1)` highlights one dot in each
+#' quadrant except the middle one.
+#'
+#' These same counts also determine how many topic word clouds appear in the test-based
+#' `$overview_plot` (1D or 2D), so the dots emphasized in the scatter legend and the
+#' word clouds in the overview stay in sync. Setting larger values produces a denser
+#' overview; setting a value to 0 omits that category entirely. If you want to build
+#' your own figure layout in external software (PowerPoint, Google Drawings, etc.),
+#' the individual topic plots are always returned separately in the result list — the
+#' overview is only one possible composition.
 #' @param scatter_legend_dots_alpha (numeric) The transparency alphe level of the dots.
 #' @param scatter_legend_bg_dots_alpha (numeric) The transparency alphe level of the background dots.
 #' @param scatter_legend_method (string) The method to filter topics to be emphasized in the scatter legend; either "mean", "max_x", or "max_y".
@@ -1679,6 +1805,7 @@ topicsPlot <- function(
       plot_list = plot_list,
       overview_plot_type = overview_type,
       overview_n_topics = overview_n_topics,
+      scatter_legend_n = scatter_legend_n,
       title_font = title_font
     )
     plot_list[["overview_plot"]] <- overview_p
