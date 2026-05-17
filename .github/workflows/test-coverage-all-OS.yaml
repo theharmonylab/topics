@@ -115,10 +115,12 @@ jobs:
 
           # Pre-create the conda env *with* pip so textrpp_install can use it.
           # Works around recent miniconda releases not bundling pip in new envs.
+          # Use python 3.11 to avoid stale 3.9-wheel issues on Ubuntu 24.04
+          # (e.g. urllib3/openssl import errors when loading transformers).
           if (!reticulate::condaenv_exists("textrpp_condaenv")) {
             reticulate::conda_create(
               "textrpp_condaenv",
-              packages = c("python=3.9", "pip")
+              packages = c("python=3.11", "pip")
             )
           }
 
