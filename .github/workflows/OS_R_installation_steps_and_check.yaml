@@ -111,6 +111,14 @@ jobs:
           default-jdk
           sudo R CMD javareconf
 
+      # Match text's own CI: rebuild stringi from source on Ubuntu 24.04
+      # (binary build is incompatible with the runner's libicu).
+      - name: Reinstall stringi from source on Ubuntu 24.04
+        if: matrix.config.os == 'ubuntu-24.04'
+        run: |
+          install.packages("stringi", type = "source")
+        shell: Rscript {0}
+
       - name: Installing TEXT and testing it
         run:  |
           install.packages("devtools")
@@ -118,26 +126,11 @@ jobs:
           install.packages("glmnet")
           devtools::install_github("oscarkjell/text")
 
-          # Ensure a conda binary is available before creating any env.
-          conda_bin <- tryCatch(reticulate::conda_binary(), error = function(e) NULL)
-          if (is.null(conda_bin)) {
-            reticulate::install_miniconda()
-          }
-
-          # Pre-create the conda env via conda-forge so Python + OpenSSL ship
-          # as a matched pair. Works around two CI failure modes:
-          #   (1) recent miniconda releases not bundling pip in new envs, and
-          #   (2) Ubuntu 24.04 envs where Python's `ssl` module fails to load
-          #       (urllib3 then silently drops its `ssl` symbol, and transformers
-          #       imports crash with "cannot import name 'ssl' from urllib3.util.ssl_").
-          if (!reticulate::condaenv_exists("textrpp_condaenv")) {
-            reticulate::conda_create(
-              "textrpp_condaenv",
-              packages = c("python=3.11", "pip", "openssl"),
-              channel  = "conda-forge"
-            )
-          }
-
+          # Let text::textrpp_install() create and configure the conda env itself.
+          # text >= 1.8.4 already creates the env with python=3.11 + pip, which is
+          # the exact setup we need. Pre-creating the env from R fights with text's
+          # own logic and produces a hybrid env where urllib3's _ssl linkage breaks
+          # on Ubuntu ("cannot import name 'ssl' from urllib3.util.ssl_").
           text::textrpp_install(prompt = FALSE)
           text::textrpp_initialize(textEmbed_test = TRUE)
         shell: Rscript {0}

@@ -119,26 +119,10 @@ jobs:
           install.packages("glmnet")
           devtools::install_github("oscarkjell/text")
 
-          # Ensure a conda binary is available before creating any env.
-          conda_bin <- tryCatch(reticulate::conda_binary(), error = function(e) NULL)
-          if (is.null(conda_bin)) {
-            reticulate::install_miniconda()
-          }
-
-          # Pre-create the conda env via conda-forge so Python + OpenSSL ship
-          # as a matched pair. Works around two CI failure modes:
-          #   (1) recent miniconda releases not bundling pip in new envs, and
-          #   (2) Ubuntu 24.04 envs where Python's `ssl` module fails to load
-          #       (urllib3 then silently drops its `ssl` symbol, and transformers
-          #       imports crash with "cannot import name 'ssl' from urllib3.util.ssl_").
-          if (!reticulate::condaenv_exists("textrpp_condaenv")) {
-            reticulate::conda_create(
-              "textrpp_condaenv",
-              packages = c("python=3.11", "pip", "openssl"),
-              channel  = "conda-forge"
-            )
-          }
-
+          # Let text::textrpp_install() create and configure the conda env itself.
+          # text >= 1.8.4 creates the env with python=3.11 + pip on its own.
+          # Pre-creating the env from R produces a hybrid env where urllib3's _ssl
+          # linkage breaks on Ubuntu ("cannot import name 'ssl' from urllib3.util.ssl_").
           text::textrpp_install(prompt = FALSE)
           text::textrpp_initialize(textEmbed_test = TRUE)
         shell: Rscript {0}
