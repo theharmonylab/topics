@@ -16,6 +16,7 @@ system paths.
 Open R or RStudio and run the following commands.
 
 ``` r
+
 # Install and verify the Java interface
 install.packages("topics")
 ```
@@ -23,6 +24,7 @@ install.packages("topics")
 You can also install the development version from GitHub.
 
 ``` r
+
 
 # Install devtools if not already present
 if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")

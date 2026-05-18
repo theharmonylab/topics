@@ -22,6 +22,7 @@ To preprocess the data, run the following command:
 
 ``` r
 
+
 library(topics)
 
 dtm <- topicsDtm(
@@ -38,6 +39,7 @@ To train the LDA model, run the following command:
 
 ``` r
 
+
 model <- topicsModel(
   dtm = dtm,
   num_topics = 20,
@@ -50,6 +52,7 @@ command:
 
 ``` r
 
+
 preds <- topicsPreds(
   model = model,
   data = dep_wor_data$Depword)
@@ -60,6 +63,7 @@ To analyze the relationship between the topics and the prediction
 variable, run the following command:
 
 ``` r
+
 
 test <- topicsTest(
   data = dep_wor_data,
@@ -75,6 +79,7 @@ To visualize the significant topics as wordclouds, run the following
 command:
 
 ``` r
+
 
 plot_list <- topicsPlot(
   model = model,

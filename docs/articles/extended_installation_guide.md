@@ -13,11 +13,15 @@ Environment (JRE) installed on your computer. 1. Download Java from
 www.java.com/en/download/. 2. Restart your computer after installation
 to ensure R can detect the new system paths.
 
+On Linux run:
+`sudo apt install libtirpc-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libharfbuzz-dev libfribidi-dev libgit2-dev libcairo2-dev`
+
 #### Step 2: Install topics in R
 
 Open R or RStudio and run the following commands.
 
 ``` r
+
 # Install and verify the Java interface
 install.packages("topics")
 ```
@@ -25,6 +29,7 @@ install.packages("topics")
 You can also install the development version from GitHub.
 
 ``` r
+
 
 # Install devtools if not already present
 if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")

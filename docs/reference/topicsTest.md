@@ -95,6 +95,17 @@ model <- topicsModel(
   num_top_words = 10,
   num_iterations = 1000,
   seed = 42)
+#> 
+#> --- topicsModel() memory diagnostics ---
+#>   Documents:                     500
+#>   Vocabulary (n-gram terms):     6421
+#>   Total tokens:                  9017
+#>   Topic-word matrix (phi):       0 GB
+#>   Document-topic matrix (theta): 0 GB
+#>   Token assignments:             0 GB
+#>   Estimated total:               0 GB
+#>   Current Java heap:             0.5 GB
+#> ----------------------------------------
                      
 preds <- topicsPreds(
  model = model, # output of topicsModel()

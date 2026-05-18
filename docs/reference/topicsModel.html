@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">topics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.70</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.72</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,8 @@
 <span>  num_topics <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  num_top_words <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  num_iterations <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  seed <span class="op">=</span> <span class="fl">42</span></span>
+<span>  seed <span class="op">=</span> <span class="fl">42</span>,</span>
+<span>  matrix_size_check <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -71,6 +72,15 @@
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
 <dd><p>(integer) A seed to set for reproducibility</p></dd>
+
+
+<dt id="arg-matrix-size-check">matrix_size_check<a class="anchor" aria-label="anchor" href="#arg-matrix-size-check"></a></dt>
+<dd><p>(boolean) If TRUE, checks whether the vocabulary
+size and Java heap memory are sufficient before fitting the model. If the
+vocabulary is too large or the heap too small, the function stops early with
+advice on how to fix the issue - preventing R from crashing. Set to FALSE to
+skip this check and attempt to fit the model regardless, though this may crash
+your R session if memory is insufficient.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -120,7 +130,7 @@
   <dt>theta</dt>
 <dd><p>A data frame of document-topic probabilities: each row represents a document, and each column
    represents a topic. Similar to topic_docs, this shows the contribution of each topic to each document.
-   Each row sums to 1, representing the document’s composition of topics.</p></dd>
+   Each row sums to 1, representing the document's composition of topics.</p></dd>
 
   <dt>prevalence</dt>
 <dd><p>A numeric vector showing the overall prevalence (prominence) of each topic in the corpus.
@@ -160,6 +170,17 @@
 <span class="r-in"><span>num_top_words <span class="op">=</span> <span class="fl">10</span>,</span></span>
 <span class="r-in"><span>num_iterations <span class="op">=</span> <span class="fl">1000</span>,</span></span>
 <span class="r-in"><span>seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> --- topicsModel() memory diagnostics ---</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Documents:                     500</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Vocabulary (n-gram terms):     6421</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Total tokens:                  9017</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Topic-word matrix (phi):       0 GB</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Document-topic matrix (theta): 0 GB</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Token assignments:             0 GB</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Estimated total:               0 GB</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Current Java heap:             0.5 GB</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ----------------------------------------</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

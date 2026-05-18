@@ -2,13 +2,33 @@
 
 ## topics (development version)
 
-## topics 0.68
+## topics 0.72
+
+- [`topicsGrams()`](https://r-topics.org/reference/topicsGrams.md):
+  Fixed incorrect normalization of `freq_per_user`. Values were
+  previously column-normalized (each cell = a document’s share of the
+  corpus-wide count for that n-gram), which produced statistically
+  uninterpretable predictors in
+  [`topicsTest()`](https://r-topics.org/reference/topicsTest.md). Values
+  are now row-normalized (each cell = relative frequency of the n-gram
+  within that document’s own token count), which is the correct
+  definition of per-user relative frequency.
+- making n-gram overview plot layout symmetrical
+- adding parameter to number of prevalent topics plotted in overview
+  plot
+
+## topics 0.71
+
+- adding check_matrix_size in topicsModel() with advice on how to avoid
+  matrix size to explode.
+
+## topics 0.70
+
+CRAN release: 2026-02-16
 
 - adding compatability with `textTopicsWordCloud()`.
 - updated parameter defaults `top_frequent = NULL` and
-  `ngram_select = "estimate"`
-
-## topics 0.66
+  `ngram_select = "estimate"`.
 
 Performance & Robustness \*
 [`topicsGrams()`](https://r-topics.org/reference/topicsGrams.md)

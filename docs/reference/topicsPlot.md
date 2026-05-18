@@ -17,6 +17,7 @@ topicsPlot(
   word_font = "sans",
   title_font = "sans",
   overview_plot = TRUE,
+  overview_n_topics = 9,
   highlight_topic_words = NULL,
   scale_size = FALSE,
   plot_topics_idx = NULL,
@@ -151,8 +152,24 @@ topicsPlot(
 
 - overview_plot:
 
-  (boolean) Whether to produce an overview plot, including some of the
-  topics and the ditribution (experimental).
+  (boolean) Whether to produce a combined overview plot
+  (\`\$overview_plot\`) that arranges selected topic word clouds and
+  (where applicable) the distribution legend into a single figure
+  (experimental). The individual topic plots are also returned
+  separately in the result list, so users who prefer to assemble their
+  own figure in PowerPoint, Google Drawings, Illustrator, etc. can
+  ignore the overview and combine the individual plots manually.
+  Default: TRUE.
+
+- overview_n_topics:
+
+  (integer) Used only by the \*\*prevalent-topics\*\* overview (i.e.,
+  when \`plot_n_most_prevalent_topics\` is set and no \`test\` is
+  provided). Number of topic plots to include in the grid; plots are
+  arranged in 3 columns (e.g., the default of 9 produces a 3x3 grid).
+  For test-based overviews (1D and 2D differential plots), the number of
+  topics shown is instead controlled by \`scatter_legend_n\`. Default:
+  9.
 
 - highlight_topic_words:
 
@@ -227,9 +244,20 @@ topicsPlot(
 - scatter_legend_n:
 
   (numeric or vector) A vector determining the number of dots to
-  emphasize in each quadrant of the scatter legend. For example:
-  c(1,1,1,1,0,1,1,1,1) result in one dot in each quadrant except for the
-  middle quadrant.
+  emphasize in each quadrant of the scatter legend. For 1-dimensional
+  plots this is a length-3 vector \`c(negative, non-significant,
+  positive)\`; for 2-dimensional plots it is a length-9 vector (one
+  value per quadrant). Example: \`c(1,1,1,1,0,1,1,1,1)\` highlights one
+  dot in each quadrant except the middle one.
+
+  These same counts also determine how many topic word clouds appear in
+  the test-based \`\$overview_plot\` (1D or 2D), so the dots emphasized
+  in the scatter legend and the word clouds in the overview stay in
+  sync. Setting larger values produces a denser overview; setting a
+  value to 0 omits that category entirely. If you want to build your own
+  figure layout in external software (PowerPoint, Google Drawings,
+  etc.), the individual topic plots are always returned separately in
+  the result list — the overview is only one possible composition.
 
 - scatter_legend_method:
 

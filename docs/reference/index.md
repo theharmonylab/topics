@@ -32,7 +32,8 @@
 - [`topicsPlot()`](https://r-topics.org/reference/topicsPlot.md) : Plot
   word clouds
 - [`topicsPlotOverview()`](https://r-topics.org/reference/topicsPlotOverview.md)
-  : Combine topics and distribution legend (experimental)
+  : Combine topics and distribution legend into an overview figure
+  (experimental)
 
 ## Example Data
 
