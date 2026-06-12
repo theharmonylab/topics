@@ -37,6 +37,17 @@ Ackermann L., Zhuojun G. & Kjell O.N.E. (2024). An R-package for
 visualizing text in topics. <https://github.com/theharmonylab/topics>.
 `DOI:zenodo.org/records/11165378`.
 
+> ### 📣 Online Workshop: *Analysing Human Language using R*
+>
+> **August 11–13, 2026** — three half-day sessions (2:00–5:00 pm CEST /
+> 8:00–11:00 am ET)
+>
+> Learn the full *R Language Analysis Suite* —
+> [`talk`](https://www.r-talk.org/), [`text`](https://www.r-text.org/),
+> and [`topics`](https://www.r-topics.org/) — with Oscar Kjell.
+>
+> **[Read more & register →](https://smart-workshops.com/lang-r-info)**
+
 ## Differential Language Analysis with Topics and N-grams
 
 The `topics` pipeline is designed for a seamless transition from raw

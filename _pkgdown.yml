@@ -45,11 +45,11 @@ home:
   title: topics
   description: Analyses of Text using LDA topics and Differential Language Analysis.
   sidebar:
-  - title: Badges
-    badges: true
-  links:
-  - text: Ask a question about topics using the r-topics tag
-    href: https://stackoverflow.com/
+    structure: [workshop, links, license, community, citation, authors, dev]
+    components:
+      workshop:
+        title: Workshop
+        text: "📣 [**Aug 11–13, 2026:** Analysing Human Language using R](https://smart-workshops.com/lang-r-info)"
 
 reference:
 - title: Transform text to ngrams
