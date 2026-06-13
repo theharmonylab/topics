@@ -1,5 +1,8 @@
 # topics (development version)
 
+# topics 1.0
+- Harmonized with tuorial and submitted to CRAN. 
+
 # topics 0.72
 - `topicsGrams()`: Fixed incorrect normalization of `freq_per_user`. Values were
   previously column-normalized (each cell = a document's share of the corpus-wide

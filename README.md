@@ -11,7 +11,7 @@ status](https://github.com/theharmonylab/topics/workflows/R-CMD-check/badge.svg)
 [![Project Status:
 Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing-1)
+maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#maturing-1)
 [![codecov](https://codecov.io/gh/theharmonylab/topics/graph/badge.svg?token=7ZTWBNIVCX)](https://app.codecov.io/gh/theharmonylab/topics/)
 [![CRAN
 Downloads](https://cranlogs.r-pkg.org/badges/grand-total/topics)](https://CRAN.R-project.org/package=topics)
