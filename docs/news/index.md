@@ -2,6 +2,10 @@
 
 ## topics (development version)
 
+## topics 1.0
+
+- Harmonized with tuorial and submitted to CRAN.
+
 ## topics 0.72
 
 - [`topicsGrams()`](https://r-topics.org/reference/topicsGrams.md):
