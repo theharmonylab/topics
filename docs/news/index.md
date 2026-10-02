@@ -4,6 +4,8 @@
 
 ## topics 1.0
 
+CRAN release: 2026-06-13
+
 - Harmonized with tutorial and submitted to CRAN.
 
 ## topics 0.72
