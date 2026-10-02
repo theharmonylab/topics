@@ -75,7 +75,7 @@ Range: 10 to 1000 (larger datasets or more complex models may require a longer b
 \item{seed}{(integer) A seed to set for reproducibility.}
 
 \item{create_new_dtm}{(boolean) If applying the model on new data (not used in training), it can help to make a new dtm.
-Currently this is experimental, and using the textmineR::CreateDtm() function rather than the topicsDtm() function, which has more functions.}
+Currently this is experimental, and using a simpler internal DTM builder rather than the topicsDtm() function, which has more functions.}
 }
 \value{
 A tibble of the predictions: The rows represent the documents, and the columns represent the topics. The values in the cells indicate the proportion of each topic within the corresponding document.

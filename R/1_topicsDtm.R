@@ -202,7 +202,6 @@ filter_by_pmi <- function(
 #'                  removal_rate_most = 0.01)
 #'
 #' }
-#' @importFrom textmineR CreateDtm 
 #' @importFrom stats complete.cases
 #' @importFrom stopwords stopwords
 #' @importFrom Matrix colSums t
@@ -287,7 +286,7 @@ topicsDtm <- function(
   }
   
   # Create Trigram DTM
-  train_dtm <- textmineR::CreateDtm(
+  train_dtm <- create_dtm_internal(
     doc_vec = train[["text"]], 
     doc_names = train[["id"]], 
     ngram_window = ngram_window, 
@@ -296,13 +295,12 @@ topicsDtm <- function(
     remove_punctuation = remove_punctuation, 
     remove_numbers = remove_numbers, 
     verbose = verbose,
-    stem_lemma_function = stem_lemma_function,
-    cpus = threads
+    stem_lemma_function = stem_lemma_function
   )
   
   # Create Unigram DTM if necessary for PMI
   if (!is.null(pmi_threshold)) {
-    unigram_dtm <- textmineR::CreateDtm(
+    unigram_dtm <- create_dtm_internal(
       doc_vec = train[["text"]], 
       doc_names = train[["id"]], 
       ngram_window = c(1, 1), # Unigrams only
@@ -311,8 +309,7 @@ topicsDtm <- function(
       remove_punctuation = remove_punctuation, 
       remove_numbers = remove_numbers, 
       verbose = verbose,
-      stem_lemma_function = stem_lemma_function, 
-      cpus = threads
+      stem_lemma_function = stem_lemma_function
     )
   }
   

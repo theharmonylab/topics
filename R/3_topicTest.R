@@ -4,7 +4,7 @@
 #' The function for topic testing
 #' @param topic_loadings (tibble) The predicted loadings of topics including the grouping variable.
 #' @param grouping_variable (tibble) The variable for grouping
-#' @param topic_terms (R_obj) The object from model$summary in textmineR package vignette topic_modeling
+#' @param topic_terms (R_obj) The object from model$summary (the topic summary of a topicsModel() output)
 #' @param split (string) How to split the CONTINUOUS test_values for testing
 #' @param n_min_max (integer) If split = "min_max", the number of records to test per group.
 #' @param multiple_comparison (string) The p-correction method

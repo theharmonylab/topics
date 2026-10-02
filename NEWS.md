@@ -1,4 +1,11 @@
-# topics (development version)
+# topics 1.0.1
+- Removed the `textmineR` dependency (which depends on packages scheduled for
+  archival on CRAN). DTM creation now uses `quanteda` internally, and the small
+  helpers previously taken from `textmineR` (`Dtm2Docs()`, `CalcGamma()`) are
+  implemented within topics. Document-term matrices (terms, counts and column
+  order) and model results are unchanged. The only difference: a missing (`NA`)
+  text in `topicsPredict(create_new_dtm = TRUE)` now gives an empty document
+  instead of the token "NA".
 
 # topics 1.0
 - Harmonized with tutorial and submitted to CRAN. 

@@ -1,7 +1,7 @@
 Package: topics
 Type: Package
 Title: Creating and Significance Testing Language Features for Visualisation
-Version: 1.0
+Version: 1.0.1
 Authors@R: c(
     person("Leon", "Ackermann", 
     role = c("aut"), 
@@ -13,7 +13,10 @@ Authors@R: c(
     ),
     person("Oscar", "Kjell", , "oscar.kjell@psy.lu.se", 
     role = c("aut", "cre"), 
-      comment = c(ORCID = "0000-0002-2728-6278"))
+      comment = c(ORCID = "0000-0002-2728-6278")),
+    person("Thomas W.", "Jones",
+    role = c("ctb", "cph"),
+      comment = "Author of 'textmineR' code adapted in calc_gamma()")
     )
 Description: Implements differential language analysis with statistical tests and offers various language visualization techniques for n-grams and topics. It also supports the 'text' package. For more information, visit <https://r-topics.org/> and <https://www.r-text.org/>.
 License: GPL-3
@@ -25,7 +28,6 @@ SystemRequirements: Python (>= 3.6.0)
 LazyData: true
 BuildVignettes: true
 Imports:
-    textmineR,
     quanteda,
     ggplot2,
     dplyr,
@@ -44,7 +46,6 @@ Imports:
     ggforce, 
     patchwork, 
     utils
-RoxygenNote: 7.3.3
 Suggests: 
     text,
     rJava,
@@ -59,3 +60,4 @@ Suggests:
     arrow
 VignetteBuilder: knitr
 Depends: R (>= 4.00)
+Config/roxygen2/version: 8.1.0

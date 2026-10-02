@@ -7,7 +7,6 @@
 #' @param num_iterations (string) Number of iterations
 #' @param seed Set see with L, like 42L.
 #' @return Mallet model
-#' @importFrom textmineR Dtm2Docs CalcGamma
 #' @importFrom stats setNames
 # @importFrom mallet mallet.top.words mallet.doc.topics mallet.word.freqs mallet.topic.labels MalletLDA  mallet.import  mallet.topic.words
 #' @importFrom utils combn
@@ -26,7 +25,7 @@ get_mallet_model <- function(
                 "And then run install.packages(c('mallet', 'rJava')."))
   }
   
-  docs <- textmineR::Dtm2Docs(dtm)
+  docs <- dtm_to_docs(dtm)
   
   model <- mallet::MalletLDA(
     num.topics = num_topics,
@@ -227,7 +226,7 @@ get_mallet_model <- function(
   colnames(pred_model$theta) <- new_col_names # Assign new column names to the dataframe
   pred_model$alpha <- model$alpha
   
-  pred_model$gamma <- textmineR::CalcGamma(
+  pred_model$gamma <- calc_gamma(
     phi = pred_model$phi, 
     theta = pred_model$theta)
   
@@ -455,7 +454,7 @@ topicsModel <- function(
 #' Range: 10 to 1000 (larger datasets or more complex models may require a longer burn-in period).
 #' @param seed (integer) A seed to set for reproducibility.
 #' @param create_new_dtm (boolean) If applying the model on new data (not used in training), it can help to make a new dtm.
-#' Currently this is experimental, and using the textmineR::CreateDtm() function rather than the topicsDtm() function, which has more functions.
+#' Currently this is experimental, and using a simpler internal DTM builder rather than the topicsDtm() function, which has more functions.
 #' @return A tibble of the predictions: The rows represent the documents, and the columns represent the topics. The values in the cells indicate the proportion of each topic within the corresponding document.
 #' @examples
 #' \donttest{
@@ -513,7 +512,7 @@ topicsPredict <- function(
     if (create_new_dtm){
       # Preprocess new data to create DTM
       new_dtm <- list()
-      new_dtm$train_dtm <- textmineR::CreateDtm(
+      new_dtm$train_dtm <- create_dtm_internal(
         doc_vec = data,
         doc_names = as.character(1:length(data)),
         ngram_window = model$dtm_settings$ngram_window,
@@ -540,7 +539,7 @@ topicsPredict <- function(
       
       new_dtm$train_dtm <- new_dtm$train_dtm[, model_vocab, drop = FALSE]
       # Convert the new DTM to the Mallet instances format
-      new_docs <- textmineR::Dtm2Docs(new_dtm$train_dtm)
+      new_docs <- dtm_to_docs(new_dtm$train_dtm)
       
       new_instances <- mallet::mallet.import(
         as.character(seq_along(new_docs)),
